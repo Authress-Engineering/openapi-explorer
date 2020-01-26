@@ -39,9 +39,7 @@
     "build": "NODE_ENV=production webpack",
     "serve": "webpack-dev-server --mode=development",
     "lint": "./node_modules/eslint/bin/eslint.js ./src/**",
-    "lint-fix": "./node_modules/eslint/bin/eslint.js --fix ./src/**",
-    "snyk-protect": "snyk protect",
-    "prepare": "yarn run snyk-protect"
+    "lint-fix": "./node_modules/eslint/bin/eslint.js --fix ./src/**"
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",
@@ -68,5 +66,5 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
   },
-  "snyk": true
+  "snyk": false
 }
