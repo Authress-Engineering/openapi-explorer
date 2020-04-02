@@ -5,7 +5,7 @@ import Swagger from 'swagger-client';
 import marked from 'marked';
 import { invalidCharsRegEx } from '@/utils/common-utils';
 
-export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '') {
+export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '', allowDuplicatedPathsByTag = false) {
   let jsonParsedSpec;
   let convertedSpec;
   // let resolvedRefSpec;
@@ -64,7 +64,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
   // const pathGroups = groupByPaths(jsonParsedSpec);
 
   // Tags
-  const tags = groupByTags(jsonParsedSpec, sortTags, sortEndpointsBy);
+  const tags = groupByTags(jsonParsedSpec, sortTags, sortEndpointsBy, allowDuplicatedPathsByTag);
 
   const components = getComponents(jsonParsedSpec);
   const infoDescriptionHeaders = getInfoDescriptionHeaders(jsonParsedSpec);
@@ -247,7 +247,7 @@ function getComponents(openApiSpec) {
   return components || [];
 }
 
-function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy) {
+function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy, allowDuplicatedPathsByTag) {
   const methods = ['get', 'put', 'post', 'delete', 'patch', 'head']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
     ? openApiSpec.tags.map((v) => ({
@@ -276,6 +276,7 @@ function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy) {
 
       if (openApiSpec.paths[path][methodName]) {
         const fullPath = openApiSpec.paths[path][methodName];
+
         // If path.methods are tagged, else generate it from path
         if (fullPath.tags && fullPath.tags[0]) {
           tagText = fullPath.tags[0];
@@ -289,7 +290,7 @@ function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy) {
           } else {
             firstWordEndIndex -= 1;
           }
-          tagText = path.substr(1, firstWordEndIndex);
+          pathTags.push(path.substr(1, firstWordEndIndex));
         }
         tagObj = tags.find((v) => v.name === tagText);
         if (!tagObj) {
@@ -303,26 +304,47 @@ function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy) {
           tags.push(tagObj);
         }
 
-        // Generate Path summary and Description if it is missing for a method
-        let summary = (fullPath.summary || '').trim() ? fullPath.summary.trim() : (fullPath.description || '-').trim().split('/n')[0];
-        if (summary.length > 100) {
-          summary = summary.split('.')[0];
-        }
-        if (!(fullPath.description || '').trim()) {
-          fullPath.description = ((fullPath.summary || '-').trim());
-        }
+          tag = tag.toLowerCase();
 
-        // Merge Common Parameters with This methods parameters
-        let finalParameters = [];
-        if (commonParams) {
-          if (fullPath.parameters) {
-            finalParameters = commonParams.filter((commonParam) => {
-              if (!fullPath.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
-                return commonParam;
-              }
-            }).concat(fullPath.parameters);
+          if (openApiSpec.tags) {
+            tagDescr = openApiSpec.tags.find((v) => (v.name.toLowerCase() === tag));
+          }
+
+          tagObj = tags.find((v) => v.name === tag);
+          if (!tagObj) {
+            tagObj = {
+              show: true,
+              name: tag,
+              description: tagDescr ? tagDescr.description : '',
+              paths: [],
+            };
+            tags.push(tagObj);
+          }
+
+
+          // Generate Path summary and Description if it is missing for a method
+          let summary = (fullPath.summary || '').trim() ? fullPath.summary.trim() : (fullPath.description || '-').trim().split('/n')[0];
+          if (summary.length > 100) {
+            summary = summary.split('.')[0];
+          }
+          if (!(fullPath.description || '').trim()) {
+            fullPath.description = ((fullPath.summary || '-').trim());
+          }
+
+          // Merge Common Parameters with This methods parameters
+          let finalParameters = [];
+          if (commonParams) {
+            if (fullPath.parameters) {
+              finalParameters = commonParams.filter((commonParam) => {
+                if (!fullPath.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
+                  return commonParam;
+                }
+              }).concat(fullPath.parameters);
+            } else {
+              finalParameters = commonParams.slice(0);
+            }
           } else {
-            finalParameters = commonParams.slice(0);
+            finalParameters = fullPath.parameters ? fullPath.parameters.slice(0) : [];
           }
         } else {
           finalParameters = fullPath.parameters ? fullPath.parameters.slice(0) : [];
