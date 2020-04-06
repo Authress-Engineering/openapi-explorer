@@ -316,7 +316,6 @@ function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy, allowDuplic
               show: true,
               name: tag,
               description: tagDescr ? tagDescr.description : '',
-              expanded: tagDescr ? tagDescr.expanded : true,
               paths: [],
             };
             tags.push(tagObj);
