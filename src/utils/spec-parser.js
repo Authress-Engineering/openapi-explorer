@@ -321,7 +321,6 @@ function groupByTags(openApiSpec, sortTags = false, sortEndpointsBy, allowDuplic
             tags.push(tagObj);
           }
 
-
           // Generate Path summary and Description if it is missing for a method
           let summary = (fullPath.summary || '').trim() ? fullPath.summary.trim() : (fullPath.description || '-').trim().split('/n')[0];
           if (summary.length > 100) {
