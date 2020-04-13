@@ -132,13 +132,13 @@ function endpointBodyTemplate(path) {
   }
   return html`
   <div class='divider'></div>
-  <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(/[\s#:?&=]/g, '-')}' >
+  <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}' >
     
     ${path.deprecated ? html`<div class="bold-text red-text" > DEPRECATED </div>` : ''}
     ${html`
-      <h1 class = "${path.deprecated ? 'gray-text' : ''}"> 
+      <h2 class = "${path.deprecated ? 'gray-text' : ''}"> 
         ${path.summary || html`<span class='upper ${path.deprecated ? ' method-fg gray-text' : path.method}  '> ${path.method}</span> ${path.path}`} 
-      </h1>
+      </h2>
       ${path.summary
         ? html`
           <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg3)'> 
@@ -194,7 +194,7 @@ function endpointBodyTemplate(path) {
 export default function expandedEndpointTemplate() {
   return html`
   ${this.resolvedSpec.tags.map((tag) => html`
-    <div id="${tag.name.replace(/[\s#:?&=]/g, '-')}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
+    <div id="${tag.name.replace(invalidCharsRegEx, '-')}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
       <div class="title tag">${tag.name}</div>
       <div class="regular-font-size">
         ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(tag.description ? tag.description : '')}</div>`)}
