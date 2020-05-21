@@ -133,7 +133,7 @@ export default class ApiRequest extends LitElement {
       }
 
     </style>
-    <div class="col regular-font request-panel ${this.renderStyle === 'read' || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
+    <div class="col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
         ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
       </div>
@@ -208,7 +208,7 @@ export default class ApiRequest extends LitElement {
             }
           </div>
         </td>  
-        <td style="width:${paramSchema.type === 'array' || paramSchema.type === 'object' ? (this.renderStyle === 'read' ? '300px' : '220px') : '160px'}; min-width:100px;">
+        <td style="width:${paramSchema.type === 'array' || paramSchema.type === 'object' ? ('read focused'.includes(this.renderStyle) ? '300px' : '220px') : '160px'}; min-width:100px;">
           ${paramSchema.type === 'array'
             ? html`
               <tag-input class="request-param" 
@@ -231,7 +231,7 @@ export default class ApiRequest extends LitElement {
                   data-param-serialize-style = "${paramStyle}"
                   data-param-serialize-explode = "${paramExplode}"
                   spellcheck = "false"
-                  style = "resize:vertical; width:100%; height: ${this.renderStyle === 'read' ? '180px' : '120px'};"
+                  style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
                 >${inputVal}</textarea>
               `
               : html`
