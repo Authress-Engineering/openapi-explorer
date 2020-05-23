@@ -56,7 +56,7 @@ function endpointDescriptionRenderer() {
 
 /* eslint-disable indent */
 
-export function expandedEndpointBodyTemplate(data, path) {
+export function expandedEndpointBodyTemplate(path) {
   let accept = '';
   for (const respStatus in path.responses) {
     for (const acceptContentType in (path.responses[respStatus].content)) {
@@ -79,7 +79,7 @@ export function expandedEndpointBodyTemplate(data, path) {
     xCodeSamplesTabPanel += `<div class="req-res-title" style="margin-top: 24px;">CODE SAMPLES</div><tab-panel panels='${JSON.stringify(panels)}' active-panel-id='${path.xCodeSamples[0].lang}'></tab-panel>`;
   }
   return html`
-    ${data.renderStyle === 'read' ? html` <div class='divider'></div>` : ''}
+    ${this.renderStyle === 'read' ? html` <div class='divider'></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}'>
     ${path.deprecated ? html`<div class="bold-text red-text" > DEPRECATED </div>` : ''}
     ${html`
@@ -112,36 +112,36 @@ export function expandedEndpointBodyTemplate(data, path) {
         .request_body = "${path.requestBody}"
         .api_keys = "${nonEmptyApiKeys}"
         .servers = "${path.servers}" 
-        server-url = "${path.servers && path.servers.length > 0 ? path.servers[0].url : data.selectedServer.computedUrl}" 
-        allow-try = "${data.allowTry}"
+        server-url = "${path.servers?.[0]?.url || this.selectedServer.computedUrl}" 
+        allow-try = "${this.allowTry}"
         accept = "${accept}"
-        render-style="${data.renderStyle}" 
-        schema-style = "${data.schemaStyle}"
-        active-schema-tab = "${data.defaultSchemaTab}"
-        schema-expand-level = "${data.schemaExpandLevel}"
-        schema-description-expanded = "${data.schemaDescriptionExpanded}"
+        render-style="${this.renderStyle}" 
+        schema-style = "${this.schemaStyle}"
+        active-schema-tab = "${this.defaultSchemaTab}"
+        schema-expand-level = "${this.schemaExpandLevel}"
+        schema-description-expanded = "${this.schemaDescriptionExpanded}"
       > </api-request>
 
-      ${path.callbacks ? callbackTemplate(data, path.callbacks) : ''}
+      ${path.callbacks ? callbackTemplate.call(this, path.callbacks) : ''}
 
       <api-response
         class = 'response-panel'
-        .responses="${path.responses}"
-        render-style="${data.renderStyle}"
-        schema-style="${data.schemaStyle}"
-        active-schema-tab = "${data.defaultSchemaTab}"
-        schema-expand-level = "${data.schemaExpandLevel}"
-        schema-description-expanded = "${data.schemaDescriptionExpanded}"
-        selected-status = "${Object.keys(path.responses)[0]}"
+        .responses = "${path.responses}"
+        render-style = "${this.renderStyle}"
+        schema-style = "${this.schemaStyle}"
+        active-schema-tab = "${this.defaultSchemaTab}"
+        schema-expand-level = "${this.schemaExpandLevel}"
+        schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        selected-status = "${Object.keys(path.responses || {})[0] || ''}"
       > </api-response>
     </div>
   </div>
   `;
 }
 
-export default function expandedEndpointTemplate(data) {
+export default function expandedEndpointTemplate() {
   return html`
-  ${data.resolvedSpec.tags.map((tag) => html`
+  ${this.resolvedSpec.tags.map((tag) => html`
     <div id="${tag.name.replace(invalidCharsRegEx, '-')}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
       <div class="title tag">${tag.name}</div>
       <div class="regular-font-size">
@@ -149,7 +149,7 @@ export default function expandedEndpointTemplate(data) {
       </div>
     </div>
     <div class='regular-font section-gap--read-mode'>
-      ${tag.paths.map((path) => expandedEndpointBodyTemplate(data, path))}
+      ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path))}
     </div>
     `)
   }
