@@ -84,6 +84,7 @@ function endpointBodyTemplate(data, path) {
         schema-style="${data.schemaStyle}"
         schema-expand-level = "${data.schemaExpandLevel}"
         schema-description-expanded = "${data.schemaDescriptionExpanded}"
+        selected-status = "${Object.keys(path.responses)[0]}"
       > </api-response>
     </div>
   </div>`;

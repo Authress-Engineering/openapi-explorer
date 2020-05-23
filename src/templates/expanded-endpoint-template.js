@@ -55,60 +55,8 @@ function endpointDescriptionRenderer() {
 }
 
 /* eslint-disable indent */
-export function callbackTemplate(data, callbacks) {
-  return html`
-    <div class="req-res-title" style="margin-top:12px">CALLBACKS</div>
-    ${Object.entries(callbacks).map((kv) => html`
-      <div class="tiny-title" style="padding: 12px; border:1px solid var(--light-border-color)"> 
-        ${kv[0]}
-        ${Object.entries(kv[1]).map((pathObj) => html`
-          <div class="mono-font small-font-size" style="display:flex; margin-left:16px;">
-            <div> 
-              ${Object.entries(pathObj[1]).map((method) => html`
-                <div>
-                  <div style="margin-top:12px;">
-                    <div class="method method-fg ${method[0]}" style="width:70px; border:none; margin:0; padding:0; line-height:20px; vertical-align: baseline;text-align:left"> 
-                      <span style="font-size:20px;"> &#x2944; </span> 
-                      ${method[0]} 
-                    </div>
-                    <span style="line-height:20px; vertical-align: baseline;">${pathObj[0]} </span>
-                  </div>  
-                  <div class='expanded-req-resp-container'>
-                    <api-request  class="request-panel"
-                      callback = "true"
-                      method = "${method[0]}", 
-                      path = "${pathObj[0]}" 
-                      .parameters = "${method[1].parameters}" 
-                      .request_body = "${method[1].requestBody}"
-                      allow-try = "false"
-                      render-style="${data.renderStyle}" 
-                      schema-style = "${data.schemaStyle}"
-                      active-schema-tab = "${data.defaultSchemaTab}"
-                      schema-expand-level = "${data.schemaExpandLevel}"
-                      schema-description-expanded = "${data.schemaDescriptionExpanded}"
-                    > </api-request>
 
-                    <api-response
-                      callback = "true"
-                      .responses="${method[1].responses}"
-                      render-style="${data.renderStyle}"
-                      schema-style="${data.schemaStyle}"
-                      active-schema-tab = "${data.defaultSchemaTab}"
-                      schema-expand-level = "${data.schemaExpandLevel}"
-                      schema-description-expanded = "${data.schemaDescriptionExpanded}"
-                    > </api-response>
-                  </div>
-                </div>  
-              `)}
-            </div>  
-          </div>  
-        `)}
-      </div>  
-    `)}
-  `;
-}
-
-function endpointBodyTemplate(data, path) {
+export function expandedEndpointBodyTemplate(data, path) {
   let accept = '';
   for (const respStatus in path.responses) {
     for (const acceptContentType in (path.responses[respStatus].content)) {
@@ -131,9 +79,8 @@ function endpointBodyTemplate(data, path) {
     xCodeSamplesTabPanel += `<div class="req-res-title" style="margin-top: 24px;">CODE SAMPLES</div><tab-panel panels='${JSON.stringify(panels)}' active-panel-id='${path.xCodeSamples[0].lang}'></tab-panel>`;
   }
   return html`
-  <div class='divider'></div>
-  <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}' >
-    
+    ${data.renderStyle === 'read' ? html` <div class='divider'></div>` : ''}
+    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}'>
     ${path.deprecated ? html`<div class="bold-text red-text" > DEPRECATED </div>` : ''}
     ${html`
       <h2 class = "${path.deprecated ? 'gray-text' : ''}"> 
@@ -185,6 +132,7 @@ function endpointBodyTemplate(data, path) {
         active-schema-tab = "${data.defaultSchemaTab}"
         schema-expand-level = "${data.schemaExpandLevel}"
         schema-description-expanded = "${data.schemaDescriptionExpanded}"
+        selected-status = "${Object.keys(path.responses)[0]}"
       > </api-response>
     </div>
   </div>
@@ -201,7 +149,7 @@ export default function expandedEndpointTemplate(data) {
       </div>
     </div>
     <div class='regular-font section-gap--read-mode'>
-      ${tag.paths.map((path) => endpointBodyTemplate(data, path))}
+      ${tag.paths.map((path) => expandedEndpointBodyTemplate(data, path))}
     </div>
     `)
   }
