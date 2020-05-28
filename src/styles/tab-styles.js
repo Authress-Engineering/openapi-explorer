@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { css } from 'lit-element';
 
 export default html`
 <style>
@@ -25,11 +25,11 @@ export default html`
     color:var(--primary-color);
   }
 
-  .tab-btn:hover {
-    color:var(--primary-color);
-  }
-  .tab-content {
-    margin:-1px 0 0 0;
-    position:relative;
-  }
-</style>`;
+.tab-btn:hover {
+  color:var(--primary-color);
+}
+.tab-content {
+  margin:-1px 0 0 0;
+  position:relative;
+}
+`;

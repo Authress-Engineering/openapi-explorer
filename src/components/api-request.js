@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit-element';
+import { LitElement, html, css } from 'lit-element';
 import marked from 'marked';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -92,47 +92,51 @@ export default class ApiRequest extends LitElement {
       }
       .top-gap{margin-top:24px;}
 
-      .textarea {
-        min-height:220px; 
-        padding:5px;
-        resize:vertical;
-        font-family:var(--font-mono);
-        font-size:var(--font-size-small);
-      }
-      .response-message{
-        font-weight:bold;
-        text-overflow: ellipsis;
-      }
-      .response-message.error {
-        color:var(--red);
-      }
-      .response-message.success {
-        color:var(--blue);
-      }
-
-      .file-input-container {
-        align-items:flex-end;
-      }
-      .file-input-container .input-set:first-child .file-input-remove-btn{
-        visibility:hidden;
-      }
-
-      .file-input-remove-btn{
-        font-size:16px;
-        color:var(--red);
-        outline: none;
-        border: none;
-        background:none;
-        cursor:pointer;
-      }
-
-      @media only screen and (min-width: 768px) {
         .textarea {
-          padding:8px;
+          min-height:220px; 
+          padding:5px;
+          resize:vertical;
+          font-family:var(--font-mono);
+          font-size:var(--font-size-small);
         }
-      }
+        .response-message{
+          font-weight:bold;
+          text-overflow: ellipsis;
+        }
+        .response-message.error {
+          color:var(--red);
+        }
+        .response-message.success {
+          color:var(--blue);
+        }
 
-    </style>
+        .file-input-container {
+          align-items:flex-end;
+        }
+        .file-input-container .input-set:first-child .file-input-remove-btn{
+          visibility:hidden;
+        }
+
+        .file-input-remove-btn{
+          font-size:16px;
+          color:var(--red);
+          outline: none;
+          border: none;
+          background:none;
+          cursor:pointer;
+        }
+
+        @media only screen and (min-width: 768px) {
+          .textarea {
+            padding:8px;
+          }
+        }
+      `,
+    ];
+  }
+
+  render() {
+    return html`
     <div class="col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
         ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
