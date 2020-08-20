@@ -59,7 +59,8 @@ function endpointBodyTemplate(path) {
       ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
     </div>  
     <div class='req-resp-container'> 
-      <api-request  class="request"  
+      <api-request 
+        class="request"  
         method = "${path.method}", 
         path = "${path.path}" 
         .parameters = "${path.parameters}"
