@@ -1060,6 +1060,9 @@ export default class ApiRequest extends LitElement {
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
 
+    fetchOptions.headers['Cache-Control'] = "no-cache";
+    curlHeaders += ` -H "Cache-Control: no-cache" \\\n`;
+
     me.responseUrl = '';
     me.responseHeaders = '';
     // me.responseText    = '';
