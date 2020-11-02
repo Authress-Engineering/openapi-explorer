@@ -57,10 +57,10 @@ function endpointDescriptionRenderer() {
 /* eslint-disable indent */
 
 export function expandedEndpointBodyTemplate(path) {
-  let accept = '';
+  const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
     for (const acceptContentType in (path.responses[respStatus].content)) {
-      accept = `${accept + acceptContentType}, `;
+      acceptContentTypes.add(acceptContentType.trim());
     }
   }
   accept = accept.replace(/,\s*$/, ''); // remove trailing comma
