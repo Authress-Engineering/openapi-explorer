@@ -394,6 +394,12 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
         v.paths.sort((a, b) => methods.indexOf(a.method).toString().localeCompare(methods.indexOf(b.method)));
       }
     });
+  } else if (sortEndpointsBy === 'summary') {
+    tagsWithSortedPaths.forEach((v) => {
+      if (v.paths) {
+        v.paths.sort((a, b) => (a.summary || a.description || a.path).localeCompare(b.summary || b.description || b.path));
+      }
+    });
   } else {
     tagsWithSortedPaths.forEach((v) => {
       if (v.paths) {
