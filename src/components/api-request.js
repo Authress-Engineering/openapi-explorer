@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element';
 import marked from 'marked';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { live } from 'lit-html/directives/live';
+// import { live } from 'lit-html/directives/live';
 import TableStyles from '@/styles/table-styles';
 import FlexStyles from '@/styles/flex-styles';
 import InputStyles from '@/styles/input-styles';
@@ -264,7 +264,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
                     placeholder= "add-multiple &#x2b90;"
-                    .value = "${live(inputVal)}"
+                    .value = "${inputVal}"
                   >
                   </tag-input>`
                 : paramSchema.type === 'object'
@@ -283,7 +283,7 @@ export default class ApiRequest extends LitElement {
                       data-pname="${param.name}" 
                       data-ptype="${paramType}"  
                       data-array="false"
-                      .value="${live(inputVal)}"
+                      .value="${inputVal}"
                     />`
                 }
             </td>`
@@ -659,7 +659,7 @@ export default class ApiRequest extends LitElement {
                   : html`
                     ${this.allowTry === 'true' || fieldSchema.example
                       ? html`<input
-                          .value = "${live(fieldSchema.example || '')}"
+                          .value = "${fieldSchema.example || ''}"
                           spellcheck = "false"
                           type = "${fieldSchema.format === 'binary' ? 'file' : fieldSchema.format === 'password' ? 'password' : 'text'}"
                           style = "width:200px"
