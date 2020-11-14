@@ -105,14 +105,15 @@ export function expandedEndpointBodyTemplate(path) {
     }
     ${unsafeHTML(xCodeSamplesTabPanel)}
     <div class='expanded-req-resp-container'>
-      <api-request  class="request-panel"  
-        method = "${path.method}", 
-        path = "${path.path}" 
-        .parameters = "${path.parameters}" 
+      <api-request  class="request-panel"
+        method = "${path.method}"
+        path = "${path.path}"
+        .parameters = "${path.parameters}"
         .request_body = "${path.requestBody}"
         .api_keys = "${nonEmptyApiKeys}"
-        .servers = "${path.servers}" 
-        server-url = "${path.servers?.[0]?.url || this.selectedServer.computedUrl}" 
+        .servers = "${path.servers}"
+        server-url = "${path.servers?.[0]?.url || this.selectedServer.computedUrl}"
+        fill-request-fields-with-example = "${this.fillRequestFieldsWithExample}"
         allow-try = "${this.allowTry}"
         accept = "${accept}"
         render-style="${this.renderStyle}" 
