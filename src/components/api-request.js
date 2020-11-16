@@ -315,16 +315,20 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
                   ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                   ${html`
-                    <a style="cursor:pointer" data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}" data-enum="${v.trim()}" @click="${(e) => {
-                      const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
-                      if (inputEl) {
-                        if (e.target.dataset.type === 'array') {
-                          inputEl.value = [e.target.dataset.enum];
-                        } else {
-                          inputEl.value = e.target.dataset.enum;
+                    <a class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                      data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                      data-enum="${v.trim()}"
+                      @click="${(e) => {
+                        const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
+                        if (inputEl) {
+                          if (e.target.dataset.type === 'array') {
+                            inputEl.value = [e.target.dataset.enum];
+                          } else {
+                            inputEl.value = e.target.dataset.enum;
+                          }
                         }
-                      }
-                    }}"> 
+                      }}"
+                    >
                       ${v} 
                     </a>`
                   }`)}
@@ -343,9 +347,9 @@ export default class ApiRequest extends LitElement {
               ${exampleList.map((v, i) => html`
                 ${i === 0 ? '' : html` &#9671;`}
                 ${paramSchema.type === 'array' ? '[' : ''}
-                <a style="cursor:pointer" 
-                  data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}" 
-                  data-example = "${paramSchema.type === 'array' ? (v.value?.join('~|~') || '') : (v.value || '')}" 
+                <a class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                  data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                  data-example = "${paramSchema.type === 'array' ? (v.value?.join('~|~') || '') : (v.value || '')}"
                   @click="${(e) => {
                     const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
                     if (inputEl) {
@@ -356,8 +360,8 @@ export default class ApiRequest extends LitElement {
                       }
                     }
                   }
-                }
-                ">
+                }"
+                >
                   ${v.description || ''}
                 </a>
                 ${paramSchema.type === 'array' ? '] ' : ''}
@@ -609,7 +613,7 @@ export default class ApiRequest extends LitElement {
 
         formDataTableRows.push(html`
         <tr> 
-          <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:160px; min-width:100px;">
+          <td style="width:160px; min-width:100px;">
             <div class="param-name">
               ${fieldSchema.required
                 ? html`<span style='color:var(--red);'>*</span>${fieldName}`
@@ -618,7 +622,9 @@ export default class ApiRequest extends LitElement {
             </div>
             <div class="param-type">${paramSchema.type}</div>
           </td>  
-          <td style="${fieldType === 'object' ? 'width:100%; padding:0;' : 'width:160px;'} min-width:100px;" colspan="${fieldType === 'object' ? 2 : 1}">
+          <td 
+            style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? 'width:160px;' : 'display:none;'} min-width:100px;" 
+            colspan="${fieldType === 'object' ? 2 : 1}">
             ${fieldType === 'array'
               ? fieldSchema.items?.format === 'binary'
                 ? html`
@@ -701,7 +707,7 @@ export default class ApiRequest extends LitElement {
                     }
                   </div>`
                   : html`
-                    ${this.allowTry === 'true' || fieldSchema.example
+                    ${this.allowTry === 'true'
                       ? html`<input
                           .value = "${this.fillRequestFieldsWithExample === 'true' ? (fieldSchema.example || '') : ''}"
                           spellcheck = "false"
@@ -730,16 +736,20 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
                         ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                         ${html`
-                          <a style="cursor:pointer" data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}" data-enum="${v.trim()}" @click="${(e) => {
-                            const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
-                            if (inputEl) {
-                              if (e.target.dataset.type === 'array') {
-                                inputEl.value = [e.target.dataset.enum];
-                              } else {
-                                inputEl.value = e.target.dataset.enum;
+                          <a class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                            data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                            data-enum="${v.trim()}"
+                            @click="${(e) => {
+                              const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
+                              if (inputEl) {
+                                if (e.target.dataset.type === 'array') {
+                                  inputEl.value = [e.target.dataset.enum];
+                                } else {
+                                  inputEl.value = e.target.dataset.enum;
+                                }
                               }
-                            }
-                          }}"> 
+                            }}"
+                          > 
                             ${v} 
                           </a>`
                         }`)
@@ -754,7 +764,7 @@ export default class ApiRequest extends LitElement {
           ? ''
           : html`
             <tr>
-              ${this.allowTry === 'true' ? html`<td style="border:none"> </td>` : ''}
+              <td style="border:none"> </td>
               <td colspan="2" style="border:none; margin-top:0; padding:0 5px 8px 5px;"> 
                 <span class="m-markdown-small">${unsafeHTML(marked(fieldSchema.description || ''))}</span>
                 ${paramSchema.example
@@ -762,9 +772,9 @@ export default class ApiRequest extends LitElement {
                     <span>
                       <span style="font-weight:bold"> Example: </span>
                       ${paramSchema.type === 'array' ? '[ ' : ''}
-                      <a style="cursor:pointer" 
-                        data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}" 
-                        data-example = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}" 
+                      <a class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                        data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                        data-example = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}"
                         @click="${(e) => {
                           const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
                           if (inputEl) {
@@ -774,8 +784,8 @@ export default class ApiRequest extends LitElement {
                               inputEl.value = e.target.dataset.example;
                             }
                           }
-                        }}
-                      ">
+                        }}"
+                      >
                         ${paramSchema.type === 'array' ? paramSchema.example.join(', ') : paramSchema.example}
                       </a>
                       ${paramSchema.type === 'array' ? '] ' : ''}
