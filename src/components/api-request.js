@@ -407,6 +407,11 @@ export default class ApiRequest extends LitElement {
     }, 0, mimeDropdownEl);
   }
 
+  resetRequestBodySelection() {
+    this.selectedRequestBodyType = '';
+    this.selectedRequestBodyExample = '';
+  }
+
   requestBodyTemplate() {
     if (!this.request_body) {
       return '';
@@ -424,12 +429,6 @@ export default class ApiRequest extends LitElement {
 
     const requestBodyTypes = [];
     const content = this.request_body.content;
-    if (this.renderStyle === 'focused') {
-      this.activeResponseTab = '';
-      this.selectedRequestBodyType = '';
-      this.selectedRequestBodyExample = '';
-      this.selectedRequestBodyType = '';
-    }
     for (const mimeType in content) {
       requestBodyTypes.push({
         mimeType,
