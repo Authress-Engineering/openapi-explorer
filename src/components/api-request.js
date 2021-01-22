@@ -993,6 +993,8 @@ export default class ApiRequest extends LitElement {
     let curlHeaders = '';
     let curlData = '';
     let curlForm = '';
+    const respEl = this.closest('.expanded-req-resp-container, .req-resp-container')?.getElementsByTagName('api-response')[0];
+    const acceptHeader = respEl?.selectedMimeType;
     const requestPanelEl = e.target.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
@@ -1092,7 +1094,11 @@ export default class ApiRequest extends LitElement {
     }
     curl = `curl -X ${this.method.toUpperCase()} "${curlUrl}" `;
 
-    if (this.accept) {
+    if (acceptHeader) {
+      // Uses the acceptHeader from Response panel
+      fetchOptions.headers.Accept = acceptHeader;
+      curlHeaders += ` -H "Accept: ${acceptHeader}" \\\n`;
+    } else if (this.accept) {
       fetchOptions.headers.Accept = this.accept;
       curlHeaders += ` -H "Accept: ${this.accept}"`;
     }
@@ -1200,7 +1206,6 @@ export default class ApiRequest extends LitElement {
       }
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
-
     me.responseUrl = '';
     me.responseHeaders = '';
     // me.responseText    = '';
@@ -1217,18 +1222,18 @@ export default class ApiRequest extends LitElement {
     try {
       tryBtnEl.disabled = true;
       // await wait(1000);
-      const resp = await fetch(fetchUrl, fetchOptions);
+      const tryResp = await fetch(fetchUrl, fetchOptions);
       tryBtnEl.disabled = false;
-      me.responseStatus = resp.ok ? 'success' : 'error';
-      me.responseMessage = `${resp.statusText}:${resp.status}`;
-      me.responseUrl = resp.url;
-      resp.headers.forEach((hdrVal, hdr) => {
+      me.responseStatus = tryResp.ok ? 'success' : 'error';
+      me.responseMessage = `${tryResp.statusText}:${tryResp.status}`;
+      me.responseUrl = tryResp.url;
+      tryResp.headers.forEach((hdrVal, hdr) => {
         me.responseHeaders = `${me.responseHeaders}${hdr.trim()}: ${hdrVal}\n`;
       });
-      const contentType = resp.headers.get('content-type');
+      const contentType = tryResp.headers.get('content-type');
       if (contentType) {
         if (contentType.includes('json')) {
-          resp.json().then((respObj) => {
+          tryResp.json().then((respObj) => {
             me.responseText = JSON.stringify(respObj, null, 2);
           });
         } else if (RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$').test(contentType)) {
@@ -1238,19 +1243,19 @@ export default class ApiRequest extends LitElement {
           me.responseIsBlob = true;
           me.responseBlobType = 'view';
         } else {
-          resp.text().then((respText) => {
+          tryResp.text().then((respText) => {
             me.responseText = respText;
           });
         }
         if (me.responseIsBlob) {
-          const contentDisposition = resp.headers.get('content-disposition');
+          const contentDisposition = tryResp.headers.get('content-disposition');
           me.respContentDisposition = contentDisposition ? contentDisposition.split('filename=')[1] : 'filename';
-          resp.blob().then((respBlob) => {
+          tryResp.blob().then((respBlob) => {
             me.responseBlobUrl = URL.createObjectURL(respBlob);
           });
         }
       } else {
-        resp.text().then((respText) => {
+        tryResp.text().then((respText) => {
           me.responseText = respText;
         });
       }
