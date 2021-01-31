@@ -6,7 +6,6 @@ import '@/components/api-response';
 import { pathIsInSearch } from '@/utils/common-utils';
 import { callbackTemplate } from '@/templates/expanded-endpoint-template';
 
-/* eslint-disable indent */
 function toggleExpand(path) {
   if (path.expanded) {
     path.expanded = false; // collapse
@@ -22,6 +21,24 @@ function toggleExpand(path) {
   this.requestUpdate();
 }
 
+export function expandCollapseAll(operationsRootEl, action = 'expand-all') {
+  const elList = [...operationsRootEl.querySelectorAll('.section-tag')];
+  if (action === 'expand-all') {
+    elList.map((el) => {
+      el.classList.replace('collapsed', 'expanded');
+    });
+  } else {
+    elList.map((el) => {
+      el.classList.replace('expanded', 'collapsed');
+    });
+  }
+}
+
+function onExpandCollapseAll(e, action = 'expand-all') {
+  expandCollapseAll.call(this, e.target.closest('.operations-root'), action);
+}
+
+/* eslint-disable indent */
 function endpointHeadTemplate(path) {
   return html`
   <div @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.deprecated ? 'deprecated' : ''} ${path.expanded ? 'expanded' : 'collapsed'}'>
@@ -103,6 +120,16 @@ function endpointBodyTemplate(path) {
 
 export default function endpointTemplate() {
   return html`
+    <div style="display:flex; justify-content:flex-end;"> 
+      <span @click="${(e) => onExpandCollapseAll(e, 'expand-all')}" style="color:var(--primary-color); cursor:pointer;">
+        Expand all
+      </span> 
+      &nbsp;|&nbsp; 
+      <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor:pointer;" >
+        Collapse all
+      </span> 
+      &nbsp; sections
+    </div>
     ${this.resolvedSpec.tags.map((tag) => html`
     <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
     
