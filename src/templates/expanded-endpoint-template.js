@@ -56,7 +56,7 @@ function endpointDescriptionRenderer() {
 
 /* eslint-disable indent */
 
-export function expandedEndpointBodyTemplate(path) {
+export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
     for (const acceptContentType in (path.responses[respStatus]?.content)) {
@@ -79,8 +79,9 @@ export function expandedEndpointBodyTemplate(path) {
     xCodeSamplesTabPanel += `<div class="req-res-title" style="margin-top: 24px;">CODE SAMPLES</div><tab-panel panels='${JSON.stringify(panels)}' active-panel-id='${path.xCodeSamples[0].lang}'></tab-panel>`;
   }
   return html`
-    ${this.renderStyle === 'read' ? html` <div class='divider'></div>` : ''}
+    ${this.renderStyle === 'read' ? html`<div class='divider'></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}'>
+    ${this.renderStyle === 'focused' ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
     ${path.deprecated ? html`<div class="bold-text red-text" > DEPRECATED </div>` : ''}
     ${html`
       <h2 class = "${path.deprecated ? 'gray-text' : ''}"> 
@@ -150,7 +151,7 @@ export default function expandedEndpointTemplate() {
       </div>
     </div>
     <div class='regular-font section-gap--read-mode'>
-      ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path))}
+      ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path, 'BBB'))}
     </div>
     `)
   }
