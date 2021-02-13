@@ -327,6 +327,7 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
           if (!tagObj) {
             tagObj = {
               show: true,
+              elementId: `tag--${tag.replace(invalidCharsRegEx, '-')}`,
               name: tag,
               description: tagDescr ? tagDescr.description : '',
               paths: [],

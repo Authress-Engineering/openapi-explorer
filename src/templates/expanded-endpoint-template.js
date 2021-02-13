@@ -80,9 +80,9 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
   }
   return html`
     ${this.renderStyle === 'read' ? html`<div class='divider'></div>` : ''}
-    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.method}-${path.path.replace(invalidCharsRegEx, '-')}'>
+    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.elementId}'>
     ${this.renderStyle === 'focused' ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
-    ${path.deprecated ? html`<div class="bold-text red-text" > DEPRECATED </div>` : ''}
+    ${path.deprecated ? html`<div class="bold-text red-text"> DEPRECATED </div>` : ''}
     ${html`
       <h2 class = "${path.deprecated ? 'gray-text' : ''}"> 
         ${path.summary || html`<span class='upper ${path.deprecated ? ' method-fg gray-text' : path.method}  '> ${path.method}</span> ${path.path}`} 
@@ -144,7 +144,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
 export default function expandedEndpointTemplate() {
   return html`
   ${this.resolvedSpec.tags.map((tag) => html`
-    <div id="tag--${tag.name.replace(invalidCharsRegEx, '-')}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
+    <div id="${tag.elementId}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
       <div class="title tag">${tag.name}</div>
       <div class="regular-font-size">
         ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(tag.description ? tag.description : '')}</div>`)}
