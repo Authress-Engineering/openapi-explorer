@@ -55,7 +55,6 @@ function endpointDescriptionRenderer() {
 }
 
 /* eslint-disable indent */
-
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
