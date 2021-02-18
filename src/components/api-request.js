@@ -1261,7 +1261,12 @@ export default class ApiRequest extends LitElement {
           me.responseBlobType = 'view';
         } else {
           respText = await tryResp.text();
-          me.responseText = respText;
+          // const formatedXml = prettyXml(respText);
+          const formatedXml = prettyXml(`<me> ok 
+          
+          </me>`);
+
+          me.responseText = formatedXml;
         }
         if (me.responseIsBlob) {
           const contentDisposition = tryResp.headers.get('content-disposition');
