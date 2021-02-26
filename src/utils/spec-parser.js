@@ -67,7 +67,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
   const tags = groupByTags(jsonParsedSpec, sortEndpointsBy, allowDuplicatedPathsByTag, sortTags);
 
   const components = getComponents(jsonParsedSpec);
-  const infoDescriptionHeaders = getInfoDescriptionHeaders(jsonParsedSpec);
+  const infoDescriptionHeaders = jsonParsedSpec.info?.description ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
 
   // Security Scheme
   const securitySchemes = [];
@@ -175,13 +175,10 @@ function groupByPaths(openApiSpec) {
   return paths;
 }
 */
-function getInfoDescriptionHeaders(openApiSpec) {
-  if (openApiSpec && openApiSpec.info && openApiSpec.info.description) {
-    const tokens = marked.lexer(openApiSpec.info.description);
-    const headers = tokens.filter((v) => v.type === 'heading' && v.depth <= 2);
-    return headers || [];
-  }
-  return [];
+function getHeadersFromMarkdown(markdownContent) {
+  const tokens = marked.lexer(markdownContent);
+  const headers = tokens.filter((v) => v.type === 'heading' && v.depth <= 2);
+  return headers || [];
 }
 
 function getComponents(openApiSpec) {

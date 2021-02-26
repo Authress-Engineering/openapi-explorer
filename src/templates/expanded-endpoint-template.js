@@ -55,6 +55,12 @@ function endpointDescriptionRenderer() {
 }
 
 /* eslint-disable indent */
+function headingRenderer(tagElementId) {
+  const renderer = new marked.Renderer();
+  renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="${tagElementId}--${slugger.slug(raw)}">${text}</h${level}>`);
+  return renderer;
+}
+
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
@@ -143,16 +149,21 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
 export default function expandedEndpointTemplate() {
   return html`
   ${this.resolvedSpec.tags.map((tag) => html`
-    <div id="${tag.elementId}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
+    <section id="${tag.elementId}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
       <div class="title tag">${tag.name}</div>
       <slot name="${tag.elementId}"></slot>
       <div class="regular-font-size">
-        ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(tag.description ? tag.description : '')}</div>`)}
+      ${
+        unsafeHTML(`
+          <div class="m-markdown regular-font">
+          ${marked(tag.description, this.infoDescriptionHeadingsInNavBar === 'true' ? { renderer: headingRenderer(tag.elementId) } : undefined)}
+        </div>`)
+      }
       </div>
-    </div>
-    <div class='regular-font section-gap--read-mode'>
+    </section>
+    <section class='regular-font section-gap--read-mode'>
       ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path, 'BBB'))}
-    </div>
+    </section>
     `)
   }
 `;
