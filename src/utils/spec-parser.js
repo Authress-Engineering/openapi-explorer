@@ -1,37 +1,41 @@
 /* eslint-disable no-use-before-define */
 // import JsonRefs from 'json-refs';
-import converter from 'swagger2openapi';
-import Swagger from 'swagger-client';
+// import converter from 'swagger2openapi';
+// import Swagger from 'swagger-client';
+import OpenApiParser from '@apitools/openapi-parser';
 import marked from 'marked';
-import { invalidCharsRegEx, rapidocApiKey } from '@/utils/common-utils';
+import { invalidCharsRegEx, rapidocApiKey } from '~/utils/common-utils';
 
 export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '', allowDuplicatedPathsByTag = false) {
   let jsonParsedSpec;
-  let convertedSpec;
+  // let convertedSpec;
   // let resolvedRefSpec;
   // let resolveOptions;
   // const specLocation = '';
   // let url;
-
+  /*
   const convertOptions = {
     patch: true,
     warnOnly: true,
     resolveInternal: true,
     anchors: true,
   };
+  */
 
   try {
-    let specObj;
+    let specMeta;
     if (typeof specUrl === 'string') {
-      specObj = await Swagger(specUrl);
+      specMeta = await OpenApiParser.resolve({ url: specUrl }); // Swagger(specUrl);
     } else {
-      specObj = await Swagger({ spec: specUrl });
+      specMeta = await OpenApiParser.resolve({ spec: specUrl }); // Swagger({ spec: specUrl });
     }
-    jsonParsedSpec = specObj.spec;
+    jsonParsedSpec = specMeta.spec;
+    /*
     if (specObj.spec.swagger) {
       convertedSpec = await converter.convertObj(specObj.spec, convertOptions);
       jsonParsedSpec = convertedSpec.openapi;
     }
+    */
     /*
       // JsonRefs cant load yaml files, so first use converter
       if (typeof specUrl === 'string') {
@@ -273,10 +277,8 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
   for (const path in openApiSpec.paths) {
     const commonParams = openApiSpec.paths[path].parameters;
     const commonPathProp = {
-      // summary: openApiSpec.paths[path].summary,
-      // description: openApiSpec.paths[path].description,
-      servers: openApiSpec.paths[path].servers ? openApiSpec.paths[path].servers : [],
-      parameters: openApiSpec.paths[path].parameters ? openApiSpec.paths[path].parameters : [],
+      servers: openApiSpec.paths[path].servers || [],
+      parameters: openApiSpec.paths[path].parameters || [],
     };
 
     methods.forEach((methodName) => {
