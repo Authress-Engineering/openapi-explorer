@@ -470,6 +470,7 @@ export default class ApiRequest extends LitElement {
             reqBody.schema,
             reqBody.mimeType,
             false,
+            true,
             'text',
           );
           if (!this.selectedRequestBodyExample) {
@@ -527,6 +528,7 @@ export default class ApiRequest extends LitElement {
             reqBody.schema,
             reqBody.mimeType,
             false,
+            true,
             'text',
           );
           if (reqBody.schema) {
@@ -618,6 +620,7 @@ export default class ApiRequest extends LitElement {
           fieldSchema,
           'json',
           false,
+          true,
           'text',
         );
 
