@@ -22,7 +22,10 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
   // Tags
   const tags = groupByTags(jsonParsedSpec, sortEndpointsBy, allowDuplicatedPathsByTag, sortTags);
 
+  // Components
   const components = getComponents(jsonParsedSpec);
+
+  // Info Description Headers
   const infoDescriptionHeaders = jsonParsedSpec.info?.description ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
 
   // Security Scheme
@@ -212,12 +215,19 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
     }))
     : [];
 
+  const pathsAndWebhooks = openApiSpec.paths || {};
+  if (openApiSpec.webhooks) {
+    for (const [key, value] of Object.entries(openApiSpec.webhooks)) {
+      value._type = 'webhook'; // eslint-disable-line no-underscore-dangle
+      pathsAndWebhooks[key] = value;
+    }
+  }
   // For each path find the tag and push it into the corresponding tag
-  for (const path in openApiSpec.paths) {
-    const commonParams = openApiSpec.paths[path].parameters;
+  for (const pathOrHookName in pathsAndWebhooks) {
+    const commonParams = pathsAndWebhooks[pathOrHookName].parameters;
     const commonPathProp = {
-      servers: openApiSpec.paths[path].servers || [],
-      parameters: openApiSpec.paths[path].parameters || [],
+      servers: pathsAndWebhooks[pathOrHookName].servers || [],
+      parameters: pathsAndWebhooks[pathOrHookName].parameters || [],
     };
 
     methods.forEach((methodName) => {
@@ -237,11 +247,11 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
         } else {
           let firstWordEndIndex = path.indexOf('/', 1);
           if (firstWordEndIndex === -1) {
-            firstWordEndIndex = (path.length - 1);
+            pathTags.push(pathOrHookNameKey);
           } else {
-            firstWordEndIndex -= 1;
+            // firstWordEndIndex -= 1;
+            pathTags.push(pathOrHookNameKey.substr(0, firstWordEndIndex));
           }
-          pathTags.push(path.substr(1, firstWordEndIndex));
         }
         tagObj = tags.find((v) => v.name === tagText);
         if (!tagObj) {
@@ -274,24 +284,24 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
           }
 
           // Generate a short summary which is broken
-          let shortSummary = (fullPath.summary || fullPath.description || `${methodName.toUpperCase()} ${path}`).trim();
+          let shortSummary = (pathOrHookObj.summary || pathOrHookObj.description || `${methodName.toUpperCase()} ${pathOrHookName}`).trim();
           if (shortSummary.length > 100) {
             shortSummary = shortSummary.split(/[.|!|?]\s|[\r?\n]/)[0]; // take the first line (period or carriage return)
           }
           // Merge Common Parameters with This methods parameters
           let finalParameters = [];
           if (commonParams) {
-            if (fullPath.parameters) {
+            if (pathOrHookObj.parameters) {
               finalParameters = commonParams.filter((commonParam) => {
-                if (!fullPath.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
+                if (!pathOrHookObj.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
                   return commonParam;
                 }
-              }).concat(fullPath.parameters);
+              }).concat(pathOrHookObj.parameters);
             } else {
               finalParameters = commonParams.slice(0);
             }
           } else {
-            finalParameters = fullPath.parameters ? fullPath.parameters.slice(0) : [];
+            finalParameters = pathOrHookObj.parameters ? pathOrHookObj.parameters.slice(0) : [];
           }
         } else {
           finalParameters = fullPath.parameters ? fullPath.parameters.slice(0) : [];
@@ -347,7 +357,7 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
   const tagsWithSortedPaths = tags.filter((tag) => tag.paths && tag.paths.length > 0);
   tagsWithSortedPaths.forEach((tag) => {
     if (sortEndpointsBy === 'method') {
-      tag.paths.sort((a, b) => methods.indexOf(a.method).toString().localeCompare(methods.indexOf(b.method)));
+      tag.paths.sort((a, b) => supportedMethods.indexOf(a.method).toString().localeCompare(supportedMethods.indexOf(b.method)));
     } else if (sortEndpointsBy === 'summary') {
       tag.paths.sort((a, b) => (a.shortSummary).localeCompare(b.shortSummary));
     } else {
