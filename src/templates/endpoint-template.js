@@ -102,6 +102,7 @@ function endpointBodyTemplate(path) {
         schema-style = "${this.schemaStyle}" 
         schema-expand-level = "${this.schemaExpandLevel}"
         schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
         schema-hide-read-only = "${this.schemaHideReadOnly}"
         fetch-credentials = "${this.fetchCredentials}"
       > 
@@ -115,6 +116,7 @@ function endpointBodyTemplate(path) {
         schema-style="${this.schemaStyle}"
         schema-expand-level = "${this.schemaExpandLevel}"
         schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
         schema-hide-write-only = "${this.schemaHideWriteOnly}"
         selected-status = "${Object.keys(path.responses || {})[0] || ''}"
       > </api-response>
