@@ -294,6 +294,7 @@ export default class ApiRequest extends LitElement {
                   ? html`
                     <textarea 
                       class = "textarea request-param"
+                      part = "textarea textarea-param"
                       data-ptype = "${paramType}-object"
                       data-pname = "${param.name}"
                       data-example = "${exampleVal}"
@@ -305,7 +306,7 @@ export default class ApiRequest extends LitElement {
                   : html`
                     <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" 
                       class="request-param"
-                      part="textbox param"
+                      part="textbox textbox-param"
                       data-ptype="${paramType}"
                       data-pname="${param.name}" 
                       data-example="${Array.isArray(exampleVal) ? exampleVal.join('~|~') : exampleVal}"
@@ -506,7 +507,8 @@ export default class ApiRequest extends LitElement {
                   ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
                   <!-- this textarea is for user to edit the example -->
                   <textarea 
-                    class = "textarea request-body-param-user-input" 
+                    class = "textarea request-body-param-user-input"
+                    part = "textarea textarea-param"
                     spellcheck = "false"
                     data-ptype = "${reqBody.mimeType}" 
                     data-example = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2)}"
@@ -665,7 +667,7 @@ export default class ApiRequest extends LitElement {
                     />
                     <button class="file-input-remove-btn"> &#x2715; </button>
                   </div>  
-                  <button class="m-btn primary file-input-add-btn" style="margin:2px 25px 0 0; padding:2px 6px;">ADD</button>
+                  <button class="m-btn primary file-input-add-btn" part="btn btn-fill" style="margin:2px 25px 0 0; padding:2px 6px;">ADD</button>
                 </div>  
                 `
                 : html`
@@ -720,7 +722,7 @@ export default class ApiRequest extends LitElement {
                       <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'example' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
                         <textarea 
                           class = "textarea"
-                          part = "textarea param"
+                          part = "textarea textarea-param"
                           style = "width:100%; border:none; resize:vertical;" 
                           data-array = "false" 
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
@@ -739,7 +741,7 @@ export default class ApiRequest extends LitElement {
                           .value = "${this.fillRequestFieldsWithExample === 'true' ? (fieldSchema.example || '') : ''}"
                           spellcheck = "false"
                           type = "${fieldSchema.format === 'binary' ? 'file' : fieldSchema.format === 'password' ? 'password' : 'text'}"
-                          part = "textbox param"
+                          part = "textbox textbox-param"
                           style = "width:200px"
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
@@ -835,7 +837,8 @@ export default class ApiRequest extends LitElement {
 
     return html`
       <textarea
-        class = "textarea dynamic-form-param ${mimeType}" 
+        class = "textarea dynamic-form-param ${mimeType}"
+        part = "textarea textarea-param"
         spellcheck = "false"
         data-pname="dynamic-form" 
         data-ptype="${mimeType}"  
@@ -851,7 +854,7 @@ export default class ApiRequest extends LitElement {
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
         <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}</div>
         <div style="flex:1"></div>
-        <button class="m-btn" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
+        <button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
       </div>
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
         <div id="tab_buttons" class="tab-buttons row" @click="${(e) => {
@@ -865,15 +868,15 @@ export default class ApiRequest extends LitElement {
         ${this.responseIsBlob
           ? html`
             <div class="tab-content col" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};">
-              <button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.downloadResponseBlob}">DOWNLOAD</button>
+              <button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.downloadResponseBlob}" part="btn btn-outline">DOWNLOAD</button>
               ${this.responseBlobType === 'view'
-                ? html`<button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.viewResponseBlob}">VIEW (NEW TAB)</button>`
+                ? html`<button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.viewResponseBlob}" part="btn btn-outline">VIEW (NEW TAB)</button>`
                 : ''
               }
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <button class="toolbar-btn" style = "position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.responseText, e); }}'> Copy </button>
+              <button class="toolbar-btn" style="position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill"> Copy </button>
               <pre style="white-space:pre; max-height:400px; overflow:auto">${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
@@ -882,11 +885,11 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button  class="toolbar-btn" style = "position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}'> Copy </button>
+          <button  class="toolbar-btn" style = "position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill"> Copy </button>
           <pre style="white-space:pre"><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button  class="toolbar-btn" style = "position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}'> Copy </button>
+          <button  class="toolbar-btn" style = "position:absolute; top:12px; right:8px" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill"> Copy </button>
           <pre style="white-space:pre"><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;
@@ -939,15 +942,15 @@ export default class ApiRequest extends LitElement {
       ${
         this.parameters.length > 0 || this.request_body
           ? html`
-            <button class="m-btn thin-border" style="margin-right:5px;" @click="${this.onFillRequestData}" title="Fills with example data (if provided)">
+            <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onFillRequestData}" title="Fills with example data (if provided)">
               FILL EXAMPLE
             </button>
-            <button class="m-btn thin-border" style="margin-right:5px;" @click="${this.onClearRequestData}">
+            <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onClearRequestData}">
               CLEAR
             </button>`
           : ''
       }
-      <button class="m-btn primary thin-border" @click="${this.onTryClick}">TRY</button>
+      <button class="m-btn primary thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">TRY</button>
     </div>
     ${this.responseMessage === ''
       ? ''
