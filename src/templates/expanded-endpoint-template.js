@@ -84,8 +84,8 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
     xCodeSamplesTabPanel += `<div class="req-res-title" style="margin-top: 24px;">CODE SAMPLES</div><tab-panel panels='${JSON.stringify(panels)}' active-panel-id='${path.xCodeSamples[0].lang}'></tab-panel>`;
   }
   return html`
-    ${this.renderStyle === 'read' ? html`<div class='divider'></div>` : ''}
-    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' id='${path.elementId}'>
+    ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
+    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' part="operation ${path.elementId}" id='${path.elementId}'>
     ${this.renderStyle === 'focused' ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
     ${path.deprecated ? html`<div class="bold-text red-text"> DEPRECATED </div>` : ''}
     ${html`
@@ -154,8 +154,8 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
 export default function expandedEndpointTemplate() {
   return html`
   ${this.resolvedSpec.tags.map((tag) => html`
-    <section id="${tag.elementId}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
-      <div class="title tag">${tag.name}</div>
+    <section id="${tag.elementId}" part="tag" class="regular-font section-gap--read-mode observe-me" style="border-top:1px solid var(--primary-color);">
+      <div class="title tag" part="tag-title">${tag.name}</div>
       <slot name="${tag.elementId}"></slot>
       <div class="regular-font-size">
       ${
@@ -166,7 +166,7 @@ export default function expandedEndpointTemplate() {
       }
       </div>
     </section>
-    <section class='regular-font section-gap--read-mode'>
+    <section class='regular-font section-gap--read-mode' part="operations-in-tag">
       ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path, 'BBB'))}
     </section>
     `)
