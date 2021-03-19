@@ -327,7 +327,7 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
                   ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                   ${html`
-                    <a part="anchor param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                    <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                       data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
                       data-enum="${v.trim()}"
                       @click="${(e) => {
@@ -359,7 +359,7 @@ export default class ApiRequest extends LitElement {
               ${exampleList.map((v, i) => html`
                 ${i === 0 ? '' : html` &#9671;`}
                 ${paramSchema.type === 'array' ? '[' : ''}
-                <a part="anchor param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                   data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
                   data-example = "${v.value && Array.isArray(v.value) ? (v.value?.join('~|~') || '') : (v.value || '')}"
                   @click="${(e) => {
@@ -767,7 +767,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
                         ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                         ${html`
-                          <a part="anchor param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                          <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                             data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
                             data-enum="${v.trim()}"
                             @click="${(e) => {
@@ -803,7 +803,7 @@ export default class ApiRequest extends LitElement {
                     <span>
                       <span style="font-weight:bold"> Example: </span>
                       ${paramSchema.type === 'array' ? '[ ' : ''}
-                      <a part="anchor param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                      <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                         data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
                         data-example = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}"
                         @click="${(e) => {
