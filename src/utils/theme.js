@@ -58,34 +58,40 @@ export default function setTheme(baseTheme, theme = {}) {
       headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
       headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
 
-      borderColor: theme.borderColor ? theme.borderColor : ColorUtils.color.brightness(bg1, 20), // #555
-      lightBorderColor: theme.lightBorderColor ? theme.lightBorderColor : ColorUtils.color.brightness(bg1, 15), // #444
-      codeBorderColor: theme.codeBorderColor ? theme.codeBorderColor : ColorUtils.color.brightness(bg1, 30),
+      borderColor: theme.borderColor || ColorUtils.color.brightness(bg1, 20), // #555
+      lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, 15), // #444
+      codeBorderColor: theme.codeBorderColor || ColorUtils.color.brightness(bg1, 30),
 
-      codeBg: theme.codeBg ? theme.codeBg : ColorUtils.color.brightness(bg1, -10),
-      codeFg: theme.codeFg ? theme.codeFg : '#999',
-
-      inputBg: theme.inputBg ? theme.inputBg : ColorUtils.color.brightness(bg1, -5), // #2f2f2f
-      placeHolder: theme.placeHolder ? theme.placeHolder : ColorUtils.color.opacity(fg1, '0.3'),
-      hoverColor: theme.hoverColor ? theme.hoverColor : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      inputBg: theme.inputBg || ColorUtils.color.brightness(bg1, -5), // #2f2f2f
+      placeHolder: theme.placeHolder || ColorUtils.color.opacity(fg1, '0.3'),
+      hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
       red: theme.red ? theme.red : '#F06560',
       lightRed: theme.lightRed ? theme.lightRed : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
-      green: theme.green ? theme.green : '#99CC00',
-      lightGreen: theme.lightGreen ? theme.lightGreen : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      pink: theme.pink ? theme.pink : '#ffb2b2',
+      lightPink: theme.lightPink || ColorUtils.color.brightness(bg1, -10),
 
-      blue: theme.blue ? theme.blue : '#47AFE8',
-      lightBlue: theme.lightBlue ? theme.lightBlue : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      green: theme.green || '#7ec699',
+      lightGreen: theme.lightGreen || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
-      orange: theme.orange ? theme.orange : '#FF9900',
-      lightOrange: theme.lightOrange ? theme.lightOrange : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      blue: theme.blue || '#71b7ff',
+      lightBlue: theme.lightBlue || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
-      yellow: theme.yellow ? theme.yellow : '#827717',
-      lightYellow: theme.lightYellow ? theme.lightYellow : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      orange: theme.orange ? theme.orange : '#f08d49',
+      lightOrange: theme.lightOrange || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
-      purple: theme.purple ? theme.purple : '#786FF1',
-      brown: theme.brown ? theme.brown : '#D4AC0D',
+      yellow: theme.yellow || '#827717',
+      lightYellow: theme.lightYellow || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+
+      purple: theme.purple || '#786FF1',
+      brown: theme.brown || '#D4AC0D',
+
+      codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
+      codeFg: theme.codeFg || '#ccc',
+      codePropertyColor: theme.codePropertyColor || '#f8c555',
+      codeKeywordColor: theme.codeKeywordColor || '#cc99cd',
+      codeOperatorColor: theme.codeOperatorColor || '#67cdcc',
     };
   } else {
     const bg1 = (theme.bg1 ? theme.bg1 : '#ffffff');
@@ -141,34 +147,39 @@ export default function setTheme(baseTheme, theme = {}) {
       headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
       headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
 
-      borderColor: theme.borderColor ? theme.borderColor : ColorUtils.color.brightness(bg1, -38),
-      lightBorderColor: theme.lightBorderColor ? theme.lightBorderColor : ColorUtils.color.brightness(bg1, -23),
-      codeBorderColor: theme.codeBorderColor ? theme.codeBorderColor : '#transparent',
+      borderColor: theme.borderColor || ColorUtils.color.brightness(bg1, -38),
+      lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, -23),
+      codeBorderColor: theme.codeBorderColor || 'transparent',
 
       codeBg: theme.codeBg ? theme.codeBg : '#454545',
       codeFg: theme.codeFg ? theme.codeFg : '#ccc',
 
-      inputBg: theme.inputBg ? theme.inputBg : ColorUtils.color.brightness(bg1, 10), // #fff
-      placeHolder: theme.placeHolder ? theme.placeHolder : ColorUtils.color.brightness(lightFg, 20), // #dedede
-      hoverColor: theme.hoverColor ? theme.hoverColor : ColorUtils.color.brightness(bg1, -5), // # f1f1f1
+      red: theme.red || '#F06560',
+      lightRed: theme.lightRed || '#fff0f0',
 
-      red: theme.red ? theme.red : '#F06560',
-      lightRed: theme.lightRed ? theme.lightRed : '#fff0f0',
+      pink: theme.pink ? theme.pink : '#990055',
+      lightPink: theme.lightPink ? theme.lightPink : '#ffb2b2',
 
-      green: theme.green ? theme.green : '#48AD1A',
-      lightGreen: theme.lightGreen ? theme.lightGreen : '#fbfff0',
+      green: theme.green || '#690',
+      lightGreen: theme.lightGreen || '#fbfff0',
 
-      blue: theme.blue ? theme.blue : '#47AFE8',
-      lightBlue: theme.lightBlue ? theme.lightBlue : '#eff8fd',
+      blue: theme.blue || '#0299da',
+      lightBlue: theme.lightBlue || '#eff8fd',
 
-      orange: theme.orange ? theme.orange : '#FF9900',
-      lightOrange: theme.lightOrange ? theme.lightOrange : '#fff5e6',
+      orange: theme.orange || '#FF9900',
+      lightOrange: theme.lightOrange || '#fff5e6',
 
-      yellow: theme.yellow ? theme.yellow : '#827717',
-      lightYellow: theme.lightYellow ? theme.lightYellow : '#fff5cc',
+      yellow: theme.yellow || '#827717',
+      lightYellow: theme.lightYellow || '#fff5cc',
 
-      purple: theme.purple ? theme.purple : '#786FF1',
-      brown: theme.brown ? theme.brown : '#D4AC0D',
+      purple: theme.purple || '#786FF1',
+      brown: theme.brown || '#D4AC0D',
+
+      codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
+      codeFg: theme.codeFg || '#666',
+      codePropertyColor: theme.codePropertyColor || '#905',
+      codeKeywordColor: theme.codeKeywordColor || '#07a',
+      codeOperatorColor: theme.codeOperatorColor || '#9a6e3a',
     };
   }
   return html`
@@ -213,6 +224,8 @@ export default function setTheme(baseTheme, theme = {}) {
     --hover-color:${newTheme.hoverColor};
     --red:${newTheme.red};
     --light-red:${newTheme.lightRed};
+    --pink:${newTheme.pink};
+    --light-pink:${newTheme.lightPink};
     --green:${newTheme.green};
     --light-green:${newTheme.lightGreen};
     --blue:${newTheme.blue};
@@ -241,6 +254,14 @@ export default function setTheme(baseTheme, theme = {}) {
     --primary-color:${newTheme.primaryColor};
     --primary-color-invert:${newTheme.primaryColorInvert};
     --primary-color-trans:${newTheme.primaryColorTrans};
+
+    /*Code Syntax Color*/
+    --code-bg:${newTheme.codeBg};
+    --code-fg:${newTheme.codeFg};
+    --inline-code-fg:${newTheme.inlineCodeFg};
+    --code-property-color:${newTheme.codePropertyColor};
+    --code-keyword-color:${newTheme.codeKeywordColor};
+    --code-operator-color:${newTheme.codeOperatorColor};
   }
   </style>`;
 }
