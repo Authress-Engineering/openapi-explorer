@@ -249,8 +249,7 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
           if (firstWordEndIndex === -1) {
             pathTags.push(pathOrHookNameKey);
           } else {
-            // firstWordEndIndex -= 1;
-            pathTags.push(pathOrHookNameKey.substr(0, firstWordEndIndex));
+            pathTags.push('General ⦂');
           }
         }
         tagObj = tags.find((v) => v.name === tagText);
