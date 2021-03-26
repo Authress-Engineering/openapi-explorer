@@ -15,9 +15,6 @@ export function getTypeInfo(schema) {
     if (schema.format || schema.enum) {
       dataType = dataType.replace('string', schema.enum ? 'enum' : schema.format);
     }
-    if (schema.nullable) {
-      dataType += '┃null';
-    }
   } else {
     dataType = '{missing-type-info}';
   }
