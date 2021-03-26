@@ -469,9 +469,9 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
       } else if (v === 'array' && typeof subSchema.items?.type === 'string' && subSchema.items?.type.match(/integer|number|string|null|boolean/g)) {
         // Array with primitive types should also be treated as primitive type
         if (subSchema.items.type === 'string' && subSchema.items.format) {
-          primitiveType.push(`[${subSchema.items.format}]`);
+          primitiveType.push(`${subSchema.items.format}[]`);
         } else {
-          primitiveType.push(`[${subSchema.items.type}]`);
+          primitiveType.push(`${subSchema.items.type}[]`);
         }
       } else {
         complexTypes.push(v);
