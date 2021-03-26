@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+    - main
+    - 'release/**'
+  pull_request:
+    branches:
+    - main
+    - 'release/**'
+
+jobs:
+  nodejs:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.12.0
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install packages
+      run: npm install
+    - name: Run Setup
+      run: node make.js setup
+    - name: Run build
+      run: npm run build
+    - name: Deploy to NPM
+      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+    - name: After build
+      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: node make.js after_build

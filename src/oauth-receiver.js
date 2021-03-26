@@ -31,12 +31,12 @@ export default class OauthReceiver extends HTMLElement {
       window.opener.postMessage(authData, this.target);
       return;
     }
-    sessionStorage.setItem('rapidoc-oauth-data', JSON.stringify(authData)); // Fallback to session storage if window.opener dont exist
+    sessionStorage.setItem('oae-oauth-data', JSON.stringify(authData)); // Fallback to session storage if window.opener dont exist
   }
 
   relayAuthParams(e) {
     if (window.parent) {
-      if (e.key === 'rapidoc-oauth-data') {
+      if (e.key === 'oae-oauth-data') {
         const authData = JSON.parse(e.newValue);
         window.parent.postMessage(authData, this.target);
       }
