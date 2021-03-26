@@ -230,7 +230,7 @@ export default class ApiRequest extends LitElement {
       if (!paramSchema) {
         continue;
       }
-      let defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
+      const defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
       let paramStyle = 'form';
       let paramExplode = true;
       if (paramType === 'query') {
@@ -853,20 +853,6 @@ export default class ApiRequest extends LitElement {
         </select>
       `;
     }
-    const selectedServerHtml = html`
-      <div style="display:flex; flex-direction:column;">
-        ${selectServerDropdownHtml}
-        ${this.serverUrl
-          ? html`
-            <div style="display:flex; align-items:baseline;">
-              <div style="font-weight:bold; padding-right:5px;">API Server</div> 
-              <span class = "gray-text"> ${this.serverUrl} </span>
-            </div>
-          `
-          : ''
-        }
-      </div>  
-    `;
 
     return html`
     <div style="display:flex; align-items:flex-end; margin:16px 0; font-size:var(--font-size-small);">

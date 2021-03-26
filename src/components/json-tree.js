@@ -23,6 +23,11 @@ export default class JsonTree extends LitElement {
         display:flex;
       }
       .json-tree {
+        background: rgb(51, 51, 51);
+        color: white;
+        padding: 10px;
+
+        min-height: 30px;
         font-family: var(--font-mono);
         font-size: var(--font-size-small);
         display:inline-block;
@@ -57,7 +62,7 @@ export default class JsonTree extends LitElement {
       .number{color:var(--blue);}
       .null{color:var(--red);}
       .boolean{color:var(--purple);}
-      .object{color:var(--fg)}
+      .object{color:white}
       .toolbar {
         position: absolute;
         top:5px;
