@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/Rhosys/openapi-explorer.git"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": [
     "OpenAPI",
     "OpenAPI Specification",
