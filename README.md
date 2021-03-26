@@ -21,6 +21,17 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ## Get started now
 `npm i openapi-explorer`
 
+### Quick start example
+* `import 'openapi-explorer';`
+
+```html
+<openapi-explorer :id="apiExplorer" :spec-url="openapiSpecificationUrl">
+  <div slot="overview">
+    <h1 class="pt-3">The API</h1>
+  </div>
+</openapi-explorer>
+```
+
 ## Features
 - Supports Swagger 2.0 and OpenAPI 3.0 
 - Works with any framework or with no framework
