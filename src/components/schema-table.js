@@ -239,7 +239,7 @@ export default class SchemaTable extends LitElement {
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
       <div class = "tr primitive">
-        <div class="td key ${deprecated ? deprecated : ''}" style='padding-left:${leftPadding}px' >
+        <div class="td key ${deprecated || ''}" style='padding-left:${leftPadding}px' >
           ${keyLabel?.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
             : key.startsWith('::OPTION')

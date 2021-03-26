@@ -242,9 +242,10 @@ export default class ApiRequest extends LitElement {
         }
       }
 
+      const labelColWidth = 'read focused'.includes(this.renderStyle) ? '200px' : '160px';
       tableRows.push(html`
       <tr> 
-        <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:160px; min-width:100px;">
+        <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:${labelColWidth}; min-width:100px;">
           <div class="param-name">
             ${param.required ? html`<span style='color:var(--red)'>*</span>` : ''}${param.name}
           </div>
@@ -257,11 +258,11 @@ export default class ApiRequest extends LitElement {
         </td>  
         ${this.allowTry === 'true'
           ? html`
-            <td style="width:${paramSchema.type === 'array' || paramSchema.type === 'object' ? ('read focused'.includes(this.renderStyle) ? '300px' : '220px') : '160px'}; min-width:100px;">
+            <td style="min-width:100px;">
               ${paramSchema.type === 'array'
                 ? html`
                   <tag-input class="request-param" 
-                    style = "width:160px;" 
+                    style = "width:100%;" 
                     data-ptype = "${paramType}"
                     data-pname = "${param.name}"
                     data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
@@ -307,7 +308,7 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                 ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraint: </span>${paramSchema.constrain}<br/>` : ''}
                 ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
-                  ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
+                  ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                   ${html`
                     <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                       data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
@@ -554,7 +555,7 @@ export default class ApiRequest extends LitElement {
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
                 <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}"   data-tab = 'model'  >MODEL</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'example' ? 'active' : ''}" data-tab = 'example'>EXAMPLE </button>
+                <button class="tab-btn ${this.activeSchemaTab === 'example' ? 'active' : ''}" data-tab = 'example'>BODY</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
@@ -585,9 +586,10 @@ export default class ApiRequest extends LitElement {
           'text',
         );
 
+        const labelColWidth = 'read focused'.includes(this.renderStyle) ? '200px' : '160px';
         formDataTableRows.push(html`
         <tr> 
-          <td style="width:160px; min-width:100px;">
+          <td style="width:${labelColWidth}; min-width:100px;">
             <div class="param-name">
               ${fieldSchema.required
                 ? html`<span style='color:var(--red);'>*</span>${fieldName}`
@@ -597,7 +599,7 @@ export default class ApiRequest extends LitElement {
             <div class="param-type">${paramSchema.type}</div>
           </td>  
           <td 
-            style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? 'width:160px;' : 'display:none;'} min-width:100px;" 
+            style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? '' : 'display:none;'} min-width:100px;" 
             colspan="${fieldType === 'object' ? 2 : 1}">
             ${fieldType === 'array'
               ? fieldSchema.items?.format === 'binary'
@@ -607,7 +609,7 @@ export default class ApiRequest extends LitElement {
                     <input 
                       type = "file"
                       part = "file-input"
-                      style = "width:200px" 
+                      style = "width:100%" 
                       data-pname = "${fieldName}" 
                       data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                       data-array = "false" 
@@ -620,7 +622,7 @@ export default class ApiRequest extends LitElement {
                 `
                 : html`
                   <tag-input
-                    style = "width:160px;" 
+                    style = "width:100%;" 
                     data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                     data-pname = "${fieldName}"
                     data-default = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join('~|~') : fieldSchema.example || ''}"
@@ -690,7 +692,7 @@ export default class ApiRequest extends LitElement {
                           spellcheck = "false"
                           type = "${fieldSchema.format === 'binary' ? 'file' : fieldSchema.format === 'password' ? 'password' : 'text'}"
                           part = "textbox textbox-param"
-                          style = "width:200px"
+                          style = "width:100%"
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
                           data-default = "${fieldSchema.example || ''}"
@@ -713,7 +715,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                       ${paramSchema.constrain ? html`${paramSchema.constrain}<br/>` : ''}
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
-                        ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
+                        ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                         ${html`
                           <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                             data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
