@@ -10,8 +10,8 @@
     </a>
 </p>        
 
-# RapiDoc
-Custom Element for Open-API spec viewing
+# OpenAPI Explorer
+Web Component Custom Element for Open-API spec viewing, with automatic integration for React and Vue.
 
 ## Features
 - Supports Swagger 2.0 and OpenAPI 3.0 

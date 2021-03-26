@@ -21,12 +21,12 @@ const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 // const ESLintPlugin = require('eslint-webpack-plugin');
 
-const rapidocVersion = JSON.stringify(require('./package.json').version).replace(/"/g, '');
+const version = JSON.stringify(require('./package.json').version).replace(/"/g, '');
 
-const rapidocBanner = `
+const banner = `
 /**
 * @preserve
-* RapiDoc ${rapidocVersion.replace()} - WebComponent to View OpenAPI docs
+* OpenAPI Explorer ${version.replace()} - WebComponent to View OpenAPI docs
 * License: Apache-2.0
 * Repo   : https://github.com/Rhosys/openapi-explorer
 * Author : Rhosys Developers
@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === 'production') {
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true,
-    banner: rapidocBanner,
+    banner: banner,
   }));
   // commonPlugins.push(new webpack.DefinePlugin({ VERSION }));
   commonPlugins.push(new FileManagerPlugin({
@@ -97,7 +97,7 @@ module.exports = {
       new TerserPlugin({
         extractComments: {
           condition: /^\**!|@preserve|@license|@cc_on/i,
-          banner: (licenseFile) => `OpenAPI Explorer ${rapidocVersion} | Author - Rhosys Developers | License information can be found in ${licenseFile} `,
+          banner: (licenseFile) => `OpenAPI Explorer ${version} | Author - Rhosys Developers | License information can be found in ${licenseFile} `,
         },
       }),
     ],

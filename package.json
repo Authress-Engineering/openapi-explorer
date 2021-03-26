@@ -1,7 +1,7 @@
 {
-  "name": "rapidoc",
-  "version": "9.0.0-beta",
-  "description": "RapiDoc - Open API spec viewer with built in console",
+  "name": "openapi-explorer",
+  "version": "0.0.0",
+  "description": "OpenAPI Explorer - API viewer with dynamically generated components, documentation, and interaction console",
   "author": "Rhosys Developers <developers@rhosys.ch>",
   "repository": {
     "type": "git",
@@ -68,7 +68,6 @@
     "webpack-bundle-analyzer": "^4.4.0",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2",
-
     "chai": "^4.2.0",
     "check-dts": "^0.4.4",
     "ci-build-tools": "^1.0.13",
