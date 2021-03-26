@@ -2,16 +2,24 @@
 
 
 <p align="center">
-    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square"/>
+    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square">
     <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">-->
     <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.gz.svg?colorB=blue&label=zip&style=flat-square">-->
+    <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
+        <img src="https://badge.fury.io/js/openapi-explorer.svg">
+    </a>
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
-        <img src="https://img.shields.io/badge/webcomponents.org-openapi-explorer-blue.svg?style=social"/>
+        <img src="https://img.shields.io/badge/webcomponents.org-openapi-explorer-blue.svg?style=social">
     </a>
 </p>        
 
-# OpenAPI Explorer
+# OpenAPI Explorer - Currently Under Development
 Web Component Custom Element for Open-API spec viewing, with automatic integration for React and Vue.
+
+_(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and provides a cleaner skimmed down version of the functionality which works out of the box!)_
+
+## Get started now
+`npm i openapi-explorer`
 
 ## Features
 - Supports Swagger 2.0 and OpenAPI 3.0 
