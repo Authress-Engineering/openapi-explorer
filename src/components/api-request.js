@@ -837,16 +837,6 @@ export default class ApiRequest extends LitElement {
   }
 
   apiCallTemplate() {
-    let selectServerDropdownHtml = '';
-
-    if (this.servers && this.servers.length > 0) {
-      selectServerDropdownHtml = html`
-        <select style="min-width:100px;" @change='${(e) => { this.serverUrl = e.target.value; }}'>
-          ${this.servers.map((v) => html`<option value = "${v.url}"> ${v.url} - ${v.description} </option>`)}
-        </select>
-      `;
-    }
-
     return html`
     <div style="display:flex; align-items:flex-end; margin:16px 0; font-size:var(--font-size-small);">
       ${
