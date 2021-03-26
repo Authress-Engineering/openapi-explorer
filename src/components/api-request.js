@@ -306,7 +306,7 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
                 ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                 ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraint: </span>${paramSchema.constrain}<br/>` : ''}
-                ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
+                ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                   ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                   ${html`
                     <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
@@ -712,7 +712,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
                       ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                       ${paramSchema.constrain ? html`${paramSchema.constrain}<br/>` : ''}
-                      ${paramSchema.allowedValues && paramSchema.allowedValues.split(',').map((v, i) => html`
+                      ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                         ${i > 0 ? ' | ' : html`<span style="font-weight:bold"> Allowed: </span>`}
                         ${html`
                           <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"

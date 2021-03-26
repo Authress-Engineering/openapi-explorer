@@ -11,7 +11,8 @@ export function getTypeInfo(schema) {
     const schemaNode = schema.$ref.substring(n + 1);
     dataType = `{recursive: ${schemaNode}} `;
   } else if (schema.type) {
-    dataType = Array.isArray(schema.type) ? schema.type.join('┃') : schema.type;
+    const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
+    dataType = Array.isArray(arraySchema) ? arraySchema.filter(s => s !== 'null').join('┃') : schema.type;
     if (schema.format || schema.enum) {
       dataType = dataType.replace('string', schema.enum ? 'enum' : schema.format);
     }
@@ -83,7 +84,7 @@ export function getTypeInfo(schema) {
   return info;
 }
 
-export function getSampleValueByType(schemaObj) {
+export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   const example = schemaObj.examples
     ? schemaObj.examples[0]
     : schemaObj.example
@@ -124,7 +125,7 @@ export function getSampleValueByType(schemaObj) {
   if (typeValue.match(/^null/g)) { return null; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
-    if (schemaObj.pattern) { return schemaObj.pattern; }
+    if (schemaObj.pattern) { return fallbackPropertyName || 'string'; }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {
         case 'url':
@@ -152,10 +153,7 @@ export function getSampleValueByType(schemaObj) {
           return schemaObj.format;
       }
     } else {
-      const minLength = Number.isNaN(schemaObj.minLength) ? undefined : Number(schemaObj.minLength);
-      const maxLength = Number.isNaN(schemaObj.maxLength) ? undefined : Number(schemaObj.maxLength);
-      const finalLength = minLength || (maxLength > 6 ? 6 : maxLength || undefined);
-      return finalLength ? 'A'.repeat(finalLength) : 'string';
+      return fallbackPropertyName || 'string';
     }
   }
   // If type cannot be determined
@@ -271,7 +269,7 @@ export function schemaToSampleObj(schema, config = { }) {
       }
       if (schema.allOf[0].readOnly && config.includeReadOnly) {
         const tempSchema = schema.allOf[0];
-        return getSampleValueByType(tempSchema);
+        return getSampleValueByType(tempSchema, config.propertyName);
       }
       return;
     }
@@ -285,7 +283,7 @@ export function schemaToSampleObj(schema, config = { }) {
         Object.assign(objWithAllProps, partialObj);
       } else if (v.type) {
         const prop = `prop${Object.keys(objWithAllProps).length}`;
-        objWithAllProps[prop] = getSampleValueByType(v);
+        objWithAllProps[prop] = getSampleValueByType(v, config.propertyName);
       } else {
         return '';
       }
@@ -318,7 +316,7 @@ export function schemaToSampleObj(schema, config = { }) {
         if (schema.properties[propertyName].deprecated && !config.includeDeprecated) { continue; }
         if (schema.properties[propertyName].readOnly && !config.includeReadOnly) { continue; }
         if (schema.properties[propertyName].writeOnly && !config.includeWriteOnly) { continue; }
-        commonObj = mergePropertyExamples(commonObj, propertyName, schemaToSampleObj(schema.properties[propertyName], config));
+        commonObj = mergePropertyExamples(commonObj, propertyName, schemaToSampleObj(schema.properties[propertyName], Object.assign({}, config, { propertyName })));
       }
     }
 
@@ -354,7 +352,7 @@ export function schemaToSampleObj(schema, config = { }) {
           } else if (schema.properties[propertyName]?.items?.example) { // schemas and properties support single example but not multiple examples.
             addPropertyExampleToObjectExamples([schema.properties[propertyName].items.example], obj, propertyName);
           } else {
-            const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, config);
+            const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, Object.assign({}, config, { propertyName }));
             const arraySamples = [];
             for (const key in itemSamples) {
               arraySamples[key] = [itemSamples[key]];
@@ -363,7 +361,7 @@ export function schemaToSampleObj(schema, config = { }) {
           }
           continue;
         }
-        obj = mergePropertyExamples(obj, propertyName, schemaToSampleObj(schema.properties[propertyName], config));
+        obj = mergePropertyExamples(obj, propertyName, schemaToSampleObj(schema.properties[propertyName], Object.assign({}, config, { propertyName })));
       }
     }
   } else if (schema.type === 'array' || schema.items) {
@@ -381,7 +379,7 @@ export function schemaToSampleObj(schema, config = { }) {
       }
     }
   } else {
-    return { 'example-0': getSampleValueByType(schema) };
+    return { 'example-0': getSampleValueByType(schema, config.propertyName) };
   }
   return obj;
 }
