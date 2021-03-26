@@ -1,4 +1,4 @@
-<img alt="Rhosys logo" src="https://github.com/Rhosys/openapi-explorer/blob/master/logo.png" width="60px" />
+<img alt="Rhosys logo" src="https://rhosys.ch/assets/images/rhosys.png" width="600px" />
 
 
 <p align="center">
