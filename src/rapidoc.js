@@ -141,7 +141,6 @@ export default class RapiDoc extends LitElement {
       :host {
         display:flex;
         flex-direction: column;
-        min-width:360px;
         width:100%;
         height:100%;
         margin:0;

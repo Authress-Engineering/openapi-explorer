@@ -65,7 +65,6 @@ export default class JsonTree extends LitElement {
       .object{color:white}
       .toolbar {
         position: absolute;
-        top:5px;
         right:6px;
         display:flex;
         padding:2px;
