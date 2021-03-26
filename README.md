@@ -9,7 +9,7 @@
         <img src="https://badge.fury.io/js/openapi-explorer.svg">
     </a>
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
-        <img src="https://img.shields.io/badge/webcomponents.org-openapi-explorer-blue.svg?style=social">
+        <img src="https://img.shields.io/badge/webcomponents.org-OpenAPI%20Explorer-blue.svg?style=social">
     </a>
 </p>        
 
