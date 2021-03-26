@@ -1,10 +1,10 @@
-<img alt="Rhosys logo" src="https://rhosys.ch/assets/images/rhosys.png" width="600px" />
+<img alt="Rhosys logo" src="https://rhosys.ch/assets/images/rhosys.png" width="200px" />
 
 
 <p align="center">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square"/>
-    <img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">
-    <img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.gz.svg?colorB=blue&label=zip&style=flat-square">
+    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square"/>
+    <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">-->
+    <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.gz.svg?colorB=blue&label=zip&style=flat-square">-->
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
         <img src="https://img.shields.io/badge/webcomponents.org-openapi-explorer-blue.svg?style=social"/>
     </a>
