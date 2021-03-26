@@ -356,40 +356,6 @@ export default class ApiRequest extends LitElement {
           }
         </td>  
       </tr>
-      <tr>
-        ${this.allowTry === 'true' ? html`<td style="border:none"> </td>` : ''}
-        <td colspan="2" style="border:none; margin-top:0; padding:0 5px 8px 5px;"> 
-          <span class="m-markdown-small">${unsafeHTML(marked(param.description || ''))}</span>
-          <!-- Print single Example if provided -->
-          ${(Array.isArray(exampleList) && exampleList.length > 0
-            ? html`<span> <span style="font-weight:bold"> Example: </span>
-              ${exampleList.map((v, i) => html`
-                ${i === 0 ? '' : html` &#9671;`}
-                ${paramSchema.type === 'array' ? '[' : ''}
-                <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
-                  data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                  data-example = "${v.value && Array.isArray(v.value) ? (v.value?.join('~|~') || '') : (v.value || '')}"
-                  @click="${(e) => {
-                    const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
-                    if (inputEl) {
-                      if (e.target.dataset.exampleType === 'array') {
-                        inputEl.value = e.target.dataset.example.split('~|~');
-                      } else {
-                        inputEl.value = e.target.dataset.example;
-                      }
-                    }
-                  }
-                }"
-                >
-                  ${v.description || ''}
-                </a>
-                ${paramSchema.type === 'array' ? '] ' : ''}
-              `)}
-            `
-            : ''
-          )}
-        </td>
-      </tr>
     `);
     }
 
@@ -929,28 +895,11 @@ export default class ApiRequest extends LitElement {
 
     return html`
     <div style="display:flex; align-items:flex-end; margin:16px 0; font-size:var(--font-size-small);">
-      <div style="display:flex; flex-direction:column; margin:0; width:calc(100% - 60px);">
-        <div style="display:flex; flex-direction:row; align-items:center; overflow:hidden;"> 
-          ${selectedServerHtml}
-        </div>
-        <div style="display:flex;">
-          <div style="font-weight:bold; padding-right:5px;">Authentication</div>
-          ${this.api_keys.length > 0
-            ? html`<div style="color:var(--blue); overflow:hidden;"> 
-                ${this.api_keys.length === 1
-                  ? `${this.api_keys[0]?.typeDisplay} in ${this.api_keys[0].in}`
-                  : `${this.api_keys.length} API keys applied`
-                } 
-              </div>`
-            : html`<div style="color:var(--red)">No API key applied</div>`
-          }
-        </div>
-      </div>
       ${
         this.parameters.length > 0 || this.request_body
           ? html`
             <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onFillRequestData}" title="Fills with example data (if provided)">
-              FILL EXAMPLE
+              RESET
             </button>
             <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onClearRequestData}">
               CLEAR
