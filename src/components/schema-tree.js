@@ -33,12 +33,13 @@ export default class SchemaTree extends LitElement {
       BorderStyles,
       css`
       .tree {
+        min-height: 30px;
+        background: rgb(51, 51, 51);
+        padding: 10px;
+        color: white;
         font-size:var(--font-size-small);
         text-align: left;
         line-height:calc(var(--font-size-small) + 6px);
-      }
-      .tree .tr:hover{
-        background-color:var(--hover-color);
       }
       .collapsed-descr .tr {
         max-height:calc(var(--font-size-small) + 8px);
@@ -245,7 +246,7 @@ export default class SchemaTree extends LitElement {
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
       <div class = "tr primitive">
-        <div class="td key ${deprecated ? deprecated : ''}" style='min-width:${minFieldColWidth}px' >
+        <div class="td key ${deprecated || ''}" style='min-width:${minFieldColWidth}px' >
           ${keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>:`
             : key.startsWith('::OPTION')

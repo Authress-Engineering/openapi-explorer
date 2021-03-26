@@ -79,6 +79,7 @@ pre[class*="language-"] {
 .token.regex,
 .token.variable { 
   color: var(--green);
+  white-space: pre-wrap;
 }
 
 .token.operator,

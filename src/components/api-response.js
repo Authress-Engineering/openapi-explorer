@@ -296,6 +296,7 @@ export default class ApiResponse extends LitElement {
           <schema-table
             render-style = '${this.renderStyle}'
             .data = '${mimeRespDetails.schemaTree}'
+            class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
             allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
@@ -306,6 +307,7 @@ export default class ApiResponse extends LitElement {
           <schema-tree
             render-style = '${this.renderStyle}'
             .data = '${mimeRespDetails.schemaTree}'
+            class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
             allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",

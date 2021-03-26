@@ -12,7 +12,7 @@ export function getTypeInfo(schema) {
     dataType = `{recursive: ${schemaNode}} `;
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
-    dataType = Array.isArray(arraySchema) ? arraySchema.filter(s => s !== 'null').join('┃') : schema.type;
+    dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null').join('┃') : schema.type;
     if (schema.format || schema.enum) {
       dataType = dataType.replace('string', schema.enum ? 'enum' : schema.format);
     }
@@ -59,8 +59,8 @@ export function getTypeInfo(schema) {
     info.default = arrayItemDefault;
     info.allowedValues = Array.isArray(schema.items?.enum) ? schema.items.enum.join('┃') : '';
   }
+
   if (dataType.match(/integer|number/g)) {
-    
     const minimum = schema.minimum !== undefined ? schema.minimum : schema.exclusiveMinimum;
     const maximum = schema.maximum !== undefined ? schema.maximum : schema.exclusiveMaximum;
     const leftBound = schema.minimum !== undefined ? '[' : '(';
@@ -76,7 +76,7 @@ export function getTypeInfo(schema) {
     } else if (schema.minLength !== undefined) {
       constrain += `Min length: ${schema.minLength}`;
     } else if (schema.maxLength !== undefined) {
-      constrain += `Max length: ${schema.maxLength}`
+      constrain += `Max length: ${schema.maxLength}`;
     }
   }
   info.constrain = constrain;
@@ -316,7 +316,7 @@ export function schemaToSampleObj(schema, config = { }) {
         if (schema.properties[propertyName].deprecated && !config.includeDeprecated) { continue; }
         if (schema.properties[propertyName].readOnly && !config.includeReadOnly) { continue; }
         if (schema.properties[propertyName].writeOnly && !config.includeWriteOnly) { continue; }
-        commonObj = mergePropertyExamples(commonObj, propertyName, schemaToSampleObj(schema.properties[propertyName], Object.assign({}, config, { propertyName })));
+        commonObj = mergePropertyExamples(commonObj, propertyName, schemaToSampleObj(schema.properties[propertyName], { ...config, propertyName }));
       }
     }
 
@@ -352,7 +352,7 @@ export function schemaToSampleObj(schema, config = { }) {
           } else if (schema.properties[propertyName]?.items?.example) { // schemas and properties support single example but not multiple examples.
             addPropertyExampleToObjectExamples([schema.properties[propertyName].items.example], obj, propertyName);
           } else {
-            const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, Object.assign({}, config, { propertyName }));
+            const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, { ...config, propertyName });
             const arraySamples = [];
             for (const key in itemSamples) {
               arraySamples[key] = [itemSamples[key]];
@@ -361,7 +361,7 @@ export function schemaToSampleObj(schema, config = { }) {
           }
           continue;
         }
-        obj = mergePropertyExamples(obj, propertyName, schemaToSampleObj(schema.properties[propertyName], Object.assign({}, config, { propertyName })));
+        obj = mergePropertyExamples(obj, propertyName, schemaToSampleObj(schema.properties[propertyName], { ...config, propertyName }));
       }
     }
   } else if (schema.type === 'array' || schema.items) {
