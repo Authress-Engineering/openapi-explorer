@@ -59,3 +59,4 @@ npm run build
 ```
 
 ## Contribution
+[Contributions Guide](./CONTRIBUTING.md)
