@@ -248,7 +248,7 @@ export default class SchemaTable extends LitElement {
           }
         </div>
         <div class='td key-type ${dataTypeCss}'>
-          ${dataType === 'array' ? `[${type}]` : type} 
+          ${dataType === 'array' ? `${type}[]` : type}
           <span style="font-family: var(--font-mono);">${readorWriteOnly} </span> </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? description : ''}
