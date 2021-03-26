@@ -62,23 +62,23 @@ export function getTypeInfo(schema) {
     info.allowedValues = Array.isArray(schema.items?.enum) ? schema.items.enum.join('┃') : '';
   }
   if (dataType.match(/integer|number/g)) {
-    if (schema.minimum !== undefined || schema.exclusiveMinimum !== undefined) {
-      constrain += schema.minimum !== undefined ? `>= ${schema.minimum}` : `> ${schema.exclusiveMinimum}`;
-    }
-    if (schema.maximum !== undefined || schema.exclusiveMaximum !== undefined) {
-      constrain += schema.maximum !== undefined ? `${constrain ? '┃' : ''}<= ${schema.maximum}` : `${constrain ? '┃' : ''}< ${schema.exclusiveMaximum}`;
-    }
+    
+    const minimum = schema.minimum !== undefined ? schema.minimum : schema.exclusiveMinimum;
+    const maximum = schema.maximum !== undefined ? schema.maximum : schema.exclusiveMaximum;
+    const leftBound = schema.minimum !== undefined ? '[' : '(';
+    const rightBound = schema.maximum !== undefined ? ']' : ')';
+    constrain = `Range: ${leftBound}${minimum},${maximum}${rightBound}`;
     if (schema.multipleOf !== undefined) {
-      constrain += `${constrain ? '┃' : ''} multiple of ${schema.multipleOf}`;
+      constrain += `${constrain ? ', ' : ''}Multiples: ${schema.multipleOf}`;
     }
   }
   if (dataType.match(/string/g)) {
     if (schema.minLength !== undefined && schema.maxLength !== undefined) {
-      constrain += `${constrain ? '┃' : ''}${schema.minLength} to ${schema.maxLength} chars`;
+      constrain += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
     } else if (schema.minLength !== undefined) {
-      constrain += `${constrain ? '┃' : ''}min ${schema.minLength} chars`;
+      constrain += `Min length: ${schema.minLength}`;
     } else if (schema.maxLength !== undefined) {
-      constrain += `max ${constrain ? '┃' : ''}${schema.maxLength} chars`;
+      constrain += `Max length: ${schema.maxLength}`
     }
   }
   info.constrain = constrain;
