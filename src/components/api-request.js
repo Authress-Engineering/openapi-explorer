@@ -230,8 +230,7 @@ export default class ApiRequest extends LitElement {
       if (!paramSchema) {
         continue;
       }
-      let exampleVal = '';
-      let exampleList = [];
+      let defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
       let paramStyle = 'form';
       let paramExplode = true;
       if (paramType === 'query') {
@@ -240,30 +239,6 @@ export default class ApiRequest extends LitElement {
         }
         if (typeof param.explode === 'boolean') {
           paramExplode = param.explode;
-        }
-      }
-      param.example = typeof param.example === 'undefined'
-        ? ''
-        : Array.isArray(param.example)
-          ? param.example
-          : `${param.example}`;
-
-      if (param.example) {
-        exampleVal = paramSchema.type === 'array' ? param.example : `${param.example}`;
-        exampleList = [{ value: param.example, description: `${param.example}` }];
-      } else if (paramSchema.example) {
-        exampleVal = paramSchema.type === 'array' ? paramSchema.example : `${paramSchema.example}`;
-        exampleList = [{ value: paramSchema.example, description: `${paramSchema.example}` }];
-      } else if (param.examples && Object.values(param.examples).length > 0) {
-        if (Array.isArray(param.examples)) {
-          // This is an invalid situation `examples` should always be a key-value pair not an array, but we are taking care of this case for now
-          const firstExample = Object.values(param.examples)[0] || '';
-          exampleVal = paramSchema.type === 'array' ? [firstExample] : firstExample;
-          exampleList = Object.values(param.examples).map((v) => ({ value: v, description: v }));
-        } else {
-          const exampleValAndDescr = Object.values(param.examples);
-          exampleVal = exampleValAndDescr[0]?.value;
-          exampleList = Object.values(param.examples).map((v) => ({ value: v.value, description: v.description || v.summary || v.value }));
         }
       }
 
@@ -289,12 +264,12 @@ export default class ApiRequest extends LitElement {
                     style = "width:160px;" 
                     data-ptype = "${paramType}"
                     data-pname = "${param.name}"
-                    data-example = "${Array.isArray(exampleVal) ? exampleVal.join('~|~') : exampleVal}"
+                    data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
                     placeholder = "add-multiple &#x21a9;"
-                    .value = "${Array.isArray(exampleVal) ? exampleVal : exampleVal.split(',')}"
+                    .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"
                   >
                   </tag-input>`
                 : paramSchema.type === 'object'
@@ -304,21 +279,21 @@ export default class ApiRequest extends LitElement {
                       part = "textarea textarea-param"
                       data-ptype = "${paramType}-object"
                       data-pname = "${param.name}"
-                      data-example = "${exampleVal}"
+                      data-default = "${defaultVal}"
                       data-param-serialize-style = "${paramStyle}"
                       data-param-serialize-explode = "${paramExplode}"
                       spellcheck = "false"
                       style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
-                    >${this.fillRequestFieldsWithExample === 'true' ? exampleVal : ''}</textarea>`
+                    >${this.fillRequestFieldsWithExample === 'true' ? defaultVal : ''}</textarea>`
                   : html`
                     <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" 
                       class="request-param"
                       part="textbox textbox-param"
                       data-ptype="${paramType}"
                       data-pname="${param.name}" 
-                      data-example="${Array.isArray(exampleVal) ? exampleVal.join('~|~') : exampleVal}"
+                      data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
                       data-array="false"
-                      .value="${this.fillRequestFieldsWithExample === 'true' ? exampleVal : ''}"
+                      .value="${this.fillRequestFieldsWithExample === 'true' ? defaultVal : ''}"
                     />`
                 }
             </td>`
@@ -475,7 +450,7 @@ export default class ApiRequest extends LitElement {
               ${reqBodyExamples
                 .filter((v) => v.exampleId === this.selectedRequestBodyExample)
                 .map((v) => html`
-                <div class="example ${v.exampleId === this.selectedRequestBodyExample ? 'example-selected' : ''}" data-example = '${v.exampleId}'>
+                <div class="example ${v.exampleId === this.selectedRequestBodyExample ? 'example-selected' : ''}" data-default = '${v.exampleId}'>
                   ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
                   ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
                   <!-- this textarea is for user to edit the example -->
@@ -484,8 +459,8 @@ export default class ApiRequest extends LitElement {
                     part = "textarea textarea-param"
                     spellcheck = "false"
                     data-ptype = "${reqBody.mimeType}" 
-                    data-example = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2)}"
-                    data-example-format = "${v.exampleFormat}"
+                    data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2)}"
+                    data-default-format = "${v.exampleFormat}"
                     style="width:100%; resize:vertical;"
                   >${this.fillRequestFieldsWithExample === 'true'
                       ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2))
@@ -648,7 +623,7 @@ export default class ApiRequest extends LitElement {
                     style = "width:160px;" 
                     data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                     data-pname = "${fieldName}"
-                    data-example = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join('~|~') : fieldSchema.example || ''}"
+                    data-default = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join('~|~') : fieldSchema.example || ''}"
                     data-array = "true"
                     placeholder = "add-multiple &#x21a9;"
                     .value = "${Array.isArray(fieldSchema.example) ? fieldSchema.example : fieldSchema.example.split(',')}"
@@ -700,7 +675,7 @@ export default class ApiRequest extends LitElement {
                           data-array = "false" 
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
-                          data-example = "${formdataPartExample[0]?.exampleValue || ''}"
+                          data-default = "${formdataPartExample[0]?.exampleValue || ''}"
                           spellcheck = "false"
                         >${this.fillRequestFieldsWithExample === 'true' ? formdataPartExample[0].exampleValue : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
@@ -718,7 +693,7 @@ export default class ApiRequest extends LitElement {
                           style = "width:200px"
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
-                          data-example = "${fieldSchema.example || ''}"
+                          data-default = "${fieldSchema.example || ''}"
                           data-array = "false"
                         />`
                       : ''
@@ -777,8 +752,8 @@ export default class ApiRequest extends LitElement {
                       <span style="font-weight:bold"> Example: </span>
                       ${paramSchema.type === 'array' ? '[ ' : ''}
                       <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
-                        data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                        data-example = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}"
+                        data-default-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                        data-default = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}"
                         @click="${(e) => {
                           const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
                           if (inputEl) {
@@ -917,11 +892,11 @@ export default class ApiRequest extends LitElement {
     const requestPanelEl = e.target.closest('.request-panel');
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => {
-      if (el.dataset.example) {
+      if (el.dataset.default) {
         if (el.tagName.toUpperCase() === 'TAG-INPUT') {
-          el.value = el.dataset.example.split('~|~');
+          el.value = el.dataset.default.split('~|~');
         } else {
-          el.value = el.dataset.example;
+          el.value = el.dataset.default;
         }
       }
     });
