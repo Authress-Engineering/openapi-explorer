@@ -81,6 +81,8 @@ export default css`
   cursor:pointer;
   padding:5px 0;
   margin:0 2px;
+  /* TODO: add: The import highlight color variable */
+  color: #38b3f9;
 }
 .schema-root-type {
   cursor:auto;

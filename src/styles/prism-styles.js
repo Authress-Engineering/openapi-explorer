@@ -80,6 +80,7 @@ pre[class*="language-"] {
 .token.variable { 
   color: var(--green);
   white-space: pre-wrap;
+  line-break: anywhere;
 }
 
 .token.operator,
