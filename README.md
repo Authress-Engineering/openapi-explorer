@@ -1,12 +1,12 @@
-<img alt="MrinDoc logo" src="https://github.com/mrin9/RapiDoc/blob/master/logo.png" width="60px" />
+<img alt="Rhosys logo" src="https://github.com/Rhosys/openapi-explorer/blob/master/logo.png" width="60px" />
 
 
 <p align="center">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square"/>
-    <img src="https://img.shields.io/github/size/mrin9/rapidoc/dist/rapidoc-min.js.svg?colorB=blue&label=minified&style=flat-square">
-    <img src="https://img.shields.io/github/size/mrin9/rapidoc/dist/rapidoc-min.js.gz.svg?colorB=blue&label=zip&style=flat-square">
-    <a href="https://www.webcomponents.org/element/rapidoc" alt="published on webcomponents.org">
-        <img src="https://img.shields.io/badge/webcomponents.org-rapidoc-blue.svg?style=social"/>
+    <img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">
+    <img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.gz.svg?colorB=blue&label=zip&style=flat-square">
+    <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
+        <img src="https://img.shields.io/badge/webcomponents.org-openapi-explorer-blue.svg?style=social"/>
     </a>
 </p>        
 
@@ -42,10 +42,10 @@ Custom Element for Open-API spec viewing
 
 
 ## Documentation
-[Check out the usage and demos](https://mrin9.github.io/RapiDoc/)
+[Check out the usage and demos](https://rhosys.github.io/openapi-explorer/)
 
 ## Examples
-[Examples and Test cases](https://mrin9.github.io/RapiDoc/list.html)
+[Examples and Test cases](https://rhosys.github.io/openapi-explorer/list.html)
 
 
 ## Build Process
@@ -53,12 +53,9 @@ Custom Element for Open-API spec viewing
 # Clone / Download the project then
 npm install
 
-# build will generate rapidoc-min.js, this is the only file you will need.
-# use it in the script tag of your html <script type="text/javascript" src="rapidoc-min.js"></script></body>
+# build will generate openapi-explorer.min.js, this is the only file you will need.
+# use it in the script tag of your html <script type="text/javascript" src="openapi-explorer.min.js"></script></body>
 npm run build 
-
-# for developement use yarn serve (this will start an webserver at port 8080, then navigate to localhost:8080) 
-npm run serve
 ```
 
 ## Contribution

@@ -27,9 +27,9 @@ const rapidocBanner = `
 /**
 * @preserve
 * RapiDoc ${rapidocVersion.replace()} - WebComponent to View OpenAPI docs
-* License: MIT
-* Repo   : https://github.com/mrin9/RapiDoc
-* Author : Mrinmoy Majumdar
+* License: Apache-2.0
+* Repo   : https://github.com/Rhosys/openapi-explorer
+* Author : Rhosys Developers
 *`;
 
 const commonPlugins = [
@@ -89,7 +89,7 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'rapidoc-min.js',
+    filename: 'openapi-explorer.min.js',
     publicPath: '',
   },
   optimization: {
@@ -97,7 +97,7 @@ module.exports = {
       new TerserPlugin({
         extractComments: {
           condition: /^\**!|@preserve|@license|@cc_on/i,
-          banner: (licenseFile) => `RapiDoc ${rapidocVersion} | Author - Mrinmoy Majumdar | License information can be found in ${licenseFile} `,
+          banner: (licenseFile) => `OpenAPI Explorer ${rapidocVersion} | Author - Rhosys Developers | License information can be found in ${licenseFile} `,
         },
       }),
     ],
