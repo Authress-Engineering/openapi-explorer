@@ -36,12 +36,10 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
       securityObj.value = '';
       securityObj.finalKeyValue = '';
       if (kv[1].type === 'apiKey' || kv[1].type === 'http') {
-        securityObj.in = kv[1].in || 'header';
         securityObj.name = kv[1].name || 'Authorization';
         securityObj.user = '';
         securityObj.password = '';
       } else if (kv[1].type === 'oauth2') {
-        securityObj.in = 'header';
         securityObj.name = 'Authorization';
         securityObj.clientId = '';
         securityObj.clientSecret = '';
