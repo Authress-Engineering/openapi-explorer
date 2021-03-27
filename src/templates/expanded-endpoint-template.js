@@ -1,11 +1,11 @@
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import marked from 'marked';
-import { pathSecurityTemplate } from '~/templates/security-scheme-template';
-import codeSamplesTemplate from '~/templates/code-samples-template';
-import callbackTemplate from '~/templates/callback-template';
-import '~/components/api-request';
-import '~/components/api-response';
+import { pathSecurityTemplate } from './security-scheme-template';
+import codeSamplesTemplate from './code-samples-template';
+import callbackTemplate from './callback-template';
+import '../components/api-request';
+import '../components/api-response';
 
 /* eslint-disable indent */
 function headingRenderer(tagElementId) {
