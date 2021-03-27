@@ -27,37 +27,27 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ```html
 <openapi-explorer :id="apiExplorer" :spec-url="openapiSpecificationUrl">
   <div slot="overview">
-    <h1 class="pt-3">The API</h1>
+    <h1>The API</h1>
   </div>
 </openapi-explorer>
 ```
 
 ## Features
-- Supports Swagger 2.0 and OpenAPI 3.0 
-- Works with any framework or with no framework
-- Allows making API calls
+- OpenAPI 3.0 
+- Works with any framework
+- View resources, models, and directly make API calls
 - Better Usability, 
-  - all Models and Examples are expanded by default, eliminates the need to click and reveal.
-  - Request fields are pre-populated with sample data
+  - Request fields are pre-populated with default data
   - Takes only one click to make an API call
-  - Request and response can be placed side-by-side for easy comparison
 - Branding and Personalization features makes it easy to follow any style guide
-  - Comes with 2 Themes (Dark and Light)
-  - Replace default logo with yours
-  - Typography, allows changing fonts
-  - Allows changing text-color, button-color, header-color and color of other UI elements
+  - Fully customizeable theme
 - Plenty of customization options 
   - Add external contents at the top and bottom of the document,  you may add images, link, text, forms etc
   - Allows disabling API calling feature
-  - Hide the header, so the user can't load any other OpenAPI Spec
-  - Hide Authentication and provide your own pre-generated api-key 
-  - Embed it inside another HTML document
-  - Use it inside another framework (react, vue, angular, lit-element)
-  - Use JavaScript to change its attributes, and it will react to those changes
+  - All properties are reactive
   - Style the element with standard css (change padding, position, border, margin )
+- Responsive so it works on mobile
 - Lightweight and fast
-- Load local json spec from the disk
-- Supported on Chrome, FireFox and Safari. (Not yet tested on Edge)
 
 
 ## Documentation
@@ -72,8 +62,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 # Clone / Download the project then
 npm install
 
-# build will generate openapi-explorer.min.js, this is the only file you will need.
-# use it in the script tag of your html <script type="text/javascript" src="openapi-explorer.min.js"></script></body>
+# build will generate openapi-explorer.min.js
 npm run build 
 ```
 

@@ -14,7 +14,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
     }
     jsonParsedSpec = specMeta.spec;
   } catch (err) {
-    console.info('RapiDoc: %c There was an issue while parsing the spec %o ', 'color:orangered', err); // eslint-disable-line no-console
+    console.info('OpenAPI Explorer: %c There was an issue while parsing the spec %o ', 'color:orangered', err); // eslint-disable-line no-console
   }
 
   // const pathGroups = groupByPaths(jsonParsedSpec);

@@ -99,10 +99,10 @@ async function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, client
     return;
   }
   if (!msgEvent.data) {
-    console.warn('RapiDoc: Received no data with authorization message');
+    console.warn('OpenAPI Explorer: Received no data with authorization message');
   }
   if (msgEvent.data.error) {
-    console.warn('RapiDoc: Error while receiving data');
+    console.warn('OpenAPI Explorer: Error while receiving data');
   }
   if (msgEvent.data) {
     if (msgEvent.data.responseType === 'code') {
@@ -158,7 +158,7 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
     setTimeout(() => {
       newWindow = window.open(authUrlObj.toString());
       if (!newWindow) {
-        console.error(`RapiDoc: Unable to open ${authUrlObj.toString()} in a new window`);
+        console.error(`OpenAPI Explorer: Unable to open ${authUrlObj.toString()} in a new window`);
       } else {
         sessionStorage.setItem('winMessageEventActive', 'true');
         window.addEventListener(

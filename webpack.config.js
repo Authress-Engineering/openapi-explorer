@@ -1,15 +1,3 @@
-/*
-import { webpack } from 'webpack';
-import FileManagerPlugin from 'filemanager-webpack-plugin';
-import BundleAnalyzerPlugin from 'webpack-bundle-analyzer';
-import CompressionPlugin from 'compression-webpack-plugin';
-import { DuplicatesPlugin } from 'inspectpack/plugin';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import 'path';
-// import ESLintPlugin from 'eslint-webpack-plugin';
-*/
-
 const webpack = require('webpack');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -18,8 +6,8 @@ const { DuplicatesPlugin } = require('inspectpack/plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const path = require('path');
-// const ESLintPlugin = require('eslint-webpack-plugin');
 
 const version = JSON.stringify(require('./package.json').version).replace(/"/g, '');
 
@@ -49,29 +37,14 @@ const commonPlugins = [
       },
     },
   }),
-  /*
-  new ESLintPlugin({
-    emitError: true,
-    emitWarning: true,
-    formatter: 'stylish',
-    overrideConfigFile: path.resolve(__dirname, '.eslintrc'),
-    outputReport: {
-      filePath: './eslint_report.html',
-      formatter: 'html',
-    },
-  }),
-  */
 ];
 
 if (process.env.NODE_ENV === 'production') {
-  console.log('BUILDING FOR PRODUCTION ... '); // eslint-disable-line no-console
   commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
   commonPlugins.push(new webpack.BannerPlugin({
-    raw: true,
-    banner: banner,
+    raw: true, banner,
   }));
-  // commonPlugins.push(new webpack.DefinePlugin({ VERSION }));
   commonPlugins.push(new FileManagerPlugin({
     events: {
       onEnd: {
