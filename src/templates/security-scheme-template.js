@@ -123,7 +123,7 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 
   const checkedScopeEls = [...authFlowDivEl.querySelectorAll('input[type="checkbox"]:checked')];
   const state = (`${Math.random().toString(36)}random`).slice(2, 9);
-  const redirectUrlObj = new URL(`${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/${this.oauthReceiver}`);
+  const redirectUrlObj = new URL(this.oauthReceiver);
   let grantType = '';
   let responseType = '';
   let newWindow;

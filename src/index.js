@@ -1,6 +1,835 @@
-// import '~/styles/css/main.css';
-import RapiDoc from '~/rapidoc';
-import OAuthReceiver from '~/oauth-receiver';
+import { css, LitElement, unsafeCSS } from 'lit-element';
+import marked from 'marked';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-http';
+import 'prismjs/components/prism-csharp';
 
-export default { RapiDoc };
-export { OAuthReceiver };
+// Styles
+import FontStyles from './styles/font-styles';
+import InputStyles from './styles/input-styles';
+import FlexStyles from './styles/flex-styles';
+import TableStyles from './styles/table-styles';
+import EndpointStyles from './styles/endpoint-styles';
+import PrismStyles from './styles/prism-styles';
+import TabStyles from './styles/tab-styles';
+import NavStyles from './styles/nav-styles';
+import InfoStyles from './styles/info-styles';
+import CustomStyles from './styles/custom-styles';
+// import { expandCollapseNavBarTag } from '@/templates/navbar-template';
+import {
+  advancedSearch, pathIsInSearch, sleep,
+} from './utils/common-utils';
+import ProcessSpec from './utils/spec-parser';
+import mainBodyTemplate from './templates/main-body-template';
+
+export default class RapiDoc extends LitElement {
+  constructor() {
+    super();
+    const intersectionObserverOptions = {
+      root: this.getRootNode().host,
+      rootMargin: '-50px 0px -50px 0px', // when the element is visible 100px from bottom
+      threshold: 0,
+    };
+    this.isIntersectionObserverActive = true;
+    this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
+  }
+
+  static get properties() {
+    return {
+      // Heading
+      headingText: { type: String, attribute: 'heading-text' },
+      explorerLocation: { type: String, attribute: 'explorer-location' },
+
+      // Spec
+      specUrl: { type: String, attribute: 'spec-url' },
+      sortTags: { type: String, attribute: 'sort-tags' },
+      generateMissingTags: { type: String, attribute: 'generate-missing-tags' },
+      sortEndpointsBy: { type: String, attribute: 'sort-endpoints-by' },
+      specFile: { type: String, attribute: false },
+
+      // UI Layouts
+      layout: { type: String },
+      renderStyle: { type: String, attribute: 'render-style' },
+      defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
+      responseAreaHeight: { type: String, attribute: 'response-area-height' },
+      fillRequestFieldsWithExample: { type: String, attribute: 'fill-request-fields-with-example' },
+      onNavTagClick: { type: String, attribute: 'on-nav-tag-click' },
+
+      // Schema Styles
+      schemaStyle: { type: String, attribute: 'schema-style' },
+      schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
+      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
+      schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
+      schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
+
+      // API Server
+      defaultApiServerUrl: { type: String, attribute: 'default-api-server' },
+      serverUrl: { type: String, attribute: 'server-url' },
+      oauthReceiver: { type: String, attribute: 'oauth-redirect-url' },
+
+      // Hide/Show Sections & Enable Disable actions
+      showHeader: { type: String, attribute: 'show-header' },
+      showSideNav: { type: String, attribute: 'show-side-nav' },
+      showInfo: { type: String, attribute: 'show-info' },
+      allowAuthentication: { type: String, attribute: 'show-authentication' },
+      allowTry: { type: String, attribute: 'allow-try' },
+      allowSpecUrlLoad: { type: String, attribute: 'allow-spec-url-load' },
+      allowSpecFileLoad: { type: String, attribute: 'allow-spec-file-load' },
+      allowSearch: { type: String, attribute: 'allow-search' },
+      allowAdvancedSearch: { type: String, attribute: 'allow-advanced-search' },
+      allowServerSelection: { type: String, attribute: 'show-server-selection' },
+      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
+      showComponents: { type: String, attribute: 'show-components' },
+
+      // Main Colors and Font
+      theme: { type: String },
+      bgColor: { type: String, attribute: 'bg-color' },
+      textColor: { type: String, attribute: 'text-color' },
+      headerColor: { type: String, attribute: 'header-color' },
+      primaryColor: { type: String, attribute: 'primary-color' },
+      fontSize: { type: String, attribute: 'font-size' },
+      regularFont: { type: String, attribute: 'regular-font' },
+      monoFont: { type: String, attribute: 'mono-font' },
+      loadFonts: { type: String, attribute: 'load-fonts' },
+
+      // Nav Bar Colors
+      navBgColor: { type: String, attribute: 'nav-bg-color' },
+      navTextColor: { type: String, attribute: 'nav-text-color' },
+      navHoverBgColor: { type: String, attribute: 'nav-hover-bg-color' },
+      navHoverTextColor: { type: String, attribute: 'nav-hover-text-color' },
+      navAccentColor: { type: String, attribute: 'nav-accent-color' },
+      navItemSpacing: { type: String, attribute: 'nav-item-spacing' },
+      usePathInNavBar: { type: String, attribute: 'use-path-in-nav-bar' },
+      infoDescriptionHeadingsInNavBar: { type: String, attribute: 'info-description-headings-in-navbar' },
+
+      // Fetch Options
+      fetchCredentials: { type: String, attribute: 'fetch-credentials' },
+
+      // Filters
+      matchPaths: { type: String, attribute: 'match-paths' },
+
+      // Internal Properties
+      loading: { type: Boolean }, // indicates spec is being loaded
+      focusedElementId: { type: String }, // updating the focusedElementId will automatically render appropriate section in focused mode
+      showAdvancedSearchDialog: { type: Boolean },
+      advancedSearchMatches: { type: Object },
+    };
+  }
+
+  static get styles() {
+    return [
+      FontStyles,
+      InputStyles,
+      FlexStyles,
+      TableStyles,
+      EndpointStyles,
+      PrismStyles,
+      TabStyles,
+      NavStyles,
+      InfoStyles,
+      css`
+      :host {
+        display:flex;
+        flex-direction: column;
+        width:100%;
+        height:100%;
+        margin:0;
+        padding:0;
+        overflow: hidden;
+        letter-spacing:normal;
+        color:var(--fg);
+        background-color:var(--bg);
+        font-family:var(--font-regular);
+      }
+      .body {
+        display:flex;
+        height:100%;
+        width:100%;
+        overflow:hidden;
+      }
+
+      .main-content { 
+        margin:0;
+        padding: 0; 
+        display:block;
+        flex:1;
+        height:100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-color) transparent;
+      }
+
+      .main-content-inner--view-mode {
+        padding: 0 8px;
+      }
+      .main-content::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .main-content::-webkit-scrollbar-track {
+        background:transparent;
+      }
+      .main-content::-webkit-scrollbar-thumb {
+        background-color: var(--border-color);
+      }
+
+      .section-gap.section-tag {
+        border-bottom:1px solid var(--border-color);
+      }
+      .section-gap,
+      .section-gap--focused-mode,
+      .section-gap--read-mode { 
+        padding: 0px 4px; 
+      }
+      .section-tag-header {
+        position:relative;
+        cursor: n-resize;
+        padding: 12px 0;
+      }
+      .collapsed .section-tag-header:hover{
+        cursor: s-resize;
+      }
+
+      .section-tag-header:hover{
+        background-image: linear-gradient(to right, rgba(0,0,0,0), var(--border-color), rgba(0,0,0,0));
+      }
+
+      .section-tag-header:hover::after {
+        position:absolute;
+        margin-left:-24px;
+        font-size:20px;
+        top: calc(50% - 14px);
+        color:var(--primary-color);
+        content: '⬆'; 
+      }
+
+      .collapsed .section-tag-header::after {
+        position:absolute;
+        margin-left:-24px;
+        font-size:20px;
+        top: calc(50% - 14px);
+        color: var(--border-color);
+        content: '⬇'; 
+      }
+      .collapsed .section-tag-header:hover::after {
+        color:var(--primary-color);
+      }
+
+      .collapsed .section-tag-body {
+        display:none;
+      }
+
+      .logo {
+        height:36px;
+        width:36px;
+        margin-left:5px; 
+      }
+      .only-large-screen-flex,
+      .only-large-screen{
+        display:none;
+      }
+      .header-title{
+        font-size:calc(var(--font-size-regular) + 8px); 
+        padding:0 8px;
+      }
+      .tag.title {
+        text-transform: uppercase;
+      }
+      .header{
+        background-color:var(--header-bg);
+        color:var(--header-fg);
+        width:100%;
+      }
+
+      input.header-input{
+        background:var(--header-color-darker);
+        color:var(--header-fg);
+        border:1px solid var(--header-color-border);
+        flex:1; 
+        padding-right:24px;
+        border-radius:3px;
+      }
+      input.header-input::placeholder {
+        opacity:0.4;
+      }
+      .loader {
+        margin: 16px auto 16px auto; 
+        border: 4px solid var(--bg3);
+        border-radius: 50%;
+        border-top: 4px solid var(--primary-color);
+        width: 36px;
+        height: 36px;
+        animation: spin 2s linear infinite;
+      }
+      .expanded-endpoint-body{ 
+        position: relative;
+        padding: 6px 0px; 
+      }
+      .expanded-endpoint-body.deprecated{ filter:opacity(0.6); }
+      .divider { 
+        border-top: 2px solid var(--border-color);
+        margin: 24px 0;
+        width:100%;
+      }
+
+      .tooltip {
+        cursor:pointer;
+        border: 1px solid var(--border-color);
+        border-left-width: 4px;
+        margin-left:2px;
+      }
+      .tooltip a {
+        color: var(--fg2);
+        text-decoration: none;
+      }
+      .tooltip-text {
+        color: var(--fg2);
+        background-color: var(--bg2);
+        visibility: hidden;
+        overflow-wrap: break-word;
+      }
+      .tooltip:hover {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      .tooltip:hover a:hover {
+        color: var(--primary-color);
+      }
+
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @media only screen and (min-width: 768px) {
+        .nav-bar {
+          width: 260px;
+          display:flex;
+        }
+        .only-large-screen{
+          display:block;
+        }
+        .only-large-screen-flex{
+          display:flex;
+        }
+        .section-gap { 
+          padding: 0 0 0 24px; 
+        }
+        .section-gap--focused-mode {
+          padding: 24px 8px; 
+        }
+        .section-gap--read-mode { 
+          padding: 24px 8px; 
+        }
+        .endpoint-body {
+          position: relative;
+          padding:36px 0 48px 0;
+        }
+      }
+
+      @media only screen and (min-width: 1024px) {
+        .nav-bar {
+          width: ${unsafeCSS(this.fontSize === 'default' ? '300px' : this.fontSize === 'large' ? '315px' : '330px')};
+          display:flex;
+        }
+        .section-gap--focused-mode { 
+          padding: 12px 80px 12px 80px; 
+        }
+        .section-gap--read-mode { 
+          padding: 24px 80px 12px 80px; 
+        }
+      }`,
+      CustomStyles,
+    ];
+  }
+
+  // Startup
+  connectedCallback() {
+    super.connectedCallback();
+    const parent = this.parentElement;
+    if (parent) {
+      if (parent.offsetWidth === 0 && parent.style.width === '') {
+        parent.style.width = '100vw';
+      }
+      if (parent.offsetHeight === 0 && parent.style.height === '') {
+        parent.style.height = '100vh';
+      }
+      if (parent.tagName === 'BODY') {
+        if (!parent.style.marginTop) { parent.style.marginTop = '0'; }
+        if (!parent.style.marginRight) { parent.style.marginRight = '0'; }
+        if (!parent.style.marginBottom) { parent.style.marginBottom = '0'; }
+        if (!parent.style.marginLeft) { parent.style.marginLeft = '0'; }
+      }
+    }
+
+    if (this.loadFonts !== 'false') {
+      const fontDescriptor = {
+        family: 'Open Sans',
+        style: 'normal',
+        weight: '300',
+        unicodeRange: 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD',
+      };
+      const fontWeight300 = new FontFace(
+        'Open Sans',
+        "url(https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UN_r8OUuhpKKSTjw.woff2) format('woff2')",
+        fontDescriptor,
+      );
+      fontDescriptor.weight = '600';
+      const fontWeight600 = new FontFace(
+        'Open Sans',
+        "url(https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UNirkOUuhpKKSTjw.woff2) format('woff2')",
+        fontDescriptor,
+      );
+      fontWeight300.load().then((font) => { document.fonts.add(font); });
+      fontWeight600.load().then((font) => { document.fonts.add(font); });
+    }
+
+    if (!this.renderStyle || !'read, view, focused,'.includes(`${this.renderStyle},`)) { this.renderStyle = 'read'; }
+    if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
+    if (!this.theme || !'light, dark,'.includes(`${this.theme},`)) {
+      this.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    }
+    if (!this.defaultSchemaTab || !'example, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
+    if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
+    if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'false'; }
+    const writeMethodsWithBody = ['post', 'put', 'patch'];
+    if (!this.schemaHideReadOnly) {
+      this.schemaHideReadOnly = writeMethodsWithBody;
+    } else if (this.schemaHideReadOnly !== 'never') {
+      this.schemaHideReadOnly = writeMethodsWithBody.filter((value) => this.schemaHideReadOnly.includes(value));
+      if (this.schemaHideReadOnly.length === 0) {
+        this.schemaHideReadOnly = writeMethodsWithBody;
+      }
+    }
+    this.schemaHideReadOnly += ['get', 'head', 'delete', 'options'];
+    this.schemaHideWriteOnly = this.schemaHideWriteOnly !== 'never';
+    if (!this.fillRequestFieldsWithExample || !'true, false,'.includes(`${this.fillRequestFieldsWithExample},`)) { this.fillRequestFieldsWithExample = 'true'; }
+    if (!this.onNavTagClick || !'expand-collapse, show-description,'.includes(`${this.onNavTagClick},`)) { this.onNavTagClick = 'expand-collapse'; }
+    if (!this.responseAreaHeight) {
+      this.responseAreaHeight = '300px';
+    }
+
+    if (!this.allowSearch || !'true, false,'.includes(`${this.allowSearch},`)) { this.allowSearch = 'true'; }
+    if (!this.allowAdvancedSearch || !'true, false,'.includes(`${this.allowAdvancedSearch},`)) { this.allowAdvancedSearch = 'true'; }
+
+    if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
+
+    if (!this.sortTags || !'true, false,'.includes(`${this.sortTags},`)) { this.sortTags = 'false'; }
+    if (!this.generateMissingTags || !'true, false,'.includes(`${this.generateMissingTags},`)) { this.generateMissingTags = 'false'; }
+    if (!this.sortEndpointsBy || !'method, path, summary,'.includes(`${this.sortEndpointsBy},`)) { this.sortEndpointsBy = 'path'; }
+    if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
+    if (!this.usePathInNavBar || !'true, false,'.includes(`${this.usePathInNavBar},`)) { this.usePathInNavBar = 'false'; }
+    if (!this.fontSize || !'default, large, largest,'.includes(`${this.fontSize},`)) { this.fontSize = 'default'; }
+
+    if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
+    if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
+    if (!this.allowAuthentication || !'true, false,'.includes(`${this.allowAuthentication},`)) { this.allowAuthentication = 'true'; }
+    if (!this.allowSchemaDescriptionExpandToggle || !'true, false,'.includes(`${this.allowSchemaDescriptionExpandToggle},`)) { this.allowSchemaDescriptionExpandToggle = 'true'; }
+
+    if (!this.showSideNav || !'true false'.includes(this.showSideNav)) { this.showSideNav = 'true'; }
+    if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }
+    if (!this.infoDescriptionHeadingsInNavBar || !'true, false,'.includes(`${this.infoDescriptionHeadingsInNavBar},`)) { this.infoDescriptionHeadingsInNavBar = 'false'; }
+    if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
+
+    if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
+
+    marked.setOptions({
+      highlight: (code, lang) => {
+        if (Prism.languages[lang]) {
+          return Prism.highlight(code, Prism.languages[lang], lang);
+        }
+        return code;
+      },
+    });
+
+    window.addEventListener('hashchange', () => {
+      this.scrollTo(window.location.hash.substring(1));
+    }, true);
+  }
+
+  // Cleanup
+  disconnectedCallback() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+    super.disconnectedCallback();
+  }
+
+  infoDescriptionHeadingRenderer() {
+    const renderer = new marked.Renderer();
+    renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="${slugger.slug(raw)}">${text}</h${level}>`);
+    return renderer;
+  }
+
+  /* eslint-disable indent */
+  render() {
+    // return render(mainBodyTemplate(this), this.shadowRoot, { eventContext: this });
+    return mainBodyTemplate.call(this);
+  }
+
+  /* eslint-enable indent */
+
+  observeExpandedContent() {
+    // Main Container
+    const observeOverviewEls = this.shadowRoot.querySelectorAll('.observe-me');
+    observeOverviewEls.forEach((targetEl) => {
+      this.intersectionObserver.observe(targetEl);
+    });
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (name === 'spec-url') {
+      if (oldVal !== newVal) {
+        // put it at the end of event-loop to load all the attributes
+        window.setTimeout(async () => {
+          await this.loadSpec(newVal);
+          // If the initial location is set, then attempt to scroll there
+          if (this.explorerLocation) {
+            this.scrollTo(this.explorerLocation);
+          }
+        }, 0);
+      }
+    }
+    if (name === 'render-style') {
+      if (newVal === 'read') {
+        window.setTimeout(() => {
+          this.observeExpandedContent();
+        }, 100);
+      } else {
+        this.intersectionObserver.disconnect();
+      }
+    }
+    super.attributeChangedCallback(name, oldVal, newVal);
+  }
+
+  onSepcUrlChange() {
+    this.setAttribute('spec-url', this.shadowRoot.getElementById('spec-url').value);
+  }
+
+  onSepcFileChange(e) {
+    this.setAttribute('spec-file', this.shadowRoot.getElementById('spec-file').value);
+    const specFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const specObj = JSON.parse(reader.result);
+        this.loadSpec(specObj);
+        this.shadowRoot.getElementById('spec-url').value = '';
+      } catch (err) {
+        console.error('OpenAPI Explorer: Unable to read or parse json'); // eslint-disable-line no-console
+      }
+    };
+    // Read the Text file
+    reader.readAsText(specFile);
+  }
+
+  onFileLoadClick() {
+    this.shadowRoot.getElementById('spec-file').click();
+  }
+
+  onSearchChange(e) {
+    this.matchPaths = e.target.value;
+    this.resolvedSpec.tags.forEach((tag) => tag.paths.filter((v) => {
+      if (this.matchPaths) {
+        // v.expanded = false;
+        if (pathIsInSearch(this.matchPaths, v)) {
+          tag.expanded = true;
+        }
+      }
+    }));
+    this.requestUpdate();
+  }
+
+  onClearSearch() {
+    const searchEl = this.shadowRoot.getElementById('nav-bar-search');
+    searchEl.value = '';
+    this.matchPaths = '';
+  }
+
+  onShowSearchModalClicked() {
+    this.showAdvancedSearchDialog = true;
+  }
+
+  // Event Handler on Dialog-Box is opened
+  async onOpenSearchDialog(e) {
+    // Set focus to text input
+    const inputEl = e.detail.querySelector('input');
+    await sleep(0);
+    if (inputEl) {
+      inputEl.focus();
+    }
+  }
+
+  // Public Method
+  async loadSpec(specUrl) {
+    if (!specUrl) {
+      return;
+    }
+    this.matchPaths = '';
+    try {
+      this.resolvedSpec = null;
+      this.loading = true;
+      this.loadFailed = false;
+      // this.requestUpdate();
+      const spec = await ProcessSpec(
+        specUrl,
+        this.generateMissingTags === 'true',
+        this.sortTags === 'true',
+        this.getAttribute('sort-endpoints-by'),
+        this.getAttribute('server-url'),
+      );
+      this.loading = false;
+      if (spec === undefined || spec === null) {
+        console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
+      }
+      this.afterSpecParsedAndValidated(spec);
+    } catch (err) {
+      this.loading = false;
+      this.loadFailed = true;
+      this.resolvedSpec = null;
+      console.error(`OpenAPI Explorer: Unable to resolve the API spec..  ${err.message}`); // eslint-disable-line no-console
+    }
+  }
+
+  async afterSpecParsedAndValidated(spec) {
+    this.resolvedSpec = spec;
+    if (this.defaultApiServerUrl) {
+      if (this.defaultApiServerUrl === this.serverUrl) {
+        this.selectedServer = {
+          url: this.serverUrl,
+          computedUrl: this.serverUrl,
+        };
+      } else if (this.resolvedSpec.servers) {
+        this.selectedServer = this.resolvedSpec.servers.find((v) => (v.url === this.defaultApiServerUrl));
+      }
+    }
+    if (!this.selectedServer) {
+      if (this.resolvedSpec.servers) {
+        this.selectedServer = this.resolvedSpec.servers[0];
+      }
+    }
+    this.requestUpdate();
+    const specLoadedEvent = new CustomEvent('spec-loaded', { detail: spec });
+    this.dispatchEvent(specLoadedEvent);
+
+    // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
+    this.intersectionObserver.disconnect();
+    if (this.renderStyle === 'read') {
+      await sleep(100);
+      this.observeExpandedContent(); // This will auto-highlight the selected nav-item in read-mode
+    }
+
+    // On first time Spec load, try to navigate to location hash if provided
+    const locationHash = window.location.hash?.substring(1);
+    if (locationHash) {
+      if (this.renderStyle === 'view') {
+        this.expandAndGotoOperation(locationHash, true, true);
+      } else if (this.renderStyle === 'focused') {
+        this.scrollTo(locationHash);
+      }
+    } else if (this.renderStyle === 'focused') {
+      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags[0]?.paths[0];
+      this.scrollTo(defaultElementId);
+    }
+  }
+
+  expandAndGotoOperation(elementId, scrollToElement = true) {
+    // Expand full operation and tag
+    let isExpandingNeeded = true;
+    const tmpElementId = elementId.indexOf('#') === -1 ? elementId : elementId.substring(1);
+    if (tmpElementId.startsWith('overview') || tmpElementId === 'servers' || tmpElementId === 'auth') {
+      isExpandingNeeded = false;
+    } else {
+      for (let i = 0; i < this.resolvedSpec.tags?.length; i++) {
+        const tag = this.resolvedSpec.tags[i];
+        const path = tag.paths?.find((p) => p.elementId === elementId);
+        if (path) {
+          if (path.expanded && tag.expanded) {
+            isExpandingNeeded = false;
+          } else {
+            path.expanded = true;
+            tag.expanded = true;
+          }
+        }
+      }
+    }
+    if (scrollToElement) {
+      // requestUpdate() and delay required, else we cant find element
+      if (isExpandingNeeded) {
+        this.requestUpdate();
+      }
+      window.setTimeout(() => {
+        const gotoEl = this.shadowRoot.getElementById(tmpElementId);
+        if (gotoEl) {
+          gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+          window.history.replaceState(null, null, `#${tmpElementId}`);
+        }
+      }, isExpandingNeeded ? 150 : 0);
+    }
+  }
+
+  isValidTopId(id) {
+    return (id.startsWith('overview') || id === 'servers' || id === 'auth');
+  }
+
+  isValidPathId(id) {
+    if (id === 'overview' && this.showInfo) {
+      return true;
+    }
+    if (id === 'servers' && this.allowServerSelection) {
+      return true;
+    }
+    if (id === 'auth' && this.allowAuthentication) {
+      return true;
+    }
+    if (id.startsWith('tag--')) {
+      return this.resolvedSpec.tags?.find((tag) => tag.elementId === id);
+    }
+    return this.resolvedSpec.tags?.find((tag) => tag.paths.find((path) => path.elementId === id));
+  }
+
+  onIntersect(entries) {
+    if (this.isIntersectionObserverActive === false) {
+      return;
+    }
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0) {
+        const oldNavEl = this.shadowRoot.querySelector('.nav-bar-tag.active, .nav-bar-path.active, .nav-bar-info.active, .nav-bar-h1.active, .nav-bar-h2.active');
+        const newNavEl = this.shadowRoot.getElementById(`link-${entry.target.id}`);
+
+        // Add active class in the new element
+        if (newNavEl) {
+          window.history.replaceState(null, null, `${window.location.href.split('#')[0]}#${entry.target.id}`);
+          newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+          newNavEl.classList.add('active');
+        }
+        // Remove active class from previous element
+        if (oldNavEl) {
+          oldNavEl.classList.remove('active');
+        }
+      }
+    });
+  }
+
+  // Called by anchor tags created using markdown
+  handleHref(e) {
+    if (e.target.tagName.toLowerCase() === 'a') {
+      if (e.target.getAttribute('href').startsWith('#')) {
+        const gotoEl = this.shadowRoot.getElementById(e.target.getAttribute('href').replace('#', ''));
+        if (gotoEl) {
+          gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+      }
+    }
+  }
+
+  /**
+   * Called by
+   *  - onClick of Navigation Bar
+   *  - onClick of Advanced Search items
+   *
+   * Functionality:
+   *  1. First deactivate IntersectionObserver
+   *  2. Scroll to the element
+   *  3. Activate IntersectionObserver (after little delay)
+   *
+  */
+  async scrollToEventTarget(event, scrollNavItemToView = true) {
+    const navEl = event.currentTarget;
+    if (!navEl.dataset.contentId) {
+      return;
+    }
+    this.isIntersectionObserverActive = false;
+    this.scrollTo(navEl.dataset.contentId, true, scrollNavItemToView);
+    setTimeout(() => {
+      this.isIntersectionObserverActive = true;
+    }, 300);
+  }
+
+  // Public Method (scrolls to a given path and highlights the left-nav selection)
+  async scrollTo(elementId, expandPath = true, scrollNavItemToView = true) {
+    if (this.renderStyle === 'focused') {
+      // for focused mode update this.focusedElementId to update the rendering, else it wont find the needed html elements
+      // focusedElementId will get validated in the template
+      this.focusedElementId = elementId;
+      await sleep(0);
+    }
+    if (this.renderStyle === 'view') {
+      this.expandAndGotoOperation(elementId, expandPath, true);
+    } else {
+      let isValidElementId = false;
+      const contentEl = this.shadowRoot.getElementById(elementId);
+      if (contentEl) {
+        isValidElementId = true;
+        // ScrollIntoView is needed for read-mode and overview and tag section in focused-mode
+        if (this.renderStyle === 'read' || elementId.startsWith('overview') || elementId.startsWith('tag--')) {
+          contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+      } else {
+        isValidElementId = false;
+      }
+      if (isValidElementId) {
+        // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
+        if (this.renderStyle === 'focused') {
+          const requestEl = this.shadowRoot.querySelector('api-request');
+          if (requestEl) {
+            requestEl.resetRequestBodySelection();
+          }
+          const responseEl = this.shadowRoot.querySelector('api-response');
+          if (responseEl) {
+            responseEl.resetSelection();
+          }
+        }
+
+        // Update Location Hash
+        window.history.replaceState(null, null, `#${elementId}`);
+
+        // Update NavBar View and Styles
+        const newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
+
+        if (newNavEl) {
+          if (scrollNavItemToView) {
+            newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+          }
+          await sleep(0);
+          const oldNavEl = this.shadowRoot.querySelector('.nav-bar-tag.active, .nav-bar-path.active, .nav-bar-info.active, .nav-bar-h1.active, .nav-bar-h2.active');
+          if (oldNavEl) {
+            oldNavEl.classList.remove('active');
+          }
+          newNavEl.classList.add('active'); // must add the class after scrolling
+          // this.requestUpdate();
+        }
+      }
+    }
+  }
+
+  // Event handler for Advanced Search text-inputs and checkboxes
+  onAdvancedSearch(ev, delay) {
+    const eventTargetEl = ev.target;
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      let searchInputEl;
+      if (eventTargetEl.type === 'text') {
+        searchInputEl = eventTargetEl;
+      } else {
+        searchInputEl = eventTargetEl.closest('.advanced-search-options').querySelector('input[type=text]');
+      }
+      const searcOptions = [...eventTargetEl.closest('.advanced-search-options').querySelectorAll('input:checked')].map((v) => v.id);
+      this.advancedSearchMatches = advancedSearch(searchInputEl.value, this.resolvedSpec.tags, searcOptions);
+    }, delay);
+  }
+}
+customElements.define('openapi-explorer', RapiDoc);

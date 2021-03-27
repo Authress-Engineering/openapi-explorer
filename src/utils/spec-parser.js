@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import OpenApiParser from '@apitools/openapi-parser';
 import marked from 'marked';
-import { invalidCharsRegEx } from '~/utils/common-utils';
+import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '', allowDuplicatedPathsByTag = false) {
   let jsonParsedSpec;

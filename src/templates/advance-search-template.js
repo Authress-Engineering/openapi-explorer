@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import '~/components/dialog-box';
+import '../components/dialog-box';
 
 /* eslint-disable indent */
 export default function searchByPropertiesModalTemplate() {
