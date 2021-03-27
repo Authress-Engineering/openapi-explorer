@@ -45,7 +45,7 @@ export default class RapiDoc extends LitElement {
     return {
       // Heading
       headingText: { type: String, attribute: 'heading-text' },
-      gotoPath: { type: String, attribute: 'goto-path' },
+      explorerLocation: { type: String, attribute: 'explorer-location' },
 
       // Spec
       specUrl: { type: String, attribute: 'spec-url' },
@@ -497,9 +497,9 @@ export default class RapiDoc extends LitElement {
         // put it at the end of event-loop to load all the attributes
         window.setTimeout(async () => {
           await this.loadSpec(newVal);
-          // If goto-path is provided and no location-hash is present then try to scroll there
-          if (this.gotoPath && !window.location.hash) {
-            this.scrollTo(this.gotoPath);
+          // If the initial location is set, then attempt to scroll there
+          if (this.explorerLocation) {
+            this.scrollTo(this.explorerLocation);
           }
         }, 0);
       }
