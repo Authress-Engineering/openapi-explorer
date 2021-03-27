@@ -12,21 +12,21 @@ import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-csharp';
 
 // Styles
-import FontStyles from './styles/font-styles';
-import InputStyles from './styles/input-styles';
-import FlexStyles from './styles/flex-styles';
-import TableStyles from './styles/table-styles';
-import EndpointStyles from './styles/endpoint-styles';
-import PrismStyles from './styles/prism-styles';
-import TabStyles from './styles/tab-styles';
-import NavStyles from './styles/nav-styles';
-import InfoStyles from './styles/info-styles';
-import CustomStyles from './styles/custom-styles';
+import FontStyles from './src/styles/font-styles';
+import InputStyles from './src/styles/input-styles';
+import FlexStyles from './src/styles/flex-styles';
+import TableStyles from './src/styles/table-styles';
+import EndpointStyles from './src/styles/endpoint-styles';
+import PrismStyles from './src/styles/prism-styles';
+import TabStyles from './src/styles/tab-styles';
+import NavStyles from './src/styles/nav-styles';
+import InfoStyles from './src/styles/info-styles';
+import CustomStyles from './src/styles/custom-styles';
 import {
   advancedSearch, pathIsInSearch, sleep,
-} from './utils/common-utils';
-import ProcessSpec from './utils/spec-parser';
-import mainBodyTemplate from './templates/main-body-template';
+} from './src/utils/common-utils';
+import ProcessSpec from './src/utils/spec-parser';
+import mainBodyTemplate from './src/templates/main-body-template';
 
 export default class RapiDoc extends LitElement {
   constructor() {

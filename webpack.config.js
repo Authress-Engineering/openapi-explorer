@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.js',
+  entry: './openapi-explorer.js',
   devtool: 'cheap-module-source-map',
   output: {
     path: path.join(__dirname, 'dist'),
