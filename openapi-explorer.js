@@ -55,7 +55,7 @@ export default class RapiDoc extends LitElement {
 
       // UI Layouts
       layout: { type: String },
-      renderStyle: { type: String, attribute: 'render-style' },
+      responsive: { type: String },
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
       fillRequestFieldsWithExample: { type: String, attribute: 'fill-request-fields-with-example' },
@@ -395,7 +395,7 @@ export default class RapiDoc extends LitElement {
       fontWeight600.load().then((font) => { document.fonts.add(font); });
     }
 
-    if (!this.renderStyle || !'read, view, focused,'.includes(`${this.renderStyle},`)) { this.renderStyle = 'read'; }
+    this.renderStyle = this.responsive ? 'view' : 'focused';
     if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
     if (!this.theme || !'light, dark,'.includes(`${this.theme},`)) {
       this.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
@@ -472,13 +472,9 @@ export default class RapiDoc extends LitElement {
     return renderer;
   }
 
-  /* eslint-disable indent */
   render() {
-    // return render(mainBodyTemplate(this), this.shadowRoot, { eventContext: this });
     return mainBodyTemplate.call(this);
   }
-
-  /* eslint-enable indent */
 
   observeExpandedContent() {
     // Main Container
@@ -501,7 +497,8 @@ export default class RapiDoc extends LitElement {
         }, 0);
       }
     }
-    if (name === 'render-style') {
+    if (name === 'responsive') {
+      this.renderStyle = newVal ? 'view' : 'focused';
       if (newVal === 'read') {
         window.setTimeout(() => {
           this.observeExpandedContent();

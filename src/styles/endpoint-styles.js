@@ -70,6 +70,7 @@ export default css`
 }
 
 .m-endpoint .endpoint-body {
+  word-break: break-word;
   flex-wrap:wrap;
   padding:16px 0px 0 0px;
   border-width:0px 1px 1px 5px;
@@ -102,7 +103,7 @@ export default css`
 .summary .title{
   font-size:calc(var(--font-size-regular) + 2px);
   margin-bottom: 6px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .method{
@@ -138,10 +139,10 @@ export default css`
   flex-direction: column;
   border-top:1px solid var(--light-border-color);
 }
-.request,
-.response{
+.request, .response {
   flex:1; 
   min-height:100px;
+  max-width: 100%;
   padding:16px 8px;
   overflow:hidden;
 }

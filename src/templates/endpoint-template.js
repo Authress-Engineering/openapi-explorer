@@ -131,7 +131,7 @@ export default function endpointTemplate() {
       &nbsp;|&nbsp; 
       <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor:pointer;">Collapse all</span>
     </div>
-    ${this.resolvedSpec.tags.map((tag) => html`
+    ${(this.resolvedSpec?.tags || []).map((tag) => html`
     <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
     
       <div class='section-tag-header' @click="${() => { tag.expanded = !tag.expanded; this.requestUpdate(); }}">

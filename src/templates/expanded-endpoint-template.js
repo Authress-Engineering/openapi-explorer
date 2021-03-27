@@ -89,7 +89,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
 
 export default function expandedEndpointTemplate() {
   return html`
-  ${this.resolvedSpec.tags.map((tag) => html`
+  ${(this.resolvedSpec?.tags || []).map((tag) => html`
     <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="border-top:1px solid var(--primary-color);">
       <div class="title tag" part="label-tag-title">${tag.name}</div>
       <slot name="${tag.elementId}"></slot>
