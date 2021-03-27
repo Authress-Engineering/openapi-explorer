@@ -56,7 +56,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ### Mutate request and responses
 ```js
 requestInterceptor(event) {
-  Object.assign(event.detail.request.options.headers, { Authorization: this.userJwt });
+  Object.assign(event.detail.request.options.headers, { Authorization: `Bearer ${userToken}` });
 },
 responseInterceptor(event) {
   if (event.detail.response?.status === 401) {
