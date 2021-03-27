@@ -75,7 +75,6 @@ export default class RapiDoc extends LitElement {
       oauthReceiver: { type: String, attribute: 'oauth-redirect-url' },
 
       // Hide/Show Sections & Enable Disable actions
-      showHeader: { type: String, attribute: 'show-header' },
       showSideNav: { type: String, attribute: 'show-side-nav' },
       showInfo: { type: String, attribute: 'show-info' },
       allowAuthentication: { type: String, attribute: 'show-authentication' },
