@@ -102,5 +102,26 @@ npm install
 npm run build 
 ```
 
+### Troubleshooting integration issues
+
+```
+error  in ./node_modules/openapi-explorer/src/index.js
+
+Module parse failed: Unexpected token (634:46)
+You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
+| 
+|     // On first time Spec load, try to navigate to location hash if provided
+>     const locationHash = window.location.hash?.substring(1);
+|     if (locationHash) {
+|       if (this.renderStyle === 'view') {
+```
+The library includes `?.` (@babel/plugin-proposal-optional-chaining), install this package and include the module `openapi-explorer` in your list of packages to transpile. In vue, add this to the `vue.config.js` configuration:
+```js
+module.exports = {
+  transpileDependencies: ['openapi-explorer']
+};
+```
+
+
 ## Contribution
 [Contributions Guide](./CONTRIBUTING.md)

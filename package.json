@@ -26,10 +26,11 @@
     "openapi themes",
     "swagger themes"
   ],
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "main": "dist/openapi-explorer.min.js",
+  "module": "dist/openapi-explorer.min.js",
   "files": [
-    "src", "dist"
+    "src", "dist",
+    "openapi-explorer.js"
   ],
   "mode": "production",
   "dependencies": {
