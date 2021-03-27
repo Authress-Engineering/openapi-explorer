@@ -7,7 +7,6 @@ import overviewTemplate from './overview-template';
 import endpointTemplate from './endpoint-template';
 import serverTemplate from './server-template';
 import securitySchemeTemplate from './security-scheme-template';
-import headerTemplate from './header-template';
 import navbarTemplate from './navbar-template';
 import advancedSearchTemplate from './advance-search-template';
 import SetTheme from '../utils/theme';
@@ -29,9 +28,6 @@ export default function mainBodyTemplate() {
   /* eslint-disable indent */
   return html`
     ${this.theme === 'dark' ? SetTheme.call(this, 'dark', newTheme) : SetTheme.call(this, 'light', newTheme)}
-
-    <!-- Header -->
-    ${this.showHeader === 'false' ? '' : headerTemplate.call(this)}
     
     <!-- Advanced Search -->
     ${this.allowAdvancedSearch === 'false' ? '' : advancedSearchTemplate.call(this)}

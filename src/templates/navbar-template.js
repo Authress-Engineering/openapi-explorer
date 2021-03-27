@@ -39,9 +39,6 @@ function onExpandCollapseAll(e, action = 'expand-all') {
 export default function navbarTemplate() {
   return html`
   <nav class='nav-bar ${this.renderStyle}' part="section-navbar">
-    <div style="padding:16px 30px 0 16px;">
-      <slot name="nav-logo" class="logo"></slot>
-    </div>
     ${(this.allowSearch === 'false' && this.allowAdvancedSearch === 'false')
       ? ''
       : html`

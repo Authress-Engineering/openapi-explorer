@@ -38,10 +38,10 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         ${path.isWebhook ? html`<span style="color:var(--primary-color)"> WEBHOOK </span>` : ''}
         <span part="label-operation-method" class='regular-font upper method-fg bold-text ${path.method}'>${path.method}</span> 
         <span part="label-operation-path">${path.path}</span>
-      </div>
-      <slot name="${path.elementId}"></slot>`
+      </div>`
     }
     ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
+    <slot name="${path.elementId}"></slot>
     ${pathSecurityTemplate.call(this, path.security)}
     ${codeSampleTabPanel}
     <div class='expanded-req-resp-container'>
