@@ -98,16 +98,6 @@ onSpecLoaded(data) {
 ## Examples
 [Examples and Test cases](https://rhosys.github.io/openapi-explorer/list.html)
 
-
-## Build Process
-```bash
-# Clone / Download the project then
-npm install
-
-# build will generate openapi-explorer.min.js
-npm run build 
-```
-
 ### Troubleshooting integration issues
 
 ```
@@ -131,3 +121,16 @@ module.exports = {
 
 ## Contribution
 [Contributions Guide](./CONTRIBUTING.md)
+
+```bash
+# Clone / Download the project then
+git clone
+
+## Pull in dependencies (yarn does not work)
+npm install
+
+# build will generate dist/openapi-explorer.min.js
+npm run build 
+
+import 'openapi-explorer';
+```
