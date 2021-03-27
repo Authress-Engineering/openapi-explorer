@@ -6,7 +6,7 @@ import '~/components/api-response';
 import codeSamplesTemplate from '~/templates/code-samples-template';
 import callbackTemplate from '~/templates/callback-template';
 import { pathSecurityTemplate } from '~/templates/security-scheme-template';
-import { pathIsInSearch, rapidocApiKey } from '~/utils/common-utils';
+import { pathIsInSearch } from '~/utils/common-utils';
 
 function toggleExpand(path) {
   if (path.expanded) {

@@ -1002,7 +1002,6 @@ export default class ApiRequest extends LitElement {
 
     // Add Authentication Header if provided
     this.api_keys
-      .filter((v) => (v.in === 'header'))
       .forEach((v) => {
         fetchOptions.headers[v.name] = v.finalKeyValue;
         curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
