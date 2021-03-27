@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 import OpenApiParser from '@apitools/openapi-parser';
 import marked from 'marked';
-import { invalidCharsRegEx, rapidocApiKey } from '~/utils/common-utils';
+import { invalidCharsRegEx } from '~/utils/common-utils';
 
-export default async function ProcessSpec(specUrl, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '') {
+export default async function ProcessSpec(specUrl, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
   let jsonParsedSpec;
   try {
     let specMeta;
@@ -47,19 +47,6 @@ export default async function ProcessSpec(specUrl, generateMissingTags = false, 
         securityObj.clientSecret = '';
       }
       securitySchemes.push(securityObj);
-    });
-  }
-
-  if (attrApiKey && attrApiKeyLocation && attrApiKeyValue) {
-    securitySchemes.push({
-      apiKeyId: rapidocApiKey,
-      description: 'api-key provided in rapidoc element attributes',
-      type: 'apiKey',
-      oAuthFlow: '',
-      name: attrApiKey,
-      in: attrApiKeyLocation,
-      value: attrApiKeyValue,
-      finalKeyValue: attrApiKeyValue,
     });
   }
 

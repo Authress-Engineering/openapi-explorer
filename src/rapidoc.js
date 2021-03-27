@@ -24,7 +24,7 @@ import InfoStyles from '~/styles/info-styles';
 import CustomStyles from '~/styles/custom-styles';
 // import { expandCollapseNavBarTag } from '@/templates/navbar-template';
 import {
-  advancedSearch, pathIsInSearch, rapidocApiKey, sleep,
+  advancedSearch, pathIsInSearch, sleep,
 } from '~/utils/common-utils';
 import ProcessSpec from '~/utils/spec-parser';
 import mainBodyTemplate from '~/templates/main-body-template';
@@ -70,9 +70,6 @@ export default class RapiDoc extends LitElement {
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
 
       // API Server
-      apiKeyName: { type: String, attribute: 'api-key-name' },
-      apiKeyLocation: { type: String, attribute: 'api-key-location' },
-      apiKeyValue: { type: String, attribute: 'api-key-value' },
       defaultApiServerUrl: { type: String, attribute: 'default-api-server' },
       serverUrl: { type: String, attribute: 'server-url' },
       oauthReceiver: { type: String, attribute: 'oauth-receiver' },
@@ -429,9 +426,6 @@ export default class RapiDoc extends LitElement {
     if (!this.allowAdvancedSearch || !'true, false,'.includes(`${this.allowAdvancedSearch},`)) { this.allowAdvancedSearch = 'true'; }
 
     if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
-    if (!this.apiKeyValue) { this.apiKeyValue = '-'; }
-    if (!this.apiKeyLocation) { this.apiKeyLocation = 'header'; }
-    if (!this.apiKeyName) { this.apiKeyName = ''; }
 
     if (!this.oauthReceiver) { this.oauthReceiver = 'oauth-receiver.html'; }
     if (!this.sortTags || !'true, false,'.includes(`${this.sortTags},`)) { this.sortTags = 'false'; }
@@ -519,58 +513,6 @@ export default class RapiDoc extends LitElement {
         this.intersectionObserver.disconnect();
       }
     }
-    if (name === 'api-key-name' || name === 'api-key-location' || name === 'api-key-value') {
-      let updateSelectedApiKey = false;
-      let apiKeyName = '';
-      let apiKeyLocation = '';
-      let apiKeyValue = '';
-
-      if (name === 'api-key-name') {
-        if (this.getAttribute('api-key-location') && this.getAttribute('api-key-value')) {
-          apiKeyName = newVal;
-          apiKeyLocation = this.getAttribute('api-key-location');
-          apiKeyValue = this.getAttribute('api-key-value');
-          updateSelectedApiKey = true;
-        }
-      } else if (name === 'api-key-location') {
-        if (this.getAttribute('api-key-name') && this.getAttribute('api-key-value')) {
-          apiKeyLocation = newVal;
-          apiKeyName = this.getAttribute('api-key-name');
-          apiKeyValue = this.getAttribute('api-key-value');
-          updateSelectedApiKey = true;
-        }
-      } else if (name === 'api-key-value') {
-        if (this.getAttribute('api-key-name') && this.getAttribute('api-key-location')) {
-          apiKeyValue = newVal;
-          apiKeyLocation = this.getAttribute('api-key-location');
-          apiKeyName = this.getAttribute('api-key-name');
-          updateSelectedApiKey = true;
-        }
-      }
-
-      if (updateSelectedApiKey) {
-        if (this.resolvedSpec) {
-          const rapiDocApiKey = this.resolvedSpec.securitySchemes.find((v) => v.apiKeyId === rapidocApiKey);
-          if (!rapiDocApiKey) {
-            this.resolvedSpec.securitySchemes.push({
-              apiKeyId: rapidocApiKey,
-              description: 'api-key provided in rapidoc element attributes',
-              type: 'apiKey',
-              name: apiKeyName,
-              in: apiKeyLocation,
-              value: apiKeyValue,
-              finalKeyValue: apiKeyValue,
-            });
-          } else {
-            rapiDocApiKey.name = apiKeyName;
-            rapiDocApiKey.in = apiKeyLocation;
-            rapiDocApiKey.value = apiKeyValue;
-            rapiDocApiKey.finalKeyValue = apiKeyValue;
-          }
-          this.requestUpdate();
-        }
-      }
-    }
     super.attributeChangedCallback(name, oldVal, newVal);
   }
 
@@ -648,9 +590,6 @@ export default class RapiDoc extends LitElement {
         this.generateMissingTags === 'true',
         this.sortTags === 'true',
         this.getAttribute('sort-endpoints-by'),
-        this.getAttribute('api-key-name'),
-        this.getAttribute('api-key-location'),
-        this.getAttribute('api-key-value'),
         this.getAttribute('server-url'),
       );
       this.loading = false;

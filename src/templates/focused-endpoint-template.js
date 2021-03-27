@@ -26,7 +26,7 @@ function wrapFocusedTemplate(templateToWrap) {
 function defaultContentTemplate() {
   // In focused mode default content is overview or first path
   if (this.showInfo === 'true') {
-    return wrapFocusedTemplate(overviewTemplate.call(this));
+    return overviewTemplate.call(this);
   }
   const selectedTagObj = this.resolvedSpec.tags[0];
   const selectedPathObj = this.resolvedSpec.tags[0]?.paths[0];

@@ -27,12 +27,6 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
   // Filter API Keys that are non-empty and are applicable to the the path
   const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security?.some((ps) => (v.apiKeyId in ps)))) || [];
 
-  // If a RapiDoc API Key is specified on the element and its value is not hyphen(-) then include it for all paths
-  const rapiDocApiKey = this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === rapidocApiKey && v.value !== '-'));
-  if (rapiDocApiKey) {
-    nonEmptyApiKeys.push(rapiDocApiKey);
-  }
-
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate.call(this, path.xCodeSamples) : '';
   return html`
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
