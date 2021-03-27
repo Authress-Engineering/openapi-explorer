@@ -51,7 +51,43 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 
 
 ## Documentation
-[Check out the usage and demos](https://rhosys.github.io/openapi-explorer/)
+<!--[Check out the usage and demos](https://rhosys.github.io/openapi-explorer/)-->
+
+### Mutate request and responses
+```js
+requestInterceptor(event) {
+  Object.assign(event.detail.request.options.headers, { Authorization: this.userJwt });
+},
+responseInterceptor(event) {
+  if (event.detail.response?.status === 401) {
+    this.enableSignupModal = true;
+  }
+}
+```
+
+### Dynamically update spec example
+The user's id into the specification property to be used automatically in the UI
+```js
+onSpecLoaded(data) {
+  const updateTag = tag => {
+    const picker = value => {
+      if (!value || typeof value !== 'object') {
+        return value;
+      }
+
+      if (value.name === 'userId') {
+        value.schema = Object.assign({ default: userId }, value.schema);
+        return value;
+      }
+
+      return undefined;
+    };
+    return lodash.cloneDeepWith(tag, picker);
+  };
+
+  data.detail.tags = data.detail.tags.map(tag => updateTag(tag));
+}
+```
 
 ## Examples
 [Examples and Test cases](https://rhosys.github.io/openapi-explorer/list.html)
