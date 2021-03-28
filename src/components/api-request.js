@@ -295,13 +295,13 @@ export default class ApiRequest extends LitElement {
         }
         ${this.renderStyle === 'focused'
           ? html`
-            <td colspan="${(this.allowTry === 'true') ? '2' : '2'}">
+            <td colspan="${(this.allowTry === 'true') ? '1' : '2'}">
               ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
                     ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
                     ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
-                    ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraint: </span>${paramSchema.constrain}<br/>` : ''}
+                    ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
