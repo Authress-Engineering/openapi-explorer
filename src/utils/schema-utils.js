@@ -674,7 +674,7 @@ export function generateExample(examples, example, schema, mimeType, includeRead
           if (mimeType.toLowerCase().includes('xml')) {
             exampleValue = `${xmlRootStart}${json2xml(samples[samplesKey])}\n${xmlRootEnd}`;
           } else {
-            exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 2) : samples[samplesKey];
+            exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 8) : samples[samplesKey];
           }
 
           finalExamples.push({

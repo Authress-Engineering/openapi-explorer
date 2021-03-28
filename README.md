@@ -59,6 +59,16 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ## Documentation
 <!--[Check out the usage and demos](https://rhosys.github.io/openapi-explorer/)-->
 
+### CSS variables
+
+* Font override example (default set to page fonts)
+```css
+openapi-explorer {
+  --font-mono: Monaco, "Andale Mono", "Roboto Mono", Consolas, monospace;
+  --font-regular: "Open Sans", Avenir, "Segoe UI", Arial, sans-serif;
+}
+```
+
 ### Mutate request and responses
 ```js
 requestInterceptor(event) {
