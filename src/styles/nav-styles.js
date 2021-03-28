@@ -59,6 +59,9 @@ export default css`
   text-align: center;
   display: inline-block;
 }
+.nav-bar.focused, .nav-scroll {
+  border-top: 1px solid var(--nav-accent-color);
+}
 .nav-scroll::-webkit-scrollbar {
   width: 10px;
 }
@@ -127,7 +130,8 @@ export default css`
 .nav-bar-tag.active,
 .nav-bar-path.active {
   border-left:4px solid var(--nav-accent-color);
-  color:var(--nav-accent-color);
+  color: var(--nav-accent-color);
+  background-color: var(--nav-hover-bg-color);
 }
 
 .nav-bar-h1:hover,
