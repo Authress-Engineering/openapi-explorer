@@ -85,11 +85,7 @@ export function getTypeInfo(schema) {
 }
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName) {
-  const example = schemaObj.examples
-    ? schemaObj.examples[0]
-    : schemaObj.example
-      ? schemaObj.example
-      : undefined;
+  const example = schemaObj.examples ? schemaObj.examples[0] : (schemaObj.example ? schemaObj.example : undefined);
   if (example === '') { return ''; }
   if (example === null) { return null; }
   if (example === 0) { return 0; }
@@ -125,6 +121,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   if (typeValue.match(/^null/g)) { return null; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
+    // TODO: https://github.com/wimpyprogrammer/regex-to-strings#readme
     if (schemaObj.pattern) { return fallbackPropertyName || 'string'; }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {
