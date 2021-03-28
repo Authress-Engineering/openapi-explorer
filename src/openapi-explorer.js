@@ -275,7 +275,6 @@ export default class RapiDoc extends LitElement {
       }
 
       .tooltip {
-        cursor:pointer;
         border: 1px solid var(--border-color);
         border-left-width: 4px;
         margin-left:2px;

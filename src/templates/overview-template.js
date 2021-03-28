@@ -15,39 +15,40 @@ export default function overviewTemplate() {
       class="observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}">
       ${this.resolvedSpec?.info
         ? html`
-          <div id="api-title" part="label-overview-title" style="font-size:32px">
-            ${this.resolvedSpec.info.title}
-            ${!this.resolvedSpec.info.version ? '' : html`
-              <span style = 'font-size:var(--font-size-small);font-weight:bold'>
-                ${this.resolvedSpec.info.version}
-              </span>`
-            }
-          </div>
-          <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;">
-            ${this.resolvedSpec.info.contact?.email
-              ? html`<span>${this.resolvedSpec.info.contact.name || 'Email'}: 
-                <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
-              </span>`
-              : ''
-            }
-            ${this.resolvedSpec.info.contact?.url
-              ? html`<span>URL: <a href="${this.resolvedSpec.info.contact.url}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.url}</a></span>`
-              : ''
-            }
-            ${this.resolvedSpec.info.license
-              ? html`<span>License: 
-                ${this.resolvedSpec.info.license.url
-                ? html`<a href="${this.resolvedSpec.info.license.url}" part="anchor anchor-overview">${this.resolvedSpec.info.license.name}</a>`
-                : this.resolvedSpec.info.license.name
-              } </span>`
-              : ''
-            }
-            ${this.resolvedSpec.info.termsOfService
-              ? html`<span><a href="${this.resolvedSpec.info.termsOfService}" part="anchor anchor-overview">Terms of Service</a></span>`
-              : ''
-            }
-          </div>
-          <slot name="overview"></slot>
+          <slot name="overview">
+            <div id="api-title" part="label-overview-title" style="font-size:32px">
+              ${this.resolvedSpec.info.title}
+              ${!this.resolvedSpec.info.version ? '' : html`
+                <span style = 'font-size:var(--font-size-small);font-weight:bold'>
+                  ${this.resolvedSpec.info.version}
+                </span>`
+              }
+            </div>
+            <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;">
+              ${this.resolvedSpec.info.contact?.email
+                ? html`<span>${this.resolvedSpec.info.contact.name || 'Email'}: 
+                  <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
+                </span>`
+                : ''
+              }
+              ${this.resolvedSpec.info.contact?.url
+                ? html`<span>URL: <a href="${this.resolvedSpec.info.contact.url}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.url}</a></span>`
+                : ''
+              }
+              ${this.resolvedSpec.info.license
+                ? html`<span>License: 
+                  ${this.resolvedSpec.info.license.url
+                  ? html`<a href="${this.resolvedSpec.info.license.url}" part="anchor anchor-overview">${this.resolvedSpec.info.license.name}</a>`
+                  : this.resolvedSpec.info.license.name
+                } </span>`
+                : ''
+              }
+              ${this.resolvedSpec.info.termsOfService
+                ? html`<span><a href="${this.resolvedSpec.info.termsOfService}" part="anchor anchor-overview">Terms of Service</a></span>`
+                : ''
+              }
+            </div>
+          </slot>
           <div id="api-description">
           ${this.resolvedSpec.info.description
             ? html`${
