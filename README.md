@@ -22,6 +22,9 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
   <img src="./docs/desktop-view.png" alt="Desktop demo image" width="800px">
 </p>
 
+## Check out the Demo
+[OpenAPI Explorer Demo](https://authress.io/app/#get-/v1/users/-userId-/resources)
+
 ## Get started now
 `npm i openapi-explorer`
 
