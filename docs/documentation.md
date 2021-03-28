@@ -87,25 +87,28 @@ responseInterceptor(event) {
 
 ### Slots
 ```html
-<slot name="overview">
+<div name="overview">
     <h1>Overview</h1>
     <div>Replaces the overview section</div>
-</slot>
+</div>
 
-<slot name="authentication">
+<div name="authentication">
     <h1>Authentication</h1>
     <div>Replaces the authentication section</div>
-</slot>
+</div>
 
-<slot name="servers">
+<div name="servers">
     <h1>Servers</h1>
     <div>Replaces the servers section</div>
-</slot>
+</div>
 
-<slot :name="${method}-${sanitizedPath}">
+<div :name="${method}-${sanitizedPath}">
     <h1>Path Info</h1>
     <div>Additional method/path related information</div>
-</slot>
+</div>
+
+<!-- Hide a tag from navigation -->
+<div div="nav-tag--${tagName}"></div>
 
 ```
 
