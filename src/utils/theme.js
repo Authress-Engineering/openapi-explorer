@@ -195,7 +195,7 @@ export default function setTheme(baseTheme, theme = {}) {
   :host {
     /* Common Styles - irrespective of themes */  
     --border-radius: 2px;
-    --layout: ${this.layout || 'row'};
+    --layout: ${this.layout || 'column'};
     --nav-item-padding: ${this.navItemSpacing === 'relaxed' ? '10px' : (this.navItemSpacing === 'compact' ? '5px 10px' : '7px 10px')};
     --resp-area-height: ${this.responseAreaHeight};
     --font-size-small:  ${this.fontSize === 'default' ? '12px' : (this.fontSize === 'large' ? '13px' : '14px')};

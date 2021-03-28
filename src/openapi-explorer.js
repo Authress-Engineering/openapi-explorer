@@ -58,7 +58,7 @@ export default class RapiDoc extends LitElement {
       responsive: { type: String },
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
-      fillRequestFieldsWithExample: { type: String, attribute: 'fill-request-fields-with-example' },
+      fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
       onNavTagClick: { type: String, attribute: 'on-nav-tag-click' },
 
       // Schema Styles
@@ -77,7 +77,7 @@ export default class RapiDoc extends LitElement {
       showSideNav: { type: String, attribute: 'show-side-nav' },
       showInfo: { type: String, attribute: 'show-info' },
       allowAuthentication: { type: String, attribute: 'show-authentication' },
-      allowTry: { type: String, attribute: 'allow-try' },
+      allowTry: { type: String, attribute: 'enable-console' },
       allowSpecUrlLoad: { type: String, attribute: 'allow-spec-url-load' },
       allowSpecFileLoad: { type: String, attribute: 'allow-spec-file-load' },
       allowSearch: { type: String, attribute: 'allow-search' },
@@ -376,7 +376,7 @@ export default class RapiDoc extends LitElement {
     }
     if (!this.defaultSchemaTab || !'example, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
-    if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'false'; }
+    if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'true'; }
     const writeMethodsWithBody = ['post', 'put', 'patch'];
     if (!this.schemaHideReadOnly) {
       this.schemaHideReadOnly = writeMethodsWithBody;
@@ -388,7 +388,7 @@ export default class RapiDoc extends LitElement {
     }
     this.schemaHideReadOnly += ['get', 'head', 'delete', 'options'];
     this.schemaHideWriteOnly = this.schemaHideWriteOnly !== 'never';
-    if (!this.fillRequestFieldsWithExample || !'true, false,'.includes(`${this.fillRequestFieldsWithExample},`)) { this.fillRequestFieldsWithExample = 'true'; }
+    if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }
     if (!this.onNavTagClick || !'expand-collapse, show-description,'.includes(`${this.onNavTagClick},`)) { this.onNavTagClick = 'expand-collapse'; }
     if (!this.responseAreaHeight) {
       this.responseAreaHeight = '300px';
@@ -591,8 +591,7 @@ export default class RapiDoc extends LitElement {
       }
     }
     this.requestUpdate();
-    const specLoadedEvent = new CustomEvent('spec-loaded', { detail: spec });
-    this.dispatchEvent(specLoadedEvent);
+    this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
 
     // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
     this.intersectionObserver.disconnect();

@@ -12,7 +12,7 @@
 <script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const docEl = document.getElementById('thedoc');
-    docEl.addEventListener('before-try', (e) => {
+    docEl.addEventListener('request', (e) => {
       e.detail.request.headers.append('AAA-BBB', 'CCC DDDD');
     });
   });
