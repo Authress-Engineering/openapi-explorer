@@ -112,7 +112,6 @@ export default class RapiDoc extends LitElement {
 
       // Internal Properties
       loading: { type: Boolean }, // indicates spec is being loaded
-      focusedElementId: { type: String }, // updating the focusedElementId will automatically render appropriate section in focused mode
       showAdvancedSearchDialog: { type: Boolean },
       advancedSearchMatches: { type: Object },
     };
@@ -603,7 +602,7 @@ export default class RapiDoc extends LitElement {
     }
 
     // On first time Spec load, try to navigate to location hash if provided
-    const locationHash = window.location.hash?.substring(1);
+    const locationHash = this.explorerLocation;
     if (locationHash) {
       if (this.renderStyle === 'view') {
         this.expandAndGotoOperation(locationHash, true, true);
@@ -732,9 +731,8 @@ export default class RapiDoc extends LitElement {
   // Public Method (scrolls to a given path and highlights the left-nav selection)
   async scrollTo(elementId, expandPath = true, scrollNavItemToView = true) {
     if (this.renderStyle === 'focused') {
-      // for focused mode update this.focusedElementId to update the rendering, else it wont find the needed html elements
-      // focusedElementId will get validated in the template
-      this.focusedElementId = elementId;
+      // explorerLocation will get validated in the focused-endpoint-template
+      this.explorerLocation = elementId;
       await sleep(0);
     }
     if (this.renderStyle === 'view') {

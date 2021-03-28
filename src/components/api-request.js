@@ -509,7 +509,7 @@ export default class ApiRequest extends LitElement {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
             <schema-table
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}'
+              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
@@ -523,7 +523,7 @@ export default class ApiRequest extends LitElement {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
             <schema-tree
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}'
+              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"

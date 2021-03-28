@@ -55,10 +55,10 @@ function focusedTagBodyTemplate(tag) {
 }
 
 export default function focusedEndpointTemplate() {
-  if (!this.focusedElementId) {
+  if (!this.explorerLocation) {
     return;
   }
-  const focusElId = this.focusedElementId;
+  const focusElId = this.explorerLocation;
   let selectedPathObj = null;
   let selectedTagObj = null;
   let focusedTemplate;
@@ -93,7 +93,7 @@ export default function focusedEndpointTemplate() {
       expandCollapseNavBarTag(newNavEl, 'expand');
       focusedTemplate = wrapFocusedTemplate.call(this, expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name));
     } else {
-      // if focusedElementId is not found then show the default content (overview or first-path)
+      // if explorerLocation is not found then show the default content (overview or first-path)
       focusedTemplate = defaultContentTemplate.call(this);
     }
   }
