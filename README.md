@@ -58,10 +58,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 
 
 ## Documentation
-[Check out the usage and list of properties and variables](./docs/documentation.md)
-
-## Examples
-[Examples and Test cases](https://rhosys.github.io/openapi-explorer/list.html)
+[Property and variables documentation](./docs/documentation.md)
 
 ### Troubleshooting integration issues
 
