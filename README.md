@@ -1,3 +1,8 @@
+# OpenAPI Explorer
+Web Component Custom Element for Open-API spec viewing, with automatic integration for React and Vue.
+
+_(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and provides a cleaner skimmed down version of the functionality which works out of the box!)_
+
 <p align="center">
     <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square">
     <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">-->
@@ -8,12 +13,8 @@
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
         <img src="https://img.shields.io/badge/webcomponents.org-OpenAPI%20Explorer-blue.svg?style=social">
     </a>
-</p>        
+</p>
 
-# OpenAPI Explorer
-Web Component Custom Element for Open-API spec viewing, with automatic integration for React and Vue.
-
-_(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and provides a cleaner skimmed down version of the functionality which works out of the box!)_
 
 ## Beautiful and responsive API explorer and console
 
