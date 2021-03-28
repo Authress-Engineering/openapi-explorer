@@ -50,7 +50,7 @@ export default class JsonTree extends LitElement {
         border: 1px solid var(--border-color);
       }
       .inside-bracket{
-        padding-left:12px;
+        padding-left:16px;
         border-left:1px dotted var(--border-color);
       }
       .open-bracket.collapsed + .inside-bracket,

@@ -462,11 +462,11 @@ export default class ApiRequest extends LitElement {
                     part = "textarea textarea-param"
                     spellcheck = "false"
                     data-ptype = "${reqBody.mimeType}" 
-                    data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2)}"
+                    data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
                     data-default-format = "${v.exampleFormat}"
                     style="width:100%; resize:vertical;"
                   >${this.fillRequestFieldsWithExample === 'true'
-                      ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2))
+                      ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))
                       : ''
                     }</textarea>
                   <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
@@ -475,7 +475,7 @@ export default class ApiRequest extends LitElement {
                     spellcheck = "false"
                     data-ptype = "${reqBody.mimeType}" 
                     style="width:100%; resize:vertical; display:none"
-                  >${(v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 2))}</textarea>
+                  >${(v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))}</textarea>
                 </div>  
               `)}
 
@@ -1168,13 +1168,13 @@ export default class ApiRequest extends LitElement {
               respText = new TextDecoder('utf-8').decode(buffer);
             }
             try {
-              this.responseText = JSON.stringify(JSON.parse(respText), null, 2);
+              this.responseText = JSON.stringify(JSON.parse(respText), null, 8);
             } catch {
               this.responseText = respText;
             }
           } else {
             respJson = await fetchResponse.json();
-            this.responseText = JSON.stringify(respJson, null, 2);
+            this.responseText = JSON.stringify(respJson, null, 8);
           }
         } else if (RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$').test(contentType)) {
           this.responseIsBlob = true;

@@ -139,8 +139,9 @@ export default class SchemaTree extends LitElement {
       keyLabel = key;
     }
 
-    const leftPadding = 12;
-    const minFieldColWidth = 400 - (indentLevel * leftPadding);
+    const leftPadding = 16;
+    // Min-width used for model keys: `td key `
+    const minFieldColWidth = 250 - (indentLevel * leftPadding);
     let openBracket = '';
     let closeBracket = '';
     const newSchemaLevel = data['::type']?.startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
