@@ -47,8 +47,8 @@ export default class ApiRequest extends LitElement {
       responseHeaders: { type: String, attribute: false },
       responseStatus: { type: String, attribute: false },
       responseUrl: { type: String, attribute: false },
-      fillRequestFieldsWithExample: { type: String, attribute: 'fill-request-fields-with-example' },
-      allowTry: { type: String, attribute: 'allow-try' },
+      fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
+      allowTry: { type: String, attribute: 'enable-console' },
       renderStyle: { type: String, attribute: 'render-style' },
       schemaStyle: { type: String, attribute: 'schema-style' },
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
@@ -278,7 +278,7 @@ export default class ApiRequest extends LitElement {
                       data-param-serialize-explode = "${paramExplode}"
                       spellcheck = "false"
                       style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
-                    >${this.fillRequestFieldsWithExample === 'true' ? defaultVal : ''}</textarea>`
+                    >${this.fillRequestWithDefault === 'true' ? defaultVal : ''}</textarea>`
                   : html`
                     <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" 
                       class="request-param"
@@ -287,7 +287,7 @@ export default class ApiRequest extends LitElement {
                       data-pname="${param.name}" 
                       data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
                       data-array="false"
-                      .value="${this.fillRequestFieldsWithExample === 'true' ? defaultVal : ''}"
+                      .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
                     />`
                 }
             </td>`
@@ -460,7 +460,7 @@ export default class ApiRequest extends LitElement {
                     data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
                     data-default-format = "${v.exampleFormat}"
                     style="width:100%; resize:vertical;"
-                  >${this.fillRequestFieldsWithExample === 'true'
+                  >${this.fillRequestWithDefault === 'true'
                       ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))
                       : ''
                     }</textarea>
@@ -676,7 +676,7 @@ export default class ApiRequest extends LitElement {
                           data-pname = "${fieldName}"
                           data-default = "${formdataPartExample[0]?.exampleValue || ''}"
                           spellcheck = "false"
-                        >${this.fillRequestFieldsWithExample === 'true' ? formdataPartExample[0].exampleValue : ''}</textarea>
+                        >${this.fillRequestWithDefault === 'true' ? formdataPartExample[0].exampleValue : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
                         <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${formdataPartExample[0].exampleValue}</textarea>
                       </div>`
@@ -685,7 +685,7 @@ export default class ApiRequest extends LitElement {
                   : html`
                     ${this.allowTry === 'true'
                       ? html`<input
-                          .value = "${this.fillRequestFieldsWithExample === 'true' ? (fieldSchema.example || '') : ''}"
+                          .value = "${this.fillRequestWithDefault === 'true' ? (fieldSchema.example || '') : ''}"
                           spellcheck = "false"
                           type = "${fieldSchema.format === 'binary' ? 'file' : fieldSchema.format === 'password' ? 'password' : 'text'}"
                           part = "textbox textbox-param"
@@ -1159,6 +1159,7 @@ export default class ApiRequest extends LitElement {
       },
     };
     this.dispatchEvent(new CustomEvent('before-try', event));
+    this.dispatchEvent(new CustomEvent('request', event));
     const fetchRequestObject = new Request(fetchUrl, fetchOptions);
 
     let fetchResponse;
@@ -1223,7 +1224,7 @@ export default class ApiRequest extends LitElement {
         respText = await fetchResponse.text();
         this.responseText = respText;
       }
-      this.dispatchEvent(new CustomEvent('after-try', {
+      const responseEvent = {
         bubbles: true,
         composed: true,
         detail: {
@@ -1234,18 +1235,22 @@ export default class ApiRequest extends LitElement {
             status: fetchResponse.status,
           },
         },
-      }));
+      };
+      this.dispatchEvent(new CustomEvent('after-try', responseEvent));
+      this.dispatchEvent(new CustomEvent('response', responseEvent));
     } catch (error) {
       tryBtnEl.disabled = false;
       this.responseMessage = `${error.message} (CORS or Network Issue)`;
-      document.dispatchEvent(new CustomEvent('after-try', {
+      const responseEvent = {
         bubbles: true,
         composed: true,
         detail: {
           error,
           request: fetchRequest,
         },
-      }));
+      };
+      document.dispatchEvent(new CustomEvent('after-try', responseEvent));
+      document.dispatchEvent(new CustomEvent('response', responseEvent));
     }
   }
 
