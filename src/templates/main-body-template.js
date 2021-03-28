@@ -13,6 +13,9 @@ import SetTheme from '../utils/theme';
 import { isValidHexColor } from '../utils/color-utils';
 
 export default function mainBodyTemplate() {
+  if (!this.resolvedSpec) {
+    return;
+  }
   const newTheme = {
     bg1: isValidHexColor(this.bgColor) ? this.bgColor : '',
     fg1: isValidHexColor(this.textColor) ? this.textColor : '',

@@ -33,6 +33,9 @@ export default css`
   overflow: hidden;
   display: none;
 }
+.toolbar {
+  display: none;
+}
 .expanded-descr .key-descr{
   max-height:auto;
   overflow:hidden;
@@ -72,7 +75,6 @@ export default css`
 .enum {color:var(--purple)}
 .recu {color:var(--brown)}
 .toolbar {
-  display:flex;
   width:100%;
   padding: 2px 0;
   color:var(--primary-color);
@@ -98,6 +100,9 @@ export default css`
 @media only screen and (min-width: 500px) {
   .key-descr {
     display: block;
+  }
+  .toolbar {
+    display: flex;
   }
   .expanded-descr .key-descr{
     display: block;

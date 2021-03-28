@@ -79,8 +79,11 @@ export default class ApiRequest extends LitElement {
       css`
         *, *:before, *:after { box-sizing: border-box; }
     
+        .focused-mode,
         .read-mode {
-          margin-top: 24px;
+          padding-top:24px;
+          margin-top:12px;
+          border-top: 1px dashed var(--border-color);
         }
         .param-name,
         .param-type {
@@ -514,7 +517,7 @@ export default class ApiRequest extends LitElement {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
             <schema-table
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}'
+              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
@@ -528,7 +531,7 @@ export default class ApiRequest extends LitElement {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
             <schema-tree
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}'
+              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"

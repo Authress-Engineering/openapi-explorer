@@ -127,7 +127,7 @@ export default css`
 .nav-bar-tag.active,
 .nav-bar-path.active {
   border-left:4px solid var(--nav-accent-color);
-  color:var(--nav-hover-text-color);
+  color:var(--nav-accent-color);
 }
 
 .nav-bar-h1:hover,
