@@ -1,6 +1,3 @@
-<img alt="Rhosys logo" src="https://rhosys.ch/assets/images/rhosys.png" width="200px" />
-
-
 <p align="center">
     <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square">
     <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">-->
