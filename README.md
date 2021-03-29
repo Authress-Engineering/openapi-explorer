@@ -80,6 +80,30 @@ module.exports = {
 };
 ```
 
+#### web component rendering issues in limited browsers
+Every browser should support the compiled library available here, in the rare case that it doesn't adding the following babel plugins will help:
+
+```sh
+npm install babel-config-transform-custom-element-classes @babel/plugin-transform-classes
+```
+
+And then include them in your `babel.config.js` (this a vue example):
+```js
+module.exports = {
+  presets: [
+    ['@vue/app', { useBuiltIns: 'entry', polyfills: [] }]
+  ],
+  plugins: [
+    'lodash',
+    '@babel/plugin-proposal-optional-chaining',
+    '@babel/plugin-proposal-nullish-coalescing-operator',
+    'transform-custom-element-classes',
+    '@babel/plugin-transform-classes'
+  ]
+};
+
+```
+
 
 ## Contribution
 [Contributions Guide](./CONTRIBUTING.md)
