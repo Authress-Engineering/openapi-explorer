@@ -29,7 +29,8 @@
   "main": "dist/openapi-explorer.min.js",
   "module": "dist/openapi-explorer.min.js",
   "files": [
-    "src", "dist"
+    "src",
+    "dist"
   ],
   "mode": "production",
   "dependencies": {

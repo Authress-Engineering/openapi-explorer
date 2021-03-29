@@ -27,7 +27,6 @@ export default css`
 
 .key-descr {
   font-family:var(--font-regular);
-  color:var(--light-fg);
   flex-shrink: 1;
   text-overflow: ellipsis;
   overflow: hidden;
