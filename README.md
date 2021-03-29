@@ -23,7 +23,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 </p>
 
 ## Check out the Demo
-[OpenAPI Explorer Demo](https://authress.io/app/#get-/v1/users/-userId-/resources)
+[OpenAPI Explorer Demo](https://authress.io/app/?utm_source=oae&utm_medium=github&utm_campaign=cross-link&utm_content=demo#get-/v1/users/-userId-/resources)
 
 ## Get started now
 `npm i openapi-explorer`
