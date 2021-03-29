@@ -60,7 +60,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ## Documentation
 [Property and variables documentation](./docs/documentation.md)
 
-### Troubleshooting integration issues
+## Troubleshooting integration issues
 
 ```
 error  in ./node_modules/openapi-explorer/src/index.js
