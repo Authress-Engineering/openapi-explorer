@@ -21,7 +21,6 @@ import PrismStyles from './styles/prism-styles';
 import TabStyles from './styles/tab-styles';
 import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
-import CustomStyles from './styles/custom-styles';
 import {
   advancedSearch, pathIsInSearch, sleep,
 } from './utils/common-utils';
@@ -155,7 +154,7 @@ export default class RapiDoc extends LitElement {
         display:block;
         flex:1;
         height:100%;
-        overflow-y: auto;
+        overflow-y: overlay;
         overflow-x: hidden;
         scrollbar-width: thin;
         scrollbar-color: var(--border-color) transparent;
