@@ -110,14 +110,6 @@ export default function setTheme(baseTheme, theme = {}) {
     const selectionFg = '#eee';
 
     const headerColor = theme.headerColor ? theme.headerColor : ColorUtils.color.brightness(bg1, -180);
-
-    /*
-    const navBgColor = theme.navBgColor ? theme.navBgColor : ColorUtils.color.brightness(bg1, -10);
-    const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.brightness(fg1, 5);
-    const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : bg1;
-    const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : primaryColor;
-    const navAccentColor = theme.navAccentColor ? theme.navAccentColor : primaryColor;
-    */
     const navBgColor = theme.navBgColor ? theme.navBgColor : ColorUtils.color.brightness(bg1, -180);
     const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
     const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);

@@ -98,7 +98,7 @@ export default class SchemaTree extends LitElement {
             ? html`
               <div style="flex:1"></div>
               <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-                ${this.schemaDescriptionExpanded === 'true' ? 'Single line description' : 'Multiline description'}
+                ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
               </div>
             `
             : ''

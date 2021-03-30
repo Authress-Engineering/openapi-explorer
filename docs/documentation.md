@@ -28,8 +28,9 @@ Note: This properties will likely be deprecated in favor of global css variables
 * `text-color` - Set the default text color [Expected Bootstrap value: `$grey`]
 
 * `nav-bg-color` - Set the navigation background color [Expected Bootstrap value: `$dark`]
-* `nav-accent-color` - Set the navigation text color [Expected Bootstrap value: `$primary`]
-* `nav-hover-text-color` - Set th color of hover on navigation links [[Expected Bootstrap value: `$light`]]
+* `nav-accent-color` - Set the navigation text color [Expected Bootstrap value: `$secondary`]
+* `nav-hover-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$light`]
+* `nav-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$grey`]
 
 ### Events
 * `@spec-loaded` - Event trigger after the specification is loaded. Can be used to modify the spec including updating values.
