@@ -58,7 +58,8 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 
 
 ## Documentation
-[Property and variables documentation](./docs/documentation.md)
+* [Property and variables documentation](./docs/documentation.md)
+* [Examples (Vue, React, JS, and more)](./docs/examples.md)
 
 ## Troubleshooting integration issues
 [Common issues](./docs/troubleshooting.md)
