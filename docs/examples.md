@@ -28,12 +28,13 @@ export class MyApi extends Component {
 ```
 
 ### Vanilla Javascript/HTML
-(First download the npm package, and then bundle the result)
 ```html
 <!doctype html>
 <html>
   <head>
-    <script type="module" src="node_modules/openapi-explorer/dist/openapi-explorer.min.js"></script>
+    <script type="module" src="https://cdn.skypack.dev/openapi-explorer"></script>
+    <!-- Or use a local deployed copy -->
+    <!-- <script type="module" src="node_modules/openapi-explorer/dist/openapi-explorer.min.js"></script> -->
   </head>
   <body>
     <openapi-explorer spec-url="https://petstore.swagger.io/v2/swagger.json"> </openapi-explorer>
