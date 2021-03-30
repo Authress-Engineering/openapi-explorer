@@ -25,6 +25,8 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 ## Check out the Demo
 [OpenAPI Explorer Demo](https://authress.io/app/?utm_source=oae&utm_medium=github&utm_campaign=cross-link&utm_content=demo#get-/v1/users/-userId-/resources)
 
+(Curious about the exact styling of this: [here's the exact example](./docs/authress-example.vue))
+
 ## Get started now
 `npm i openapi-explorer`
 
@@ -32,7 +34,7 @@ _(This project was forked from [RapiDoc](https://github.com/mrin9/RapiDoc), and 
 * `import 'openapi-explorer';`
 
 ```html
-<openapi-explorer :id="apiExplorer" :spec-url="openapiSpecificationUrl">
+<openapi-explorer :spec-url="openapiSpecificationUrl">
   <div slot="overview">
     <h1>The API</h1>
   </div>
