@@ -8,7 +8,6 @@ import TableStyles from '../styles/table-styles';
 import InputStyles from '../styles/input-styles';
 import TabStyles from '../styles/tab-styles';
 import BorderStyles from '../styles/border-styles';
-import CustomStyles from '../styles/custom-styles';
 import './schema-tree';
 import './schema-table';
 
