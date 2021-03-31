@@ -88,6 +88,7 @@ export default class RapiDoc extends LitElement {
 
       // Main Colors and Font
       theme: { type: String },
+      disableDefaultColors: { type: Boolean, attribute: 'disable-default-colors' },
       bgColor: { type: String, attribute: 'bg-color' },
       textColor: { type: String, attribute: 'text-color' },
       headerColor: { type: String, attribute: 'header-color' },

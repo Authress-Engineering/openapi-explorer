@@ -72,7 +72,6 @@ export default css`
 .null {color:var(--red);}
 .bool, .boolean{color:var(--orange)}
 .enum {color:var(--purple)}
-.recu {color:var(--brown)}
 .toolbar {
   width:100%;
   padding: 2px 0;

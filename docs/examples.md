@@ -41,3 +41,9 @@ export class MyApi extends Component {
   </body>
 </html>
 ```
+
+## CSS Frameworks
+When using a CSS framework it comes with color palettes amongst other things. You may or may not want to use those colors. The OpenAPI Explorer also comes with colors to make it easier to integrate, but that can conflict.
+
+* If you using a CSS framework that brings it own colors set `disable-default-colors="true"` and we'll avoid overwriting yours.
+* Either way, you can explicitly set the colors that the OpenAPI Explorer uses by using the defined the [CSS variables](./documentation.md#css-variables) section.
