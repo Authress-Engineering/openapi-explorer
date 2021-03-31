@@ -69,7 +69,6 @@ export default class JsonTree extends LitElement {
         padding:2px;
         align-items: center;
       }`,
-      CustomStyles,
     ];
   }
 

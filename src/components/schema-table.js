@@ -78,7 +78,6 @@ export default class SchemaTable extends LitElement {
       .tr.collapsed + .object-body {
         display:none;
       }`,
-      CustomStyles,
     ];
   }
 

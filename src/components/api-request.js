@@ -163,7 +163,6 @@ export default class ApiRequest extends LitElement {
           }
         }
       `,
-      CustomStyles,
     ];
   }
 
