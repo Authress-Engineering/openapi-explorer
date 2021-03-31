@@ -119,7 +119,6 @@ responseInterceptor(event) {
 In many cases these might have already been set by your css framework, if not you'll want to specify ones that make sense for your theme.
 * CSS (default set to page fonts) - Add to your css
 ```css
-<style>
 openapi-explorer {
   --purple: #6f42c1;
   --pink: #e83e8c;
@@ -131,5 +130,4 @@ openapi-explorer {
   --primary: #FBAF0B;
   --secondary: #3E6077;
 }
-</style>
 ```
