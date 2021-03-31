@@ -1,7 +1,20 @@
 import { html } from 'lit-element';
 import ColorUtils from './color-utils';
 /* Generates an schema object containing type and constraint info */
-export default function setTheme(baseTheme, theme = {}) {
+
+const defaultColors = [
+  '--purple: #6f42c1',
+  '--pink: #e83e8c',
+  '--red: #dc3545',
+  '--orange: #fd7e14',
+  '--yellow: #ffc107',
+  '--green: #28a745',
+  '--white: #fff',
+  '--primary: #FBAF0B',
+  '--secondary: #3E6077',
+];
+
+export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
   let newTheme = {};
 
   // Common Theme colors
@@ -69,22 +82,11 @@ export default function setTheme(baseTheme, theme = {}) {
       hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
       lightRed: theme.lightRed ? theme.lightRed : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
-      pink: theme.pink ? theme.pink : '#ffb2b2',
       lightPink: theme.lightPink || ColorUtils.color.brightness(bg1, -10),
-
       lightGreen: theme.lightGreen || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
-      blue: theme.blue || '#71b7ff',
       lightBlue: theme.lightBlue || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
-      orange: theme.orange ? theme.orange : '#f08d49',
       lightOrange: theme.lightOrange || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
       lightYellow: theme.lightYellow || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
-      purple: theme.purple || '#786FF1',
-      brown: theme.brown || '#D4AC0D',
 
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#aaa',
@@ -150,22 +152,11 @@ export default function setTheme(baseTheme, theme = {}) {
       hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -5), // # f1f1f1
 
       lightRed: theme.lightRed || '#fff0f0',
-
-      pink: theme.pink ? theme.pink : '#990055',
       lightPink: theme.lightPink ? theme.lightPink : '#ffb2b2',
-
       lightGreen: theme.lightGreen || '#fbfff0',
-
-      blue: theme.blue || '#47AFE8',
       lightBlue: theme.lightBlue || '#eff8fd',
-
-      orange: theme.orange || '#FF9900',
       lightOrange: theme.lightOrange || '#fff5e6',
-
       lightYellow: theme.lightYellow || '#fff5cc',
-
-      purple: theme.purple || '#786FF1',
-      brown: theme.brown || '#D4AC0D',
 
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#666',
@@ -211,16 +202,13 @@ export default function setTheme(baseTheme, theme = {}) {
     --placeholder-color:${newTheme.placeHolder};
     --hover-color:${newTheme.hoverColor};
     --light-red:${newTheme.lightRed};
-    --pink:${newTheme.pink};
     --light-pink:${newTheme.lightPink};
     --light-green:${newTheme.lightGreen};
-    --blue:${newTheme.blue};
     --light-blue:${newTheme.lightBlue};
-    --orange:${newTheme.orange};
     --light-orange:${newTheme.lightOrange};
     --light-yellow:${newTheme.lightYellow};
-    --purple:${newTheme.purple};
-    --brown:${newTheme.brown};
+
+    ${disableDefaultColors ? '' : defaultColors.join(';\n')}
 
     /* Header Color */
     --header-bg:${newTheme.headerColor};

@@ -30,7 +30,7 @@ export default function mainBodyTemplate() {
 
   /* eslint-disable indent */
   return html`
-    ${this.theme === 'dark' ? SetTheme.call(this, 'dark', newTheme) : SetTheme.call(this, 'light', newTheme)}
+    ${this.theme === 'dark' ? SetTheme.call(this, 'dark', newTheme, this.disableDefaultColors) : SetTheme.call(this, 'light', newTheme, this.disableDefaultColors)}
     
     <!-- Advanced Search -->
     ${this.allowAdvancedSearch === 'false' ? '' : advancedSearchTemplate.call(this)}

@@ -23,6 +23,7 @@
 ### Colors
 Note: This properties will likely be deprecated in favor of global css variables being set, are still available
 
+* `disable-default-colors` - In the case when a theme is being used the default color palette is not necessary and will likely overwrite your theme's colors. Set this to `true` in most cases.
 * `bg-color` - Set the background color [Expected Bootstrap value: `$light`]
 * `primary-color` - Set the primary [Expected Bootstrap value: `$primary`]
 * `text-color` - Set the default text color [Expected Bootstrap value: `$grey`]
@@ -115,14 +116,20 @@ responseInterceptor(event) {
 
 
 ### CSS variables
-Avoid using undocumented css variables, as they may be replaced at any time.
-
-* Font override example (default set to page fonts) - Add to your css
+In many cases these might have already been set by your css framework, if not you'll want to specify ones that make sense for your theme.
+* CSS (default set to page fonts) - Add to your css
 ```css
 <style>
 openapi-explorer {
-  --font-mono: Monaco, "Andale Mono", "Roboto Mono", Consolas, monospace;
-  --font-regular: "Open Sans", Avenir, "Segoe UI", Arial, sans-serif;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --white: #fff;
+  --primary: #FBAF0B;
+  --secondary: #3E6077;
 }
 </style>
 ```
