@@ -85,6 +85,7 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
       lightBlue: theme.lightBlue || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
       lightOrange: theme.lightOrange || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
       lightYellow: theme.lightYellow || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+      lightPurple: theme.lightPurple || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#aaa',
@@ -151,6 +152,7 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
       lightBlue: theme.lightBlue || '#eff8fd',
       lightOrange: theme.lightOrange || '#fff5e6',
       lightYellow: theme.lightYellow || '#fff5cc',
+      lightPurple: theme.lightPurple || '#E9D3FF',
 
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#666',
@@ -203,6 +205,7 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --light-blue:${newTheme.lightBlue};
     --light-orange:${newTheme.lightOrange};
     --light-yellow:${newTheme.lightYellow};
+    --light-purple:${newTheme.lightPurple};
 
     ${disableDefaultColors ? '' : defaultColors.join(';\n')}
 
