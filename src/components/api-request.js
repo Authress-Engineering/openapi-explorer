@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html } from 'lit-element';
 import marked from 'marked';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -17,6 +17,8 @@ import '@/components/schema-tree';
 import '@/components/tag-input';
 
 export default class ApiRequest extends LitElement {
+  createRenderRoot() { return this; }
+
   constructor() {
     super();
     this.responseMessage = '';
@@ -161,7 +163,7 @@ export default class ApiRequest extends LitElement {
 
   render() {
     return html`
-    <div class="col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
+    <div class="api-request col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
         ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
       </div>
@@ -178,22 +180,24 @@ export default class ApiRequest extends LitElement {
   }
 
   updated(changedProperties) {
-    // In focused mode after rendering the request component, update the text-areas(which contains examples) using
-    // the original values from hidden textareas
+    // In focused mode after rendering the request component, update the text-areas(which contains examples) using the original values from hidden textareas.
     // This is done coz, user may update the dom by editing the textarea's and once the DOM is updated externally change detection wont happen, therefore update the values manually
-    if (this.renderStyle === 'focused') {
-      if (changedProperties.size === 1 && changedProperties.has('activeSchemaTab')) {
-        // dont update example as only tabs is switched
-      } else {
-        const exampleTextAreaEls = [...this.shadowRoot.querySelectorAll('textarea[data-ptype="form-data"]')];
-        exampleTextAreaEls.forEach((el) => {
-          const origExampleEl = this.shadowRoot.querySelector(`textarea[data-pname='hidden-${el.dataset.pname}']`);
-          if (origExampleEl) {
-            el.value = origExampleEl.value;
-          }
-        });
-      }
+    if (this.renderStyle !== 'focused') {
+      return;
     }
+
+    // dont update example as only tabs is switched
+    if (changedProperties.size === 1 && changedProperties.has('activeSchemaTab')) {
+      return;
+    }
+
+    const exampleTextAreaEls = [...this.querySelectorAll('textarea[data-ptype="form-data"]')];
+    exampleTextAreaEls.forEach((el) => {
+      const origExampleEl = this.querySelector(`textarea[data-pname='hidden-${el.dataset.pname}']`);
+      if (origExampleEl) {
+        el.value = origExampleEl.value;
+      }
+    });
   }
 
   /* eslint-disable indent */
