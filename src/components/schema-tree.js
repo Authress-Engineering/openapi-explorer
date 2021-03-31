@@ -84,7 +84,6 @@ export default class SchemaTree extends LitElement {
         border-width: 0 0 1px 0;
         border-color:var(--primary-color);
       }`,
-      CustomStyles,
     ];
   }
 

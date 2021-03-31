@@ -344,7 +344,6 @@ export default class RapiDoc extends LitElement {
           padding: 24px 80px 12px 80px; 
         }
       }`,
-      CustomStyles,
     ];
   }
 
