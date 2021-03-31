@@ -43,23 +43,14 @@ Note: This properties will likely be deprecated in favor of global css variables
 For example populate the user's id into default property to be automatically used:
 ```js
 onSpecLoaded(data) {
-  const updateTag = tag => {
-    const picker = value => {
-      if (!value || typeof value !== 'object') {
-        return value;
+  data.detail.tags.forEach(tag => {
+    tag.paths.filter(path => path.parameters).forEach(path => {
+      const userParameter = path.parameters.find(p => p.name === 'userId');
+      if (userParameter) {
+        userParameter.schema.default = this.$store.state.profile?.userId;
       }
-
-      if (value.name === 'userId') {
-        value.schema = Object.assign({ default: userId }, value.schema);
-        return value;
-      }
-
-      return undefined;
-    };
-    return lodash.cloneDeepWith(tag, picker);
-  };
-
-  data.detail.tags = data.detail.tags.map(tag => updateTag(tag));
+    });
+  });
 }
 ```
 
