@@ -138,7 +138,6 @@ export default css`
   align-items: stretch;
   flex-wrap: wrap;
   flex-direction: column;
-  border-top:1px solid var(--light-border-color);
 }
 .request, .response {
   flex:1; 
@@ -155,18 +154,23 @@ export default css`
 .head .request,
 .patch .request,
 .options .request { 
+  border-top: 1px dashed var(--yellow);
   border-color:var(--yellow); 
 }
 .put .request{ 
-  border-color:var(--orange); 
+  border-top: 1px dashed var(--orange);
+  border-color:var(--orange);
 }
 .post .request{ 
+  border-top: 1px dashed var(--green);
   border-color:var(--green); 
 }
 .get .request{ 
-  border-color:var(--blue); 
+  border-top: 1px dashed var(--blue);
+  border-color:var(--blue);
 }
-.delete .request{ 
+.delete .request{
+  border-top: 1px dashed var(--red);
   border-color:var(--red); 
 }
 
