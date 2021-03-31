@@ -26,6 +26,7 @@ import {
 } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
+import apiRequestStyles from './styles/api-request-styles';
 
 export default class RapiDoc extends LitElement {
   constructor() {
@@ -127,6 +128,7 @@ export default class RapiDoc extends LitElement {
       TabStyles,
       NavStyles,
       InfoStyles,
+      apiRequestStyles,
       css`
       :host {
         display:flex;

@@ -1,16 +1,8 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html } from 'lit-element';
 import marked from 'marked';
 import Prism from 'prismjs';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-// import { live } from 'lit-html/directives/live';
-import TableStyles from '../styles/table-styles';
-import FlexStyles from '../styles/flex-styles';
-import InputStyles from '../styles/input-styles';
-import FontStyles from '../styles/font-styles';
-import BorderStyles from '../styles/border-styles';
-import TabStyles from '../styles/tab-styles';
-import PrismStyles from '../styles/prism-styles';
 import { copyToClipboard, prettyXml } from '../utils/common-utils';
 import { schemaInObjectNotation, getTypeInfo, generateExample } from '../utils/schema-utils';
 import './json-tree';
@@ -18,6 +10,8 @@ import './schema-tree';
 import './tag-input';
 
 export default class ApiRequest extends LitElement {
+  createRenderRoot() { return this; }
+
   constructor() {
     super();
     this.responseMessage = '';
@@ -66,109 +60,9 @@ export default class ApiRequest extends LitElement {
     };
   }
 
-  static get styles() {
-    return [
-      TableStyles,
-      InputStyles,
-      FontStyles,
-      FlexStyles,
-      BorderStyles,
-      TabStyles,
-      PrismStyles,
-      css`
-        *, *:before, *:after { box-sizing: border-box; }
-    
-        .focused-mode,
-        .read-mode {
-          padding-top:24px;
-          margin-top:12px;
-          border-top: 1px dashed var(--border-color);
-        }
-        .param-name,
-        .param-type {
-          margin: 1px 0;
-          text-align: right;
-          line-height: var(--font-size-small);
-        }
-        .param-name{
-          color: var(--fg); 
-          font-family: var(--font-mono);
-        }
-        .param-type{
-          color: var(--light-fg); 
-          font-family: var(--font-regular);
-        }
-        .param-constraint{
-          min-width:100px;
-        }
-        .param-constraint:empty{
-          display:none;
-        }
-        .top-gap{margin-top:24px;}
-
-        .textarea {
-          min-height:220px; 
-          padding:5px;
-          resize:vertical;
-        }
-        .example:first-child {
-          margin-top: -9px;
-        }
-
-        .response-message{
-          font-weight:bold;
-          text-overflow: ellipsis;
-        }
-        .response-message.error {
-          color:var(--red);
-        }
-        .response-message.success {
-          color:var(--blue);
-        }
-
-        .file-input-container {
-          align-items:flex-end;
-        }
-        .file-input-container .input-set:first-child .file-input-remove-btn{
-          visibility:hidden;
-        }
-
-        .file-input-remove-btn{
-          font-size:16px;
-          color:var(--red);
-          outline: none;
-          border: none;
-          background:none;
-          cursor:pointer;
-        }
-
-        .v-tab-btn {
-          font-size: var(--smal-font-size);
-          height:24px; 
-          border:none; 
-          background:none; 
-          opacity: 0.3;
-          cursor: pointer;
-          padding: 4px 8px;
-        }
-        .v-tab-btn.active {
-          font-weight: bold;
-          background: var(--bg);
-          opacity: 1;
-        }
-
-        @media only screen and (min-width: 768px) {
-          .textarea {
-            padding:8px;
-          }
-        }
-      `,
-    ];
-  }
-
   render() {
     return html`
-    <div class="col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
+    <div class="api-request col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
         ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
       </div>
@@ -185,22 +79,24 @@ export default class ApiRequest extends LitElement {
   }
 
   updated(changedProperties) {
-    // In focused mode after rendering the request component, update the text-areas(which contains examples) using
-    // the original values from hidden textareas
+    // In focused mode after rendering the request component, update the text-areas(which contains examples) using the original values from hidden textareas.
     // This is done coz, user may update the dom by editing the textarea's and once the DOM is updated externally change detection wont happen, therefore update the values manually
-    if (this.renderStyle === 'focused') {
-      if (changedProperties.size === 1 && changedProperties.has('activeSchemaTab')) {
-        // dont update example as only tabs is switched
-      } else {
-        const exampleTextAreaEls = [...this.shadowRoot.querySelectorAll('textarea[data-ptype="form-data"]')];
-        exampleTextAreaEls.forEach((el) => {
-          const origExampleEl = this.shadowRoot.querySelector(`textarea[data-pname='hidden-${el.dataset.pname}']`);
-          if (origExampleEl) {
-            el.value = origExampleEl.value;
-          }
-        });
-      }
+    if (this.renderStyle !== 'focused') {
+      return;
     }
+
+    // dont update example as only tabs is switched
+    if (changedProperties.size === 1 && changedProperties.has('activeSchemaTab')) {
+      return;
+    }
+
+    const exampleTextAreaEls = [...this.querySelectorAll('textarea[data-ptype="form-data"]')];
+    exampleTextAreaEls.forEach((el) => {
+      const origExampleEl = this.querySelector(`textarea[data-pname='hidden-${el.dataset.pname}']`);
+      if (origExampleEl) {
+        el.value = origExampleEl.value;
+      }
+    });
   }
 
   /* eslint-disable indent */
