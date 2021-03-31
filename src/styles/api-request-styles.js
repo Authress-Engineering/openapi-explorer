@@ -1,10 +1,10 @@
 import { css } from 'lit-element';
 
 export default css`
-.api-request *, .api-request *:before, .api-request *:after { box-sizing: border-box; }
+*.api-request, *.api-request:before, *.api-request:after, .api-request *, .api-request *:before, .api-request *:after { box-sizing: border-box; }
 
-.api-request .focused-mode,
-.api-request .read-mode {
+.api-request.focused-mode,
+.api-request.read-mode {
   padding-top:24px;
   margin-top:12px;
   border-top: 1px dashed var(--border-color);
