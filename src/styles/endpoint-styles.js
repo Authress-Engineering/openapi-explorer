@@ -113,6 +113,7 @@ export default css`
   height: calc(var(--font-size-small) + 16px);
   line-height: calc(var(--font-size-small) + 8px);
   width: 60px;
+  flex-shrink: 0;
   border-radius: 2px;
   display:inline-block;
   text-align: center;
