@@ -1,4 +1,5 @@
-import { css } from 'lit-element';
+import { css, unsafeCSS } from 'lit-element';
+import color from 'color';
 
 export default css`
 .only-large-screen { display:none; }
@@ -35,35 +36,35 @@ export default css`
 .m-endpoint > .endpoint-head.put:hover,
 .m-endpoint > .endpoint-head.put.expanded{
   border-color:var(--orange); 
-  background-color:var(--light-orange); 
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--orange').trim()).lightness(96).hex())};
 }
 .m-endpoint > .endpoint-head.post:hover,
 .m-endpoint > .endpoint-head.post.expanded {
   border-color:var(--green); 
-  background-color:var(--light-green); 
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--green').trim()).lightness(96).hex())};
 }
 .m-endpoint > .endpoint-head.get:hover,
 .m-endpoint > .endpoint-head.get.expanded,
 .m-endpoint > .endpoint-head.head:hover,
 .m-endpoint > .endpoint-head.head.expanded {
   border-color:var(--blue); 
-  background-color:var(--light-blue); 
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--blue').trim()).lightness(96).hex())};
 }
 .m-endpoint > .endpoint-head.delete:hover,
 .m-endpoint > .endpoint-head.delete.expanded {
   border-color:var(--red); 
-  background-color:var(--light-red); 
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--red').trim()).lightness(96).hex())};
 }
 
 .m-endpoint > .endpoint-head.patch:hover,
 .m-endpoint > .endpoint-head.patch.expanded {
   border-color :var(--yellow); 
-  background-color :var(--light-yellow); 
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()).lightness(96).hex())};
 }
 .m-endpoint > .endpoint-head.options:hover,
 .m-endpoint > .endpoint-head.options.expanded {
   border-color: var(--purple);
-  background-color: var(--light-purple);
+  background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()).lightness(96).hex())};
 }
 
 .m-endpoint > .endpoint-head.deprecated:hover,

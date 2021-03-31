@@ -81,14 +81,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
       placeHolder: theme.placeHolder || ColorUtils.color.opacity(fg1, '0.3'),
       hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
 
-      lightRed: theme.lightRed ? theme.lightRed : ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-      lightPink: theme.lightPink || ColorUtils.color.brightness(bg1, -10),
-      lightGreen: theme.lightGreen || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-      lightBlue: theme.lightBlue || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-      lightOrange: theme.lightOrange || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-      lightYellow: theme.lightYellow || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-      lightPurple: theme.lightPurple || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
-
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#aaa',
       codePropertyColor: theme.codePropertyColor || '#f8c555',
@@ -152,14 +144,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
       placeHolder: theme.placeHolder || ColorUtils.color.brightness(lightFg, 20), // #dedede
       hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -5), // # f1f1f1
 
-      lightRed: theme.lightRed || '#fff0f0',
-      lightPink: theme.lightPink ? theme.lightPink : '#ffb2b2',
-      lightGreen: theme.lightGreen || '#fbfff0',
-      lightBlue: theme.lightBlue || '#eff8fd',
-      lightOrange: theme.lightOrange || '#fff5e6',
-      lightYellow: theme.lightYellow || '#fff5cc',
-      lightPurple: theme.lightPurple || '#E9D3FF',
-
       codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
       codeFg: theme.codeFg || '#666',
       codePropertyColor: theme.codePropertyColor || '#905',
@@ -203,13 +187,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --input-bg:${newTheme.inputBg};
     --placeholder-color:${newTheme.placeHolder};
     --hover-color:${newTheme.hoverColor};
-    --light-red:${newTheme.lightRed};
-    --light-pink:${newTheme.lightPink};
-    --light-green:${newTheme.lightGreen};
-    --light-blue:${newTheme.lightBlue};
-    --light-orange:${newTheme.lightOrange};
-    --light-yellow:${newTheme.lightYellow};
-    --light-purple:${newTheme.lightPurple};
 
     ${disableDefaultColors ? '' : defaultColors.join(';\n')}
 
