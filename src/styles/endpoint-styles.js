@@ -35,7 +35,7 @@ export default css`
 }
 .m-endpoint > .endpoint-head.put:hover,
 .m-endpoint > .endpoint-head.put.expanded{
-  border-color:var(--orange); 
+  border-color: var(--orange); 
   background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--orange').trim()).lightness(96).hex())};
 }
 .m-endpoint > .endpoint-head.post:hover,

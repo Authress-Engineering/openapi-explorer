@@ -2,6 +2,13 @@ import { html } from 'lit-element';
 import ColorUtils from './color-utils';
 /* Generates an schema object containing type and constraint info */
 
+// TODO: possible drive theme from:
+/*
+  if (!this.theme || !'light, dark,'.includes(`${this.theme},`)) {
+    this.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  }
+*/
+
 const defaultColors = [
   '--purple: #6f42c1',
   '--pink: #e83e8c',
@@ -10,8 +17,6 @@ const defaultColors = [
   '--yellow: #ffc107',
   '--green: #28a745',
   '--white: #fff',
-  '--primary: #FBAF0B',
-  '--secondary: #3E6077',
 ];
 
 export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
@@ -197,12 +202,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --nav-text-color:${newTheme.navTextColor};
     --nav-hover-bg-color:${newTheme.navHoverBgColor};
     --nav-hover-text-color:${newTheme.navHoverTextColor};
-    --nav-accent-color:${newTheme.navAccentColor};
-
-    /* Primary Colors */  
-    --primary-color:${newTheme.primaryColor};
-    --primary-color-invert:${newTheme.primaryColorInvert};
-    --primary-color-trans:${newTheme.primaryColorTrans};
 
     /*Code Syntax Color*/
     --code-bg:${newTheme.codeBg};
@@ -211,6 +210,11 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --code-property-color:${newTheme.codePropertyColor};
     --code-keyword-color:${newTheme.codeKeywordColor};
     --code-operator-color:${newTheme.codeOperatorColor};
+
+    /* Computed Color properties */
+    --primary-color: ${theme.primaryColor};
+    --secondary-color:${theme.secondaryColor};
+    --primary-color-inverted: ${ColorUtils.color.selectTextColorFromBackground(theme.primaryColor)};
   }
   </style>`;
 }

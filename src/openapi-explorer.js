@@ -87,12 +87,12 @@ export default class RapiDoc extends LitElement {
       showComponents: { type: String, attribute: 'show-components' },
 
       // Main Colors and Font
-      theme: { type: String },
+      primaryColor: { type: String, attribute: 'primary-color' },
+      secondaryColor: { type: String, attribute: 'secondary-color' },
       disableDefaultColors: { type: Boolean, attribute: 'disable-default-colors' },
       bgColor: { type: String, attribute: 'bg-color' },
       textColor: { type: String, attribute: 'text-color' },
       headerColor: { type: String, attribute: 'header-color' },
-      primaryColor: { type: String, attribute: 'primary-color' },
       fontSize: { type: String, attribute: 'font-size' },
 
       // Nav Bar Colors
@@ -100,7 +100,6 @@ export default class RapiDoc extends LitElement {
       navTextColor: { type: String, attribute: 'nav-text-color' },
       navHoverBgColor: { type: String, attribute: 'nav-hover-bg-color' },
       navHoverTextColor: { type: String, attribute: 'nav-hover-text-color' },
-      navAccentColor: { type: String, attribute: 'nav-accent-color' },
       navItemSpacing: { type: String, attribute: 'nav-item-spacing' },
       usePathInNavBar: { type: String, attribute: 'use-path-in-nav-bar' },
       infoDescriptionHeadingsInNavBar: { type: String, attribute: 'info-description-headings-in-navbar' },
@@ -371,9 +370,6 @@ export default class RapiDoc extends LitElement {
 
     this.renderStyle = this.responsive ? 'view' : 'focused';
     if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
-    if (!this.theme || !'light, dark,'.includes(`${this.theme},`)) {
-      this.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
-    }
     if (!this.defaultSchemaTab || !'example, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
     if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'true'; }

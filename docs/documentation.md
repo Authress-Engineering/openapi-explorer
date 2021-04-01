@@ -26,10 +26,10 @@ Note: This properties will likely be deprecated in favor of global css variables
 * `disable-default-colors` - In the case when a theme is being used the default color palette is not necessary and will likely overwrite your theme's colors. Set this to `true` in most cases.
 * `bg-color` - Set the background color [Expected Bootstrap value: `$light`]
 * `primary-color` - Set the primary [Expected Bootstrap value: `$primary`]
+* `secondary-color` - Set the secondary color used for accents [Expected Bootstrap value: `$primary`]
 * `text-color` - Set the default text color [Expected Bootstrap value: `$grey`]
 
 * `nav-bg-color` - Set the navigation background color [Expected Bootstrap value: `$dark`]
-* `nav-accent-color` - Set the navigation text color [Expected Bootstrap value: `$secondary`]
 * `nav-hover-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$light`]
 * `nav-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$grey`]
 
@@ -118,7 +118,5 @@ openapi-explorer {
   --yellow: #ffc107;
   --green: #28a745;
   --white: #fff;
-  --primary: #FBAF0B;
-  --secondary: #3E6077;
 }
 ```
