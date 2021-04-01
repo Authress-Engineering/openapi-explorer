@@ -63,7 +63,7 @@ export default async function ProcessSpec(specUrl, generateMissingTags = false, 
 
   // Servers
   let servers = [];
-  if (jsonParsedSpec.servers && Array.isArray(jsonParsedSpec.servers)) {
+  if (jsonParsedSpec.servers && Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
     jsonParsedSpec.servers.forEach((v) => {
       let computedUrl = v.url.trim();
       if (!(computedUrl.startsWith('http') || computedUrl.startsWith('//') || computedUrl.startsWith('{'))) {

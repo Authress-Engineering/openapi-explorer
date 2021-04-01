@@ -15,7 +15,7 @@ export default class ApiRequest extends LitElement {
   constructor() {
     super();
     this.responseMessage = '';
-    this.responseStatus = 'success';
+    this.responseStatus = '';
     this.responseHeaders = '';
     this.responseText = '';
     this.responseUrl = '';
@@ -1006,11 +1006,7 @@ export default class ApiRequest extends LitElement {
       }
       curlHeaders += ` -H "Content-Type: ${requestBodyType}" \\\n`;
     }
-    this.responseUrl = '';
-    this.responseHeaders = '';
-    // this.responseText    = '';
     this.curlSyntax = '';
-    this.responseStatus = 'success';
     this.responseIsBlob = false;
 
     this.respContentDisposition = '';
@@ -1046,6 +1042,7 @@ export default class ApiRequest extends LitElement {
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
       this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText}:${fetchResponse.status}` : fetchResponse.status;
       this.responseUrl = fetchResponse.url;
+      this.responseHeaders = '';
       const headers = {};
       fetchResponse.headers.forEach((hdrVal, hdr) => {
         this.responseHeaders = `${this.responseHeaders}${hdr.trim()}: ${hdrVal}\n`;
@@ -1114,6 +1111,8 @@ export default class ApiRequest extends LitElement {
     } catch (error) {
       tryBtnEl.disabled = false;
       this.responseMessage = `${error.message} (CORS or Network Issue)`;
+      this.responseUrl = '';
+      this.responseHeaders = '';
       const responseEvent = {
         bubbles: true,
         composed: true,
@@ -1194,7 +1193,7 @@ export default class ApiRequest extends LitElement {
     this.responseUrl = '';
     this.responseHeaders = '';
     this.responseText = '';
-    this.responseStatus = 'success';
+    this.responseStatus = '';
     this.responseMessage = '';
     this.responseIsBlob = false;
     this.responseBlobType = '';
