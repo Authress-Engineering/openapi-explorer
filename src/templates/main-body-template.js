@@ -19,8 +19,8 @@ export default function mainBodyTemplate() {
   const newTheme = {
     bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
     fg1: ColorUtils.isValidHexColor(this.textColor) ? this.textColor : '',
-    primaryColor: ColorUtils.isValidHexColor(this.primaryColor) ? this.primaryColor : '',
-    secondaryColor: ColorUtils.isValidHexColor(this.secondaryColor) ? this.secondaryColor : '',
+    primaryColor: ColorUtils.isValidHexColor(this.primaryColor) ? this.primaryColor : '#3E6077',
+    secondaryColor: ColorUtils.isValidHexColor(this.secondaryColor) ? this.secondaryColor : '#FBAF0B',
     headerColor: ColorUtils.isValidHexColor(this.headerColor) ? this.headerColor : '',
     navBgColor: ColorUtils.isValidHexColor(this.navBgColor) ? this.navBgColor : '',
     navTextColor: ColorUtils.isValidHexColor(this.navTextColor) ? this.navTextColor : '',
