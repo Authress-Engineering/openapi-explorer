@@ -22,7 +22,7 @@ export default css`
 }
 .m-btn.primary {
   background-color: var(--primary-color);
-  color: var(--primary-color-inverted);
+  color: var(--primary-btn-text-color);
 }
 .m-btn.thin-border { border-width: 1px; }
 .m-btn.large { padding:8px 14px; }
@@ -31,7 +31,7 @@ export default css`
 .m-btn.circle { border-radius: 50%; }
 .m-btn:hover { 
   background-color: var(--primary-color);
-  color: var(--primary-color-inverted);
+  color: var(--primary-btn-text-color);
 }
 .m-btn.nav { border: 2px solid var(--secondary-color); }
 .m-btn.nav:hover { 
@@ -50,7 +50,7 @@ export default css`
   margin:0 2px;
   font-size: var(--font-size-small);
   min-width: 50px;
-  color: var(--primary-color-inverted);
+  color: var(--primary-btn-text-color);
   border-radius: 2px;
   border: none;
   background-color: var(--primary-color);
@@ -131,7 +131,7 @@ input[type="file"]::-webkit-file-upload-button {
   padding: 3px 8px;
   border: 1px solid var(--primary-color);
   background-color: var(--primary-color);
-  color: var(--primary-color-inverted);
+  color: var(--primary-btn-text-color);
   border-radius: var(--border-radius);;
   -webkit-appearance: none;
 }

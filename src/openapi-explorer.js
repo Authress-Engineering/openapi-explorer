@@ -69,7 +69,6 @@ export default class RapiDoc extends LitElement {
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
 
       // API Server
-      defaultApiServerUrl: { type: String, attribute: 'default-api-server' },
       serverUrl: { type: String, attribute: 'server-url' },
       oauthReceiver: { type: String, attribute: 'oauth-redirect-url' },
 
@@ -480,31 +479,6 @@ export default class RapiDoc extends LitElement {
     super.attributeChangedCallback(name, oldVal, newVal);
   }
 
-  onSepcUrlChange() {
-    this.setAttribute('spec-url', this.shadowRoot.getElementById('spec-url').value);
-  }
-
-  onSepcFileChange(e) {
-    this.setAttribute('spec-file', this.shadowRoot.getElementById('spec-file').value);
-    const specFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const specObj = JSON.parse(reader.result);
-        this.loadSpec(specObj);
-        this.shadowRoot.getElementById('spec-url').value = '';
-      } catch (err) {
-        console.error('OpenAPI Explorer: Unable to read or parse json'); // eslint-disable-line no-console
-      }
-    };
-    // Read the Text file
-    reader.readAsText(specFile);
-  }
-
-  onFileLoadClick() {
-    this.shadowRoot.getElementById('spec-file').click();
-  }
-
   onSearchChange(e) {
     this.matchPaths = e.target.value;
     this.resolvedSpec.tags.forEach((tag) => tag.paths.filter((v) => {
@@ -548,19 +522,15 @@ export default class RapiDoc extends LitElement {
       this.resolvedSpec = null;
       this.loading = true;
       this.loadFailed = false;
-      // this.requestUpdate();
-      const spec = await ProcessSpec(
-        specUrl,
-        this.generateMissingTags === 'true',
-        this.sortTags === 'true',
-        this.getAttribute('sort-endpoints-by'),
-        this.getAttribute('server-url'),
-      );
+      if (!this.serverUrl) {
+        this.serverUrl = new URL(specUrl).origin;
+      }
+      const spec = await ProcessSpec(specUrl, this.generateMissingTags === 'true', this.sortTags === 'true', this.sortEndpointsBy, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
       }
-      this.afterSpecParsedAndValidated(spec);
+      this.afterSpecParsedAndValidated(spec, specUrl);
     } catch (err) {
       this.loading = false;
       this.loadFailed = true;
@@ -571,21 +541,7 @@ export default class RapiDoc extends LitElement {
 
   async afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
-    if (this.defaultApiServerUrl) {
-      if (this.defaultApiServerUrl === this.serverUrl) {
-        this.selectedServer = {
-          url: this.serverUrl,
-          computedUrl: this.serverUrl,
-        };
-      } else if (this.resolvedSpec.servers) {
-        this.selectedServer = this.resolvedSpec.servers.find((v) => (v.url === this.defaultApiServerUrl));
-      }
-    }
-    if (!this.selectedServer) {
-      if (this.resolvedSpec.servers) {
-        this.selectedServer = this.resolvedSpec.servers[0];
-      }
-    }
+    this.selectedServer = this.resolvedSpec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl);
     this.requestUpdate();
     this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
 

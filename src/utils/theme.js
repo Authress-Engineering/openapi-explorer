@@ -214,7 +214,7 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     /* Computed Color properties */
     --primary-color: ${theme.primaryColor};
     --secondary-color:${theme.secondaryColor};
-    --primary-color-inverted: ${ColorUtils.color.selectTextColorFromBackground(theme.primaryColor)};
+    --primary-btn-text-color: ${ColorUtils.color.selectTextColorFromBackground(theme.primaryColor)};
   }
   </style>`;
 }

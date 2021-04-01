@@ -52,7 +52,7 @@ export default css`
   font-size: calc(var(--font-size-small) - 2px); 
   font-weight:bold; 
   background-color:var(--primary-color); 
-  color: var(--primary-color-inverted);
+  color: var(--primary-btn-text-color);
   border-radius:2px;
   line-height:calc(var(--font-size-small) + 6px);
   padding:0px 5px; 
