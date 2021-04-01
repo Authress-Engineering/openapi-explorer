@@ -1,7 +1,7 @@
 <template>
     <openapi-explorer :spec-url="openapiSpecificationUrl" :server-url="serverUrl" show-server-selection="false" use-path-in-nav-bar="true" fill-defaults="true"
-        schema-description-expanded="true" nav-item-spacing="compact" :explorer-location="initialPath"
-        :bg-color="colors.light" :primary-color="colors.secondary" :nav-bg-color="colors.dark" :nav-accent-color="colors.primary" :text-color="colors.grey" :nav-hover-text-color="colors.light">
+        schema-description-expanded="true" nav-item-spacing="compact" :explorer-location="initialPath" primary-color="#3E6077" secondary-color="#FBAF0B"
+        :bg-color="colors.light" :nav-bg-color="colors.dark" :text-color="colors.grey" :nav-hover-text-color="colors.light">
         <div slot="overview">
         <h2 class="mt-4">Authress API</h2>
         <div class="row">

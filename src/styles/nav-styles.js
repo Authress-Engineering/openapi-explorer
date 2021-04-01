@@ -60,7 +60,7 @@ export default css`
   display: inline-block;
 }
 .nav-bar.focused, .nav-scroll {
-  border-top: 1px solid var(--nav-accent-color);
+  border-top: 1px solid var(--secondary-color);
 }
 .nav-scroll::-webkit-scrollbar {
   width: 10px;
@@ -74,7 +74,7 @@ export default css`
 
 .nav-bar-tag {
   font-size: var(--font-size-regular);
-  color: var(--nav-accent-color);
+  color: var(--secondary-color);
   border-left:4px solid transparent;
   font-weight:bold;
   padding: 15px 30px 15px 10px;
@@ -128,9 +128,14 @@ export default css`
 .nav-bar-h2.active,
 .nav-bar-info.active,
 .nav-bar-tag.active,
-.nav-bar-path.active {
-  border-left:4px solid var(--nav-accent-color);
-  color: var(--nav-accent-color);
+.nav-bar-path.active,
+.nav-bar-h1.active:hover,
+.nav-bar-h2.active:hover,
+.nav-bar-info.active:hover,
+.nav-bar-tag.active:hover,
+.nav-bar-path.active:hover {
+  border-left:4px solid var(--secondary-color);
+  color: var(--secondary-color);
   background-color: var(--nav-hover-bg-color);
 }
 

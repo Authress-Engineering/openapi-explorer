@@ -10,27 +10,27 @@ import securitySchemeTemplate from './security-scheme-template';
 import navbarTemplate from './navbar-template';
 import advancedSearchTemplate from './advance-search-template';
 import SetTheme from '../utils/theme';
-import { isValidHexColor } from '../utils/color-utils';
+import ColorUtils from '../utils/color-utils';
 
 export default function mainBodyTemplate() {
   if (!this.resolvedSpec) {
     return;
   }
   const newTheme = {
-    bg1: isValidHexColor(this.bgColor) ? this.bgColor : '',
-    fg1: isValidHexColor(this.textColor) ? this.textColor : '',
-    headerColor: isValidHexColor(this.headerColor) ? this.headerColor : '',
-    primaryColor: isValidHexColor(this.primaryColor) ? this.primaryColor : '',
-    navBgColor: isValidHexColor(this.navBgColor) ? this.navBgColor : '',
-    navTextColor: isValidHexColor(this.navTextColor) ? this.navTextColor : '',
-    navHoverBgColor: isValidHexColor(this.navHoverBgColor) ? this.navHoverBgColor : '',
-    navHoverTextColor: isValidHexColor(this.navHoverTextColor) ? this.navHoverTextColor : '',
-    navAccentColor: isValidHexColor(this.navAccentColor) ? this.navAccentColor : '',
+    bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
+    fg1: ColorUtils.isValidHexColor(this.textColor) ? this.textColor : '',
+    primaryColor: ColorUtils.isValidHexColor(this.primaryColor) ? this.primaryColor : '',
+    secondaryColor: ColorUtils.isValidHexColor(this.secondaryColor) ? this.secondaryColor : '',
+    headerColor: ColorUtils.isValidHexColor(this.headerColor) ? this.headerColor : '',
+    navBgColor: ColorUtils.isValidHexColor(this.navBgColor) ? this.navBgColor : '',
+    navTextColor: ColorUtils.isValidHexColor(this.navTextColor) ? this.navTextColor : '',
+    navHoverBgColor: ColorUtils.isValidHexColor(this.navHoverBgColor) ? this.navHoverBgColor : '',
+    navHoverTextColor: ColorUtils.isValidHexColor(this.navHoverTextColor) ? this.navHoverTextColor : '',
   };
 
   /* eslint-disable indent */
   return html`
-    ${this.theme === 'dark' ? SetTheme.call(this, 'dark', newTheme, this.disableDefaultColors) : SetTheme.call(this, 'light', newTheme, this.disableDefaultColors)}
+    ${SetTheme.call(this, newTheme, this.disableDefaultColors)}
     
     <!-- Advanced Search -->
     ${this.allowAdvancedSearch === 'false' ? '' : advancedSearchTemplate.call(this)}

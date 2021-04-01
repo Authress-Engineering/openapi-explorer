@@ -60,7 +60,7 @@ export default class JsonTree extends LitElement {
       .string{color:var(--green);}
       .number{color:var(--blue);}
       .null{color:var(--red);}
-      .boolean{color:var(--purple);}
+      .boolean{color:var(--orange);}
       .object{color:white}
       .toolbar {
         position: absolute;

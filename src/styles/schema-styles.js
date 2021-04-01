@@ -52,7 +52,7 @@ export default css`
   font-size: calc(var(--font-size-small) - 2px); 
   font-weight:bold; 
   background-color:var(--primary-color); 
-  color:var(--primary-color-invert); 
+  color: var(--primary-color-inverted);
   border-radius:2px;
   line-height:calc(var(--font-size-small) + 6px);
   padding:0px 5px; 
@@ -71,7 +71,7 @@ export default css`
 .inte, .numb, .number, .int6, .int3, .floa, .doub, .deci .blue {color:var(--blue);}
 .null {color:var(--red);}
 .bool, .boolean{color:var(--orange)}
-.enum {color:var(--purple)}
+.enum {color:var(--yellow)}
 .toolbar {
   width:100%;
   padding: 2px 0;
