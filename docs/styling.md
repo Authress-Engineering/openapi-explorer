@@ -12,6 +12,27 @@ openapi-explorer {
 }
 ```
 
+### Directly amending classes
+While openapi-explorer uses a shadow DOM, it is easy to inject in CSS overrides to the existing styles. After creating the DOM element for the `openapi-explorer` using javascript you can:
+
+```js
+// Get the openapi-explorer element
+const apiExplorer = document.getElementsByTagName('openapi-explorer')[0];
+const style = document.createElement('style');
+style.innerHTML = `
+.nav-bar.focused { display: none !important; }
+:host {
+  --input-bg: white;
+}`
+apiExplorer.shadowRoot.appendChild(style);
+
+// Or if there are a lot of styles create a stylesheet and inject it in:
+const linkElem = document.createElement('link');
+linkElem.setAttribute('rel', 'stylesheet');
+linkElem.setAttribute('href', 'style.css');
+apiExplorer.shadowRoot.appendChild(linkElem);
+```
+
 ### Using CSS ::Parts
 CSS provides parts, these are special attributes, but that isn't really important. What's important is that you can directly target these in the component for styling. They support simple styling without complexity:
 
