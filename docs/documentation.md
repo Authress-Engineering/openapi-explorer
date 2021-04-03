@@ -106,8 +106,8 @@ responseInterceptor(event) {
 ```
 
 
-### CSS variables
-In many cases these might have already been set by your css framework, if not you'll want to specify ones that make sense for your theme.
+### Styling using CSS variables
+In many cases these might have already been set by your css framework, if not you'll want to specify ones that make sense for your theme. For more in-depth options check out [How to style your openapi-explorer UI](./docs/styling.md).
 * CSS (default set to page fonts) - Add to your css
 ```css
 openapi-explorer {
