@@ -133,32 +133,28 @@ export default class ApiResponse extends LitElement {
       this.headersForEachRespStatus[statusCode] = tempHeaders;
       this.mimeResponsesForEachStatus[statusCode] = allMimeResp;
     }
-    return html`
-      ${Object.keys(this.responses).length > 1
-        ? html`<div class='row' style='flex-wrap:wrap'>
-          ${Object.keys(this.responses).map((respStatus) => html`
-            ${respStatus === '$$ref' // Swagger-Client parser creates '$$ref' object if JSON references are used to create responses - this should be ignored
-              ? ''
-              : html`
-                <button 
-                  @click="${() => {
-                    this.selectedStatus = respStatus;
-                    if (this.responses[respStatus].content && Object.keys(this.responses[respStatus].content)[0]) {
-                      this.selectedMimeType = Object.keys(this.responses[respStatus].content)[0];
-                    } else {
-                      this.selectedMimeType = undefined;
-                    }
-                  }}"
-                  class='m-btn small ${this.selectedStatus === respStatus ? 'primary' : ''}'
-                  part="btn--resp ${this.selectedStatus === respStatus ? 'btn-fill--resp' : 'btn-outline--resp'} btn-response-status"
-                  style='margin: 8px 4px 0 0'
-                > 
-                  ${respStatus} 
-                </button>`
-              }`)
-          }`
-        : html`<span>${Object.keys(this.responses)[0]}</span>`
-      }
+    return html`<div class='row' style='flex-wrap:wrap'>
+      ${Object.keys(this.responses).map((respStatus) => html`
+        ${respStatus === '$$ref' // Swagger-Client parser creates '$$ref' object if JSON references are used to create responses - this should be ignored
+          ? ''
+          : html`
+            <button 
+              @click="${() => {
+                this.selectedStatus = respStatus;
+                if (this.responses[respStatus].content && Object.keys(this.responses[respStatus].content)[0]) {
+                  this.selectedMimeType = Object.keys(this.responses[respStatus].content)[0];
+                } else {
+                  this.selectedMimeType = undefined;
+                }
+              }}"
+              class='m-btn small ${this.selectedStatus === respStatus ? 'primary' : ''}'
+              part="btn--resp ${this.selectedStatus === respStatus ? 'btn-fill--resp' : 'btn-outline--resp'} btn-response-status"
+              style='margin: 8px 4px 0 0'
+            > 
+              ${respStatus} 
+            </button>`
+          }`)
+        }
       </div>
 
       ${Object.keys(this.responses).map((status) => html`

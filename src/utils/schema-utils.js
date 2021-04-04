@@ -67,7 +67,9 @@ export function getTypeInfo(schema) {
     const maximum = schema.maximum !== undefined ? schema.maximum : schema.exclusiveMaximum;
     const leftBound = schema.minimum !== undefined ? '[' : '(';
     const rightBound = schema.maximum !== undefined ? ']' : ')';
-    constrain = `Range: ${leftBound}${minimum},${maximum}${rightBound}`;
+    if (typeof minimum === 'number' || typeof maximum === 'number') {
+      constrain = `Range: ${leftBound}${minimum || ''},${maximum || ''}${rightBound}`;
+    }
     if (schema.multipleOf !== undefined) {
       constrain += `${constrain ? ', ' : ''}Multiples: ${schema.multipleOf}`;
     }
