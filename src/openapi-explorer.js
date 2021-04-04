@@ -513,8 +513,8 @@ export default class RapiDoc extends LitElement {
   }
 
   // Public Method
-  async loadSpec(specUrl) {
-    if (!specUrl) {
+  async loadSpec(specUrlOrObject) {
+    if (!specUrlOrObject) {
       return;
     }
     this.matchPaths = '';
@@ -522,15 +522,15 @@ export default class RapiDoc extends LitElement {
       this.resolvedSpec = null;
       this.loading = true;
       this.loadFailed = false;
-      if (!this.serverUrl) {
-        this.serverUrl = new URL(specUrl).origin;
+      if (!this.serverUrl && typeof specUrlOrObject === 'string') {
+        this.serverUrl = new URL(specUrlOrObject).origin;
       }
-      const spec = await ProcessSpec(specUrl, this.generateMissingTags === 'true', this.sortTags === 'true', this.sortEndpointsBy, this.serverUrl);
+      const spec = await ProcessSpec(specUrlOrObject, this.generateMissingTags === 'true', this.sortTags === 'true', this.sortEndpointsBy, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
       }
-      this.afterSpecParsedAndValidated(spec, specUrl);
+      this.afterSpecParsedAndValidated(spec);
     } catch (err) {
       this.loading = false;
       this.loadFailed = true;

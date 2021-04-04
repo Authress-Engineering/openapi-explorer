@@ -3,21 +3,20 @@ import OpenApiParser from '@apitools/openapi-parser';
 import marked from 'marked';
 import { invalidCharsRegEx } from './common-utils';
 
-export default async function ProcessSpec(specUrl, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
+export default async function ProcessSpec(specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
   let jsonParsedSpec;
   try {
     let specMeta;
-    if (typeof specUrl === 'string') {
-      specMeta = await OpenApiParser.resolve({ url: specUrl }); // Swagger(specUrl);
+    if (typeof specUrlOrObject === 'string') {
+      specMeta = await OpenApiParser.resolve({ url: specUrlOrObject }); // Swagger(specUrl);
     } else {
-      specMeta = await OpenApiParser.resolve({ spec: specUrl }); // Swagger({ spec: specUrl });
+      specMeta = await OpenApiParser.resolve({ spec: specUrlOrObject }); // Swagger({ spec: specUrl });
     }
     jsonParsedSpec = specMeta.spec;
   } catch (err) {
-    console.info('OpenAPI Explorer: %c There was an issue while parsing the spec %o ', 'color:orangered', err); // eslint-disable-line no-console
+    console.info('OpenAPI Explorer: %c There was an issue while parsing the spec %o ', 'color:orange', err); // eslint-disable-line no-console
+    throw err;
   }
-
-  // const pathGroups = groupByPaths(jsonParsedSpec);
 
   // Tags with Paths and WebHooks
   const tags = groupByTags(jsonParsedSpec, generateMissingTags, sortTags, sortEndpointsBy);

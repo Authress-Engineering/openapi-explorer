@@ -1,5 +1,17 @@
 ## Troubleshooting integration issues
 
+
+#### Loading a specification from object instead of url
+In certain cases you may have a reference to the specification object already. For example if you wished to apply pre-processing or dynamically generate it. To load this spec in:
+
+```js
+const apiSpecificationObject = { /*... The load the spec into an object here */ };
+const apiExplorer = document.getElementsByTagName('openapi-explorer')[0];
+await apiExplorer.loadSpec(apiSpecificationObject);
+```
+
+_(Note: Make sure to set the `server-url="ServerUrl"` attribute because without the `spec-url` set, the server url cannot be defaulted.)_
+
 #### Using the non-transpiled version
 The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js` or `import openapi-explorer`. When using the source version `import openapi-explorer/src/openapi-explorer`, you might see this issue depending on your babel configuration.
 
