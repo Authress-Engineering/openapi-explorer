@@ -39,7 +39,8 @@
     "lit-element": "2.4.0",
     "lit-html": "1.2.1",
     "marked": "^2.0.1",
-    "prismjs": "^1.23.0"
+    "prismjs": "^1.23.0",
+    "regex-to-strings": "^2.0.3"
   },
   "scripts": {
     "build": "NODE_ENV=production webpack --mode=production",

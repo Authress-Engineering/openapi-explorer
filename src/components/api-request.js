@@ -202,6 +202,7 @@ export default class ApiRequest extends LitElement {
                 ? html`
                   <div class="param-constraint">
                     ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
+                    ${paramSchema.example ? html`<span style="font-weight:bold">Example: </span>${paramSchema.example}<br/>` : ''}
                     ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                     ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
@@ -611,6 +612,7 @@ export default class ApiRequest extends LitElement {
                   ? html`
                     <div class="param-constraint">
                       ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
+                      ${paramSchema.example ? html`<span style="font-weight:bold">Example: </span>${paramSchema.example}<br/>` : ''}
                       ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                       ${paramSchema.constrain ? html`${paramSchema.constrain}<br/>` : ''}
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
