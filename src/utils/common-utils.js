@@ -11,7 +11,6 @@ export function debounce(fn, delay) {
 }
 
 export const invalidCharsRegEx = new RegExp(/[\s#:?&={}]/, 'g'); // used for generating valid html element ids by replacing the invalid chars with hyphen (-)
-export const rapidocApiKey = '_rapidoc_api_key';
 
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -40,12 +39,6 @@ export function copyToClipboard(data, e) {
 export function getBaseUrlFromUrl(url) {
   const pathArray = url.split('/');
   return `${pathArray[0]}//${pathArray[2]}`;
-}
-
-export async function wait(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 }
 
 export function pathIsInSearch(searchVal, path) {

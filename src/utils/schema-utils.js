@@ -121,7 +121,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
       : minimumPossibleVal;
     return finalVal;
   }
-  if (typeValue.match(/^boolean/g)) { return false; }
+  if (typeValue.match(/^boolean/g)) { return typeof schemaObj.default === 'boolean' ? schemaObj.default : false; }
   if (typeValue.match(/^null/g)) { return null; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
@@ -153,6 +153,8 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
           return '192.168.0.1';
         case 'ipv6':
           return '2001:0db8:5b96:0000:0000:426f:8e17:642a';
+        case 'uuid':
+          return '4e0ba220-9575-11eb-a8b3-0242ac130003';
         default:
           return schemaObj.format;
       }
@@ -260,7 +262,7 @@ function mergePropertyExamples(obj, propertyName, propExamples) {
 export function schemaToSampleObj(schema, config = { }) {
   let obj = {};
   if (!schema) {
-    return;
+    return null;
   }
 
   if (schema.allOf) {
@@ -269,13 +271,13 @@ export function schemaToSampleObj(schema, config = { }) {
     if (schema.allOf.length === 1 && !schema.allOf[0].properties && !schema.allOf[0].items) {
       // If allOf has single item and the type is not an object or array, then its a primitive
       if (schema.allOf[0].$ref) {
-        return '{  }';
+        return schema.allOf[0].$ref;
       }
       if (schema.allOf[0].readOnly && config.includeReadOnly) {
         const tempSchema = schema.allOf[0];
         return getSampleValueByType(tempSchema, config.propertyName);
       }
-      return;
+      return null;
     }
 
     schema.allOf.forEach((v) => {
@@ -288,8 +290,6 @@ export function schemaToSampleObj(schema, config = { }) {
       } else if (v.type) {
         const prop = `prop${Object.keys(objWithAllProps).length}`;
         objWithAllProps[prop] = getSampleValueByType(v, config.propertyName);
-      } else {
-        return '';
       }
     });
 
@@ -632,85 +632,83 @@ export function generateExample(examples, example, schema, mimeType, includeRead
       exampleFormat: egFormat,
     });
   }
+
   // If schema-level examples are not provided then generate one based on the schema field types
-  if (finalExamples.length === 0) {
-    if (schema) {
-      if (schema.example) { // Note: schema.examples (plurals) is not allowed as per spec
-        finalExamples.push({
-          exampleId: 'Example',
-          exampleSummary: '',
-          exampleDescription: '',
-          exampleType: mimeType,
-          exampleValue: schema.example,
-          exampleFormat: ((mimeType.toLowerCase().includes('json') && typeof schema.example === 'object') ? 'json' : 'text'),
-        });
-      } else if (mimeType.toLowerCase().includes('json') || mimeType.toLowerCase().includes('text') || mimeType.toLowerCase().includes('*/*') || mimeType.toLowerCase().includes('xml')) {
-        let xmlRootStart = '';
-        let xmlRootEnd = '';
-        let exampleFormat = '';
-        let exampleValue = '';
-        if (mimeType.toLowerCase().includes('xml')) {
-          xmlRootStart = (schema.xml && schema.xml.name) ? `<${schema.xml.name}>` : '<root>';
-          xmlRootEnd = (schema.xml && schema.xml.name) ? `</${schema.xml.name}>` : '</root>';
-          exampleFormat = 'text';
-        } else {
-          exampleFormat = outputType;
-        }
-
-        const samples = schemaToSampleObj(
-          schema,
-          {
-            includeReadOnly,
-            includeWriteOnly,
-            deprecated: true,
-          },
-        );
-
-        let i = 0;
-        for (const samplesKey in samples) {
-          if (!samples[samplesKey]) {
-            continue;
-          }
-          const summary = samples[samplesKey]['::TITLE'] || `Example ${++i}`;
-          const description = samples[samplesKey]['::DESCRIPTION'] || '';
-          removeTitlesAndDescriptions(samples[samplesKey]);
-
-          if (mimeType.toLowerCase().includes('xml')) {
-            exampleValue = `${xmlRootStart}${json2xml(samples[samplesKey])}\n${xmlRootEnd}`;
-          } else {
-            exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 8) : samples[samplesKey];
-          }
-
-          finalExamples.push({
-            exampleId: samplesKey,
-            exampleSummary: summary,
-            exampleDescription: description,
-            exampleType: mimeType,
-            exampleFormat,
-            exampleValue,
-          });
-        }
-      } else {
-        finalExamples.push({
-          exampleId: 'Example',
-          exampleSummary: '',
-          exampleDescription: '',
-          exampleType: mimeType,
-          exampleValue: '',
-          exampleFormat: 'text',
-        });
-      }
-    } else {
-      // No Example or Schema provided (should never reach here)
-      finalExamples.push({
-        exampleId: 'Example',
-        exampleSummary: '',
-        exampleDescription: '',
-        exampleType: mimeType,
-        exampleValue: '',
-        exampleFormat: 'text',
-      });
-    }
+  if (finalExamples.length) {
+    return finalExamples;
   }
-  return finalExamples;
+
+  if (!schema) {
+    return [{
+      exampleId: 'Example',
+      exampleSummary: '',
+      exampleDescription: '',
+      exampleType: mimeType,
+      exampleValue: '',
+      exampleFormat: 'text',
+    }];
+  }
+
+  if (schema.example) { // Note: schema.examples (plurals) is not allowed as per spec
+    return [{
+      exampleId: 'Example',
+      exampleSummary: '',
+      exampleDescription: '',
+      exampleType: mimeType,
+      exampleValue: schema.example,
+      exampleFormat: ((mimeType.toLowerCase().includes('json') && typeof schema.example === 'object') ? 'json' : 'text'),
+    }];
+  }
+
+  if (!mimeType.toLowerCase().includes('json') && !mimeType.toLowerCase().includes('text') && !mimeType.toLowerCase().includes('*/*') && !mimeType.toLowerCase().includes('xml')) {
+    return [{
+      exampleId: 'Example',
+      exampleSummary: '',
+      exampleDescription: '',
+      exampleType: mimeType,
+      exampleValue: '',
+      exampleFormat: 'text',
+    }];
+  }
+
+  const samples = schemaToSampleObj(
+    schema,
+    {
+      includeReadOnly,
+      includeWriteOnly,
+      deprecated: true,
+      xml: mimeType.toLowerCase().includes('xml'),
+    },
+  );
+
+  if (!samples) {
+    return [];
+  }
+
+  return Object.keys(samples).map((samplesKey, sampleCounter) => {
+    if (!samples[samplesKey]) {
+      return null;
+    }
+    const summary = samples[samplesKey]['::TITLE'] || `Example ${sampleCounter + 1}`;
+    const description = samples[samplesKey]['::DESCRIPTION'] || '';
+    removeTitlesAndDescriptions(samples[samplesKey]);
+
+    let exampleValue = '';
+    if (mimeType.toLowerCase().includes('xml')) {
+      const xmlResult = xmlFormatter(samples[samplesKey], { declaration: true, indent: '\t' });
+      // console.log('****', samplesKey, samples[samplesKey], xmlResult);
+      exampleValue = xmlResult;
+    } else {
+      exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 8) : samples[samplesKey];
+    }
+
+    return {
+      exampleId: samplesKey,
+      exampleSummary: summary,
+      exampleDescription: description,
+      exampleType: mimeType,
+      exampleFormat: mimeType.toLowerCase().includes('xml') ? 'text' : outputType,
+      exampleValue,
+    };
+  }).filter((s) => s);
 }
