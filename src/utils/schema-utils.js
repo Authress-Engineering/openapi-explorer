@@ -1,3 +1,5 @@
+const regexStringGenerator = require('regex-to-strings');
+
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
   if (!schema) {
@@ -98,7 +100,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
     // Indicates a Circular ref
     return schemaObj.$ref;
   }
-  const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type[0] : schemaObj.type;
+  const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type.filter((t) => t !== 'null')[0] : schemaObj.type;
 
   if (typeValue.match(/^integer|^number/g)) {
     const multipleOf = Number.isNaN(Number(schemaObj.multipleOf)) ? undefined : Number(schemaObj.multipleOf);
@@ -121,19 +123,22 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   if (typeValue.match(/^null/g)) { return null; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
-    // TODO: https://github.com/wimpyprogrammer/regex-to-strings#readme
-    if (schemaObj.pattern) { return fallbackPropertyName || 'string'; }
+    if (schemaObj.pattern) {
+      const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
+      return regexStringGenerator.expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+    }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {
         case 'url':
+          return 'https://example.com';
         case 'uri':
-          return 'http://example.com';
+          return 'urn:namespace:type:example/resource';
         case 'date':
-          return (new Date(0)).toISOString().split('T')[0];
+          return (new Date()).toISOString().split('T')[0];
         case 'time':
-          return (new Date(0)).toISOString().split('T')[1];
+          return (new Date()).toISOString().split('T')[1];
         case 'date-time':
-          return (new Date(0)).toISOString();
+          return (new Date()).toISOString();
         case 'duration':
           return 'P3Y6M4DT12H30M5S'; // P=Period 3-Years 6-Months 4-Days 12-Hours 30-Minutes 5-Seconds
         case 'email':
@@ -143,7 +148,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
         case 'idn-hostname':
           return 'www.example.com';
         case 'ipv4':
-          return '198.51.100.42';
+          return '192.168.0.1';
         case 'ipv6':
           return '2001:0db8:5b96:0000:0000:426f:8e17:642a';
         default:
