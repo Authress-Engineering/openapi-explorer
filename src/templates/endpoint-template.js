@@ -42,9 +42,9 @@ function onExpandCollapseAll(e, action = 'expand-all') {
 /* eslint-disable indent */
 function endpointHeadTemplate(path) {
   return html`
-  <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.deprecated ? 'deprecated' : ''} ${path.expanded ? 'expanded' : 'collapsed'}'>
-    <div class="method ${path.method} ${path.deprecated ? 'deprecated' : ''}"> ${path.method} </div> 
-    <div class="path ${path.deprecated ? 'deprecated' : ''}"> 
+  <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
+    <div class="method ${path.method}"> ${path.method} </div> 
+    <div class="path"> 
       ${path.path} 
       ${path.isWebhook ? html`<span style="color:var(--primary-color)"> (Webhook) </span>` : ''}
     </div>
@@ -74,7 +74,7 @@ function endpointBodyTemplate(path) {
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate(path.xCodeSamples) : '';
   return html`
-  <div class='endpoint-body ${path.method} ${path.deprecated ? 'deprecated' : ''}'>
+  <div class='endpoint-body ${path.method}'>
     <div class="summary">
       ${path.summary ? html`<div class="title">${path.summary}<div>` : path.shortSummary !== path.description ? html`<div class="title">${path.shortSummary}</div>` : ''}
       ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}

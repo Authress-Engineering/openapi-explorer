@@ -267,7 +267,6 @@ export default class RapiDoc extends LitElement {
         position: relative;
         padding: 6px 0px; 
       }
-      .expanded-endpoint-body.deprecated{ filter:opacity(0.6); }
       .divider { 
         border-top: 2px solid var(--border-color);
         margin: 24px 0;

@@ -67,12 +67,6 @@ export default css`
   background-color: ${unsafeCSS(color(getComputedStyle(document.documentElement).getPropertyValue('--purple').trim()).lightness(96).hex())};
 }
 
-.m-endpoint > .endpoint-head.deprecated:hover,
-.m-endpoint > .endpoint-head.deprecated.expanded {
-  border-color:var(--border-color); 
-  filter:opacity(0.6);
-}
-
 .m-endpoint .endpoint-body {
   word-break: break-word;
   flex-wrap:wrap;
@@ -87,16 +81,6 @@ export default css`
 .m-endpoint .endpoint-body.get, .m-endpoint .endpoint-body.head { border-color:var(--blue); }
 .m-endpoint .endpoint-body.patch { border-color:var(--yellow); }
 .m-endpoint .endpoint-body.options { border-color: var(--purple); }
-
-.m-endpoint .endpoint-body.deprecated{ 
-  border-color:var(--border-color);
-  filter:opacity(0.6);
-}
-
-.endpoint-head .deprecated{
-  color: var(--light-fg);
-  filter:opacity(0.6);
-}
 
 .summary{
   padding:8px 8px;
@@ -126,7 +110,6 @@ export default css`
 .method.put{ border: 2px solid var(--orange); }
 .method.post{ border: 2px solid var(--green); }
 .method.head, .method.get{ border: 2px solid var(--blue); }
-.method.get.deprecated{ border: 2px solid var(--border-color); }
 
 .method.patch {
   border: 2px solid var(--yellow); 
