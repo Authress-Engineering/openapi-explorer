@@ -73,6 +73,9 @@ function serverVarsTemplate() {
 }
 
 export default function serverTemplate() {
+  if (!this.resolvedSpec) {
+    return;
+  }
   return html`
   <section id = 'servers' part="section-servers" style="margin-top:24px; margin-bottom:24px;" class='regular-font observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
     <div class = 'sub-title'>API SERVER</div>

@@ -28,7 +28,7 @@ import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
 import apiRequestStyles from './styles/api-request-styles';
 
-export default class RapiDoc extends LitElement {
+export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
     const intersectionObserverOptions = {
@@ -161,7 +161,7 @@ export default class RapiDoc extends LitElement {
         scrollbar-color: var(--border-color) transparent;
       }
 
-      .main-content-inner--view-mode {
+      .main-content-inner {
         padding: 0 8px;
       }
       .main-content::-webkit-scrollbar {
@@ -350,6 +350,7 @@ export default class RapiDoc extends LitElement {
   // Startup
   connectedCallback() {
     super.connectedCallback();
+    this.loading = true;
     const parent = this.parentElement;
     if (parent) {
       if (parent.offsetWidth === 0 && parent.style.width === '') {
@@ -750,4 +751,4 @@ export default class RapiDoc extends LitElement {
     }, delay);
   }
 }
-customElements.define('openapi-explorer', RapiDoc);
+customElements.define('openapi-explorer', OpenApiExplorer);

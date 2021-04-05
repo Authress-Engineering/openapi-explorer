@@ -13,9 +13,6 @@ import SetTheme from '../utils/theme';
 import ColorUtils from '../utils/color-utils';
 
 export default function mainBodyTemplate() {
-  if (!this.resolvedSpec) {
-    return;
-  }
   const newTheme = {
     bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
     fg1: ColorUtils.isValidHexColor(this.textColor) ? this.textColor : '',
@@ -44,31 +41,31 @@ export default function mainBodyTemplate() {
       }
 
       <!-- Main Content -->
-      <main class="main-content regular-font" part="section-main-content">
-        <slot></slot>
-        <div class="main-content-inner--${this.renderStyle}-mode">
-          ${this.loading === true
-            ? html`<div class="loader"></div>`
-            : html`
-              ${this.loadFailed === true
-                ? html`<div style="text-align: center;margin: 16px;"> Unable to load the Spec</div>`
-                : html`
-                  <div class="operations-root" @click="${(e) => { this.handleHref(e); }}">
-                  ${this.renderStyle === 'focused'
-                    ? html`${focusedEndpointTemplate.call(this)}`
-                    : html`
-                      ${this.showInfo === 'true' ? overviewTemplate.call(this) : ''}
-                      ${this.allowServerSelection === 'true' ? serverTemplate.call(this) : ''}
-                      ${this.allowAuthentication === 'true' ? securitySchemeTemplate.call(this) : ''}
-                      ${this.renderStyle === 'read'
-                        ? expandedEndpointTemplate.call(this)
-                        : endpointTemplate.call(this)
-                      }
-                    `
-                  }
-                  </div>
-                `
-              }`
+      ${this.loading === true
+        ? html`<slot name="loader"><div class="loader"></div></slot>`
+        : html`
+        <main class="main-content regular-font" part="section-main-content">
+          <slot></slot>
+          <div class="main-content-inner">
+            ${this.loadFailed === true
+              ? html`<div style="text-align: center;margin: 16px;"> Unable to load the Spec</div>`
+              : html`
+                <div class="operations-root" @click="${(e) => { this.handleHref(e); }}">
+                ${this.renderStyle === 'focused'
+                  ? html`${focusedEndpointTemplate.call(this)}`
+                  : html`
+                    ${this.showInfo === 'true' ? overviewTemplate.call(this) : ''}
+                    ${this.allowServerSelection === 'true' ? serverTemplate.call(this) : ''}
+                    ${this.allowAuthentication === 'true' ? securitySchemeTemplate.call(this) : ''}
+                    ${this.renderStyle === 'read'
+                      ? expandedEndpointTemplate.call(this)
+                      : endpointTemplate.call(this)
+                    }
+                  `
+                }
+                </div>
+              `
+            }`
           }
         </div>
         <slot name="footer"></slot>
