@@ -1,5 +1,6 @@
 const xmlFormatter = require('@kyleshockey/xml');
 const regexStringGenerator = require('regex-to-strings');
+const { cloneDeep } = require('lodash');
 
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
@@ -166,6 +167,106 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   }
   // If type cannot be determined
   return '?';
+}
+
+function duplicateExampleWithNewPropertyValues(objectExamples, propertyName, propertyValues) {
+  // Limit max number of property examples to 2 and limit the max number of examples to 10
+  return objectExamples.reduce((exampleList, example) => {
+    const examplesFromPropertyValues = propertyValues.slice(0, 2).map((value) => ({
+      ...cloneDeep(example),
+      [propertyName]: value,
+    }));
+    return exampleList.concat(...examplesFromPropertyValues);
+  }, []).slice(0, 10);
+}
+
+export function getExampleValuesFromSchema(schema, config = {}) {
+  // Wrap the top level so that the recursive object can treat it as a normal property and we'll hit the 'object' below, otherwise we'll never create the top level.
+  if (config.xml) {
+    // eslint-disable-next-line no-use-before-define
+    const xmlResult = getExampleValuesFromSchemaRecursive(schema.type === 'object' ? { properties: { _root: schema } } : schema, config);
+    return xmlResult.map((example) => example[0]);
+  }
+  // eslint-disable-next-line no-use-before-define
+  return getExampleValuesFromSchemaRecursive(schema, config);
+}
+
+// TODO: Support getting the `summary` from the examples object or the `title` from the schema object
+function getExampleValuesFromSchemaRecursive(schema, config = {}) {
+  if (!schema) {
+    return [];
+  }
+
+  // XML Support
+  const xmlAttributes = {};
+  const xmlTagProperties = [];
+  const { prefix, namespace } = schema.xml || {};
+  if (namespace) {
+    xmlAttributes[prefix ? `xmlns:${prefix}` : 'xmlns'] = namespace;
+  }
+  const nodeName = schema.items?.xml?.name || schema.xml?.name || config.propertyName || 'root';
+  const overridePropertyName = prefix ? `${prefix}:${nodeName}` : nodeName;
+
+  if (schema.allOf) {
+    // TODO: allOf support should include merging the schemas together
+    return getExampleValuesFromSchemaRecursive(schema.allOf[0], config);
+  }
+
+  if (schema.oneOf) {
+    return schema.oneOf.map((s) => getExampleValuesFromSchemaRecursive(s, config)).flat(1);
+  }
+
+  if (schema.anyOf) {
+    return schema.anyOf.map((s) => getExampleValuesFromSchemaRecursive(s, config)).flat(1);
+  }
+
+  if (schema.type === 'array' || schema.items) {
+    if (!config.xml) {
+      return [getExampleValuesFromSchemaRecursive(schema.items || {}, config)];
+    }
+    if (!schema.xml?.wrapped) {
+      const arrayExamples = getExampleValuesFromSchemaRecursive(schema.items || {}, config);
+      xmlTagProperties.push({ [overridePropertyName]: arrayExamples[0] }, { _attr: xmlAttributes });
+      return [xmlTagProperties];
+    }
+
+    const arrayExamples = getExampleValuesFromSchemaRecursive(schema.items || {}, { ...config, propertyName: overridePropertyName });
+    xmlTagProperties.push({ [overridePropertyName]: arrayExamples[0] }, { _attr: xmlAttributes });
+    return [xmlTagProperties];
+  }
+
+  if (schema.type === 'object' || schema.properties) {
+    let objectExamples = [{}];
+
+    Object.keys(schema.properties || {}).forEach((propertyName) => {
+      const innerSchema = schema.properties[propertyName];
+      if (innerSchema.deprecated && !config.includeDeprecated) { return; }
+      if (innerSchema.readOnly && !config.includeReadOnly) { return; }
+      if (innerSchema.writeOnly && !config.includeWriteOnly) { return; }
+
+      const propertyExamples = getExampleValuesFromSchemaRecursive(innerSchema, { ...config, propertyName });
+      objectExamples = duplicateExampleWithNewPropertyValues(objectExamples, propertyName, propertyExamples);
+
+      if (innerSchema.xml?.namespace) {
+        xmlAttributes[innerSchema.xml?.prefix ? `xmlns:${innerSchema.xml?.prefix}` : 'xmlns'] = namespace;
+      }
+      const innerNodeName = innerSchema.xml?.name || propertyName || config.propertyName;
+      const innerOverridePropertyName = prefix ? `${prefix}:${innerNodeName}` : innerNodeName;
+
+      if (innerSchema.xml?.attribute) {
+        xmlAttributes[innerOverridePropertyName] = propertyExamples[0];
+      } else {
+        xmlTagProperties.push({ [innerOverridePropertyName]: propertyExamples[0] });
+      }
+    });
+    if (Object.keys(xmlAttributes).length) {
+      xmlTagProperties.push({ _attr: xmlAttributes });
+    }
+    return config.xml ? [xmlTagProperties] : objectExamples;
+  }
+
+  const value = getSampleValueByType(schema, config.propertyName);
+  return [value];
 }
 
 function addSchemaInfoToExample(schema, obj) {
@@ -615,9 +716,8 @@ export function generateExample(examples, example, schema, mimeType, includeRead
     includeDeprecated: true,
     xml: mimeType.toLowerCase().includes('xml'),
   };
-  const legacy = schemaToSampleObj(schema, config);
+
   const samples = getExampleValuesFromSchema(schema, config);
-  console.log('****', testResult);
 
   if (!samples || (!mimeType.toLowerCase().includes('json') && !mimeType.toLowerCase().includes('text') && !mimeType.toLowerCase().includes('*/*') && !mimeType.toLowerCase().includes('xml'))) {
     return [{
@@ -630,25 +730,20 @@ export function generateExample(examples, example, schema, mimeType, includeRead
     }];
   }
 
-  return Object.keys(samples).map((samplesKey, sampleCounter) => {
-    const sample = samples[samplesKey];
-    if (!sample) {
-      return null;
-    }
+  return samples.map((sample, sampleCounter) => {
     const summary = sample['::TITLE'] || `Example ${sampleCounter + 1}`;
     const description = sample['::DESCRIPTION'] || '';
     removeTitlesAndDescriptions(sample);
 
     let exampleValue = '';
     if (mimeType.toLowerCase().includes('xml')) {
-      const xmlExample = getExampleValuesFromSchema(schema, config);
-      exampleValue = xmlFormatter(xmlExample, { declaration: true, indent: '    ' });
+      exampleValue = xmlFormatter(sample, { declaration: true, indent: '    ' });
     } else {
       exampleValue = outputType === 'text' ? JSON.stringify(sample, null, 8) : sample;
     }
 
     return {
-      exampleId: samplesKey,
+      exampleId: `Example-${sampleCounter}`,
       exampleSummary: summary,
       exampleDescription: description,
       exampleType: mimeType,

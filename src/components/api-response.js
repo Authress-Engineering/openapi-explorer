@@ -66,6 +66,23 @@ export default class ApiResponse extends LitElement {
         font-size:var(--font-size-small);
         margin:0;
       }
+      .generic-tree {
+        background: rgb(51, 51, 51);
+        color: white;
+        margin-top: 8px;
+      }
+      pre.generic-tree {
+        padding: 0;
+      }
+      .example-panel select {
+        margin-left: 8px;
+        padding-top: 8px;
+        min-width: 100px;
+        max-width: 100%
+      }
+      .example-panel .example {
+        padding-top: 8px;
+      }
       .focused-mode,
       .read-mode {
         padding-top:24px;
@@ -247,12 +264,12 @@ export default class ApiResponse extends LitElement {
                 class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
               ></json-tree>`
             : html`
-              <pre class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>${mimeRespDetails.examples[0].exampleValue}</pre>
+              <pre class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>${mimeRespDetails.examples[0].exampleValue}</pre>
             `
           }`
         : html`
-          <span class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
-            <select style="min-width:100px; max-width:100%" @change='${(e) => this.onSelectExample(e)}'>
+          <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
+            <select @change='${(e) => this.onSelectExample(e)}'>
               ${mimeRespDetails.examples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === mimeRespDetails.selectedExample} > 
                 ${v.exampleSummary.length > 80 ? v.exampleId : v.exampleSummary} 
               </option>`)}
@@ -267,7 +284,7 @@ export default class ApiResponse extends LitElement {
                       render-style = '${this.renderStyle}'
                       .data = '${v.exampleValue}'
                     ></json-tree>`
-                  : html`<pre>${v.exampleValue}</pre>`
+                  : html`<pre class="generic-tree>${v.exampleValue}</pre>`
                 }
               </div>  
             `)}

@@ -36,9 +36,6 @@ export default css`
   padding:5px;
   resize:vertical;
 }
-.api-request .example:first-child {
-  margin-top: -9px;
-}
 
 .api-request .response-message{
   font-weight:bold;

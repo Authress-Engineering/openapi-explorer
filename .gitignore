@@ -27,3 +27,4 @@ yarn-error.log*
 
 dist
 docs/openapi-explorer.min.js
+lib

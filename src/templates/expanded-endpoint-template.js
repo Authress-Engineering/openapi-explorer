@@ -85,7 +85,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
   }
   return html`
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
-    <div class='expanded-endpoint-body observe-me ${path.method} ${path.deprecated ? 'deprecated' : ''} ' part="section-operation ${path.elementId}" id='${path.elementId}'>
+    <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
     ${(this.renderStyle === 'focused' && tagName !== 'General ⦂') ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
     ${path.deprecated ? html`<div class="bold-text red-text"> DEPRECATED </div>` : ''}
     ${html`
