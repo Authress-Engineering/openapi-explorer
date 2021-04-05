@@ -1,3 +1,4 @@
+const xmlFormatter = require('@kyleshockey/xml');
 const regexStringGenerator = require('regex-to-strings');
 
 /* Generates an schema object containing type and constraint info */
@@ -350,9 +351,9 @@ export function schemaToSampleObj(schema, config = { }) {
  * For changing OpenAPI-Schema to an Object Notation,
  * This Object would further be an input to UI Components to generate an Object-Tree
  * @param {object} schema - Schema object from OpenAPI spec
- * @param {object} obj - recursivly pass this object to generate object notation
+ * @param {object} obj - recursively pass this object to generate object notation
  * @param {number} level - recursion level
- * @param {string} suffix - used for suffixing property names to avoid duplicate props during object composion
+ * @param {string} suffix - used for suffixing property names to avoid duplicate props during object composition
  */
 export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
   if (!schema) {
@@ -638,9 +639,8 @@ export function generateExample(examples, example, schema, mimeType, includeRead
 
     let exampleValue = '';
     if (mimeType.toLowerCase().includes('xml')) {
-      const xmlResult = xmlFormatter(samples[samplesKey], { declaration: true, indent: '\t' });
-      // console.log('****', samplesKey, samples[samplesKey], xmlResult);
-      exampleValue = xmlResult;
+      console.log('*****', samples);
+      exampleValue = xmlFormatter(samples, { declaration: true, indent: '    ' });
     } else {
       exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 8) : samples[samplesKey];
     }
