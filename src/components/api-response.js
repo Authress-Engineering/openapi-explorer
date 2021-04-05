@@ -69,10 +69,13 @@ export default class ApiResponse extends LitElement {
       .generic-tree {
         background: rgb(51, 51, 51);
         color: white;
+      }
+      .example-panel.generic-tree {
         margin-top: 8px;
       }
       pre.generic-tree {
-        padding: 0;
+        border: none;
+        padding: 8px 10px 10px;
       }
       .example-panel select {
         margin-left: 8px;
@@ -264,7 +267,7 @@ export default class ApiResponse extends LitElement {
               <json-tree 
                 render-style = '${this.renderStyle}'
                 .data="${mimeRespDetails.examples[0].exampleValue}"
-                class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
+                class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
               ></json-tree>`
             : html`
               <pre class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>${mimeRespDetails.examples[0].exampleValue}</pre>
@@ -287,7 +290,7 @@ export default class ApiResponse extends LitElement {
                       render-style = '${this.renderStyle}'
                       .data = '${v.exampleValue}'
                     ></json-tree>`
-                  : html`<pre class="generic-tree>${v.exampleValue}</pre>`
+                  : html`<pre class="generic-tree">${v.exampleValue}</pre>`
                 }
               </div>  
             `)}
@@ -320,7 +323,7 @@ export default class ApiResponse extends LitElement {
           <schema-tree
             render-style = '${this.renderStyle}'
             .data = '${mimeRespDetails.schemaTree}'
-            class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
+            class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
             allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
