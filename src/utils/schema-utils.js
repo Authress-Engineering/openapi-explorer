@@ -95,6 +95,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   if (example === null) { return null; }
   if (example === 0) { return 0; }
   if (example) { return example; }
+  if (schemaObj.default) { return schemaObj.default; }
 
   if (Object.keys(schemaObj).length === 0) {
     return null;
@@ -122,7 +123,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
       : minimumPossibleVal;
     return finalVal;
   }
-  if (typeValue.match(/^boolean/g)) { return typeof schemaObj.default === 'boolean' ? schemaObj.default : false; }
+  if (typeValue.match(/^boolean/g)) { return false; }
   if (typeValue.match(/^null/g)) { return null; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
@@ -608,15 +609,15 @@ export function generateExample(examples, example, schema, mimeType, includeRead
     }];
   }
 
-  const samples = schemaToSampleObj(
-    schema,
-    {
-      includeReadOnly,
-      includeWriteOnly,
-      deprecated: true,
-      xml: mimeType.toLowerCase().includes('xml'),
-    },
-  );
+  const config = {
+    includeReadOnly,
+    includeWriteOnly,
+    includeDeprecated: true,
+    xml: mimeType.toLowerCase().includes('xml'),
+  };
+  const legacy = schemaToSampleObj(schema, config);
+  const samples = getExampleValuesFromSchema(schema, config);
+  console.log('****', testResult);
 
   if (!samples || (!mimeType.toLowerCase().includes('json') && !mimeType.toLowerCase().includes('text') && !mimeType.toLowerCase().includes('*/*') && !mimeType.toLowerCase().includes('xml'))) {
     return [{
@@ -630,19 +631,20 @@ export function generateExample(examples, example, schema, mimeType, includeRead
   }
 
   return Object.keys(samples).map((samplesKey, sampleCounter) => {
-    if (!samples[samplesKey]) {
+    const sample = samples[samplesKey];
+    if (!sample) {
       return null;
     }
-    const summary = samples[samplesKey]['::TITLE'] || `Example ${sampleCounter + 1}`;
-    const description = samples[samplesKey]['::DESCRIPTION'] || '';
-    removeTitlesAndDescriptions(samples[samplesKey]);
+    const summary = sample['::TITLE'] || `Example ${sampleCounter + 1}`;
+    const description = sample['::DESCRIPTION'] || '';
+    removeTitlesAndDescriptions(sample);
 
     let exampleValue = '';
     if (mimeType.toLowerCase().includes('xml')) {
-      console.log('*****', samples);
-      exampleValue = xmlFormatter(samples, { declaration: true, indent: '    ' });
+      const xmlExample = getExampleValuesFromSchema(schema, config);
+      exampleValue = xmlFormatter(xmlExample, { declaration: true, indent: '    ' });
     } else {
-      exampleValue = outputType === 'text' ? JSON.stringify(samples[samplesKey], null, 8) : samples[samplesKey];
+      exampleValue = outputType === 'text' ? JSON.stringify(sample, null, 8) : sample;
     }
 
     return {
