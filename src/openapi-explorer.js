@@ -317,11 +317,9 @@ export default class OpenApiExplorer extends LitElement {
         .only-large-screen-flex{
           display:flex;
         }
-        .section-gap { 
-          padding: 0 0 0 24px; 
-        }
+        .section-gap,
         .section-gap--focused-mode {
-          padding: 24px 8px; 
+          padding: 24px 24px; 
         }
         .section-gap--read-mode { 
           padding: 24px 8px; 
