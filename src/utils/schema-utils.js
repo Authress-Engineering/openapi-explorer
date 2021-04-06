@@ -1,6 +1,7 @@
+import { cloneDeep } from 'lodash';
+import { expandN } from 'regex-to-strings';
+
 const xmlFormatter = require('@kyleshockey/xml');
-const regexStringGenerator = require('regex-to-strings');
-const { cloneDeep } = require('lodash');
 
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
@@ -130,7 +131,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
-      return regexStringGenerator.expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+      return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
     }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {
