@@ -16,6 +16,7 @@ import '@/components/json-tree';
 import '@/components/schema-tree';
 import '@/components/tag-input';
 
+const truncateString = (str, length) => (str && str.length > length ? `${str.substring(0, length - 1)}…` : str);
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
 
@@ -238,10 +239,9 @@ export default class ApiRequest extends LitElement {
         }
       }
 
-      const labelColWidth = 'read focused'.includes(this.renderStyle) ? '200px' : '160px';
       tableRows.push(html`
       <tr> 
-        <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:${labelColWidth}; min-width:100px;">
+        <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:160px; min-width:50px;">
           <div class="param-name">
             ${param.required ? html`<span style='color:var(--red)'>*</span>` : ''}${param.name}
           </div>
@@ -254,7 +254,7 @@ export default class ApiRequest extends LitElement {
         </td>  
         ${this.allowTry === 'true'
           ? html`
-            <td style="min-width:100px;">
+            <td style="min-width:200px;">
               ${paramSchema.type === 'array'
                 ? html`
                   <tag-input class="request-param" 
@@ -302,10 +302,10 @@ export default class ApiRequest extends LitElement {
               ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
-                    ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
+                    ${paramSchema.default && !this.fillRequestWithDefault ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
                     ${paramSchema.example ? html`<span style="font-weight:bold">Example: </span>${paramSchema.example}<br/>` : ''}
-                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
                     ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
+                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br/>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
@@ -587,10 +587,9 @@ export default class ApiRequest extends LitElement {
           'text',
         );
 
-        const labelColWidth = 'read focused'.includes(this.renderStyle) ? '200px' : '160px';
         formDataTableRows.push(html`
         <tr> 
-          <td style="width:${labelColWidth}; min-width:100px;">
+          <td style="width:160px; min-width:100px;">
             <div class="param-name">
               ${fieldSchema.required
                 ? html`<span style='color:var(--red);'>*</span>${fieldName}`
