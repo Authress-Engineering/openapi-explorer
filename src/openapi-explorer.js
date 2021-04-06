@@ -337,10 +337,10 @@ export default class OpenApiExplorer extends LitElement {
           display:flex;
         }
         .section-gap--focused-mode { 
-          padding: 12px 80px 12px 80px; 
+          padding: 12px 24px 12px 24px;
         }
         .section-gap--read-mode { 
-          padding: 24px 80px 12px 80px; 
+          padding: 24px 24px 12px;
         }
       }`,
     ];
