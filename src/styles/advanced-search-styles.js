@@ -21,11 +21,10 @@ export default css`
     transform: translate(-50%, 0%);
     display: flex;
     flex-direction: column;
-    width: 70vw;
+    width: 50vw;
     background-color: var(--bg2);
     color: var(--fg2);
     border-radius: 4px;
-    max-height: 500px;
     overflow: hidden;
     border: 1px solid var(--border-color);
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
@@ -43,33 +42,43 @@ export default css`
     border-bottom: 1px solid var(--light-border-color);
     overflow: hidden;
   }
-  
-  .dialog-box-header button {
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--fg);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    cursor:pointer;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    margin-right: -8px;
-  }
-  .dialog-box-header button:hover {
-    border-color: var(--primary-color);
+
+  .dialog-box .m-btn {
+    padding: 1px 6px;
   }
 
   .dialog-box-content {
     padding: 16px;
     display:block;
-    overflow: auto;
-    height: 100%;
   }
 
   .dialog-box-title {
     flex-grow: 1;
-    font-size:24px;
+    font-size: 20px;
+  }
+
+  .advanced-search-options {
+  }
+
+  .advanced-search-dialog-input {
+    width:100%;
+  }
+
+  #advanced-search-dialog-input {
+    width: 100%;
+  }
+
+  .advanced-search-locations {
+    display:flex;
+    flex-direction: column;
+    margin:8px 0 24px;
+  }
+
+  .advanced-search-locations label {
+    font-size: var(--font-size-small);
+  }
+  .advanced-search-results {
+    max-height: 400px;
+    overflow: auto;
   }
 `;

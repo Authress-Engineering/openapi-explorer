@@ -203,12 +203,12 @@ input[type="checkbox"]:after {
 
 /* Toggle Body - Checked */
 input[type="checkbox"]:checked {
-  box-shadow: inset 0 0 0 13px var(--green);
-  border-color: var(--green);
+  box-shadow: inset 0 0 0 13px var(--primary-color);
+  border-color: var(--primary-color);
 }
 /* Toggle Thumb - Checked*/
 input[type="checkbox"]:checked:after {
-  border: 1px solid var(--green);
+  border: 1px solid var(--primary-color);
   left: 16px;
   right: 1px;
   transition: border .25s, left .15s .25s, right .25s .175s;

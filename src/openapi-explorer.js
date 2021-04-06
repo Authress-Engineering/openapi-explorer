@@ -21,9 +21,9 @@ import PrismStyles from './styles/prism-styles';
 import TabStyles from './styles/tab-styles';
 import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
-import {
-  advancedSearch, pathIsInSearch, sleep,
-} from './utils/common-utils';
+import advancedSearchStyles from './styles/advanced-search-styles';
+
+import { advancedSearch, pathIsInSearch, sleep } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
 import apiRequestStyles from './styles/api-request-styles';
@@ -127,6 +127,7 @@ export default class OpenApiExplorer extends LitElement {
       TabStyles,
       NavStyles,
       InfoStyles,
+      advancedSearchStyles,
       apiRequestStyles,
       css`
       :host {
@@ -496,15 +497,11 @@ export default class OpenApiExplorer extends LitElement {
     this.matchPaths = '';
   }
 
-  onShowSearchModalClicked() {
+  async onShowSearchModalClicked() {
     this.showAdvancedSearchDialog = true;
-  }
-
-  // Event Handler on Dialog-Box is opened
-  async onOpenSearchDialog(e) {
-    // Set focus to text input
-    const inputEl = e.detail.querySelector('input');
-    await sleep(0);
+    // wait for the dialog to render
+    await sleep(10);
+    const inputEl = this.shadowRoot.getElementById('advanced-search-dialog-input');
     if (inputEl) {
       inputEl.focus();
     }
@@ -744,8 +741,8 @@ export default class OpenApiExplorer extends LitElement {
       } else {
         searchInputEl = eventTargetEl.closest('.advanced-search-options').querySelector('input[type=text]');
       }
-      const searcOptions = [...eventTargetEl.closest('.advanced-search-options').querySelectorAll('input:checked')].map((v) => v.id);
-      this.advancedSearchMatches = advancedSearch(searchInputEl.value, this.resolvedSpec.tags, searcOptions);
+      const searchOptions = [...eventTargetEl.closest('.advanced-search-options').querySelectorAll('input:checked')].map((v) => v.id);
+      this.advancedSearchMatches = advancedSearch(searchInputEl.value, this.resolvedSpec.tags, searchOptions);
     }, delay);
   }
 }
