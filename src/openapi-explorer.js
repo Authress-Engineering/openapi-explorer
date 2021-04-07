@@ -524,13 +524,14 @@ export default class OpenApiExplorer extends LitElement {
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
+        return;
       }
       this.afterSpecParsedAndValidated(spec);
     } catch (err) {
       this.loading = false;
       this.loadFailed = true;
       this.resolvedSpec = null;
-      console.error(`OpenAPI Explorer: Unable to resolve the API spec..  ${err.message}`); // eslint-disable-line no-console
+      console.error('OpenAPI Explorer: Unable to resolve the API spec..', err); // eslint-disable-line no-console
     }
   }
 
@@ -676,6 +677,10 @@ export default class OpenApiExplorer extends LitElement {
 
   // Public Method (scrolls to a given path and highlights the left-nav selection)
   async scrollTo(elementId, expandPath = true, scrollNavItemToView = true) {
+    if (!this.resolvedSpec) {
+      return;
+    }
+
     if (this.renderStyle === 'focused') {
       // explorerLocation will get validated in the focused-endpoint-template
       this.explorerLocation = elementId;

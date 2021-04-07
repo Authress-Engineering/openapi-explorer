@@ -4,18 +4,16 @@ import marked from 'marked';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
-  let jsonParsedSpec;
-  try {
-    let specMeta;
-    if (typeof specUrlOrObject === 'string') {
-      specMeta = await OpenApiParser.resolve({ url: specUrlOrObject }); // Swagger(specUrl);
-    } else {
-      specMeta = await OpenApiParser.resolve({ spec: specUrlOrObject }); // Swagger({ spec: specUrl });
-    }
-    jsonParsedSpec = specMeta.spec;
-  } catch (err) {
-    console.info('OpenAPI Explorer: %c There was an issue while parsing the spec %o ', 'color:orange', err); // eslint-disable-line no-console
-    throw err;
+  let specMeta;
+  if (typeof specUrlOrObject === 'string') {
+    specMeta = await OpenApiParser.resolve({ url: specUrlOrObject }); // Swagger(specUrl);
+  } else {
+    specMeta = await OpenApiParser.resolve({ spec: specUrlOrObject }); // Swagger({ spec: specUrl });
+  }
+
+  const jsonParsedSpec = specMeta.spec;
+  if (specMeta.message === 'Not Found' || !jsonParsedSpec) {
+    throw Error('SpecificationNotFound');
   }
 
   // Tags with Paths and WebHooks
