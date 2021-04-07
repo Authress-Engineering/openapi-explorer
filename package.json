@@ -23,8 +23,11 @@
     "swagger",
     "swagger ui",
     "openapi ui",
+    "api ui",
     "openapi themes",
-    "swagger themes"
+    "swagger themes",
+    "rapidoc",
+    "redoc"
   ],
   "main": "dist/openapi-explorer.min.js",
   "module": "dist/openapi-explorer.min.js",
