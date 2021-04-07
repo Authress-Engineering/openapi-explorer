@@ -1,5 +1,4 @@
-/* eslint-disable no-use-before-define */
-import OpenApiParser from '@apitools/openapi-parser';
+import SwaggerClient from 'swagger-client';
 import marked from 'marked';
 import { invalidCharsRegEx } from './common-utils';
 
