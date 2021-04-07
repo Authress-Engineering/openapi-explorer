@@ -40,9 +40,7 @@ const commonPlugins = [
 ];
 
 if (process.env.NODE_ENV === 'production') {
-  if (process.env.GITHUB_REF && !process.env.GITHUB_REF.match('release/')) {
-    commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
-  }
+  commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false, generateStatsFile: true }));
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true, banner,

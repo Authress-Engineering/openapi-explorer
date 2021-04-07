@@ -5,20 +5,22 @@ import marked from 'marked';
 function onApiKeyChange(apiKeyId, e) {
   let apiKeyValue = '';
   const securityObj = this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
-  if (securityObj) {
-    const trEl = e.target.closest('tr');
-    if (securityObj.type && securityObj.scheme && securityObj.type === 'http' && securityObj.scheme.toLowerCase() === 'basic') {
-      const userVal = trEl.querySelector('.api-key-user').value.trim();
-      const passwordVal = trEl.querySelector('.api-key-password').value.trim();
-      if (userVal && passwordVal) {
-        apiKeyValue = `Basic ${btoa(`${userVal}:${passwordVal}`)}`;
-      }
-    } else {
-      apiKeyValue = trEl.querySelector('.api-key-input').value.trim();
-      if (apiKeyValue) {
-        if (securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
-          apiKeyValue = `Bearer ${apiKeyValue}`;
-        }
+  if (!securityObj) {
+    return;
+  }
+
+  const trEl = e.target.closest('tr');
+  if (securityObj.type && securityObj.type === 'http' && securityObj.scheme && securityObj.scheme.toLowerCase() === 'basic') {
+    const userVal = trEl.querySelector('.api-key-user').value.trim();
+    const passwordVal = trEl.querySelector('.api-key-password').value.trim();
+    if (userVal && passwordVal) {
+      apiKeyValue = `Basic ${btoa(`${userVal}:${passwordVal}`)}`;
+    }
+  } else {
+    apiKeyValue = trEl.querySelector('.api-key-input').value.trim();
+    if (apiKeyValue) {
+      if (securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
+        apiKeyValue = `Bearer ${apiKeyValue.replace(/^Bearer\s+/i, '')}`;
       }
     }
     securityObj.finalKeyValue = apiKeyValue;

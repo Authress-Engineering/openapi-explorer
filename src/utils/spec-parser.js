@@ -1,14 +1,13 @@
-/* eslint-disable no-use-before-define */
-import OpenApiParser from '@apitools/openapi-parser';
+import SwaggerClient from 'swagger-client';
 import marked from 'marked';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
   let specMeta;
   if (typeof specUrlOrObject === 'string') {
-    specMeta = await OpenApiParser.resolve({ url: specUrlOrObject }); // Swagger(specUrl);
+    specMeta = await SwaggerClient(specUrlOrObject);
   } else {
-    specMeta = await OpenApiParser.resolve({ spec: specUrlOrObject }); // Swagger({ spec: specUrl });
+    specMeta = await SwaggerClient({ spec: specUrlOrObject });
   }
 
   const jsonParsedSpec = specMeta.spec;

@@ -184,11 +184,9 @@ function duplicateExampleWithNewPropertyValues(objectExamples, propertyName, pro
 export function getExampleValuesFromSchema(schema, config = {}) {
   // Wrap the top level so that the recursive object can treat it as a normal property and we'll hit the 'object' below, otherwise we'll never create the top level.
   if (config.xml) {
-    // eslint-disable-next-line no-use-before-define
     const xmlResult = getExampleValuesFromSchemaRecursive(schema.type === 'object' ? { properties: { _root: schema } } : schema, config);
     return xmlResult.map((example) => example[0]);
   }
-  // eslint-disable-next-line no-use-before-define
   return getExampleValuesFromSchemaRecursive(schema, config);
 }
 
