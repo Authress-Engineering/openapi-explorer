@@ -40,7 +40,7 @@ const commonPlugins = [
 ];
 
 if (process.env.NODE_ENV === 'production') {
-  commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false, generateStatsFile: true }));
+  commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }));
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true, banner,

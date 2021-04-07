@@ -2,11 +2,14 @@
 Web Component Custom Element for Open-API spec viewing, with automatic integration for React and Vue.
 
 <p align="center">
-    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square">
-    <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.svg?colorB=blue&label=minified&style=flat-square">-->
-    <!--<img src="https://img.shields.io/github/size/Rhosys/openapi-explorer/dist/openapi-explorer.min.js.gz.svg?colorB=blue&label=zip&style=flat-square">-->
+    <a href="./LICENSE" alt="apache 2.0 license">
+      <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg">
+    </a>
     <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
         <img src="https://badge.fury.io/js/openapi-explorer.svg">
+    </a>
+    <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
+      <img src="https://badgen.net/bundlephobia/minzip/openapi-explorer?color=green">
     </a>
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
         <img src="https://img.shields.io/badge/webcomponents.org-OpenAPI%20Explorer-blue.svg?style=social">
