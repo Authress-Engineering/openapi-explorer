@@ -55,6 +55,11 @@ export default css`
   border: none;
   background-color: var(--primary-color);
 }
+.tab-content .toolbar-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px
+}
 
 input, textarea, select, button, pre {
   color:var(--fg);
