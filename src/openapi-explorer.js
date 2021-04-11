@@ -643,8 +643,9 @@ export default class OpenApiExplorer extends LitElement {
   // Called by anchor tags created using markdown
   handleHref(e) {
     if (e.target.tagName.toLowerCase() === 'a') {
-      if (e.target.getAttribute('href').startsWith('#')) {
-        const gotoEl = this.shadowRoot.getElementById(e.target.getAttribute('href').replace('#', ''));
+      const anchor = e.target.getAttribute('href');
+      if (anchor && anchor.startsWith('#')) {
+        const gotoEl = this.shadowRoot.getElementById(anchor.replace('#', ''));
         if (gotoEl) {
           gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
         }
