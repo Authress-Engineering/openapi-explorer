@@ -1,0 +1,11 @@
+{
+    "search.exclude": {
+        "lib/*": true
+    },
+    "cSpell.words": [
+        "kyleshockey",
+        "prismjs",
+        "rapidoc",
+        "redoc"
+    ]
+}
