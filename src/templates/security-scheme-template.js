@@ -344,7 +344,7 @@ export default function securitySchemeTemplate() {
                   }
                   ${v.type.toLowerCase() === 'http' && v.scheme.toLowerCase() === 'basic'
                     ? html`
-                      Send <code>Authorization</code> in <code>header</code> containing the word <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
+                      Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
                       <div style="display:flex; max-height:28px;">
                         <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
                         <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
@@ -403,17 +403,17 @@ export function pathSecurityTemplate(pathSecurity) {
         securityDefs: andSecurityKeys1,
       });
     });
-    return html`<div style="position:absolute; top:3px; right:2px; font-size:var(--font-size-small); line-height: 1.5;">
+    return html`<div class="security-info-button" data-content-id='auth' @click='${(e) => this.scrollToEventTarget(e, false)}'>
       <div style="position:relative; display:flex; min-width:350px; max-width:700px; justify-content: flex-end;">
-        <svg width="16" height="24">
+        <svg width="16" height="24" style="cursor:pointer;">
           <g>
             <path style="fill: var(--fg3)" d="m13.8,8.5l0,-2.6l0,0c0,-3.2 -2.6,-5.8 -5.8,-5.8s-5.8,2.6 -5.8,5.8l0,0l0,2.6l-2.1,0l0,11.2l16,0l0,-11.2l-2.1,0l-0,0l0,0l0,0l-0,0zm-9.8,-2.6c0,0 0,0 0,0c0,-2.2 1.8,-4 4,-4c2.2,0 4,1.8 4,4c0,0 0,0 0,0l0,2.6l-8.03,0l0,-2.6l0,0l0,0z" />
           </g>
         </svg>
           ${orSecurityKeys1.map((orSecurityItem1, i) => html`
           ${i !== 0 ? html`<div style="padding:3px 4px;"> OR </div>` : ''}
-          <div class="tooltip">
-            <div style = "padding:2px 4px; white-space:nowrap; text-overflow:ellipsis;max-width:150px; overflow:hidden;">
+          <div class="tooltip" style="cursor:pointer;">
+            <div style="padding:2px 4px; white-space:nowrap; text-overflow:ellipsis;max-width:150px; overflow:hidden;">
               <span part="anchor anchor-operation-security"> ${orSecurityItem1.securityTypes} </span>
             </div>
             <div class="tooltip-text" style="position:absolute; color: var(--fg); top:26px; right:0; border:1px solid var(--border-color);padding:2px 4px; display:block;">

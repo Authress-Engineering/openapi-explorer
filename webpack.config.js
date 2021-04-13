@@ -25,7 +25,7 @@ const commonPlugins = [
   new webpack.HotModuleReplacementPlugin(),
   new CleanWebpackPlugin(),
   new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-  new HtmlWebpackPlugin({ template: 'index.html' }),
+  new HtmlWebpackPlugin({ template: 'mocks/index.html' }),
   new CompressionPlugin(),
   new FileManagerPlugin({
     events: {

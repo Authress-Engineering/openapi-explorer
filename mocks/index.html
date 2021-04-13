@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+        <title>OpenAPI Explorer Development Test</title>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/default.min.css">
+        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    </head>
+
+    <script>
+        // window.addEventListener('DOMContentLoaded', (event) => {
+        //     const docEl = document.getElementById('thedoc');
+        //     docEl.addEventListener('before-try', (e) => {
+        //         e.detail.request.headers.append('AAA-BBB', 'CCC DDDD');
+        //     });
+        // });
+
+    </script>
+
+    <body>
+        <!-- 
+    Some sample spec to try
+    https://api.apis.guru/v2/specs/stripe.com/2019-02-19/swagger.json 
+    https://api.apis.guru/v2/specs/github.com/v3/swagger.json
+    https://api.apis.guru/v2/specs/bitbucket.org/2.0/swagger.json
+    https://petstore.swagger.io/v2/swagger.json
+    https://assets.zuora.com/zuora-documentation/swagger.yaml <<< Large spec with lot of markdown
+    ./specs/petstore_anyof.yaml <<< contains complex one-of with inline primitives and recursive objects
+    ./specs/oneof1.yaml  <<< nested oneof
+-->
+
+        <!--
+  <openapi-explorer 
+    id = "thedoc" 
+    spec-url = "https://petstore.swagger.io/v2/swagger.json" 
+    theme = "light"
+    render-style = "read"
+    schema-style = 'tree'
+    sort-endpoints-by = "method"
+    response-area-height = "900px"
+  > </openapi-explorer>
+-->
+        
+  <!-- <openapi-explorer 
+    id = "thedoc" 
+    spec-url="https://api.authress.io/v1"> 
+  </openapi-explorer> -->
+
+        <openapi-explorer id="thedoc"></openapi-explorer>
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                let docEl = document.getElementById("thedoc");
+                let objSpec = {
+                    "openapi": "3.0.1",
+                    "info": {
+                        "title": "My API",
+                        "version": "v1"
+                    },
+                    "paths": {
+                        "/api/Todo/complicated": {
+                            "get": {
+                                "tags": [
+                                    "Todo"
+                                ],
+                                "summary": "Complicated action.",
+                                "responses": {
+                                    "200": {
+                                        "description": "Returns a complicated class.",
+                                        "content": {
+                                            "application/json": {
+                                                "schema": {
+                                                    "$ref": "#/components/schemas/ComplicatedClass"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "security": [{ "basicAuth": [] }],
+                    "components": {
+                        "schemas": {
+                            "Tag": {
+                                "enum": [0, 1, 2],
+                                "type": "integer",
+                                "description": "Tag for TodoItem.",
+                                "format": "int32"
+                            },
+                            "InnerEnum": {
+                                "enum": [1],
+                                "type": "integer",
+                                "description": "Inner enum.",
+                                "format": "int32"
+                            },
+                            "SecondInnerEnum": {
+                                "enum": [0],
+                                "type": "integer",
+                                "description": "Second inner enum.",
+                                "format": "int32"
+                            },
+                            "SecondInnerEnumSecondInnerClass": {
+                                "type": "object",
+                                "properties": {
+                                    "innerEnum": {
+                                        "allOf": [{
+                                            "$ref": "#/components/schemas/SecondInnerEnum"
+                                        }],
+                                        "description": "Second inner enum."
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "description": "Second inner class."
+                            },
+                            "InnerClass": {
+                                "type": "object",
+                                "properties": {
+                                    "innerEnum": {
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/InnerEnum"
+                                        },
+                                        "description": "List of inner enums.",
+                                        "nullable": true
+                                    },
+                                    "secondInnerClass": {
+                                        "allOf": [{
+                                            "$ref": "#/components/schemas/SecondInnerEnumSecondInnerClass"
+                                        }],
+                                        "description": "Second inner class.",
+                                        "nullable": true
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "description": "Inner class."
+                            },
+                            "ComplicatedClass": {
+                                "type": "object",
+                                "properties": {
+                                    "tag": {
+                                        "allOf": [{
+                                            "$ref": "#/components/schemas/Tag"
+                                        }],
+                                        "description": "Tag."
+                                    },
+                                    "innerClass": {
+                                        "allOf": [{
+                                            "$ref": "#/components/schemas/InnerClass"
+                                        }],
+                                        "description": "Inner class.",
+                                        "nullable": true
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "description": "Complicated class for testing enums."
+                            }
+                        },
+                        "securitySchemes": {
+                            "basicAuth": {
+                                "type": "http",
+                                "scheme": "basic"
+                            }
+                        }
+                    }
+                };
+                docEl.loadSpec(objSpec);
+            })
+
+        </script>
+    </body>
+
+</html>
