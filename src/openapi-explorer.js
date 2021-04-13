@@ -88,7 +88,6 @@ export default class OpenApiExplorer extends LitElement {
       // Main Colors and Font
       primaryColor: { type: String, attribute: 'primary-color' },
       secondaryColor: { type: String, attribute: 'secondary-color' },
-      disableDefaultColors: { type: Boolean, attribute: 'disable-default-colors' },
       bgColor: { type: String, attribute: 'bg-color' },
       textColor: { type: String, attribute: 'text-color' },
       headerColor: { type: String, attribute: 'header-color' },

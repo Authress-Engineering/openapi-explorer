@@ -27,7 +27,7 @@ export default function mainBodyTemplate() {
 
   /* eslint-disable indent */
   return html`
-    ${SetTheme.call(this, newTheme, this.disableDefaultColors)}
+    ${SetTheme.call(this, newTheme)}
     
     <!-- Advanced Search -->
     ${this.allowAdvancedSearch === 'false' ? '' : advancedSearchTemplate.call(this)}

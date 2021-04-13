@@ -1,5 +1,7 @@
 import { html } from 'lit-element';
+import color from 'color';
 import ColorUtils from './color-utils';
+
 /* Generates an schema object containing type and constraint info */
 
 // TODO: possible drive theme from:
@@ -9,17 +11,7 @@ import ColorUtils from './color-utils';
   }
 */
 
-const defaultColors = [
-  '--purple: #6f42c1',
-  '--pink: #e83e8c',
-  '--red: #dc3545',
-  '--orange: #fd7e14',
-  '--yellow: #ffc107',
-  '--green: #28a745',
-  '--white: #fff',
-];
-
-export default function setTheme(theme = {}, disableDefaultColors) {
+export default function setTheme(theme = {}) {
   const bg1 = (theme.bg1 ? theme.bg1 : '#ffffff');
   const fg1 = (theme.fg1 ? theme.fg1 : '#444444');
   const bg2 = theme.bg2 ? theme.bg2 : ColorUtils.color.brightness(bg1, -5); // or '#fafafa'
@@ -39,6 +31,29 @@ export default function setTheme(theme = {}, disableDefaultColors) {
   const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);
   const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
   const overlayBg = 'rgba(0, 0, 0, 0.4)';
+
+  const defaultColors = [
+    `--purple: ${getComputedStyle(this).getPropertyValue('--purple').trim() || '#6f42c1'}`,
+    `--red: ${getComputedStyle(this).getPropertyValue('--red').trim() || '#dc3545'}`,
+    `--orange: ${getComputedStyle(this).getPropertyValue('--orange').trim() || '#fd7e14'}`,
+    `--yellow: ${getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107'}`,
+    `--green: ${getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745'}`,
+    `--blue: ${getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9'}`,
+
+    '--pink: #e83e8c',
+    '--white: #fff',
+    '',
+  ];
+
+  const lightColors = [
+    `--light-purple: ${color(getComputedStyle(this).getPropertyValue('--purple').trim() || '#6f42c1').lightness(96).hex()}`,
+    `--light-red: ${color(getComputedStyle(this).getPropertyValue('--red').trim() || '#dc3545').lightness(96).hex()}`,
+    `--light-orange: ${color(getComputedStyle(this).getPropertyValue('--orange').trim() || '#fd7e14').lightness(96).hex()}`,
+    `--light-yellow: ${color(getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107').lightness(96).hex()}`,
+    `--light-green: ${color(getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745').lightness(96).hex()}`,
+    `--light-blue: ${color(getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9').lightness(96).hex()}`,
+    '',
+  ];
 
   const newTheme = {
     bg1,
@@ -115,7 +130,9 @@ export default function setTheme(theme = {}, disableDefaultColors) {
     --placeholder-color:${newTheme.placeHolder};
     --hover-color:${newTheme.hoverColor};
 
-    ${disableDefaultColors ? '' : defaultColors.join(';\n')}
+    ${defaultColors.join(';\n')}
+    
+    ${lightColors.join(';\n')}
 
     /* Header Color */
     --header-bg:${newTheme.headerColor};
