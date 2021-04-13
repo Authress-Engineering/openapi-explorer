@@ -1,5 +1,7 @@
 import { html } from 'lit-element';
+import color from 'color';
 import ColorUtils from './color-utils';
+
 /* Generates an schema object containing type and constraint info */
 
 // TODO: possible drive theme from:
@@ -189,7 +191,9 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --placeholder-color:${newTheme.placeHolder};
     --hover-color:${newTheme.hoverColor};
 
-    ${disableDefaultColors ? '' : defaultColors.join(';\n')}
+    ${defaultColors.join(';\n')}
+    
+    ${lightColors.join(';\n')}
 
     /* Header Color */
     --header-bg:${newTheme.headerColor};

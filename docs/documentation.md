@@ -23,7 +23,6 @@
 ### Colors
 Note: This properties will likely be deprecated in favor of global css variables being set, are still available
 
-* `disable-default-colors` - In the case when a theme is being used the default color palette is not necessary and will likely overwrite your theme's colors. Set this to `true` in most cases.
 * `bg-color` - Set the background color [Expected Bootstrap value: `$light`]
 * `primary-color` - Set the primary [Expected Bootstrap value: `$primary`]
 * `secondary-color` - Set the secondary color used for accents [Expected Bootstrap value: `$primary`]
