@@ -188,4 +188,12 @@ export default css`
     padding:8px 16px;
   }
 }
+
+.security-info-button {
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+}
 `;
