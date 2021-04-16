@@ -104,7 +104,7 @@ responseInterceptor(event) {
 
 ```
 
-### Code examples
+### SDK code samples
 OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI vendor extension. Just add your code sample into the array and it will dynamically appear as an example in the doc.
 ```json
 "get": {
