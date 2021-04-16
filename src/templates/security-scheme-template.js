@@ -23,8 +23,9 @@ function onApiKeyChange(apiKeyId, e) {
         apiKeyValue = `Bearer ${apiKeyValue.replace(/^Bearer\s+/i, '')}`;
       }
     }
-    securityObj.finalKeyValue = apiKeyValue;
   }
+
+  securityObj.finalKeyValue = apiKeyValue;
   this.requestUpdate();
 }
 
