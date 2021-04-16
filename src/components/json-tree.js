@@ -24,7 +24,7 @@ export default class JsonTree extends LitElement {
       .json-tree {
         background: rgb(51, 51, 51);
         color: white;
-        padding: 10px;
+        padding: 8px;
 
         min-height: 30px;
         font-family: var(--font-mono);

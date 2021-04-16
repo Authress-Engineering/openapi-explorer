@@ -104,6 +104,19 @@ responseInterceptor(event) {
 
 ```
 
+### Code examples
+OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI vendor extension. Just add your code sample into the array and it will dynamically appear as an example in the doc.
+```json
+"get": {
+  "x-code-samples": [{
+    "lang": "Javascript",
+    "source": "console.log('This is a code sample')"
+  }]
+}
+```
+<p>
+  <img src="./code-samples.png" alt="Code Samples" width="600px">
+</p>
 
 ### Styling using CSS variables
 In many cases these might have already been set by your css framework, if not, and you want to override the the defaults to match your theme. For more in-depth options check out [How to style your openapi-explorer UI](./docs/styling.md).

@@ -29,7 +29,6 @@ export default html`
   color:var(--primary-color);
 }
 .tab-content {
-  margin:-1px 0 0 0;
   position:relative;
 }
 `;

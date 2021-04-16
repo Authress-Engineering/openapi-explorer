@@ -144,7 +144,7 @@ export default css`
   }
 
   .m-markdown pre {
-    padding: 12px;
+    padding: 8px;
     background-color: var(--code-bg);
     color:var(--code-fg);
   }

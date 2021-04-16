@@ -57,8 +57,8 @@ export default css`
 }
 .tab-content .toolbar-btn {
   position: absolute;
-  top: 12px;
-  right: 16px
+  top: 8px;
+  right: 8px;
 }
 
 input, textarea, select, button, pre {

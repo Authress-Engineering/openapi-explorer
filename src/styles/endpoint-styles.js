@@ -196,4 +196,11 @@ export default css`
   font-size: var(--font-size-small);
   line-height: 1.5;
 }
+
+pre.code-sample {
+  padding: 8px;
+  min-height: 30px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-small);
+}
 `;
