@@ -140,7 +140,7 @@ export default class OpenApiExplorer extends LitElement {
         letter-spacing:normal;
         color:var(--fg);
         background-color:var(--bg);
-        font-family:var(--font-regular);
+        font-family: var(--font-regular);
       }
       .body {
         display:flex;

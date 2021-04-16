@@ -48,7 +48,7 @@
   spec-url="https://api.authress.io/v1"> 
   </openapi-explorer> -->
 
-  <openapi-explorer id="thedoc" responsive="true"></openapi-explorer>    
+  <openapi-explorer id="thedoc"></openapi-explorer>    
   <!-- <openapi-explorer id="thedoc2" responsive="true"></openapi-explorer> -->
     <script>
       document.addEventListener('DOMContentLoaded', (event) => {
@@ -61,6 +61,10 @@
           "paths": {
             "/api/Todo/complicated": {
               "get": {
+                'x-code-samples': [{
+                  lang: 'Javascript',
+                  source: "console.log('This is a code sample');\nconsole.log('{}');"
+                }],
                 "tags": [
                   "Todo"
                 ],
