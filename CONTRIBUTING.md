@@ -1,33 +1,24 @@
 ## Pull Request Guidelines
 
-- Fork this repository to your own account. Do not create branches here.
-- Rebase before creating a PR to keep commit history clear.
-- Make sure that running `npm run build` output do not emit any warnings or errors
+- Fork this repository to your own account.
 
 ### When adding/modifying/renaming any attribute method or event 
   **MUST HAVE**
   - Must be supported with an issue and provide little description about it, including the name, allowed values, defaults etc
-  - Add relevant documentation in `./docs/api.html`
-  
-  **NICE TO HAVE**
-  - If adding new dependency, be considerate of the bundle size since we bundle everything in a single file (`openapi-explorer.min.js`), like to keep its size down
-  - It is a good idea to show case it using an example  
-    - examples go under `./docs/examples` folder
-    - if your example is using a new spec then add in `./docs/specs` folder
-    - include a reference to the example  in `./docs/list.html` file
+  - Add relevant documentation, (possibly in `./docs/documentation.md`)
 
 ## Prerequisites
 `Node 10.15.3+` and `npm 6.14.4+` are required.
 
-For development 
+For development:
 ```shell
 git clone https://github.com/Rhosys/openapi-explorer.git
 npm install
-npm run serve
+npm run start
 # open http://localhost:8080
 ```
 
-To Generate Production bundle:
+To generate the static production bundle:
 ```shell
 npm run build
 ```
