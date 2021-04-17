@@ -55,7 +55,6 @@ export default class OpenApiExplorer extends LitElement {
 
       // UI Layouts
       layout: { type: String },
-      responsive: { type: String },
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
@@ -348,6 +347,9 @@ export default class OpenApiExplorer extends LitElement {
   // Startup
   connectedCallback() {
     super.connectedCallback();
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener('resize', this.handleResize);
+
     this.loading = true;
     const parent = this.parentElement;
     if (parent) {
@@ -365,7 +367,7 @@ export default class OpenApiExplorer extends LitElement {
       }
     }
 
-    this.renderStyle = this.responsive ? 'view' : 'focused';
+    this.renderStyle = 'focused';
     if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
     if (!this.defaultSchemaTab || !'example, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
@@ -430,6 +432,7 @@ export default class OpenApiExplorer extends LitElement {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
+    window.removeEventListener('resize', this.handleResize);
     super.disconnectedCallback();
   }
 
@@ -451,6 +454,12 @@ export default class OpenApiExplorer extends LitElement {
     });
   }
 
+  handleResize() {
+    const mediaQueryResult = window.matchMedia('(min-width: 768px)');
+    const newDisplay = mediaQueryResult.matches ? 'focused' : 'view';
+    this.renderStyle = newDisplay;
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (name === 'spec-url') {
       if (oldVal !== newVal) {
@@ -464,8 +473,7 @@ export default class OpenApiExplorer extends LitElement {
         }, 0);
       }
     }
-    if (name === 'responsive') {
-      this.renderStyle = newVal ? 'view' : 'focused';
+    if (name === 'renderStyle') {
       if (newVal === 'read') {
         window.setTimeout(() => {
           this.observeExpandedContent();

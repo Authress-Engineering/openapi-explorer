@@ -10,7 +10,6 @@
 #### Enable functionality
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
 * `fill-defaults` - [true] Fills the request data with the default data.
-* `responsive` - [false] Set to `true` to use the mobile responsive version (recommendation: set to false for desktop and tablet) 
 
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section
