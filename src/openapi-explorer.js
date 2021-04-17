@@ -368,6 +368,8 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     this.renderStyle = 'focused';
+    this.explorerLocation = this.explorerLocation || window.location.hash.substring(1);
+
     if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
     if (!this.defaultSchemaTab || !'example, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
@@ -425,6 +427,7 @@ export default class OpenApiExplorer extends LitElement {
     window.addEventListener('hashchange', () => {
       this.scrollTo(window.location.hash.substring(1));
     }, true);
+    this.handleResize();
   }
 
   // Cleanup
@@ -457,7 +460,10 @@ export default class OpenApiExplorer extends LitElement {
   handleResize() {
     const mediaQueryResult = window.matchMedia('(min-width: 768px)');
     const newDisplay = mediaQueryResult.matches ? 'focused' : 'view';
-    this.renderStyle = newDisplay;
+    if (this.renderStyle !== newDisplay) {
+      this.renderStyle = newDisplay;
+      this.requestUpdate();
+    }
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -473,7 +479,7 @@ export default class OpenApiExplorer extends LitElement {
         }, 0);
       }
     }
-    if (name === 'renderStyle') {
+    if (name === 'render-style') {
       if (newVal === 'read') {
         window.setTimeout(() => {
           this.observeExpandedContent();

@@ -197,6 +197,12 @@ export default css`
   line-height: 1.5;
 }
 
+@media only screen and (max-width: 768px) {
+  .security-info-button {
+    display: none;
+  }
+}
+
 pre.code-sample {
   padding: 8px;
   min-height: 30px;
