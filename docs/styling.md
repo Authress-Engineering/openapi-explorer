@@ -19,6 +19,7 @@ While openapi-explorer uses a shadow DOM, it is easy to inject in CSS overrides 
 // Get the openapi-explorer element
 const apiExplorer = document.getElementsByTagName('openapi-explorer')[0];
 const style = document.createElement('style');
+// Hide the navbar and set the background to be white
 style.innerHTML = `
 .nav-bar.focused { display: none !important; }
 :host {
