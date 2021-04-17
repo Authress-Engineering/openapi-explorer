@@ -49,13 +49,14 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 - Better Usability, 
   - Request fields are pre-populated with default data
   - Takes only one click to make an API call
-- Branding and Personalization features makes it easy to follow any style guide
+  - Renders SDK/client code samples
+  - Branding and Personalization features makes it easy to follow any style guide
   - Fully customizeable theme
 - Plenty of customization options 
-  - Add external contents at the top and bottom of the document,  you may add images, link, text, forms etc
-  - Allows disabling API calling feature
+  - Add external contents at the top and bottom of the document, extensible with images, link, text, and any framework components
   - All properties are reactive
   - Style the element with standard css (change padding, position, border, margin )
+  - Styles that reflect your site and your UI/UX frameworks (React, Vue, vanilla js, Bootstrap, Material, and many more...)
 - Responsive so it works on mobile
 - Lightweight and fast
 
