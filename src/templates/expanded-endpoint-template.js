@@ -45,7 +45,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
     ${pathSecurityTemplate.call(this, path.security)}
     ${codeSampleTabPanel}
     <div class='expanded-req-resp-container'>
-      <api-request  class="request-panel"
+      <api-request class="request-panel"
         method = "${path.method}"
         path = "${path.path}"
         .parameters = "${path.parameters}"

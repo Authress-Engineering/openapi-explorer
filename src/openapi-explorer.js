@@ -1,6 +1,7 @@
 import { css, LitElement, unsafeCSS } from 'lit-element';
 import marked from 'marked';
 import Prism from 'prismjs';
+
 import 'prismjs/components/prism-css';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-go';
@@ -530,10 +531,11 @@ export default class OpenApiExplorer extends LitElement {
       this.resolvedSpec = null;
       this.loading = true;
       this.loadFailed = false;
-      if (!this.serverUrl && typeof specUrlOrObject === 'string') {
+      const isServerUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/);
+      if (!this.serverUrl && isServerUrl) {
         this.serverUrl = new URL(specUrlOrObject).origin;
       }
-      const spec = await ProcessSpec(specUrlOrObject, this.generateMissingTags === 'true', this.sortTags === 'true', this.sortEndpointsBy, this.serverUrl);
+      const spec = await ProcessSpec(isServerUrl, specUrlOrObject, this.generateMissingTags === 'true', this.sortTags === 'true', this.sortEndpointsBy, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console

@@ -21,7 +21,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Install packages
-      run: npm install
+      run: npm ci
     - name: Run Setup
       run: node make.js setup
     - name: Run build

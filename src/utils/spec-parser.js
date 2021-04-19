@@ -1,11 +1,14 @@
 import SwaggerClient from 'swagger-client';
 import marked from 'marked';
+import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
-export default async function ProcessSpec(specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
+export default async function ProcessSpec(requiresLookup, specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
   let specMeta;
-  if (typeof specUrlOrObject === 'string') {
+  if (requiresLookup) {
     specMeta = await SwaggerClient(specUrlOrObject);
+  } else if (typeof specUrlOrObject === 'string') {
+    specMeta = await SwaggerClient({ spec: yaml.load(specUrlOrObject) });
   } else {
     specMeta = await SwaggerClient({ spec: specUrlOrObject });
   }
