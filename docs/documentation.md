@@ -109,6 +109,7 @@ OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI
 "get": {
   "x-code-samples": [{
     "lang": "Javascript",
+    "label": "JS + Axios",
     "source": "console.log('This is a code sample')"
   }]
 }
