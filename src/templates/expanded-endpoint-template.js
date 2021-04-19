@@ -111,7 +111,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
     }
     ${unsafeHTML(xCodeSamplesTabPanel)}
     <div class='expanded-req-resp-container'>
-      <api-request  class="request-panel"
+      <api-request class="request-panel"
         method = "${path.method}"
         path = "${path.path}"
         .parameters = "${path.parameters}"

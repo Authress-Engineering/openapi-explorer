@@ -3,13 +3,14 @@ import { html } from 'lit-element';
 /* eslint-disable indent */
 export default function callbackTemplate(callbacks) {
   return html`
-    <div class="req-res-title" style="margin-top:12px">CALLBACKS</div>
+  <div class="api-request col regular-font request-panel ${this.renderStyle}-mode">
     ${Object.entries(callbacks).map((kv) => html`
-      <div class="tiny-title" style="padding: 12px; border:1px solid var(--light-border-color)"> 
-        ${kv[0]}
+      <div class="${this.renderStyle}-request"> 
+        <div class="req-res-title">CALLBACKS</div>
+        <div class="table-title">${kv[0]}</div>
         ${Object.entries(kv[1]).map((pathObj) => html`
-          <div class="mono-font small-font-size" style="display:flex; margin-left:16px;">
-            <div> 
+          <div class="mono-font small-font-size" style="display:flex;">
+            <div style="width:100%"> 
               ${Object.entries(pathObj[1]).map((method) => html`
                 <div>
                   <div style="margin-top:12px;">
@@ -36,8 +37,8 @@ export default function callbackTemplate(callbacks) {
                       allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
                       schema-hide-read-only = "${this.schemaHideReadOnly}"
                       fetch-credentials = "${this.fetchCredentials}"
-                      exportparts="btn btn-fill btn-outline btn-try"
-                    > </api-request>
+                      exportparts="btn btn-fill btn-outline btn-try">
+                    </api-request>
 
                     <api-response
                       callback = "true"
@@ -58,6 +59,7 @@ export default function callbackTemplate(callbacks) {
         `)}
       </div>  
     `)}
+  </div>
   `;
 }
 /* eslint-enable indent */

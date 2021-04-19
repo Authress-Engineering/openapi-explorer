@@ -1,5 +1,6 @@
 import SwaggerClient from 'swagger-client';
 import marked from 'marked';
+import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '', allowDuplicatedPathsByTag = false) {

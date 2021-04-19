@@ -13,7 +13,7 @@
 For development:
 ```shell
 git clone https://github.com/Rhosys/openapi-explorer.git
-npm install
+npm ci
 npm run start
 # open http://localhost:8080
 ```

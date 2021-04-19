@@ -3,6 +3,7 @@
         "lib/*": true
     },
     "cSpell.words": [
+        "exportparts",
         "kyleshockey",
         "prismjs",
         "rapidoc",

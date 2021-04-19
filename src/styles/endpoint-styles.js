@@ -124,6 +124,16 @@ export default css`
   flex-wrap: wrap;
   flex-direction: column;
 }
+.view-request {
+  flex:1; 
+  min-height:100px;
+  max-width: 100%;
+  padding:16px 8px;
+  overflow:hidden;
+  border-width: 0px;
+  border-style:dashed;
+}
+
 .request, .response {
   flex:1; 
   min-height:100px;
