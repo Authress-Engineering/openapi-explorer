@@ -281,10 +281,11 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
 }
 
 export default function securitySchemeTemplate() {
-  const providedApiKeys = this.resolvedSpec?.securitySchemes?.filter((v) => (v.finalKeyValue));
-  if (!providedApiKeys) {
+  const schemes = this.resolvedSpec && this.resolvedSpec.securitySchemes;
+  if (!schemes) {
     return;
   }
+  const providedApiKeys = schemes.filter((v) => (v.finalKeyValue));
   return html`
   <section id='auth' part="section-auth" style="margin-top:24px; margin-bottom:24px;" class = 'observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
     <slot name="authentication">
@@ -298,10 +299,10 @@ export default function securitySchemeTemplate() {
           : html`<div class="red-text">No API key applied</div>`
         }
       </div>
-      ${this.resolvedSpec.securitySchemes && this.resolvedSpec.securitySchemes.length > 0
+      ${schemes.length > 0
         ? html`  
           <table class='m-table' style = "width:100%">
-            ${this.resolvedSpec.securitySchemes.map((v) => html`
+            ${schemes.map((v) => html`
               <tr>  
                 <td style="max-width:500px; overflow-wrap: break-word;">
                   <div style="min-height:24px"> 

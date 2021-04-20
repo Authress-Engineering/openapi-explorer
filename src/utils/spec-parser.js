@@ -25,7 +25,7 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, gener
   const components = getComponents(jsonParsedSpec);
 
   // Info Description Headers
-  const infoDescriptionHeaders = jsonParsedSpec.info?.description ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
+  const infoDescriptionHeaders = (jsonParsedSpec.info && jsonParsedSpec.info.description) ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
 
   // Security Scheme
   const securitySchemes = [];
@@ -251,8 +251,8 @@ function groupByTags(openApiSpec, generateMissingTags = false, sortTags = false,
               show: true,
               elementId: `tag--${tag.replace(invalidCharsRegEx, '-')}`,
               name: tag,
-              description: specTagsItem?.description || '',
-              headers: specTagsItem?.description ? getHeadersFromMarkdown(specTagsItem.description) : [],
+              description: specTagsItem && specTagsItem.description || '',
+              headers: specTagsItem && specTagsItem.description ? getHeadersFromMarkdown(specTagsItem.description) : [],
               paths: [],
               expanded: (specTagsItem ? specTagsItem['x-tag-expanded'] !== false : true),
             };

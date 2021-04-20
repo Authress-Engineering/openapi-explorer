@@ -17,14 +17,14 @@ function headingRenderer(tagElementId) {
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
-    for (const acceptContentType in (path.responses[respStatus]?.content)) {
+    for (const acceptContentType in path.responses[respStatus] && path.responses[respStatus].content) {
       acceptContentTypes.add(acceptContentType.trim());
     }
   }
   const accept = [...acceptContentTypes].join(', ');
 
   // Filter API Keys that are non-empty and are applicable to the the path
-  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security?.some((ps) => (v.apiKeyId in ps)))) || [];
+  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => (v.apiKeyId in ps)))) || [];
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate.call(this, path.xCodeSamples) : '';
   return html`
@@ -52,7 +52,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         .request_body = "${path.requestBody}"
         .api_keys = "${nonEmptyApiKeys}"
         .servers = "${path.servers}"
-        server-url = "${path.servers?.[0]?.url || this.selectedServer.computedUrl}"
+        server-url = "${path.servers && path.servers[0] && path.servers[0].url || this.selectedServer.computedUrl}"
         fill-defaults = "${this.fillRequestWithDefault}"
         enable-console = "${this.allowTry}"
         accept = "${accept}"
@@ -89,7 +89,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
 
 export default function expandedEndpointTemplate() {
   return html`
-  ${(this.resolvedSpec?.tags || []).map((tag) => html`
+  ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="border-top:1px solid var(--primary-color);">
       <div class="title tag" part="label-tag-title">${tag.name}</div>
       <slot name="${tag.elementId}"></slot>

@@ -21,7 +21,6 @@
   ],
   "plugins": [
     "lodash",
-    ["@babel/plugin-proposal-optional-chaining", { "loose": true }],
     [
       "template-html-minifier", {
         "modules": {
