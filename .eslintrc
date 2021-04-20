@@ -5,7 +5,7 @@
     "allowImportExportEverywhere": false,
     "ecmaVersion": 2020,
     "babelOptions": {
-      "configFile": "./.babelrc.json"
+      "configFile": "./webpack.babelrc.json"
     }
   },
   "extends": "airbnb-base",

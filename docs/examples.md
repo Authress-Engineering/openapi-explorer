@@ -32,7 +32,7 @@ export class MyApi extends Component {
 <!doctype html>
 <html>
   <head>
-    <script type="module" src="https://cdn.skypack.dev/openapi-explorer"></script>
+    <script type="module" src="https://cdn.skypack.dev/openapi-explorer/dist/openapi-explorer.min.js"></script>
     <!-- Or use a local deployed copy -->
     <!-- <script type="module" src="node_modules/openapi-explorer/dist/openapi-explorer.min.js"></script> -->
   </head>
