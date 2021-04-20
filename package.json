@@ -31,8 +31,8 @@
     "rapidoc",
     "redoc"
   ],
-  "main": "dist/openapi-explorer.min.js",
-  "module": "dist/openapi-explorer.min.js",
+  "main": "src/openapi-explorer.js",
+  "module": "src/openapi-explorer.js",
   "files": [
     "src",
     "dist"

@@ -28,6 +28,19 @@ You may need an appropriate loader to handle this file type, currently no loader
 ```
 
 #### web component rendering issues in limited browsers
+You may get an error such as:
+```sh
+Module Error (from ./node_modules/thread-loader/dist/cjs.js):
+
+/home/warren/git/authress/openapi-explorer/src/utils/theme.js
+  0:0  error  Parsing error: Cannot find module './.babelrc.json'
+Require stack:
+- /home/warren/git/authress/openapi-explorer/node_modules/@babel/core/lib/config/files/configuration.js
+- /home/warren/git/authress/openapi-explorer/node_modules/@babel/core/lib/config/files/index.js
+- /home/warren/git/authress/openapi-explorer/node_modules/@babel/core/lib/index.js
+- /home/warren/git/authress/openapi-explorer/node_modules/@babel/eslint-parser/lib/index.js
+```
+
 Every browser should support the compiled library available here, in the rare case that it doesn't adding the following babel plugins will help:
 
 ```sh
@@ -41,9 +54,6 @@ module.exports = {
     ['@vue/app', { useBuiltIns: 'entry', polyfills: [] }]
   ],
   plugins: [
-    'lodash',
-    '@babel/plugin-proposal-optional-chaining',
-    '@babel/plugin-proposal-nullish-coalescing-operator',
     'transform-custom-element-classes',
     '@babel/plugin-transform-classes'
   ]
