@@ -572,7 +572,7 @@ export default class OpenApiExplorer extends LitElement {
         this.scrollTo(locationHash);
       }
     } else if (this.renderStyle === 'focused') {
-      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags[0]?.paths[0];
+      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags[0] && this.resolvedSpec.tags[0].paths[0];
       this.scrollTo(defaultElementId);
     }
   }
@@ -584,9 +584,9 @@ export default class OpenApiExplorer extends LitElement {
     if (tmpElementId.startsWith('overview') || tmpElementId === 'servers' || tmpElementId === 'auth') {
       isExpandingNeeded = false;
     } else {
-      for (let i = 0; i < this.resolvedSpec.tags?.length; i++) {
+      for (let i = 0; i < this.resolvedSpec.tags && this.resolvedSpec.tags.length; i++) {
         const tag = this.resolvedSpec.tags[i];
-        const path = tag.paths?.find((p) => p.elementId === elementId);
+        const path = tag.paths && tag.paths.find((p) => p.elementId === elementId);
         if (path) {
           if (path.expanded && tag.expanded) {
             isExpandingNeeded = false;
@@ -627,9 +627,9 @@ export default class OpenApiExplorer extends LitElement {
       return true;
     }
     if (id.startsWith('tag--')) {
-      return this.resolvedSpec.tags?.find((tag) => tag.elementId === id);
+      return this.resolvedSpec.tags && this.resolvedSpec.tags.find((tag) => tag.elementId === id);
     }
-    return this.resolvedSpec.tags?.find((tag) => tag.paths.find((path) => path.elementId === id));
+    return this.resolvedSpec.tags && this.resolvedSpec.tags.find((tag) => tag.paths.find((path) => path.elementId === id));
   }
 
   onIntersect(entries) {

@@ -57,12 +57,12 @@ export function getTypeInfo(schema) {
   // Set Allowed Values
   info.allowedValues = Array.isArray(schema.enum) ? schema.enum.join('┃') : '';
   if (dataType === 'array' && schema.items) {
-    const arrayItemType = schema.items?.type;
-    const arrayItemDefault = schema.items?.default !== undefined ? schema.items.default : '';
+    const arrayItemType = schema.items.type;
+    const arrayItemDefault = schema.items.default !== undefined ? schema.items.default : '';
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;
-    info.allowedValues = Array.isArray(schema.items?.enum) ? schema.items.enum.join('┃') : '';
+    info.allowedValues = Array.isArray(schema.items.enum) ? schema.items.enum.join('┃') : '';
   }
 
   if (dataType.match(/integer|number/g)) {
@@ -203,7 +203,7 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
   if (namespace) {
     xmlAttributes[prefix ? `xmlns:${prefix}` : 'xmlns'] = namespace;
   }
-  const nodeName = schema.items?.xml?.name || schema.xml?.name || config.propertyName || 'root';
+  const nodeName = schema.items && schema.items.xml && schema.items.xml.name || schema.xml && schema.xml.name || config.propertyName || 'root';
   const overridePropertyName = prefix ? `${prefix}:${nodeName}` : nodeName;
 
   if (schema.allOf) {
@@ -223,7 +223,7 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
     if (!config.xml) {
       return [getExampleValuesFromSchemaRecursive(schema.items || {}, config)];
     }
-    if (!schema.xml?.wrapped) {
+    if (!schema.xml || !schema.xml.wrapped) {
       const arrayExamples = getExampleValuesFromSchemaRecursive(schema.items || {}, config);
       xmlTagProperties.push({ [overridePropertyName]: arrayExamples[0] }, { _attr: xmlAttributes });
       return [xmlTagProperties];
@@ -246,13 +246,13 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
       const propertyExamples = getExampleValuesFromSchemaRecursive(innerSchema, { ...config, propertyName });
       objectExamples = duplicateExampleWithNewPropertyValues(objectExamples, propertyName, propertyExamples);
 
-      if (innerSchema.xml?.namespace) {
-        xmlAttributes[innerSchema.xml?.prefix ? `xmlns:${innerSchema.xml?.prefix}` : 'xmlns'] = namespace;
+      if (innerSchema.xml && innerSchema.xml.namespace) {
+        xmlAttributes[innerSchema.xml.prefix ? `xmlns:${innerSchema.xml.prefix}` : 'xmlns'] = namespace;
       }
-      const innerNodeName = innerSchema.xml?.name || propertyName || config.propertyName;
+      const innerNodeName = innerSchema.xml && innerSchema.xml.name || propertyName || config.propertyName;
       const innerOverridePropertyName = prefix ? `${prefix}:${innerNodeName}` : innerNodeName;
 
-      if (innerSchema.xml?.attribute) {
+      if (innerSchema.xml && innerSchema.xml.attribute) {
         xmlAttributes[innerOverridePropertyName] = propertyExamples[0];
       } else {
         xmlTagProperties.push({ [innerOverridePropertyName]: propertyExamples[0] });
@@ -413,7 +413,8 @@ export function schemaToSampleObj(schema, config = { }) {
         if (schema.properties[propertyName].type === 'array' || schema.properties[propertyName].items) {
           if (schema.properties[propertyName].example) {
             addPropertyExampleToObjectExamples(schema.properties[propertyName].example, obj, propertyName);
-          } else if (schema.properties[propertyName]?.items?.example) { // schemas and properties support single example but not multiple examples.
+          } else if (schema.properties[propertyName] && schema.properties[propertyName].items && schema.properties[propertyName].items.example) {
+            // schemas and properties support single example but not multiple examples.
             addPropertyExampleToObjectExamples([schema.properties[propertyName].items.example], obj, propertyName);
           } else {
             const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, { ...config, propertyName });
@@ -431,7 +432,7 @@ export function schemaToSampleObj(schema, config = { }) {
   } else if (schema.type === 'array' || schema.items) {
     if (schema.example) {
       obj['example-0'] = schema.example;
-    } else if (schema.items?.example) { // schemas and properties support single example but not multiple examples.
+    } else if (schema.items && schema.items.example) { // schemas and properties support single example but not multiple examples.
       obj['example-0'] = [schema.items.example];
     } else {
       const samples = schemaToSampleObj(schema.items, config);
@@ -530,7 +531,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
     subSchema.type.forEach((v) => {
       if (v.match(/integer|number|string|null|boolean/g)) {
         primitiveType.push(v);
-      } else if (v === 'array' && typeof subSchema.items?.type === 'string' && subSchema.items?.type.match(/integer|number|string|null|boolean/g)) {
+      } else if (v === 'array' && typeof (subSchema.items && subSchema.items.type) === 'string' && schema.items && subSchema.items.type.match(/integer|number|string|null|boolean/g)) {
         // Array with primitive types should also be treated as primitive type
         if (subSchema.items.type === 'string' && subSchema.items.format) {
           primitiveType.push(`${subSchema.items.format}[]`);
@@ -546,7 +547,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
       subSchema.type = primitiveType.join('┃');
       multiPrimitiveTypes = getTypeInfo(subSchema);
       if (complexTypes.length === 0) {
-        return `${multiPrimitiveTypes?.html || ''}`;
+        return `${multiPrimitiveTypes && multiPrimitiveTypes.html || ''}`;
       }
     }
     if (complexTypes.length > 0) {
@@ -586,7 +587,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
           };
         }
       });
-      multiTypeOptions[`::OPTION~${complexTypes.length + 1}`] = multiPrimitiveTypes?.html || '';
+      multiTypeOptions[`::OPTION~${complexTypes.length + 1}`] = multiPrimitiveTypes && multiPrimitiveTypes.html || '';
       obj['::ONE~OF'] = multiTypeOptions;
     }
   } else if (schema.type === 'object' || schema.properties) {
@@ -606,14 +607,14 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
   } else if (schema.type === 'array' || schema.items) { // If Array
     obj['::description'] = schema.description
       ? schema.description
-      : schema.items?.description
+      : (schema.items && schema.items.description)
         ? `array&lt;${schema.items.description}&gt;`
         : '';
     obj['::type'] = 'array';
     obj['::props'] = schemaInObjectNotation(schema.items, {}, (level + 1));
   } else {
     const typeObj = getTypeInfo(schema);
-    if (typeObj?.html) {
+    if (typeObj && typeObj.html) {
       return `${typeObj.html}`;
     }
     return '';

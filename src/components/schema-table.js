@@ -96,7 +96,7 @@ export default class SchemaTable extends LitElement {
             : ''
           }
         </div>
-        ${this.data?.['::description']
+        ${this.data && this.data['::description']
           ? html`<span class='m-markdown'> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
           : ''
         }
@@ -120,7 +120,7 @@ export default class SchemaTable extends LitElement {
   }
 
   generateTree(data, dataType = 'object', key = '', description = '', schemaLevel = 0, indentLevel = 0) {
-    const newSchemaLevel = data['::type']?.startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
+    const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
     const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
     const leftPadding = 16 * newIndentLevel; // 2 space indentation at each level
 
@@ -238,7 +238,7 @@ export default class SchemaTable extends LitElement {
     return html`
       <div class = "tr primitive">
         <div class="td key ${deprecated || ''}" style='padding-left:${leftPadding}px' >
-          ${keyLabel?.endsWith('*')
+          ${keyLabel && keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
             : key.startsWith('::OPTION')
               ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`

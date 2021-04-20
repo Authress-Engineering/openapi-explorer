@@ -25,8 +25,8 @@ export default function callbackTemplate(callbacks) {
                       callback = "true"
                       method = "${method[0] || ''}", 
                       path = "${pathObj[0] || ''}" 
-                      .parameters = "${method[1]?.parameters || ''}" 
-                      .request_body = "${method[1]?.requestBody || ''}"
+                      .parameters = "${method[1] && method[1].parameters || ''}" 
+                      .request_body = "${method[1] && method[1].requestBody || ''}"
                       fill-defaults = "${this.fillRequestWithDefault}"
                       enable-console = "false"
                       render-style="${this.renderStyle}" 
@@ -42,7 +42,7 @@ export default function callbackTemplate(callbacks) {
 
                     <api-response
                       callback = "true"
-                      .responses="${method[1]?.responses}"
+                      .responses="${method[1] && method[1].responses}"
                       render-style="${this.renderStyle}"
                       schema-style="${this.schemaStyle}"
                       active-schema-tab = "${this.defaultSchemaTab}"

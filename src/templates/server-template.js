@@ -80,10 +80,10 @@ export default function serverTemplate() {
   <section id = 'servers' part="section-servers" style="margin-top:24px; margin-bottom:24px;" class='regular-font observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
     <div class = 'sub-title'>API SERVER</div>
     <div class = 'mono-font' style='margin: 12px 0; font-size:calc(var(--font-size-small) + 1px);'>
-      ${this.resolvedSpec.servers?.length === 0
+      ${!this.resolvedSpec.servers || !this.resolvedSpec.servers.length
         ? ''
         : html`
-          ${this.resolvedSpec?.servers.map((server, i) => html`
+          ${this.resolvedSpec.servers.map((server, i) => html`
             <input type = 'radio'
               name = 'api_server'
               id = 'srvr-opt-${i}'
@@ -98,7 +98,7 @@ export default function serverTemplate() {
             <br/>
           `)}
       `}
-      <div class="table-title primary-text" part="label-selected-server"> SELECTED: ${this.selectedServer?.computedUrl}</div>
+      <div class="table-title primary-text" part="label-selected-server"> SELECTED: ${this.selectedServer && this.selectedServer.computedUrl}</div>
     </div>
     <slot name="servers"></slot>
     ${serverVarsTemplate.call(this)}

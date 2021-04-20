@@ -3,7 +3,7 @@ import marked from 'marked';
 import { pathIsInSearch } from '../utils/common-utils';
 
 export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {
-  const tagAndPathEl = navLinkEl?.closest('.nav-bar-tag-and-paths');
+  const tagAndPathEl = navLinkEl && navLinkEl.closest('.nav-bar-tag-and-paths');
   if (tagAndPathEl) {
     const isExpanded = tagAndPathEl.classList.contains('expanded');
     if (isExpanded && (action === 'toggle' || action === 'collapse')) {

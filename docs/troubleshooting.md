@@ -26,12 +26,6 @@ You may need an appropriate loader to handle this file type, currently no loader
 |     if (locationHash) {
 |       if (this.renderStyle === 'view') {
 ```
-The library includes `?.` (@babel/plugin-proposal-optional-chaining), install this package and include the module `openapi-explorer` in your list of packages to transpile. In vue, add this to the `vue.config.js` configuration:
-```js
-module.exports = {
-  transpileDependencies: ['openapi-explorer']
-};
-```
 
 #### web component rendering issues in limited browsers
 Every browser should support the compiled library available here, in the rare case that it doesn't adding the following babel plugins will help:

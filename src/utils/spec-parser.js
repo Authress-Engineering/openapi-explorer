@@ -27,7 +27,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
   const components = getComponents(jsonParsedSpec);
 
   // Info Description Headers
-  const infoDescriptionHeaders = jsonParsedSpec.info?.description ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
+  const infoDescriptionHeaders = (jsonParsedSpec.info && jsonParsedSpec.info.description) ? getHeadersFromMarkdown(jsonParsedSpec.info.description) : [];
 
   // Security Scheme
   const securitySchemes = [];

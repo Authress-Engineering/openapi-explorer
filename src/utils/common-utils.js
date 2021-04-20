@@ -54,8 +54,8 @@ export function schemaKeys(schemaProps, result = new Set()) {
     result.add(key);
     if (schemaProps[key].properties) {
       schemaKeys(schemaProps[key].properties, result);
-    } else if (schemaProps[key].items?.properties) {
-      schemaKeys(schemaProps[key].items?.properties, result);
+    } else if (schemaProps[key].items && schemaProps[key].items.properties) {
+      schemaKeys(schemaProps[key].items.properties, result);
     }
   });
   return result;
@@ -77,14 +77,14 @@ export function advancedSearch(searchVal, allSpecTags, searchOptions = []) {
         stringToSearch = `${stringToSearch} ${path.summary || path.description || ''}`;
       }
       if (searchOptions.includes('search-api-params')) {
-        stringToSearch = `${stringToSearch} ${path.parameters?.map((v) => v.name).join(' ') || ''}`;
+        stringToSearch = `${stringToSearch} ${path.parameters && path.parameters.map((v) => v.name).join(' ') || ''}`;
       }
 
       if (searchOptions.includes('search-api-request-body') && path.requestBody) {
         let schemaKeySet = new Set();
-        for (const contentType in path.requestBody?.content) {
-          if (path.requestBody.content[contentType].schema?.properties) {
-            schemaKeySet = schemaKeys(path.requestBody.content[contentType].schema?.properties);
+        for (const contentType in path.requestBody && path.requestBody.content) {
+          if (path.requestBody.content[contentType].schema && path.requestBody.content[contentType].schema.properties) {
+            schemaKeySet = schemaKeys(path.requestBody.content[contentType].schema.properties);
           }
           stringToSearch = `${stringToSearch} ${[...schemaKeySet].join(' ')}`;
         }

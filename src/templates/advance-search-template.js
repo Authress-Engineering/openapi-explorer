@@ -3,7 +3,7 @@ import { html } from 'lit-element';
 /* eslint-disable indent */
 export default function searchByPropertiesModalTemplate() {
   const keyDownEventListenerAdvancedSearch = (e) => {
-    if ((e.detail?.code || e.code) === 'Escape') {
+    if ((e.detail && e.detail.code || e.code) === 'Escape') {
       this.showAdvancedSearchDialog = false;
     }
   };
@@ -56,7 +56,7 @@ export default function searchByPropertiesModalTemplate() {
             </span>
             
             <div class="advanced-search-results">
-              ${this.advancedSearchMatches?.map((path) => html`
+              ${this.advancedSearchMatches && this.advancedSearchMatches.map((path) => html`
                 <div
                   class="mono-font small-font-size hover-bg" tabindex = '0'
                   style='padding: 5px; cursor: pointer; border-bottom: 1px solid var(--light-border-color); ${path.deprecated ? 'filter:opacity(0.5);' : ''}' 

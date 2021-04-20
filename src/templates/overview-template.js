@@ -13,7 +13,7 @@ export default function overviewTemplate() {
   return html`
     <section id="overview" part="section-overview"
       class="observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}">
-      ${this.resolvedSpec?.info
+      ${this.resolvedSpec && this.resolvedSpec.info
         ? html`
           <slot name="overview">
             <div id="api-title" part="label-overview-title" style="font-size:32px">
@@ -25,13 +25,13 @@ export default function overviewTemplate() {
               }
             </div>
             <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;">
-              ${this.resolvedSpec.info.contact?.email
+              ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.email
                 ? html`<span>${this.resolvedSpec.info.contact.name || 'Email'}: 
                   <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
                 </span>`
                 : ''
               }
-              ${this.resolvedSpec.info.contact?.url
+              ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.url
                 ? html`<span>URL: <a href="${this.resolvedSpec.info.contact.url}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.url}</a></span>`
                 : ''
               }

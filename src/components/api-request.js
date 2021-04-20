@@ -602,7 +602,7 @@ export default class ApiRequest extends LitElement {
             style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? '' : 'display:none;'} min-width:100px;" 
             colspan="${fieldType === 'object' ? 2 : 1}">
             ${fieldType === 'array'
-              ? fieldSchema.items?.format === 'binary'
+              ? (fieldSchema.items && fieldSchema.items.format === 'binary')
                 ? html`
                 <div class="file-input-container col" style='align-items:flex-end;' @click="${(e) => this.onAddRemoveFileInput(e, fieldName, mimeType)}">
                   <div class='input-set row'>
@@ -677,7 +677,7 @@ export default class ApiRequest extends LitElement {
                           data-array = "false" 
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
-                          data-default = "${formdataPartExample[0]?.exampleValue || ''}"
+                          data-default = "${formdataPartExample[0] && formdataPartExample[0].exampleValue || ''}"
                           spellcheck = "false"
                         >${this.fillRequestWithDefault === 'true' ? formdataPartExample[0].exampleValue : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
@@ -756,7 +756,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.type === 'array' ? '[ ' : ''}
                       <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                         data-default-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                        data-default = "${paramSchema.type === 'array' ? (paramSchema.example?.join('~|~') || '') : (paramSchema.example)}"
+                        data-default = "${paramSchema.type === 'array' ? (paramSchema.example && paramSchema.example.join('~|~') || '') : (paramSchema.example)}"
                         @click="${(e) => {
                           const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
                           if (inputEl) {
@@ -928,8 +928,9 @@ export default class ApiRequest extends LitElement {
     let curlHeaders = '';
     let curlData = '';
     let curlForm = '';
-    const respEl = this.closest('.expanded-req-resp-container, .req-resp-container')?.getElementsByTagName('api-response')[0];
-    const acceptHeader = respEl?.selectedMimeType;
+    const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
+    const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
+    const acceptHeader = respEl && respEl.selectedMimeType;
     const requestPanelEl = e.target.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];

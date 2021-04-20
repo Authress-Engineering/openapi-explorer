@@ -121,7 +121,7 @@ export default class ApiResponse extends LitElement {
         this.selectedStatus = statusCode;
       }
       const allMimeResp = {};
-      for (const mimeResp in this.responses[statusCode]?.content) {
+      for (const mimeResp in (this.responses[statusCode] && this.responses[statusCode].content)) {
         const mimeRespObj = this.responses[statusCode].content[mimeResp];
         if (!this.selectedMimeType) {
           this.selectedMimeType = mimeResp;
@@ -141,13 +141,13 @@ export default class ApiResponse extends LitElement {
         allMimeResp[mimeResp] = {
           description: this.responses[statusCode].description,
           examples: respExamples,
-          selectedExample: respExamples[0]?.exampleId || '',
+          selectedExample: respExamples[0] && respExamples[0].exampleId || '',
           schemaTree,
         };
       }
       // Headers for each response status
       const tempHeaders = [];
-      for (const key in this.responses[statusCode]?.headers) {
+      for (const key in this.responses[statusCode] && this.responses[statusCode].headers) {
         tempHeaders.push({ name: key, ...this.responses[statusCode].headers[key] });
       }
       this.headersForEachRespStatus[statusCode] = tempHeaders;
@@ -180,8 +180,8 @@ export default class ApiResponse extends LitElement {
       ${Object.keys(this.responses).map((status) => html`
         <div style = 'display: ${status === this.selectedStatus ? 'block' : 'none'}' >
           <div class="top-gap">
-            <span class="resp-descr m-markdown ">${unsafeHTML(marked(this.responses[status]?.description || ''))}</span>
-            ${(this.headersForEachRespStatus[status] && this.headersForEachRespStatus[status]?.length > 0)
+            <span class="resp-descr m-markdown ">${unsafeHTML(marked(this.responses[status] && this.responses[status].description || ''))}</span>
+            ${(this.headersForEachRespStatus[status] && this.headersForEachRespStatus[status].length > 0)
               ? html`${this.responseHeaderListTemplate(this.headersForEachRespStatus[status])}`
               : ''
             }

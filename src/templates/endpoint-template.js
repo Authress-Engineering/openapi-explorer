@@ -62,13 +62,13 @@ function endpointHeadTemplate(path) {
 function endpointBodyTemplate(path) {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
-    for (const acceptContentType in (path.responses[respStatus]?.content)) {
+    for (const acceptContentType in path.responses[respStatus] && path.responses[respStatus].content) {
       acceptContentTypes.add(acceptContentType.trim());
     }
   }
   const accept = [...acceptContentTypes].join(', ');
   // Filter API Keys that are non-empty and are applicable to the the path
-  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security?.some((ps) => (v.apiKeyId in ps)))) || [];
+  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => (v.apiKeyId in ps)))) || [];
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate(path.xCodeSamples) : '';
   return html`
@@ -127,7 +127,7 @@ export default function endpointTemplate() {
       &nbsp;|&nbsp; 
       <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor:pointer;">Collapse</span>
     </div>
-    ${(this.resolvedSpec?.tags || []).map((tag) => html`
+    ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
     
       <div class='section-tag-header' @click="${() => { tag.expanded = !tag.expanded; this.requestUpdate(); }}">
