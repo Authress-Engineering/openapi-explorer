@@ -105,7 +105,8 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-            options: require('./webpack.babelrc.json')
+            // eslint-disable-next-line global-require
+            options: require('./webpack.babelrc.json'),
           },
         ],
       },
