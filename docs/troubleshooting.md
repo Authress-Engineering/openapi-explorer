@@ -12,6 +12,30 @@ await apiExplorer.loadSpec(apiSpecificationObject);
 
 _(Note: Make sure to set the `server-url="ServerUrl"` attribute because without the `spec-url` set, the server url cannot be defaulted.)_
 
+### SSR: Server-side rendering
+_(For example Nextjs, Nuxtjs)_
+
+In certain cases your app might be completely dynamic and you serve it from a web server and do SSR. In these cases, most SSR libraries don't well support polyfilling the necessary browser APIs and so the easiest thing to do is delay rendering until it is on the client side:
+```vue
+<template>
+  <div>
+    <client-only>
+      <openapi-explorer spec-url="https://petstore.swagger.io/v2/swagger.json"></openapi-explorer>
+    </client-only>
+  </div>
+</template>
+
+<script>
+export default {
+  created () {
+    if (process.client) {
+      require('openapi-explorer')
+    }
+  }
+}
+</script>
+```
+
 #### Using the non-transpiled version
 The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js` or `import openapi-explorer`. When using the source version `import openapi-explorer/src/openapi-explorer`, you might see this issue depending on your babel configuration.
 
