@@ -1,7 +1,7 @@
-## Troubleshooting integration issues
+# Troubleshooting integration issues
 
 
-#### Loading a specification from object instead of url
+## Loading a specification from object instead of url
 In certain cases you may have a reference to the specification object already. For example if you wished to apply pre-processing or dynamically generate it. To load this spec in:
 
 ```js
@@ -12,7 +12,7 @@ await apiExplorer.loadSpec(apiSpecificationObject);
 
 _(Note: Make sure to set the `server-url="ServerUrl"` attribute because without the `spec-url` set, the server url cannot be defaulted.)_
 
-### SSR: Server-side rendering
+## SSR: Server-side rendering
 _(For example Nextjs, Nuxtjs)_
 
 In certain cases your app might be completely dynamic and you serve it from a web server and do SSR. In these cases, most SSR libraries don't well support polyfilling the necessary browser APIs and so the easiest thing to do is delay rendering until it is on the client side:
@@ -36,7 +36,7 @@ export default {
 </script>
 ```
 
-#### Using the non-transpiled version
+## Using the non-transpiled version
 The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js` or `import openapi-explorer`. When using the source version `import openapi-explorer/src/openapi-explorer`, you might see this issue depending on your babel configuration.
 
 ```
@@ -51,7 +51,7 @@ You may need an appropriate loader to handle this file type, currently no loader
 |       if (this.renderStyle === 'view') {
 ```
 
-#### web component rendering issues in limited browsers
+## web component rendering issues in limited browsers
 You may get an error such as:
 ```sh
 Module Error (from ./node_modules/thread-loader/dist/cjs.js):
