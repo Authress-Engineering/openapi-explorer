@@ -64,7 +64,8 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 ## Documentation
 * [Property and variables documentation](./docs/documentation.md)
 * [Examples (Vue, React, JS, and more)](./docs/examples.md)
-* [How to style your openapi-explorer UI](./docs/styling.md)
+* [Generate the open specification necessary for this library](./docs/examples#openapi-specification-generation)
+* [Styling your openapi-explorer UI](./docs/styling.md)
 * [Recent changes and updates](./CHANGELOG.md)
 
 ## Troubleshooting integration issues
