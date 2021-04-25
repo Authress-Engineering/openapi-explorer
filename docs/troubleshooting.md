@@ -37,22 +37,15 @@ export default {
 ```
 
 ## Using the non-transpiled version
-The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js` or `import openapi-explorer`. When using the source version `import openapi-explorer/src/openapi-explorer`, you might see this issue depending on your babel configuration.
+The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js`. When usinc `import openapi-explorer` source version (`import openapi-explorer/src/openapi-explorer`), you might see this issue depending on your babel configuration or want a more optimized version. In this case, add `openapi-explorer` to your transpiled packages:
 
+in `webpack.config`
 ```
-error  in ./node_modules/openapi-explorer/src/index.js
-
-Module parse failed: Unexpected token (634:46)
-You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
-| 
-|     // On first time Spec load, try to navigate to location hash if provided
->     const locationHash = window.location.hash?.substring(1);
-|     if (locationHash) {
-|       if (this.renderStyle === 'view') {
+transpileDependencies: ['openapi-explorer']
 ```
 
 ## web component rendering issues in limited browsers
-You may get an error such as:
+
 ```sh
 Module Error (from ./node_modules/thread-loader/dist/cjs.js):
 
