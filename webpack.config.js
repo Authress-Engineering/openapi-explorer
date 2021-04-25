@@ -11,15 +11,6 @@ const path = require('path');
 
 const version = JSON.stringify(require('./package.json').version).replace(/"/g, '');
 
-const banner = `
-/**
-* @preserve
-* OpenAPI Explorer ${version.replace()} - WebComponent to View OpenAPI docs
-* License: Apache-2.0
-* Repo   : https://github.com/Rhosys/openapi-explorer
-* Author : Rhosys Developers
-*`;
-
 const commonPlugins = [
   new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }),
   new webpack.HotModuleReplacementPlugin(),
@@ -42,6 +33,14 @@ const commonPlugins = [
 if (process.env.NODE_ENV === 'production') {
   commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }));
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
+  const banner = `
+/**
+* @preserve
+* OpenAPI Explorer ${version.replace()} - WebComponent to View OpenAPI docs
+* License: Apache-2.0
+* Repo   : https://github.com/Rhosys/openapi-explorer
+* Author : Rhosys Developers
+*`;
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true, banner,
   }));
