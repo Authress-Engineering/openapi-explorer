@@ -16,7 +16,6 @@ const commonPlugins = [
   new webpack.HotModuleReplacementPlugin(),
   new CleanWebpackPlugin(),
   new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-  new HtmlWebpackPlugin({ template: 'mocks/index.html' }),
   new CompressionPlugin(),
   new FileManagerPlugin({
     events: {
@@ -29,6 +28,11 @@ const commonPlugins = [
     },
   }),
 ];
+
+if (!process.env.GITHUB_REF) {
+  commonPlugins.push(new HtmlWebpackPlugin({ template: 'mocks/index.html', filename: 'index.html' }));
+  commonPlugins.push(new HtmlWebpackPlugin({ template: 'mocks/callback.html', filename: 'callback.html' }));
+}
 
 if (process.env.NODE_ENV === 'production') {
   commonPlugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }));

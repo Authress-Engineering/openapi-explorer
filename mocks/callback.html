@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/default.min.css">
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
   </head>
+
+  <script src="https://unpkg.com/openapi-explorer/dist/openapi-explorer.min.js" type="module"></script>
+
   <body>
     <openapi-explorer></openapi-explorer> 
     <script>
@@ -17,6 +20,26 @@ info:
   title: Callback Example
   version: 1.0.0
 paths:
+  /test:
+    post:
+      responses:
+        '200':
+          description: Response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    # Markdown works for this property.
+                    description: API result code. This property never be \`null\`. See [this link](https://example.com) for details.
+                  idList:
+                    type: array
+                    items: 
+                      type: string
+                    # Markdown doesn't work for this property.  
+                    description: User ID list. Each element of the list is an \`integer\`. See [this link](https://example.com) for details.
   /streams:
     post:
       description: subscribes a client to receive out-of-band data
