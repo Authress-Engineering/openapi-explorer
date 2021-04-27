@@ -550,6 +550,22 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
+  async setSecuritySchemeToken(apiKeyId, token) {
+    const securityObj = this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
+    if (!securityObj) {
+      throw Error('SecuritySchemeNotFound');
+    }
+
+    let authorizationToken = token.replace(/^(Bearer|Basic)\s+/i, '');
+    if (securityObj.type && securityObj.type === 'http' && securityObj.scheme && securityObj.scheme.toLowerCase() === 'basic') {
+      authorizationToken = `Basic ${btoa(authorizationToken)}`;
+    } else if (securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
+      authorizationToken = `Bearer ${authorizationToken}`;
+    }
+    securityObj.finalKeyValue = authorizationToken;
+    this.requestUpdate();
+  }
+
   async afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
     this.selectedServer = this.resolvedSpec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl);

@@ -31,6 +31,11 @@ Note: This properties will likely be deprecated in favor of global css variables
 * `nav-hover-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$light`]
 * `nav-text-color` - Set th color of hover on navigation links [Expected Bootstrap value: `$grey`]
 
+### Library API
+* `async loadSpec(spec)` - Load a spec from an object rather than looking it up from a remote url.
+* `setSecuritySchemeToken(securitySchemeId, token)` - Set a token for methods that require security for a particular security scheme id.
+  * If the securityScheme id was `auth` and the `type` of that scheme was basic: `setSecuritySchemeToken('auth', 'user:password');`
+
 ### Events
 * `@spec-loaded` - Event trigger after the specification is loaded. Can be used to modify the spec including updating values.
 
