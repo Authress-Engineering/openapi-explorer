@@ -40,10 +40,10 @@
   spec-url="https://api.authress.io/v1"> 
   </openapi-explorer> -->
 
-  <openapi-explorer id="thedoc"></openapi-explorer>    
+  <openapi-explorer></openapi-explorer>    
   <!-- <openapi-explorer id="thedoc2" responsive="true"></openapi-explorer> -->
     <script>
-      document.addEventListener('DOMContentLoaded', (event) => {
+      document.addEventListener('DOMContentLoaded', async (event) => {
         let objSpec = {
           "openapi": "3.0.1",
           "info": {
@@ -161,7 +161,9 @@
             }
           }
         };
-        document.getElementById("thedoc").loadSpec(objSpec);
+        await document.getElementsByTagName("openapi-explorer")[0].loadSpec(objSpec);
+        document.getElementsByTagName("openapi-explorer")[0].setSecuritySchemeToken('basicAuth', 'user:password');
+
         // document.getElementById("thedoc2").loadSpec(objSpec);
       })
 
