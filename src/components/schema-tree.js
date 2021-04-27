@@ -243,7 +243,7 @@ export default class SchemaTree extends LitElement {
     }
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
-      <div class = "tr primitive">
+      <div class="tr primitive">
         <div class="td key ${deprecated || ''}" style='min-width:${minFieldColWidth}px' >
           ${keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>:`
@@ -259,7 +259,7 @@ export default class SchemaTree extends LitElement {
           </span>
         </div>
         <div class='td key-descr'>
-          ${dataType === 'array' ? description : ''}
+          ${dataType === 'array' ? unsafeHTML(marked(description)) : ''}
           ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(schemaDescription))}</span>` : ''}
           ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraint}</div>` : ''}
           ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div>` : ''}
