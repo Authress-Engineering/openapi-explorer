@@ -294,4 +294,7 @@ export default class SchemaTree extends LitElement {
     }
   }
 }
-customElements.define('schema-tree', SchemaTree);
+
+if (!customElements.get('openapi-explorer')) {
+  customElements.define('schema-tree', SchemaTree);
+}
