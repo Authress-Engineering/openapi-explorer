@@ -274,4 +274,6 @@ export default class SchemaTable extends LitElement {
     }
   }
 }
-customElements.define('schema-table', SchemaTable);
+if (!customElements.get('openapi-explorer')) {
+  customElements.define('schema-table', SchemaTable);
+}

@@ -53,7 +53,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --mode=production",
     "start": "webpack serve --mode=development --port=8080",
-    "serve1": "node --trace-deprecation ./node_modules/webpack/bin/webpack serve",
+    "serve": "serve -p 8080 mocks",
     "lint": "eslint --ext .js src",
     "test": "babel src -d lib && mocha tests/*.test.js"
   },
