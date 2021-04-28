@@ -75,7 +75,7 @@ export default function navbarTemplate() {
         </div>
       `
     }
-    ${html`<nav class='nav-scroll'>
+    ${html`<nav class='nav-scroll' part="navbar-scroll">
       ${(this.showInfo === 'false' || !this.resolvedSpec.info)
         ? ''
         : html`
@@ -110,7 +110,7 @@ export default function navbarTemplate() {
         : html`<div class='nav-bar-info' id='link-auth' data-content-id='auth' @click = '${(e) => this.scrollToEventTarget(e, false)}'> Authentication </div>`
       }
 
-      <div id='link-paths' class='nav-bar-section'>
+      <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
         <div style="font-size:16px; display:flex; margin-left:10px;">
           ${this.renderStyle === 'focused'
             ? html`
