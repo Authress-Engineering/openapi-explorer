@@ -111,15 +111,17 @@ export default function navbarTemplate() {
       }
 
       <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
-        <div style="font-size:16px; display:flex; margin-left:10px;">
+      <div class='nav-bar-section-title'> OPERATIONS </div>  
+      <div style="display:flex; margin-left:10px;">
           ${this.renderStyle === 'focused'
             ? html`
-              <div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); }}" title="Expand all" style="transform: rotate(90deg); cursor:pointer; margin-right:10px;">▸</div>
-              <div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); }}" title="Collapse all" style="transform: rotate(270deg); cursor:pointer;">▸</div>`
+              ${this.operationsCollapsed
+                ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor:pointer;">▸</div>`
+                : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor:pointer;">▸</div>`
+              }`
             : ''
           }  
         </div>
-        <div class='nav-bar-section-title'> OPERATIONS </div>
       </div>
 
       <!-- TAGS AND PATHS-->

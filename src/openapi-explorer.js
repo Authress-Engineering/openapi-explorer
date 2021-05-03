@@ -111,6 +111,7 @@ export default class OpenApiExplorer extends LitElement {
 
       // Internal Properties
       loading: { type: Boolean }, // indicates spec is being loaded
+      operationsCollapsed: { type: Boolean },
       showAdvancedSearchDialog: { type: Boolean },
       advancedSearchMatches: { type: Object },
     };
