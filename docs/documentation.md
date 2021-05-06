@@ -98,6 +98,10 @@ responseInterceptor(event) {
     <div>Replaces the servers section</div>
 </div>
 
+<!--
+  Example: GET /v1/resources/{resourceUri}/users becomes => get-/v1/resources/-resourceUri-/users
+  For the parser: https://github.com/Rhosys/openapi-explorer/blob/e43a90c23be4813d2d8381b59a95bc15573c2513/src/utils/common-utils.js#L13
+-->
 <div :name="${method}-${sanitizedPath}">
     <h1>Path Info</h1>
     <div>Additional method/path related information</div>
