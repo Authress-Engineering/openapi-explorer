@@ -571,8 +571,8 @@ export default class OpenApiExplorer extends LitElement {
   async afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
     this.selectedServer = this.resolvedSpec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl);
-    this.requestUpdate();
     this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
+    this.requestUpdate();
 
     // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
     this.intersectionObserver.disconnect();
