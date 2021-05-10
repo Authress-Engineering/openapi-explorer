@@ -84,7 +84,7 @@ export default css`
 .nav-bar-components,
 .nav-bar-h1,
 .nav-bar-h2,
-.nav-bar-info,
+.nav-bar-info, slot[name=nav-section]::slotted(*),
 .nav-bar-tag,
 .nav-bar-path {
   display:flex;
@@ -102,7 +102,7 @@ export default css`
   font-size: var(--font-size-small);
 }
 
-.nav-bar-info {
+.nav-bar-info, slot[name=nav-section]::slotted(*) {
   font-size: var(--font-size-regular);
   padding: 16px 10px;
   font-weight:bold;
@@ -126,12 +126,12 @@ export default css`
 
 .nav-bar-h1.active,
 .nav-bar-h2.active,
-.nav-bar-info.active,
+.nav-bar-info.active, slot[name=nav-section]::slotted(*.active),
 .nav-bar-tag.active,
 .nav-bar-path.active,
 .nav-bar-h1.active:hover,
 .nav-bar-h2.active:hover,
-.nav-bar-info.active:hover,
+.nav-bar-info.active:hover, slot[name=nav-section]::slotted(*.active:hover),
 .nav-bar-tag.active:hover,
 .nav-bar-path.active:hover {
   border-left:4px solid var(--secondary-color);
@@ -141,7 +141,7 @@ export default css`
 
 .nav-bar-h1:hover,
 .nav-bar-h2:hover,
-.nav-bar-info:hover,
+.nav-bar-info:hover, slot[name=nav-section]::slotted(*:hover),
 .nav-bar-tag:hover,
 .nav-bar-path:hover {
   color:var(--nav-hover-text-color);

@@ -33,6 +33,7 @@ import apiRequestStyles from './styles/api-request-styles';
 export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
+    this.loading = true;
     const intersectionObserverOptions = {
       root: this.getRootNode().host,
       rootMargin: '-50px 0px -50px 0px', // when the element is visible 100px from bottom
@@ -131,6 +132,8 @@ export default class OpenApiExplorer extends LitElement {
       advancedSearchStyles,
       apiRequestStyles,
       css`
+      *:not(:defined) { display:none }
+
       :host {
         display:flex;
         flex-direction: column;
@@ -553,7 +556,7 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   async setSecuritySchemeToken(apiKeyId, token) {
-    const securityObj = this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
+    const securityObj = this.resolvedSpec && this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
     if (!securityObj) {
       throw Error('SecuritySchemeNotFound');
     }
@@ -702,15 +705,21 @@ export default class OpenApiExplorer extends LitElement {
     if (!navEl.dataset.contentId) {
       return;
     }
+
+    let repeatedElementIndex;
+    if (navEl.dataset.contentId === 'section') {
+      const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
+      repeatedElementIndex = [].findIndex.call(assignedNodes, (slot) => slot === event.target);
+    }
     this.isIntersectionObserverActive = false;
-    this.scrollTo(navEl.dataset.contentId, true, scrollNavItemToView);
+    this.scrollTo(navEl.dataset.contentId, true, scrollNavItemToView, repeatedElementIndex);
     setTimeout(() => {
       this.isIntersectionObserverActive = true;
     }, 300);
   }
 
   // Public Method (scrolls to a given path and highlights the left-nav selection)
-  async scrollTo(elementId, expandPath = true, scrollNavItemToView = true) {
+  async scrollTo(elementId, expandPath = true, scrollNavItemToView = true, repeatedElementIndex) {
     if (!this.resolvedSpec) {
       return;
     }
@@ -751,7 +760,11 @@ export default class OpenApiExplorer extends LitElement {
         window.history.replaceState(null, null, `#${elementId}`);
 
         // Update NavBar View and Styles
-        const newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
+        let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
+        if (elementId === 'section') {
+          const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
+          newNavEl = assignedNodes[repeatedElementIndex || 0];
+        }
 
         if (newNavEl) {
           if (scrollNavItemToView) {
@@ -762,6 +775,9 @@ export default class OpenApiExplorer extends LitElement {
           if (oldNavEl) {
             oldNavEl.classList.remove('active');
           }
+          this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes().filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
+            node.classList.remove('active');
+          });
           newNavEl.classList.add('active'); // must add the class after scrolling
           // this.requestUpdate();
         }
