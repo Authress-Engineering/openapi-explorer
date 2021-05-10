@@ -17,9 +17,9 @@ jobs:
           PERSONAL_ACCESS_TOKEN : ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'signatures/cla-v1.json'
-          path-to-document: 'https://github.com/rhosys/openapi-explorer/blob/master/docs/signatures/cla-v1.md'
+          path-to-document: 'https://github.com/rhosys/openapi-explorer/blob/main/docs/signatures/cla-v1.md'
           # branch should not be protected
-          branch: 'master'
+          branch: 'main'
           allowlist: wparad,bot*
 
         # https://github.com/cla-assistant/github-action
