@@ -83,20 +83,35 @@ responseInterceptor(event) {
 
 ### Slots
 ```html
-<div name="overview">
+<div slot="overview">
     <h1>Overview</h1>
     <div>Replaces the overview section</div>
 </div>
 
-<div name="authentication">
+<div slot="authentication">
     <h1>Authentication</h1>
     <div>Replaces the authentication section</div>
 </div>
 
-<div name="servers">
+<div slot="servers">
     <h1>Servers</h1>
     <div>Replaces the servers section</div>
 </div>
+
+#### Custom Navigation section
+<!-- Add custom nav sections to link to the custom section -->
+<div slot="nav-section">Section 1</div>
+<div slot="nav-section">Section 2</div>
+
+<!-- Then render the custom section -->
+<div slot="custom-section">
+  <h1>A custom section rendered when selected.</h1>
+</div>
+
+#### Tag and operations slot configuration
+
+<!-- Hide a tag from navigation -->
+<div div="nav-tag--${tagName}"></div>
 
 <!--
   Example: GET /v1/resources/{resourceUri}/users becomes => get-/v1/resources/-resourceUri-/users
@@ -106,9 +121,6 @@ responseInterceptor(event) {
     <h1>Path Info</h1>
     <div>Additional method/path related information</div>
 </div>
-
-<!-- Hide a tag from navigation -->
-<div div="nav-tag--${tagName}"></div>
 
 ```
 

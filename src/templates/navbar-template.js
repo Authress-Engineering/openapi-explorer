@@ -110,6 +110,8 @@ export default function navbarTemplate() {
         : html`<div class='nav-bar-info' id='link-auth' data-content-id='auth' @click = '${(e) => this.scrollToEventTarget(e, false)}'> Authentication </div>`
       }
 
+      <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToEventTarget(e, false)}'></slot>
+
       <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
       <div class='nav-bar-section-title'> OPERATIONS </div>  
       <div style="display:flex; margin-left:10px;">

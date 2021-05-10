@@ -69,6 +69,12 @@ export default function focusedEndpointTemplate() {
     focusedTemplate = securitySchemeTemplate.call(this);
   } else if (focusElId === 'servers' && this.allowServerSelection === 'true') {
     focusedTemplate = serverTemplate.call(this);
+  } else if (focusElId === 'section') {
+    focusedTemplate = html`
+      <section id='section' style="margin-top:24px; margin-bottom:24px;"
+        class='observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
+        <slot name="custom-section"></slot>
+      </section>`;
   } else if (focusElId.startsWith('cmp--') && this.showComponents === 'true') {
     focusedTemplate = componentsTemplate.call(this);
   } else if (focusElId.startsWith('tag--')) {
