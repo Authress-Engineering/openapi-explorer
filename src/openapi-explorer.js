@@ -724,65 +724,63 @@ export default class OpenApiExplorer extends LitElement {
       return;
     }
 
+    if (this.renderStyle === 'view') {
+      this.expandAndGotoOperation(elementId, expandPath, true);
+      return;
+    }
+
     if (this.renderStyle === 'focused') {
       // explorerLocation will get validated in the focused-endpoint-template
       this.explorerLocation = elementId;
       await sleep(0);
     }
-    if (this.renderStyle === 'view') {
-      this.expandAndGotoOperation(elementId, expandPath, true);
-    } else {
-      let isValidElementId = false;
-      const contentEl = this.shadowRoot.getElementById(elementId);
-      if (contentEl) {
-        isValidElementId = true;
-        // ScrollIntoView is needed for read-mode and overview and tag section in focused-mode
-        if (this.renderStyle === 'read' || elementId.startsWith('overview') || elementId.startsWith('tag--')) {
-          contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
-        }
-      } else {
-        isValidElementId = false;
+
+    const contentEl = this.shadowRoot.getElementById(elementId);
+    if (!contentEl) {
+      return;
+    }
+
+    contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+
+    // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
+    if (this.renderStyle === 'focused') {
+      const requestEl = this.shadowRoot.querySelector('api-request');
+      if (requestEl) {
+        requestEl.resetRequestBodySelection();
       }
-      if (isValidElementId) {
-        // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
-        if (this.renderStyle === 'focused') {
-          const requestEl = this.shadowRoot.querySelector('api-request');
-          if (requestEl) {
-            requestEl.resetRequestBodySelection();
-          }
-          const responseEl = this.shadowRoot.querySelector('api-response');
-          if (responseEl) {
-            responseEl.resetSelection();
-          }
-        }
-
-        // Update Location Hash
-        window.history.replaceState(null, null, `#${elementId}`);
-
-        // Update NavBar View and Styles
-        let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
-        if (elementId === 'section') {
-          const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
-          newNavEl = assignedNodes[repeatedElementIndex || 0];
-        }
-
-        if (newNavEl) {
-          if (scrollNavItemToView) {
-            newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
-          }
-          await sleep(0);
-          const oldNavEl = this.shadowRoot.querySelector('.nav-bar-tag.active, .nav-bar-path.active, .nav-bar-info.active, .nav-bar-h1.active, .nav-bar-h2.active');
-          if (oldNavEl) {
-            oldNavEl.classList.remove('active');
-          }
-          this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes().filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
-            node.classList.remove('active');
-          });
-          newNavEl.classList.add('active'); // must add the class after scrolling
-          // this.requestUpdate();
-        }
+      const responseEl = this.shadowRoot.querySelector('api-response');
+      if (responseEl) {
+        responseEl.resetSelection();
       }
     }
+
+    // Update Location Hash
+    window.history.replaceState(null, null, `#${elementId}`);
+
+    // Update NavBar View and Styles
+    let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
+    if (elementId === 'section') {
+      const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
+      newNavEl = assignedNodes[repeatedElementIndex || 0];
+    }
+
+    if (!newNavEl) {
+      return;
+    }
+
+    if (scrollNavItemToView) {
+      newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+    }
+    await sleep(0);
+    const oldNavEl = this.shadowRoot.querySelector('.nav-bar-tag.active, .nav-bar-path.active, .nav-bar-info.active, .nav-bar-h1.active, .nav-bar-h2.active');
+    if (oldNavEl) {
+      oldNavEl.classList.remove('active');
+    }
+    this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes().filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
+      node.classList.remove('active');
+    });
+    newNavEl.classList.add('active'); // must add the class after scrolling
+    // this.requestUpdate();
   }
 
   // Event handler for Advanced Search text-inputs and checkboxes
