@@ -3,7 +3,7 @@ import marked from 'marked';
 import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
-export default async function ProcessSpec(requiresLookup, specUrlOrObject, generateMissingTags = false, sortTags = false, sortEndpointsBy = '', serverUrl = '') {
+export default async function ProcessSpec(requiresLookup, specUrlOrObject, generateMissingTags = false, serverUrl = '') {
   let specMeta;
   if (requiresLookup) {
     specMeta = await SwaggerClient(specUrlOrObject);
@@ -19,7 +19,7 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, gener
   }
 
   // Tags with Paths and WebHooks
-  const tags = groupByTags(jsonParsedSpec, generateMissingTags, sortTags, sortEndpointsBy);
+  const tags = groupByTags(jsonParsedSpec, generateMissingTags);
 
   // Components
   const components = getComponents(jsonParsedSpec);
@@ -188,17 +188,17 @@ function getComponents(openApiSpec) {
   return components || [];
 }
 
-function groupByTags(openApiSpec, generateMissingTags = false, sortTags = false, sortEndpointsBy) {
+function groupByTags(openApiSpec, generateMissingTags = false) {
   const supportedMethods = ['get', 'put', 'post', 'delete', 'patch', 'head', 'options']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
-    ? openApiSpec.tags.map((v) => ({
+    ? openApiSpec.tags.map((t) => ({
       show: true,
-      elementId: `tag--${v.name.replace(invalidCharsRegEx, '-')}`,
-      name: v.name,
-      description: v.description || '',
-      headers: v.description ? getHeadersFromMarkdown(v.description) : [],
+      elementId: `tag--${t.name.replace(invalidCharsRegEx, '-')}`,
+      name: t.name,
+      description: t.description || '',
+      headers: t.description ? getHeadersFromMarkdown(t.description) : [],
       paths: [],
-      expanded: v['x-tag-expanded'] !== false,
+      expanded: t['x-tag-expanded'] !== false,
     }))
     : [];
 
@@ -309,16 +309,5 @@ function groupByTags(openApiSpec, generateMissingTags = false, sortTags = false,
     }); // End of Methods
   }
 
-  const tagsWithSortedPaths = tags.filter((tag) => tag.paths && tag.paths.length > 0);
-  tagsWithSortedPaths.forEach((tag) => {
-    if (sortEndpointsBy === 'method') {
-      tag.paths.sort((a, b) => supportedMethods.indexOf(a.method).toString().localeCompare(supportedMethods.indexOf(b.method)));
-    } else if (sortEndpointsBy === 'summary') {
-      tag.paths.sort((a, b) => (a.shortSummary).localeCompare(b.shortSummary));
-    } else {
-      tag.paths.sort((a, b) => a.path.localeCompare(b.path));
-    }
-    tag.firstPathId = tag.paths[0].elementId;
-  });
-  return sortTags ? tagsWithSortedPaths.sort((a, b) => a.name.localeCompare(b.name)) : tagsWithSortedPaths;
+  return tags.filter((tag) => tag.paths && tag.paths.length > 0);
 }
