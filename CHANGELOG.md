@@ -3,6 +3,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.4 ##
 * Added custom nav section and custom display for that section.
+* Fix path ordering so it matches spec ordering.
 
 ## 0.3 ##
 * Moved npm package target to point at main source location instead of `dist`. The distributable minified version is still present at `/dist/openapi-explorer.min.js`.

@@ -139,7 +139,6 @@ export default function navbarTemplate() {
                     class='nav-bar-tag' 
                     id="link-${tag.elementId}" 
                     data-content-id='${tag.elementId}'
-                    data-first-path-id='${tag.firstPathId}'
                     @click='${(e) => {
                       if (this.renderStyle === 'focused' && this.onNavTagClick === 'expand-collapse') {
                         onExpandCollapse.call(this, e);
@@ -185,16 +184,9 @@ export default function navbarTemplate() {
                   }
                   return true;
                 }).map((p) => html`
-                <div 
-                  class='nav-bar-path
-                  ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
-                  data-content-id='${p.elementId}'
-                  id='link-${p.elementId}'
-                  @click = '${(e) => {
-                    this.scrollToEventTarget(e, false);
-                  }}'
-                >
-                  <span style = "${p.deprecated ? 'filter:opacity(0.5)' : ''}">
+                <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
+                  data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
+                  <span style="line-break: anywhere; ${p.deprecated ? 'filter:opacity(0.5)' : ''}">
                     ${this.usePathInNavBar === 'true'
                       ? html`<span class='mono-font'>${p.method.toUpperCase()} ${p.path}</span>`
                       : p.summary || p.shortSummary

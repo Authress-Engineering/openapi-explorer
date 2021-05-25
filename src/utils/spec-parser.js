@@ -193,11 +193,11 @@ function getComponents(openApiSpec) {
 function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, sortTags = false) {
   const methods = ['get', 'put', 'post', 'delete', 'patch', 'head']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
-    ? openApiSpec.tags.map((v) => ({
+    ? openApiSpec.tags.map((t) => ({
       show: true,
       name: v.name.toLowerCase(),
       paths: [],
-      expanded: v['x-tag-expanded'] !== false,
+      expanded: t['x-tag-expanded'] !== false,
     }))
     : [];
 
@@ -339,16 +339,5 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
   }
   */
 
-  const tagsWithSortedPaths = tags.filter((tag) => tag.paths && tag.paths.length > 0);
-  tagsWithSortedPaths.forEach((tag) => {
-    if (sortEndpointsBy === 'method') {
-      tag.paths.sort((a, b) => supportedMethods.indexOf(a.method).toString().localeCompare(supportedMethods.indexOf(b.method)));
-    } else if (sortEndpointsBy === 'summary') {
-      tag.paths.sort((a, b) => (a.shortSummary).localeCompare(b.shortSummary));
-    } else {
-      tag.paths.sort((a, b) => a.path.localeCompare(b.path));
-    }
-    tag.firstPathId = tag.paths[0].elementId;
-  });
-  return sortTags ? tagsWithSortedPaths.sort((a, b) => a.name.localeCompare(b.name)) : tagsWithSortedPaths;
+  return tags.filter((tag) => tag.paths && tag.paths.length > 0);
 }
