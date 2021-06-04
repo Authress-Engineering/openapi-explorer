@@ -13,12 +13,12 @@
 For development:
 ```shell
 git clone https://github.com/Rhosys/openapi-explorer.git
-npm ci
-npm run start
+yarn
+yarn start
 # open http://localhost:8080
 ```
 
 To generate the static production bundle:
 ```shell
-npm run build
+yarn build
 ```

@@ -21,11 +21,11 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Install packages
-      run: npm ci
+      run: yarn --frozen-lockfile
     - name: Run Setup
       run: node make.js setup
     - name: Run build
-      run: npm run build
+      run: yarn build
     - name: Deploy to NPM
       if: github.ref != 'refs/heads/main' && github.event_name == 'push'
       run: npm publish

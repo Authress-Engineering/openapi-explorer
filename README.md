@@ -79,11 +79,11 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 # Clone / Download the project then
 git clone
 
-## Pull in dependencies (yarn does not work)
-npm ci
+## Pull in dependencies
+yarn
 
 # build will generate dist/openapi-explorer.min.js
-npm run build 
+yarn build 
 
 import 'openapi-explorer';
 ```
