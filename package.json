@@ -46,7 +46,6 @@
     "lit-html": "^1.1.1",
     "lodash": "^4.17.21",
     "marked": "^2.0.1",
-    "openapi-model-validator": "^1.1.8",
     "prismjs": "^1.23.0",
     "regex-to-strings": "^2.0.3",
     "swagger-client": "^3.13.2"
