@@ -41,7 +41,7 @@ export default css`
   background-color: var(--bg3);
   color: var(--fg3);
   border-color: var(--fg3);
-  cursor: not-allowed;
+  cursor: progress;
   opacity: 0.4;
 }
 .toolbar-btn{
