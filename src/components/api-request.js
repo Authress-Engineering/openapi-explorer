@@ -265,7 +265,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
-                    placeholder = "add-multiple &#x21a9;"
+                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple &#x21a9;'}"
                     .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"
                   >
                   </tag-input>`
@@ -280,10 +280,11 @@ export default class ApiRequest extends LitElement {
                       data-param-serialize-style = "${paramStyle}"
                       data-param-serialize-explode = "${paramExplode}"
                       spellcheck = "false"
+                      placeholder="${paramSchema.example || defaultVal || ''}"
                       style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
                     >${this.fillRequestWithDefault === 'true' ? defaultVal : ''}</textarea>`
                   : html`
-                    <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" 
+                    <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
                       class="request-param"
                       part="textbox textbox-param"
                       data-ptype="${paramType}"
@@ -302,8 +303,6 @@ export default class ApiRequest extends LitElement {
               ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
-                    ${paramSchema.default && !this.fillRequestWithDefault ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
-                    ${paramSchema.example ? html`<span style="font-weight:bold">Example: </span>${paramSchema.example}<br/>` : ''}
                     ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
                     ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br/>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
@@ -625,10 +624,10 @@ export default class ApiRequest extends LitElement {
                     style = "width:100%;" 
                     data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                     data-pname = "${fieldName}"
-                    data-default = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join('~|~') : fieldSchema.example || ''}"
+                    data-default = "${paramSchema.default || ''}"
                     data-array = "true"
-                    placeholder = "add-multiple &#x21a9;"
-                    .value = "${Array.isArray(fieldSchema.example) ? fieldSchema.example : fieldSchema.example.split(',')}"
+                    placeholder="${(Array.isArray(paramSchema.example) ? paramSchema.example[0] : paramSchema.example) || 'add-multiple &#x21a9;'}"
+                    .value = "${paramSchema.default || ''}"
                   >
                   </tag-input>
                 `
@@ -671,31 +670,31 @@ export default class ApiRequest extends LitElement {
                     ${html`
                       <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'example' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
                         <textarea 
-                          class = "textarea"
+                          class = "textarea" placeholder="${formdataPartExample[0] && formdataPartExample[0].exampleValue || paramSchema.default || ''}"
                           part = "textarea textarea-param"
                           style = "width:100%; border:none; resize:vertical;" 
                           data-array = "false" 
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
-                          data-default = "${formdataPartExample[0] && formdataPartExample[0].exampleValue || ''}"
+                          data-default = "${paramSchema.default || ''}"
                           spellcheck = "false"
-                        >${this.fillRequestWithDefault === 'true' ? formdataPartExample[0].exampleValue : ''}</textarea>
+                        >${this.fillRequestWithDefault === 'true' ? paramSchema.default : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
-                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${formdataPartExample[0].exampleValue}</textarea>
+                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${paramSchema.default}</textarea>
                       </div>`
                     }
                   </div>`
                   : html`
                     ${this.allowTry === 'true'
-                      ? html`<input
-                          .value = "${this.fillRequestWithDefault === 'true' ? (fieldSchema.example || '') : ''}"
+                      ? html`<input placeholder="${paramSchema.example || paramSchema.default || ''}"
+                          .value = "${this.fillRequestWithDefault === 'true' ? (paramSchema.default || '') : ''}"
                           spellcheck = "false"
                           type = "${fieldSchema.format === 'binary' ? 'file' : fieldSchema.format === 'password' ? 'password' : 'text'}"
                           part = "textbox textbox-param"
                           style = "width:100%"
                           data-ptype = "${mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
                           data-pname = "${fieldName}"
-                          data-default = "${fieldSchema.example || ''}"
+                          data-default = "${paramSchema.default || ''}"
                           data-array = "false"
                         />`
                       : ''
@@ -711,10 +710,8 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
                   ? html`
                     <div class="param-constraint">
-                      ${paramSchema.default ? html`<span style="font-weight:bold">Default: </span>${paramSchema.default}<br/>` : ''}
-                      ${paramSchema.example ? html`<span style="font-weight:bold">Example: </span>${paramSchema.example}<br/>` : ''}
                       ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
-                      ${paramSchema.constrain ? html`${paramSchema.constrain}<br/>` : ''}
+                      ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                         ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                         ${html`
@@ -1133,7 +1130,7 @@ export default class ApiRequest extends LitElement {
       }
       // Common for all request-body
       if (!requestBodyType.includes('form-data')) {
-        // For multipart/form-data dont set the content-type to allow creation of browser generated part boundaries
+        // For multipart/form-data don't set the content-type to allow creation of browser generated part boundaries
         fetchOptions.headers['Content-Type'] = requestBodyType;
       }
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
