@@ -5066,10 +5066,10 @@ ono@^7.1:
   dependencies:
     "@jsdevtools/ono" "7.1.3"
 
-openapi-model-validator@^1.1:
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/openapi-model-validator/-/openapi-model-validator-1.1.13.tgz#4baf086d39cf7712308ae7b9f99b17632b88f19c"
-  integrity sha512-RJHY5wojlZ45ygOk/IL2KAHzif5m6pglNfkyqUXbgTcgMVskEWgbvQXIdeImHMKWm2kb+/SCLmG4PiCw/fwjOg==
+openapi-data-validator@^1.1:
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/openapi-data-validator/-/openapi-data-validator-1.1.20.tgz#b2b6c8bf33e5115daea32b8b4840d8c48689527f"
+  integrity sha512-elgrHtkkugm0X36oWj7MmRGXIYWKwhMOsi2Q+uMATxt4WLJCPBrh4gf5DcJM6c2Lj3uqIg5Twy8Uq35lYg4eVg==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0"
     ajv "^8.5"
