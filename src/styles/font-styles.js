@@ -87,7 +87,7 @@ export default css`
   .m-markdown span,
   .m-markdown li {
     font-size: var(--font-size-regular);
-    line-height:calc(var(--font-size-regular) + 8px);
+    line-height:calc(var(--font-size-regular) + 6px);
   }
   
   .m-markdown-small p,
@@ -95,9 +95,6 @@ export default css`
   .m-markdown-small li {
     font-size: var(--font-size-small);
     line-height: calc(var(--font-size-small) + 6px);
-  }
-  .m-markdown-small li {
-    line-height: calc(var(--font-size-small) + 8px);
   }
 
   .m-markdown p:not(:first-child) {
