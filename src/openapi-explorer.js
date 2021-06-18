@@ -40,7 +40,12 @@ export default class OpenApiExplorer extends LitElement {
       threshold: 0,
     };
     this.isIntersectionObserverActive = true;
-    this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
+    
+    if (typeof IntersectionObserver !== 'undefined') {
+      this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
+    } else {
+      this.intersectionObserver = { disconnect() {}, observe() {} };
+    }
   }
 
   static get properties() {
@@ -434,9 +439,7 @@ export default class OpenApiExplorer extends LitElement {
 
   // Cleanup
   disconnectedCallback() {
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-    }
+    this.intersectionObserver.disconnect();
     window.removeEventListener('resize', this.handleResize);
     super.disconnectedCallback();
   }
