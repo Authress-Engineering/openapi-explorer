@@ -10,6 +10,7 @@ import './schema-tree';
 import './tag-input';
 
 const truncateString = (str, length) => (str && str.length > length ? `${str.substring(0, length - 1)}…` : str);
+
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
 
@@ -190,6 +191,7 @@ export default class ApiRequest extends LitElement {
                       data-pname="${param.name}" 
                       data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
                       data-array="false"
+                      @keyup="${this.requestParamFunction}"
                       .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
                     />`
                 }
@@ -756,7 +758,7 @@ export default class ApiRequest extends LitElement {
             </button>`
           : ''
       }
-      <button class="m-btn primary thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">EXECUTE</button>
+      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">EXECUTE</button>
     </div>
     ${this.responseMessage === '' ? '' : this.apiResponseTabTemplate()}
     `;
@@ -783,8 +785,8 @@ export default class ApiRequest extends LitElement {
     requestPanelInputEls.forEach((el) => { el.value = ''; });
   }
 
-  async onTryClick(e) {
-    const tryBtnEl = e.target;
+  async onTryClick() {
+    const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
     let fetchUrl;
     let curlUrl;
     let curl = '';
@@ -794,7 +796,7 @@ export default class ApiRequest extends LitElement {
     const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
     const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
     const acceptHeader = respEl && respEl.selectedMimeType;
-    const requestPanelEl = e.target.closest('.request-panel');
+    const requestPanelEl = this.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
     const queryParamObjTypeEls = [...requestPanelEl.querySelectorAll("[data-ptype='query-object']")];
@@ -1200,6 +1202,13 @@ export default class ApiRequest extends LitElement {
     if (this.responseBlobUrl) {
       URL.revokeObjectURL(this.responseBlobUrl);
       this.responseBlobUrl = '';
+    }
+  }
+
+  requestParamFunction(event) {
+    if (event.key === 'Enter') {
+      this.onTryClick();
+      event.preventDefault();
     }
   }
 

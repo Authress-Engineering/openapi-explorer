@@ -39,8 +39,8 @@
   spec-url="https://api.authress.io/v1"> 
   </openapi-explorer> -->
 
-  <openapi-explorer></openapi-explorer>    
-  <!-- <openapi-explorer id="thedoc2" responsive="true"></openapi-explorer> -->
+  <!-- <openapi-explorer spec-url="https://api.authress.io/v1"></openapi-explorer> -->
+  <openapi-explorer></openapi-explorer>
     <script>
       document.addEventListener('DOMContentLoaded', async (event) => {
         let objSpec = {
@@ -50,8 +50,16 @@
             "version": "v1"
           },
           "paths": {
-            "/api/Todo/complicated": {
+            "/api/{typeId}/complicated": {
               "get": {
+                parameters: [{
+                  name: 'typeId',
+                  in: 'path',
+                  schema: {
+                    type: 'string',
+                    default: 'TODO'
+                  }
+                }],
                 'x-code-samples': [{
                   lang: 'Javascript',
                   source: "console.log('This is a code sample');\nconsole.log('{}');"
@@ -162,8 +170,6 @@
         };
         await document.getElementsByTagName("openapi-explorer")[0].loadSpec(objSpec);
         document.getElementsByTagName("openapi-explorer")[0].setSecuritySchemeToken('basicAuth', 'user:password');
-
-        // document.getElementById("thedoc2").loadSpec(objSpec);
       })
 
     </script>
