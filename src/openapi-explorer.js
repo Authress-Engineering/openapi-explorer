@@ -40,7 +40,7 @@ export default class OpenApiExplorer extends LitElement {
       threshold: 0,
     };
     this.isIntersectionObserverActive = true;
-    
+
     if (typeof IntersectionObserver !== 'undefined') {
       this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
     } else {

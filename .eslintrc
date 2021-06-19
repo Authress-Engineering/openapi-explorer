@@ -25,6 +25,7 @@
   },
   "rules": {
     "max-len": [1, 300, 2, {"ignoreComments": true}],
+    "arrow-parens": "off",
     "no-debugger": 0,
     "no-plusplus": 0,
     "no-param-reassign": 0,

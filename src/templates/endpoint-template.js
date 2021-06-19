@@ -79,7 +79,7 @@ function endpointBodyTemplate(path) {
     </div>  
     <div class='req-resp-container'> 
       <div style="display:flex; flex-direction:column" class="request">
-        <api-request
+        <api-request class="request-panel"
           style = "width:100%;"
           method = "${path.method}", 
           path = "${path.path}" 
