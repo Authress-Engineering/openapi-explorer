@@ -575,6 +575,10 @@ export default class ApiRequest extends LitElement {
     if (schema.properties) {
       for (const fieldName in schema.properties) {
         const fieldSchema = schema.properties[fieldName];
+        if (fieldSchema.readOnly) {
+          continue;
+        }
+
         const fieldType = fieldSchema.type;
         const formdataPartSchema = schemaInObjectNotation(fieldSchema, {});
         const paramSchema = getTypeInfo(fieldSchema);
