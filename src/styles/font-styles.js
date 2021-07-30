@@ -64,7 +64,7 @@ export default css`
     margin-block-end: 0.2em;
   }
   p { margin-block-start: 0.5em; }
-  a { color: var(--blue); cursor:pointer; }
+  a { color: var(--blue); cursor: pointer; }
   a.inactive-link { 
     color:var(--fg);
     text-decoration: none;

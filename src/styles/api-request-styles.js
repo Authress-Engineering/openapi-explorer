@@ -61,7 +61,7 @@ export default css`
   outline: none;
   border: none;
   background:none;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .api-request .v-tab-btn {

@@ -55,11 +55,11 @@ export default function navbarTemplate() {
                   @change = "${this.onSearchChange}"  
                   spellcheck = "false" 
                 >
-                <div style="margin: 6px 5px 0 -24px; font-size:var(--font-size-regular); cursor:pointer;">&#x21a9;</div>
+                <div style="margin: 6px 5px 0 -24px; font-size:var(--font-size-regular); cursor: pointer;">&#x21a9;</div>
               </div>  
               ${this.matchPaths
                 ? html`
-                  <div @click = '${this.onClearSearch}' style='margin-left:5px; cursor:pointer; align-self:center; color:var(--nav-text-color)' class='small-font-size primary-text bold-text'> CLEAR </div>`
+                  <div @click = '${this.onClearSearch}' style='margin-left:5px; cursor: pointer; align-self:center; color:var(--nav-text-color)' class='small-font-size primary-text bold-text'> CLEAR </div>`
                 : ''
               }
             `
@@ -118,8 +118,8 @@ export default function navbarTemplate() {
           ${this.renderStyle === 'focused'
             ? html`
               ${this.operationsCollapsed
-                ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor:pointer;">▸</div>`
-                : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor:pointer;">▸</div>`
+                ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
               }`
             : ''
           }  

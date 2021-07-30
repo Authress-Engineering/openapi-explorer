@@ -90,9 +90,9 @@ export default function serverTemplate() {
               value = '${server.url}'
               @change = ${(e) => { onApiServerChange.call(this, e, server); }}
               .checked = '${this.selectedServer.url === server.url}'
-              style = 'margin:4px 0; cursor:pointer'
+              style = 'margin:4px 0; cursor: pointer'
             />
-              <label style='cursor:pointer' for='srvr-opt-${i}'>
+              <label style='cursor: pointer' for='srvr-opt-${i}'>
                 ${server.url} ${server.description ? html`- <span class='regular-font'>${server.description} </span>` : ''}
               </label>
             <br/>

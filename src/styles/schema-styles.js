@@ -78,7 +78,7 @@ export default css`
   color:var(--primary-color);
 }
 .toolbar-item {
-  cursor:pointer;
+  cursor: pointer;
   padding:5px 0;
   margin:0 2px;
   /* TODO: add: The import highlight color variable */

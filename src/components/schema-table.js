@@ -64,7 +64,7 @@ export default class SchemaTable extends LitElement {
         display: inline-block;
         margin-left: -16px;
         color:var(--primary-color);
-        cursor:pointer;
+        cursor: pointer;
         font-size: calc(var(--font-size-small) + 4px);
         font-family: var(--font-mono);
         background-clip: border-box;
