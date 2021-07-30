@@ -113,9 +113,6 @@ export default css`
   border-bottom: 1px solid var(--nav-text-color);
 }
 
-.nav-bar-section:first-child {
-  display: none;
-}
 .nav-bar-h2 {margin-left:12px;}
 
 .nav-bar-h1.active,

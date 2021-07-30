@@ -112,19 +112,21 @@ export default function navbarTemplate() {
 
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToEventTarget(e, false)}'></slot>
 
-      <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
-      <div class='nav-bar-section-title'> OPERATIONS </div>  
-      <div style="display:flex; margin-left:10px;">
-          ${this.renderStyle === 'focused'
-            ? html`
-              ${this.operationsCollapsed
-                ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
-              }`
-            : ''
-          }  
+      <slot name="operations-header">
+        <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
+        <div class='nav-bar-section-title'>OPERATIONS</div>  
+        <div style="display:flex; margin-left:10px;">
+            ${this.renderStyle === 'focused'
+              ? html`
+                ${this.operationsCollapsed
+                  ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                  : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                }`
+              : ''
+            }  
+          </div>
         </div>
-      </div>
+      </slot>
 
       <!-- TAGS AND PATHS-->
       ${this.resolvedSpec.tags
@@ -204,7 +206,6 @@ export default function navbarTemplate() {
       ${this.resolvedSpec.components && this.showComponents === 'true'
         ? html`
           <div id='link-components' class='nav-bar-section'>
-            <div></div>
             <div class='nav-bar-section-title'>COMPONENTS</div>
           </div>
           ${this.resolvedSpec.components.map((component) => (component.subComponents.length

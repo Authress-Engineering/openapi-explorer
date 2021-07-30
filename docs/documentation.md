@@ -20,7 +20,7 @@
 * `nav-item-spacing` - Text spacing in the nav bar [`default`, `compact`, `relaxed`]
 
 ### Colors
-Note: This properties will likely be deprecated in favor of global css variables being set, are still available
+Note: These properties will likely be deprecated in favor of global css variables being set, are still available
 
 * `bg-color` - Set the background color [Expected Bootstrap value: `$light`]
 * `primary-color` - Set the primary [Expected Bootstrap value: `$primary`]
@@ -84,18 +84,23 @@ responseInterceptor(event) {
 ### Slots
 ```html
 <div slot="overview">
-    <h1>Overview</h1>
-    <div>Replaces the overview section</div>
+  <h1>Overview</h1>
+  <div>Replaces the overview section</div>
 </div>
 
 <div slot="authentication">
-    <h1>Authentication</h1>
-    <div>Replaces the authentication section</div>
+  <h1>Authentication</h1>
+  <div>Replaces the authentication section</div>
 </div>
 
 <div slot="servers">
-    <h1>Servers</h1>
-    <div>Replaces the servers section</div>
+  <h1>Servers</h1>
+  <div>Replaces the servers section</div>
+</div>
+
+<div slot="operations-header">
+  <div>Methods</div>
+  <hr>
 </div>
 
 #### Custom Navigation section
