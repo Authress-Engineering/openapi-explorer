@@ -128,9 +128,9 @@ function endpointBodyTemplate(path) {
 export default function endpointTemplate() {
   return html`
     <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px;"> 
-      <span @click="${(e) => onExpandCollapseAll(e, 'expand-all')}" style="color:var(--primary-color); cursor:pointer;">Expand</span> 
+      <span @click="${(e) => onExpandCollapseAll(e, 'expand-all')}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
       &nbsp;|&nbsp; 
-      <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor:pointer;">Collapse</span>
+      <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
     </div>
     ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 

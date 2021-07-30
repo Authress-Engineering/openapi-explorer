@@ -22,7 +22,7 @@ export default css`
   color: var(--light-fg);
   background-color: transparent;
   white-space: nowrap;
-  cursor:pointer;
+  cursor: pointer;
   outline:none;
   font-family:var(--font-regular); 
   font-size:var(--font-size-small);

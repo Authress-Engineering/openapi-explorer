@@ -44,20 +44,14 @@ export default css`
 .nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-paths-under-tag {
   display:none;
 }
-.nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon::after {
-  content: '⌵';
-  width:16px;
-  height:16px;
+.nav-bar.focused .nav-bar-tag-and-paths .nav-bar-tag-icon::after {
+  content: '▸';
+  font-size: 16px;
   text-align: center;
   display: inline-block;
-  transform: rotate(270deg);
 }
 .nav-bar.focused .nav-bar-tag-and-paths.expanded .nav-bar-tag-icon::after {
-  content: '⌵';
-  width:16px;
-  height:16px;
-  text-align: center;
-  display: inline-block;
+  transform: rotate(90deg);
 }
 .nav-bar.focused, .nav-scroll {
   border-top: 1px solid var(--secondary-color);
@@ -88,7 +82,7 @@ export default css`
 .nav-bar-tag,
 .nav-bar-path {
   display:flex;
-  cursor:pointer;
+  cursor: pointer;
   border-left:4px solid transparent;
 }
 

@@ -123,7 +123,7 @@ input[type="password"]:active {
 input[type="file"]{
   font-family: var(--font-regular);
   padding:2px;
-  cursor:pointer;
+  cursor: pointer;
   border: 1px solid var(--primary-color);
   min-height: calc(var(--font-size-small) + 18px);
 }
@@ -132,7 +132,7 @@ input[type="file"]::-webkit-file-upload-button {
   font-family: var(--font-regular);
   font-size: var(--font-size-small);
   outline: none;
-  cursor:pointer;
+  cursor: pointer;
   padding: 3px 8px;
   border: 1px solid var(--primary-color);
   background-color: var(--primary-color);

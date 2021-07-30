@@ -38,7 +38,7 @@ export default class JsonTree extends LitElement {
       .open-bracket{
         display:inline-block;
         padding: 0 20px 0 0;
-        cursor:pointer;
+        cursor: pointer;
         border: 1px solid transparent;
         border-radius:3px;
       }
