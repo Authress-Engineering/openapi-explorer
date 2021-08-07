@@ -202,8 +202,6 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
     flowNameDisplay = 'Client Credentials Flow';
   } else if (flowName === 'implicit') {
     flowNameDisplay = 'Implicit Flow';
-  } else if (flowName === 'password') {
-    flowNameDisplay = 'Password Flow';
   } else {
     flowNameDisplay = flowName;
   }
@@ -222,7 +220,7 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
         ? html`<div><span style="width:75px; display: inline-block;">Refresh URL</span> <span class="mono-font">${refreshUrl}</span></div>`
         : ''
       }
-      ${flowName === 'authorizationCode' || flowName === 'clientCredentials' || flowName === 'implicit' || flowName === 'password'
+      ${flowName === 'authorizationCode' || flowName === 'clientCredentials' || flowName === 'implicit'
         ? html`
           ${authFlow.scopes
             ? html`
@@ -243,7 +241,7 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
           }
           <div style="display:flex; max-height:28px;">
             <input type="text" part="textbox textbox-auth-client-id" value = "${clientId || ''}" placeholder="client-id" spellcheck="false" class="oauth-client-id">
-            ${flowName === 'authorizationCode' || flowName === 'clientCredentials' || flowName === 'password'
+            ${flowName === 'authorizationCode' || flowName === 'clientCredentials'
               ? html`
                 <input type="password" part="textbox textbox-auth-client-secret" value = "${clientSecret || ''}" placeholder="client-secret" spellcheck="false" class="oauth-client-secret" style = "margin:0 5px;">
                 ${flowName === 'authorizationCode' || flowName === 'clientCredentials'
@@ -263,15 +261,7 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
                 > GET TOKEN </button>`
               : ''
             }
-          </div>
-          ${flowName === 'password'
-            ? html`
-              <div style="display:flex; max-height:28px; margin-top:2px">
-                <input type="text" value = "" placeholder="username" spellcheck="false" class="api-key-user" part="textbox textbox-username">
-                <input type="password" value = "" placeholder="password" spellcheck="false" class="api-key-password" style = "margin:0 5px;" part="textbox textbox-password">
-              </div>`
-            : ''
-          }  
+          </div>  
           <div class="oauth-resp-display red-text small-font-size"></div>
           `
         : ''
