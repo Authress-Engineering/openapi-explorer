@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 0.5 ##
+* Remove deprecated password oauth2 flow
+
 ## 0.4 ##
 * Added custom nav section and custom display for that section.
 * Fix path ordering so it matches spec ordering.
