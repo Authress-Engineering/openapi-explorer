@@ -16,6 +16,8 @@ import '@/components/json-tree';
 import '@/components/schema-tree';
 import '@/components/tag-input';
 
+const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
+const mediaFileRegex = RegExp('^audio/|^image/|^video/');
 const truncateString = (str, length) => (str && str.length > length ? `${str.substring(0, length - 1)}…` : str);
 
 export default class ApiRequest extends LitElement {
@@ -497,7 +499,7 @@ export default class ApiRequest extends LitElement {
             reqBodyFormHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
           }
         }
-      } else if ((RegExp('^audio/|^image/|^video/|^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$').test(this.selectedRequestBodyType))) {
+      } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
         if (reqBody.mimeType === this.selectedRequestBodyType) {
           reqBodyFileInputHtml = html`
             <div class = "small-font-size bold-text row">
@@ -1121,7 +1123,7 @@ export default class ApiRequest extends LitElement {
           }
         });
         fetchOptions.body = formDataParams;
-      } else if ((RegExp('^audio/|^image/|^video/|^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$').test(requestBodyType))) {
+      } else if (mediaFileRegex.test(requestBodyType) || textFileRegex.test(requestBodyType)) {
         const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
         if (bodyParamFileEl && bodyParamFileEl.files[0]) {
           fetchOptions.body = bodyParamFileEl.files[0];
@@ -1206,10 +1208,10 @@ export default class ApiRequest extends LitElement {
             respJson = await fetchResponse.json();
             this.responseText = JSON.stringify(respJson, null, 8);
           }
-        } else if (RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$').test(contentType)) {
+        } else if (textFileRegex.test(contentType)) {
           this.responseIsBlob = true;
           this.responseBlobType = 'download';
-        } else if (RegExp('^audio|^image|^video').test(contentType)) {
+        } else if (mediaFileRegex.test(contentType)) {
           this.responseIsBlob = true;
           this.responseBlobType = 'view';
         } else {
