@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
 import { expandN } from 'regex-to-strings';
 
 const xmlFormatter = require('@kyleshockey/xml');
@@ -353,18 +353,27 @@ export function schemaToSampleObj(schema, config = { }) {
       }
     });
 
-    obj = objWithAllProps;
-  } else if (schema.oneOf) {
-    if (schema.oneOf.length > 0) {
-      let i = 0;
-      // Merge all examples of each oneOf-schema
-      for (const key in schema.oneOf) {
-        const oneOfSamples = schemaToSampleObj(schema.oneOf[key], config);
-        for (const sampleKey in oneOfSamples) {
-          obj[`example-${i}`] = oneOfSamples[sampleKey];
-          addSchemaInfoToExample(schema.oneOf[key], obj[`example-${i}`]);
-          i++;
-        }
+    return objWithAllProps;
+  }
+
+  if (schema.oneOf) {
+    if (!schema.oneOf.length) {
+      return obj;
+    }
+
+    const objWithSchemaProps = {};
+    for (const propertyName in (schema.properties || {})) {
+      objWithSchemaProps[propertyName] = getSampleValueByType(schema.properties[propertyName], config.propertyName);
+    }
+
+    let i = 0;
+    // Add all the oneof to examples
+    for (const key in schema.oneOf) {
+      const oneOfSamples = schemaToSampleObj(schema.oneOf[key], config);
+      for (const sampleKey in oneOfSamples) {
+        obj[`example-${i}`] = Object.assign({}, objWithSchemaProps, oneOfSamples[sampleKey]);
+        addSchemaInfoToExample(schema.oneOf[key], obj[`example-${i}`]);
+        i++;
       }
     }
   } else if (schema.anyOf) {
