@@ -38,6 +38,7 @@
     "prefer-destructuring": 0,
     "class-methods-use-this": 0,
     "no-use-before-define": ["error", { "functions": false, "classes": false }],
-    "no-mixed-operators": ["off"]
+    "no-mixed-operators": ["off"],
+    "prefer-object-spread": 0
   }
 }
