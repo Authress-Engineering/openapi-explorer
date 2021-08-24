@@ -88,6 +88,11 @@ responseInterceptor(event) {
   <div>Replaces the overview section</div>
 </div>
 
+<div slot="overview-api-description">
+  <h1>API Description in Overview</h1>
+  <div>Replaces the api description section</div>
+</div>
+
 <div slot="authentication">
   <h1>Authentication</h1>
   <div>Replaces the authentication section</div>
