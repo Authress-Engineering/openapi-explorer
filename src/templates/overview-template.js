@@ -49,7 +49,7 @@ export default function overviewTemplate() {
               }
             </div>
           </slot>
-          <div id="api-description">
+          <slot name="overview-api-description">
           ${this.resolvedSpec.info.description
             ? html`${
               unsafeHTML(`
@@ -58,7 +58,7 @@ export default function overviewTemplate() {
               </div>`)}`
             : ''
           }
-          </div>
+          </slot>
         `
         : ''
       }

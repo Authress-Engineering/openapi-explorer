@@ -739,7 +739,12 @@ export default class OpenApiExplorer extends LitElement {
       return;
     }
 
-    contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+    // For focused APIs, always scroll to the top of the component
+    if (this.renderStyle === 'focused') {
+      this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
+    } else {
+      contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }
 
     // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
     if (this.renderStyle === 'focused') {
