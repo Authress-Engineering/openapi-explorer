@@ -34,6 +34,8 @@ export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
     this.loading = true;
+    this.pageDirection = 'ltr';
+
     const intersectionObserverOptions = {
       root: this.getRootNode().host,
       rootMargin: '-50px 0px -50px 0px', // when the element is visible 100px from bottom
@@ -118,6 +120,7 @@ export default class OpenApiExplorer extends LitElement {
       operationsCollapsed: { type: Boolean },
       showAdvancedSearchDialog: { type: Boolean },
       advancedSearchMatches: { type: Object },
+      pageDirection: { type: String },
     };
   }
 
@@ -419,6 +422,9 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }
     if (!this.infoDescriptionHeadingsInNavBar || !'true, false,'.includes(`${this.infoDescriptionHeadingsInNavBar},`)) { this.infoDescriptionHeadingsInNavBar = 'false'; }
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
+
+    // TODO: Dynamically set this
+    this.pageDirection = 'ltr';
 
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
 

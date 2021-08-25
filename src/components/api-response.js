@@ -60,6 +60,7 @@ export default class ApiResponse extends LitElement {
       }
       .resp-descr{
         font-size:calc(var(--font-size-small) + 1px);
+        direction: ltr;
       }
       .top-gap{margin-top:16px;}
       .example-panel{

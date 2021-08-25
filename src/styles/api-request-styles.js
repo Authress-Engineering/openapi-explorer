@@ -35,6 +35,7 @@ export default css`
   min-height:220px; 
   padding:5px;
   resize:vertical;
+  direction: ltr;
 }
 
 .api-request .response-message{

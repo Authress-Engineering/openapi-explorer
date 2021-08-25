@@ -23,6 +23,7 @@ export default css`
     font-family: var(--font-regular);
     font-size: calc(var(--font-size-small) + 4px);
     font-weight:bold;
+    text-align: left;
   }
   .tiny-title { 
     font-size:calc(var(--font-size-small) + 1px); 
