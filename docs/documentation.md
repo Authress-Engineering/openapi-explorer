@@ -150,7 +150,7 @@ OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI
 </p>
 
 ### Styling using CSS variables
-In many cases these might have already been set by your css framework, if not, and you want to override the the defaults to match your theme. For more in-depth options check out [How to style your openapi-explorer UI](./docs/styling.md).
+In many cases these might have already been set by your css framework, if not, and you want to override the the defaults to match your theme. For more in-depth options check out [How to style your openapi-explorer UI](./styling.md).
 * CSS (default set to page fonts) - Add to your css
 ```css
 openapi-explorer {
