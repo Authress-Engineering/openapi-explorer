@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const path = require('path');
+const { glob } = require('glob');
 
 const version = JSON.stringify(require('./package.json').version).replace(/"/g, '');
 
@@ -30,8 +31,9 @@ const commonPlugins = [
 ];
 
 if (!process.env.GITHUB_REF) {
-  commonPlugins.push(new HtmlWebpackPlugin({ template: 'mocks/index.html', filename: 'index.html' }));
-  commonPlugins.push(new HtmlWebpackPlugin({ template: 'mocks/callback.html', filename: 'callback.html' }));
+  glob.sync('mocks/*.html').forEach(mock => {
+    commonPlugins.push(new HtmlWebpackPlugin({ template: mock, filename: mock.split('/')[1] }));
+  });
 }
 
 if (process.env.NODE_ENV === 'production') {

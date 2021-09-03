@@ -887,6 +887,18 @@ export default class ApiRequest extends LitElement {
       });
     }
 
+    // Add Authentication api keys if provided
+    this.api_keys.forEach((v) => {
+      if (v.in === 'query') {
+        fetchUrl = `${fetchUrl}${fetchUrl.includes('?') ? '&' : '?'}${v.name}=${encodeURIComponent(v.finalKeyValue)}`;
+        return;
+      }
+
+      // Otherwise put it in the header
+      fetchOptions.headers[v.name] = v.finalKeyValue;
+      curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
+    });
+
     // Final URL for API call
     fetchUrl = `${this.serverUrl.replace(/\/$/, '')}${fetchUrl}`;
     if (fetchUrl.startsWith('http') === false) {
@@ -905,13 +917,6 @@ export default class ApiRequest extends LitElement {
       fetchOptions.headers.Accept = this.accept;
       curlHeaders += ` -H "Accept: ${this.accept}" \\\n`;
     }
-
-    // Add Authentication Header if provided
-    this.api_keys
-      .forEach((v) => {
-        fetchOptions.headers[v.name] = v.finalKeyValue;
-        curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
-      });
 
     // Add Header Params
     headerParamEls.map((el) => {
