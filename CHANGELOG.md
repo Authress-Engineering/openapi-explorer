@@ -3,6 +3,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.5 ##
 * Remove deprecated password oauth2 flow
+* Fixed sending API Keys in querystring (not recommended)
 
 ## 0.4 ##
 * Added custom nav section and custom display for that section.
