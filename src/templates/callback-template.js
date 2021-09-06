@@ -21,7 +21,7 @@ export default function callbackTemplate(callbacks) {
                     <span style="line-height:20px; vertical-align: baseline;">${pathObj[0]} </span>
                   </div>  
                   <div class='expanded-req-resp-container'>
-                    <api-request  class="request-panel"
+                    <api-request class="request-panel"
                       callback = "true"
                       method = "${method[0] || ''}", 
                       path = "${pathObj[0] || ''}" 

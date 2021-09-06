@@ -16,6 +16,7 @@
 * `show-server-selection` - Show server selection section
 
 ### Custom configuration
+* `default-schema-tab` - Default select the `Model` or the `Body/Example` tab in request/response views: [`model`, `body`]
 * `use-path-in-nav-bar` - Show the `HTTP Method - Resource Path` instead of `Path or Method description`
 * `nav-item-spacing` - Text spacing in the nav bar [`default`, `compact`, `relaxed`]
 
