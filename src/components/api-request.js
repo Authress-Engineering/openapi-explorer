@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit-element';
 import marked from 'marked';
 import Prism from 'prismjs';
+import mime from 'mime-types';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { copyToClipboard, prettyXml } from '../utils/common-utils';
@@ -1098,7 +1099,9 @@ export default class ApiRequest extends LitElement {
         }
         if (this.responseIsBlob) {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
-          this.respContentDisposition = contentDisposition ? contentDisposition.split('filename=')[1] : 'filename';
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+          const filename = filenameRegex.exec(contentDisposition);
+          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mime.extension(contentType) || 'file'}`;
           respBlob = await fetchResponse.blob();
           this.responseBlobUrl = URL.createObjectURL(respBlob);
         }
