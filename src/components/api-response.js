@@ -192,14 +192,14 @@ export default class ApiResponse extends LitElement {
               <div class="tab-panel col">
                 <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" >
                   <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab='model'>MODEL</button>
-                  <button class="tab-btn ${this.activeSchemaTab === 'example' ? 'active' : ''}" data-tab='example'>EXAMPLE</button>
+                  <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab='body'>EXAMPLE</button>
                   <div style="flex:1"></div>
                   ${Object.keys(this.mimeResponsesForEachStatus[status]).length === 1
                     ? html`<span class='small-font-size gray-text' style='align-self:center; margin-top:8px;'> ${Object.keys(this.mimeResponsesForEachStatus[status])[0]} </span>`
                     : html`${this.mimeTypeDropdownTemplate(Object.keys(this.mimeResponsesForEachStatus[status]))}`
                   }
                 </div>
-                ${this.activeSchemaTab === 'example'
+                ${this.activeSchemaTab === 'body'
                   ? html`<div class='tab-content col' style='flex:1;'>
                       ${this.mimeExampleTemplate(this.mimeResponsesForEachStatus[status][this.selectedMimeType])}
                     </div>`

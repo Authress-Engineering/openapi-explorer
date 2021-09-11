@@ -46,7 +46,9 @@
     "lit-html": "^1.1.1",
     "lodash.clonedeep": "^4.5.0",
     "marked": "^2.0.1",
+    "mime-types": "^2.1.32",
     "openapi-data-validator": "^1.1",
+    "path-browserify": "^1.0.1",
     "prismjs": "^1.23.0",
     "regex-to-strings": "^2.0.3",
     "swagger-client": "^3.13"

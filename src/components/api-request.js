@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit-element';
 import marked from 'marked';
 import Prism from 'prismjs';
+import mime from 'mime-types';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { copyToClipboard, prettyXml } from '../utils/common-utils';
@@ -458,7 +459,7 @@ export default class ApiRequest extends LitElement {
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
                 <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}"   data-tab = 'model'  >MODEL</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'example' ? 'active' : ''}" data-tab = 'example'>BODY</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'example'>BODY</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
@@ -561,7 +562,7 @@ export default class ApiRequest extends LitElement {
                         if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; }
                       }}">
                         <button class="v-tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab = 'model'>MODEL</button>
-                        <button class="v-tab-btn ${this.activeSchemaTab === 'example' ? 'active' : ''}" data-tab = 'example'>REQUEST BODY</button>
+                        <button class="v-tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'body'>REQUEST BODY</button>
                       </div>
                     </div>  
                     ${html`
@@ -575,7 +576,7 @@ export default class ApiRequest extends LitElement {
                       </div>`
                     }
                     ${html`
-                      <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'example' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
+                      <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'body' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
                         <textarea 
                           class = "textarea" placeholder="${formdataPartExample[0] && formdataPartExample[0].exampleValue || paramSchema.default || ''}"
                           part = "textarea textarea-param"
@@ -887,6 +888,18 @@ export default class ApiRequest extends LitElement {
       });
     }
 
+    // Add Authentication api keys if provided
+    this.api_keys.forEach((v) => {
+      if (v.in === 'query') {
+        fetchUrl = `${fetchUrl}${fetchUrl.includes('?') ? '&' : '?'}${v.name}=${encodeURIComponent(v.finalKeyValue)}`;
+        return;
+      }
+
+      // Otherwise put it in the header
+      fetchOptions.headers[v.name] = v.finalKeyValue;
+      curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
+    });
+
     // Final URL for API call
     fetchUrl = `${this.serverUrl.replace(/\/$/, '')}${fetchUrl}`;
     if (fetchUrl.startsWith('http') === false) {
@@ -905,13 +918,6 @@ export default class ApiRequest extends LitElement {
       fetchOptions.headers.Accept = this.accept;
       curlHeaders += ` -H "Accept: ${this.accept}" \\\n`;
     }
-
-    // Add Authentication Header if provided
-    this.api_keys
-      .forEach((v) => {
-        fetchOptions.headers[v.name] = v.finalKeyValue;
-        curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
-      });
 
     // Add Header Params
     headerParamEls.map((el) => {
@@ -1093,7 +1099,9 @@ export default class ApiRequest extends LitElement {
         }
         if (this.responseIsBlob) {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
-          this.respContentDisposition = contentDisposition ? contentDisposition.split('filename=')[1] : 'filename';
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+          const filename = filenameRegex.exec(contentDisposition);
+          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mime.extension(contentType) || 'file'}`;
           respBlob = await fetchResponse.blob();
           this.responseBlobUrl = URL.createObjectURL(respBlob);
         }
