@@ -40,8 +40,6 @@ export default css`
 .m-table > tbody > tr > td,
 .m-table > tr > td {
   border-top: 1px solid var(--light-border-color);
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 .table-title {
   font-size:var(--font-size-small);
