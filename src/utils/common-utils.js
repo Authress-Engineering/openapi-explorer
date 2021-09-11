@@ -132,7 +132,7 @@ export function prettyXml(sourceXmlString) {
 export function getCurrentElement() {
   const currentQuery = (window.location.hash || '').split('?')[1];
   const query = new URLSearchParams(currentQuery);
-  return query.get('route');
+  return decodeURIComponent(query.get('route') || '');
 }
 
 export function replaceState(rawElementId) {
