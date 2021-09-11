@@ -6,17 +6,16 @@ import '../components/api-response';
 import codeSamplesTemplate from './code-samples-template';
 import callbackTemplate from './callback-template';
 import { pathSecurityTemplate } from './security-scheme-template';
-import { pathIsInSearch } from '../utils/common-utils';
+import { getCurrentElement, pathIsInSearch, replaceState } from '../utils/common-utils';
 
 function toggleExpand(path) {
   if (path.expanded) {
     path.expanded = false; // collapse
-    window.history.replaceState(null, null, `${window.location.href.split('#')[0]}`);
+    replaceState(null);
   } else {
     path.expanded = true; // Expand
-    const newHash = `#${path.elementId}`;
-    if (window.location.hash !== newHash) {
-      window.history.replaceState(null, null, `${window.location.href.split('#')[0]}${newHash}`);
+    if (path.elementId === getCurrentElement()) {
+      replaceState(path.elementId);
     }
   }
   this.requestUpdate();

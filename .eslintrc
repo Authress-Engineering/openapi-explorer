@@ -8,7 +8,6 @@
       "configFile": "./webpack.babelrc.json"
     }
   },
-  "extends": "airbnb-base",
   "settings": {
     "import/resolver":{
       "webpack":{
@@ -17,29 +16,37 @@
     }
   },
   "env": {
+    "es6": true,
     "browser": true,
     "node": true
   },
   "globals": {
-    "globalThis": false // means it is not writeable
+    "AWS": false,
+    "bootbox": false,
+    "globalThis": true
   },
+  "plugins": [
+    "vue",
+    "mocha",
+    "promise"
+  ],
+  "extends": [
+    "cimpress-atsquad"
+  ],
   "rules": {
-    "max-len": [1, 300, 2, {"ignoreComments": true}],
-    "arrow-parens": "off",
-    "no-debugger": 0,
-    "no-plusplus": 0,
-    "no-param-reassign": 0,
-    "no-nested-ternary": 0,
-    "no-continue": 0,
-    "no-restricted-syntax": 0,
-    "guard-for-in": 0,
-    "consistent-return": 0,
-    "array-callback-return": 0,
-    "prefer-destructuring": 0,
-    "class-methods-use-this": 0,
-    "no-use-before-define": ["error", { "functions": false, "classes": false }],
-    "no-mixed-operators": ["off"],
-    "prefer-object-spread": 0,
+    "arrow-parens": "off", // ["error", "as-needed"],
+    "curly": ["error", "all"],
+    "indent": ["error", 2, { "SwitchCase": 1, "MemberExpression": "off" }],
+    "max-len": ["error", { "code": 200, "tabWidth": 2, "ignoreStrings": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreComments": true, "ignoreTrailingComments": true }],
+    "node/no-unsupported-features": ["off"],
+    "no-console": "error",
+    "prefer-const": ["error"],
+    "node/no-unsupported-features/es-syntax": ["off"],
+    "node/no-unpublished-import": ["off"],
+    "node/no-missing-import": ["error", {
+      "tryExtensions": [".js", ".json", ".vue", ".css"]
+    }],
+    "max-depth": "off",
     "comma-dangle": "off"
   }
 }

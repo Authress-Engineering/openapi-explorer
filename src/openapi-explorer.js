@@ -25,7 +25,7 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, pathIsInSearch, sleep } from './utils/common-utils';
+import { advancedSearch, pathIsInSearch, replaceState, sleep } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
 import apiRequestStyles from './styles/api-request-styles';
@@ -423,7 +423,7 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
 
     marked.setOptions({
-      highlight: (code, lang) => {
+      highlight(code, lang) {
         if (Prism.languages[lang]) {
           return Prism.highlight(code, Prism.languages[lang], lang);
         }
@@ -626,7 +626,7 @@ export default class OpenApiExplorer extends LitElement {
         const gotoEl = this.shadowRoot.getElementById(tmpElementId);
         if (gotoEl) {
           gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
-          window.history.replaceState(null, null, `#${tmpElementId}`);
+          replaceState(tmpElementId);
         }
       }, isExpandingNeeded ? 150 : 0);
     }
@@ -663,7 +663,7 @@ export default class OpenApiExplorer extends LitElement {
 
         // Add active class in the new element
         if (newNavEl) {
-          window.history.replaceState(null, null, `${window.location.href.split('#')[0]}#${entry.target.id}`);
+          replaceState(entry.target.id);
           newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
           newNavEl.classList.add('active');
         }
@@ -759,7 +759,7 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     // Update Location Hash
-    window.history.replaceState(null, null, `#${elementId}`);
+    replaceState(elementId);
 
     // Update NavBar View and Styles
     let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);

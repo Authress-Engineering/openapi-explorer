@@ -55,18 +55,15 @@ export default {
       rgb.r += amt;
       rgb.g += amt;
       rgb.b += amt;
-      if (rgb.r > 255) rgb.r = 255;
-      else if (rgb.r < 0) rgb.r = 0;
+      if (rgb.r > 255) {rgb.r = 255;} else if (rgb.r < 0) {rgb.r = 0;}
 
-      if (rgb.g > 255) rgb.g = 255;
-      else if (rgb.g < 0) rgb.g = 0;
+      if (rgb.g > 255) {rgb.g = 255;} else if (rgb.g < 0) {rgb.g = 0;}
 
-      if (rgb.b > 255) rgb.b = 255;
-      else if (rgb.b < 0) rgb.b = 0;
+      if (rgb.b > 255) {rgb.b = 255;} else if (rgb.b < 0) {rgb.b = 0;}
       return `#${rgb.r.toString(16).padStart(2, '0')}${rgb.g.toString(16).padStart(2, '0')}${rgb.b.toString(16).padStart(2, '0')}`;
     },
   },
   isValidHexColor(colorCode) {
-    return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8}|[A-Fa-f0-9]{4})$/i.test(colorCode);
+    return (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8}|[A-Fa-f0-9]{4})$/i).test(colorCode);
   },
 };
