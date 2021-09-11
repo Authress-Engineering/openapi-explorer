@@ -56,7 +56,7 @@ function focusedTagBodyTemplate(tag) {
 
 export default function focusedEndpointTemplate() {
   if (!this.explorerLocation || !this.resolvedSpec) {
-    return;
+    return undefined;
   }
   const focusElId = this.explorerLocation;
   let selectedPathObj = null;

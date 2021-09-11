@@ -229,10 +229,10 @@ export default class SchemaTable extends LitElement {
     // For Primitive Data types
     const [type, readorWriteOnly, constraint, defaultValue, allowedValues, pattern, schemaDescription, schemaTitle, deprecated] = data.split('~|~');
     if (readorWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
-      return;
+      return undefined;
     }
     if (readorWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
-      return;
+      return undefined;
     }
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`

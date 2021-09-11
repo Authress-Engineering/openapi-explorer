@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 0.6 ##
+* Route navigation is contained fully in a query string inside the hash, it will now no longer affect hash based routing
+
 ## 0.5 ##
 * Remove deprecated password oauth2 flow
 * Fixed sending API Keys in querystring (not recommended)

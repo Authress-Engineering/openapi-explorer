@@ -272,6 +272,7 @@ function groupByTags(openApiSpec, generateMissingTags = false) {
                 if (!pathOrHookObj.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
                   return commonParam;
                 }
+                return undefined;
               }).concat(pathOrHookObj.parameters);
             } else {
               finalParameters = commonParams.slice(0);

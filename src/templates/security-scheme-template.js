@@ -72,30 +72,28 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   try {
     const resp = await fetch(tokenUrl, { method: 'POST', headers, body: urlFormParams });
     const tokenResp = await resp.json();
-    if (resp.ok) {
-      if (tokenResp.token_type && tokenResp.access_token) {
-        updateOAuthKey.call(this, apiKeyId, tokenResp.token_type, tokenResp.access_token);
-        if (respDisplayEl) {
-          respDisplayEl.innerHTML = '<span style="color:var(--green)">Access Token Received</span>';
-        }
-        return true;
-      }
-    } else {
+    if (!resp.ok) {
       if (respDisplayEl) {
         respDisplayEl.innerHTML = `<span style="color:var(--red)">${tokenResp.error_description || tokenResp.error_description || 'Unable to get access token'}</span>`;
       }
-      return false;
+      return;
+    }
+
+    if (tokenResp.token_type && tokenResp.access_token) {
+      updateOAuthKey.call(this, apiKeyId, tokenResp.token_type, tokenResp.access_token);
+      if (respDisplayEl) {
+        respDisplayEl.innerHTML = '<span style="color:var(--green)">Access Token Received</span>';
+      }
     }
   } catch (err) {
     if (respDisplayEl) {
       respDisplayEl.innerHTML = '<span style="color:var(--red)">Failed to get access token</span>';
     }
-    return false;
   }
 }
 
 // Gets invoked when it receives the Authorization Code from the other window via message-event
-async function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, clientSecret, redirectUrl, grantType, sendClientSecretIn, apiKeyId, authFlowDivEl) {
+function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, clientSecret, redirectUrl, grantType, sendClientSecretIn, apiKeyId, authFlowDivEl) {
   sessionStorage.removeItem('winMessageEventActive');
   winObj.close();
   if (msgEvent.data.fake) {
@@ -118,7 +116,7 @@ async function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, client
   }
 }
 
-async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
+function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   const authFlowDivEl = e.target.closest('.oauth-flow');
   const clientId = authFlowDivEl.querySelector('.oauth-client-id') ? authFlowDivEl.querySelector('.oauth-client-id').value.trim() : '';
   const clientSecret = authFlowDivEl.querySelector('.oauth-client-secret') ? authFlowDivEl.querySelector('.oauth-client-secret').value.trim() : '';
@@ -273,7 +271,7 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
 export default function securitySchemeTemplate() {
   const schemes = this.resolvedSpec && this.resolvedSpec.securitySchemes;
   if (!schemes) {
-    return;
+    return undefined;
   }
   const providedApiKeys = schemes.filter((v) => (v.finalKeyValue));
   return html`
