@@ -25,7 +25,7 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, pathIsInSearch, replaceState, sleep } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
 import apiRequestStyles from './styles/api-request-styles';
@@ -377,7 +377,7 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     this.renderStyle = 'focused';
-    this.explorerLocation = this.explorerLocation || window.location.hash.substring(1);
+    this.explorerLocation = this.explorerLocation || getCurrentElement();
 
     if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
@@ -432,7 +432,7 @@ export default class OpenApiExplorer extends LitElement {
     });
 
     window.addEventListener('hashchange', () => {
-      this.scrollTo(window.location.hash.substring(1));
+      this.scrollTo(getCurrentElement());
     }, true);
     this.handleResize();
   }
@@ -554,7 +554,7 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
-  async setSecuritySchemeToken(apiKeyId, token) {
+  setSecuritySchemeToken(apiKeyId, token) {
     const securityObj = this.resolvedSpec && this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
     if (!securityObj) {
       throw Error('SecuritySchemeNotFound');
@@ -699,7 +699,7 @@ export default class OpenApiExplorer extends LitElement {
    *  3. Activate IntersectionObserver (after little delay)
    *
   */
-  async scrollToEventTarget(event, scrollNavItemToView = true) {
+  scrollToEventTarget(event, scrollNavItemToView = true) {
     const navEl = event.currentTarget;
     if (!navEl.dataset.contentId) {
       return;

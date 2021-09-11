@@ -67,7 +67,7 @@ function endpointBodyTemplate(path) {
   }
   const accept = [...acceptContentTypes].join(', ');
   // Filter API Keys that are non-empty and are applicable to the the path
-  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => (v.apiKeyId in ps)))) || [];
+  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => ps[v.apiKeyId]))) || [];
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate(path.xCodeSamples) : '';
   return html`

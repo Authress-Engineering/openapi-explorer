@@ -905,7 +905,7 @@ export default class ApiRequest extends LitElement {
   }
   /* eslint-enable indent */
 
-  async onFillRequestData(e) {
+  onFillRequestData(e) {
     const requestPanelEl = e.target.closest('.request-panel');
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => {
@@ -919,7 +919,7 @@ export default class ApiRequest extends LitElement {
     });
   }
 
-  async onClearRequestData(e) {
+  onClearRequestData(e) {
     const requestPanelEl = e.target.closest('.request-panel');
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => { el.value = ''; });

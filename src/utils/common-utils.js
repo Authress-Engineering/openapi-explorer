@@ -63,7 +63,7 @@ export function schemaKeys(schemaProps, result = new Set()) {
 
 export function advancedSearch(searchVal, allSpecTags, searchOptions = []) {
   if (!searchVal.trim() || searchOptions.length === 0) {
-    return;
+    return undefined;
   }
 
   const pathsMatched = [];
@@ -128,11 +128,6 @@ export function prettyXml(sourceXmlString) {
   const resultDoc = xsltProcessor.transformToDocument(xmlDoc);
   return new XMLSerializer().serializeToString(resultDoc);
 }
-/*
-export function hasValidPathInUrlHash(tags) {
-  return tags.find((tag) => tag.paths.find((path) => window.location.hash.substring(1) === path.elementId));
-}
-*/
 
 export function getCurrentElement() {
   const currentQuery = (window.location.hash || '').split('?')[1];
@@ -146,6 +141,7 @@ export function replaceState(rawElementId) {
   const currentNavigationHashPart = (window.location.hash || '').split('?')[0].replace(/^#/, '');
   const currentQuery = (window.location.hash || '').split('?')[1];
   const query = new URLSearchParams(currentQuery);
-  query.set('route', elementId);
-  window.history.replaceState(null, null, `#${currentNavigationHashPart}?${query.toString()}`);
+  query.delete('route');
+  const newQuery = query.toString().length > 1 ? `${query.toString()}&route=${elementId}` : `route=${elementId}`;
+  window.history.replaceState(null, null, `#${currentNavigationHashPart}?${newQuery}`);
 }

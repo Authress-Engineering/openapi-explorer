@@ -6,7 +6,7 @@ const xmlFormatter = require('@kyleshockey/xml');
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
   if (!schema) {
-    return;
+    return undefined;
   }
   let dataType = '';
   let constrain = '';
@@ -468,7 +468,7 @@ export function schemaToSampleObj(schema, config = { }) {
  */
 export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
   if (!schema) {
-    return;
+    return undefined;
   }
   if (schema.allOf) {
     const objWithAllProps = {};
@@ -490,10 +490,9 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
         const prop = `prop${Object.keys(objWithAllProps).length}`;
         const typeObj = getTypeInfo(v);
         objWithAllProps[prop] = `${typeObj.html}`;
-      } else {
-        return '';
       }
     });
+    // eslint-disable-next-line no-param-reassign
     obj = objWithAllProps;
   } else if (schema.anyOf || schema.oneOf) {
     obj['::description'] = schema.description || '';
