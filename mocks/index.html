@@ -163,7 +163,13 @@
             "securitySchemes": {
               "basicAuth": {
                 "type": "http",
-                "scheme": "basic"
+                "scheme": "basic",
+                "in": "header"
+              },
+              "cookieAuth": {
+                "type": "apiKey",
+                // "scheme": "basic",
+                "in": "cookie"
               }
             }
           }

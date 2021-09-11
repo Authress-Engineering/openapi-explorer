@@ -262,6 +262,9 @@ export default class OpenApiExplorer extends LitElement {
       input.header-input::placeholder {
         opacity:0.4;
       }
+      input:disabled {
+        cursor: not-allowed;
+      }
       .loader {
         margin: 16px auto 16px auto; 
         border: 4px solid var(--bg3);

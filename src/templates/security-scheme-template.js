@@ -92,6 +92,11 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   }
 }
 
+function getCookieValue(keyId) {
+  const foundCookie = (document.cookie || '').split(';').find(c => c.split('=')[0] === keyId);
+  return foundCookie && foundCookie.split('=')[1] || '';
+}
+
 // Gets invoked when it receives the Authorization Code from the other window via message-event
 function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, clientSecret, redirectUrl, grantType, sendClientSecretIn, apiKeyId, authFlowDivEl) {
   sessionStorage.removeItem('winMessageEventActive');
@@ -237,7 +242,7 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
             `
             : ''
           }
-          <div style="display:flex; max-height:28px;">
+          <div style="display:flex;">
             <input type="text" part="textbox textbox-auth-client-id" value = "${clientId || ''}" placeholder="client-id" spellcheck="false" class="oauth-client-id">
             ${flowName === 'authorizationCode' || flowName === 'clientCredentials'
               ? html`
@@ -312,30 +317,37 @@ export default function securitySchemeTemplate() {
                   }
                 </td>
                 <td>
-                  ${(v.type.toLowerCase() === 'apikey') || (v.type.toLowerCase() === 'http' && v.scheme.toLowerCase() === 'bearer')
+                  ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
                     ? html`
                       ${v.type.toLowerCase() === 'apikey'
-                        ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value`
+                        ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
                         : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and a Token String.`
                       }
-                      <div style="display:flex;max-height:28px;">
-                        ${v.in !== 'cookie'
+                      <div style="display:flex;">
+                        ${v.in === 'cookie'
                           ? html`
+                          <div style="display: block">
+                            <input type="text" value="${getCookieValue(v.apiKeyId)}" disabled class="api-key-input" placeholder="IygRVGf54B59e0GAkKmigGfuiVlp/uhFfk2ifA+jMMJzau2F1jPldc09gPTfnMw13BFBxqUZIFDm55DPfwkb0A==" spellcheck = "false" style="resize: horizontal; width: 100%">
+                            <br>
+                            <small>
+                              <strong>Cookies</strong>&nbsp;are set and configured by the remote service, therefore it is not possible to configure them from the browser.
+                            </small>
+                          </div>`
+                          : html`
                             <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
                             <button class="m-btn thin-border" style = "margin-left:5px;"
                               part = "btn btn-outline"
                               @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
                               ${v.finalKeyValue ? 'UPDATE' : 'SET'}
                             </button>`
-                          : ''
                         }
                       </div>`
                     : ''
                   }
-                  ${v.type.toLowerCase() === 'http' && v.scheme.toLowerCase() === 'basic'
+                  ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
                     ? html`
                       Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
-                      <div style="display:flex; max-height:28px;">
+                      <div style="display:flex;">
                         <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
                         <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
                         <button class="m-btn thin-border"
