@@ -92,7 +92,7 @@ export function getTypeInfo(schema) {
 }
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName) {
-  const example = schemaObj.examples ? schemaObj.examples[0] : (schemaObj.example ? schemaObj.example : undefined);
+  const example = schemaObj.examples ? schemaObj.examples[0] : schemaObj.example;
   if (example === '') { return ''; }
   if (example === null) { return null; }
   if (example === 0) { return 0; }
