@@ -133,3 +133,19 @@ export function hasValidPathInUrlHash(tags) {
   return tags.find((tag) => tag.paths.find((path) => window.location.hash.substring(1) === path.elementId));
 }
 */
+
+export function getCurrentElement() {
+  const currentQuery = (window.location.hash || '').split('?')[1];
+  const query = new URLSearchParams(currentQuery);
+  return query.get('route');
+}
+
+export function replaceState(rawElementId) {
+  const elementId = rawElementId.replace(/^#/, '');
+
+  const currentNavigationHashPart = (window.location.hash || '').split('?')[0].replace(/^#/, '');
+  const currentQuery = (window.location.hash || '').split('?')[1];
+  const query = new URLSearchParams(currentQuery);
+  query.set('route', elementId);
+  window.history.replaceState(null, null, `#${currentNavigationHashPart}?${query.toString()}`);
+}
