@@ -3,6 +3,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.6 ##
 * Route navigation is contained fully in a query string inside the hash, it will now no longer affect hash based routing
+* Adds the `nonce` to oauth requests to generate an access token.
 
 ## 0.5 ##
 * Remove deprecated password oauth2 flow

@@ -129,6 +129,7 @@ function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 
   const checkedScopeEls = [...authFlowDivEl.querySelectorAll('input[type="checkbox"]:checked')];
   const state = (`${Math.random().toString(36)}random`).slice(2, 9);
+  const nonce = (`${Math.random().toString(36)}random`).slice(2, 9);
   const redirectUrlObj = new URL(this.oauthReceiver);
   let grantType = '';
   let responseType = '';
@@ -155,6 +156,7 @@ function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
     authCodeParams.set('redirect_uri', redirectUrlObj.toString());
     authCodeParams.set('response_type', responseType);
     authCodeParams.set('state', state);
+    authCodeParams.set('nonce', nonce);
     authCodeParams.set('show_dialog', true);
     authUrlObj.search = authCodeParams.toString();
     // If any older message-event-listener is active then fire a fake message to remove it (these are single time listeners)
