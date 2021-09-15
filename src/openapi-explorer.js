@@ -169,9 +169,6 @@ export default class OpenApiExplorer extends LitElement {
         scrollbar-color: var(--border-color) transparent;
       }
 
-      .main-content-inner {
-        padding: 0 8px;
-      }
       .main-content::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -186,9 +183,7 @@ export default class OpenApiExplorer extends LitElement {
       .section-gap.section-tag {
         border-bottom:1px solid var(--border-color);
       }
-      .section-gap,
-      .section-gap--focused-mode,
-      .section-gap--read-mode { 
+      .section-gap { 
         padding: 0px 4px; 
       }
       .section-tag-header {
@@ -328,12 +323,14 @@ export default class OpenApiExplorer extends LitElement {
         .only-large-screen-flex{
           display:flex;
         }
-        .section-gap,
-        .section-gap--focused-mode {
+        .section-gap {
           padding: 24px 24px; 
         }
         .section-gap--read-mode { 
           padding: 24px 8px; 
+        }
+        .section-gap--focused-mode {
+          padding: 2rem 3rem;
         }
         .endpoint-body {
           position: relative;
@@ -346,11 +343,11 @@ export default class OpenApiExplorer extends LitElement {
           width: ${unsafeCSS(this.fontSize === 'default' ? '300px' : this.fontSize === 'large' ? '315px' : '330px')};
           display:flex;
         }
-        .section-gap--focused-mode { 
-          padding: 12px 24px 12px 24px;
-        }
         .section-gap--read-mode { 
           padding: 24px 24px 12px;
+        }
+        .main-content-inner {
+          padding: 24px;
         }
       }`,
     ];

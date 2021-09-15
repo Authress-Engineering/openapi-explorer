@@ -46,11 +46,11 @@ export default function mainBodyTemplate() {
         : html`
         <main class="main-content regular-font" part="section-main-content">
           <slot></slot>
-          <div class="main-content-inner">
+          <div id="operations-root" class="main-content-inner">
             ${this.loadFailed === true
               ? html`<div style="text-align: center;margin: 16px;">Unable to load the Spec${this.specUrl ? ': ' : ''}<strong>${this.specUrl}</strong></div>`
               : html`
-                <div id="operations-root" class="operations-root" @click="${(e) => { this.handleHref(e); }}">
+                <div class="operations-root" @click="${(e) => { this.handleHref(e); }}">
                 ${this.renderStyle === 'focused'
                   ? html`${focusedEndpointTemplate.call(this)}`
                   : html`
