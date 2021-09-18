@@ -136,7 +136,7 @@ export function getCurrentElement() {
 }
 
 export function replaceState(rawElementId) {
-  const elementId = rawElementId.replace(/^#/, '');
+  const elementId = rawElementId && rawElementId.replace(/^#/, '') || '';
 
   const currentNavigationHashPart = (window.location.hash || '').split('?')[0].replace(/^#/, '');
   const currentQuery = (window.location.hash || '').split('?')[1];
