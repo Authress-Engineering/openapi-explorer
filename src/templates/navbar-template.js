@@ -5,11 +5,13 @@ import { pathIsInSearch } from '../utils/common-utils';
 export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {
   const tagAndPathEl = navLinkEl && navLinkEl.closest('.nav-bar-tag-and-paths');
   if (tagAndPathEl) {
-    const isExpanded = tagAndPathEl.classList.contains('expanded');
-    if (isExpanded && (action === 'toggle' || action === 'collapse')) {
-      tagAndPathEl.classList.replace('expanded', 'collapsed');
-    } else if (!isExpanded && (action === 'toggle' || action === 'expand')) {
-      tagAndPathEl.classList.replace('collapsed', 'expanded');
+    const expand = tagAndPathEl.classList.contains('collapsed') && action === 'toggle' || action === 'expand';
+    if (expand) {
+      tagAndPathEl.classList.remove('collapsed');
+      tagAndPathEl.classList.add('expanded');
+    } else {
+      tagAndPathEl.classList.remove('expanded');
+      tagAndPathEl.classList.add('collapsed');
     }
   }
 }
@@ -18,11 +20,11 @@ export function expandCollapseAll(navEl, action = 'expand-all') {
   const elList = [...navEl.querySelectorAll('.nav-bar-tag-and-paths')];
   if (action === 'expand-all') {
     elList.map((el) => {
-      el.classList.replace('collapsed', 'expanded');
+      expandCollapseNavBarTag(el, 'expand');
     });
   } else {
     elList.map((el) => {
-      el.classList.replace('expanded', 'collapsed');
+      expandCollapseNavBarTag(el, 'collapse');
     });
   }
 }

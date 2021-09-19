@@ -21,21 +21,33 @@ function toggleExpand(path) {
   this.requestUpdate();
 }
 
-export function expandCollapseAll(operationsRootEl, action = 'expand-all') {
-  const elList = [...operationsRootEl.querySelectorAll('.section-tag')];
-  if (action === 'expand-all') {
-    elList.map((el) => {
-      el.classList.replace('collapsed', 'expanded');
-    });
+function toggleTag(tagElement, tagId) {
+  const sectionTag = tagElement.target.closest('.section-tag');
+  const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
+  tag.expanded = !tag.expanded;
+  if (tag.expanded) {
+    sectionTag.classList.remove('collapsed');
+    sectionTag.classList.add('expanded');
   } else {
-    elList.map((el) => {
-      el.classList.replace('expanded', 'collapsed');
-    });
+    sectionTag.classList.remove('expanded');
+    sectionTag.classList.add('collapsed');
   }
+  this.requestUpdate();
 }
-
-function onExpandCollapseAll(e, action = 'expand-all') {
-  expandCollapseAll.call(this, e.target.closest('.operations-root'), action);
+export function expandCollapseAll(currentElement, action = 'expand-all') {
+  const operationsRootEl = currentElement.target.closest('.operations-root');
+  const elList = [...operationsRootEl.querySelectorAll('.section-tag')];
+  const expand = action === 'expand-all';
+  this.resolvedSpec.tags.forEach(t => t.expanded = expand);
+  elList.map((el) => {
+    if (expand) {
+      el.classList.remove('collapsed');
+      el.classList.add('expanded');
+    } else {
+      el.classList.remove('expanded');
+      el.classList.add('collapsed');
+    }
+  });
 }
 
 /* eslint-disable indent */
@@ -127,14 +139,14 @@ function endpointBodyTemplate(path) {
 export default function endpointTemplate() {
   return html`
     <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px;"> 
-      <span @click="${(e) => onExpandCollapseAll(e, 'expand-all')}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
+      <span @click="${(e) => expandCollapseAll.call(this, e, 'expand-all')}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
       &nbsp;|&nbsp; 
-      <span @click="${(e) => onExpandCollapseAll(e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
+      <span @click="${(e) => expandCollapseAll.call(this, e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
     </div>
     ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
     
-      <div class='section-tag-header' @click="${() => { tag.expanded = !tag.expanded; this.requestUpdate(); }}">
+      <div class='section-tag-header' @click="${(e) => toggleTag.call(this, e, tag.elementId)}">
         <div id='${tag.elementId}' class="sub-title tag" style="color:var(--primary-color)">${tag.name}</div>
       </div>
       <div class='section-tag-body'>
