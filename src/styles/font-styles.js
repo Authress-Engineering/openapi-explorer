@@ -63,6 +63,9 @@ export default css`
   h1,h2,h3,h4,h5,h5{
     margin-block-end: 0.2em;
   }
+  h3 {
+    margin-top: 0;
+  }
   p { margin-block-start: 0.5em; }
   a { color: var(--blue); cursor: pointer; }
   a.inactive-link { 

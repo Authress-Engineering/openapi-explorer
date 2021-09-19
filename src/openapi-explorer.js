@@ -312,6 +312,17 @@ export default class OpenApiExplorer extends LitElement {
         100% { transform: rotate(360deg); }
       }
 
+      @media only screen and (max-width: 767.98px) {
+        .section-padding {
+          // margin-right: 1rem;
+          margin: 1rem;
+        }
+
+        .sub-title.tag {
+          margin-left: 1rem;
+        }
+      }
+
       @media only screen and (min-width: 768px) {
         .nav-bar {
           width: 260px;
