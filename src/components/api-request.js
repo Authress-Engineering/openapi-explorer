@@ -144,7 +144,7 @@ export default class ApiRequest extends LitElement {
 
       tableRows.push(html`
       <tr> 
-        <td rowspan="${this.allowTry === 'true' ? '1' : '2'}" style="width:160px; min-width:50px;">
+        <td style="width:160px; min-width:50px;">
           <div class="param-name">
             ${param.required ? html`<span style='color:var(--red)'>*</span>` : ''}${param.name}
           </div>
@@ -203,7 +203,7 @@ export default class ApiRequest extends LitElement {
         }
         ${this.renderStyle === 'focused'
           ? html`
-            <td colspan="${(this.allowTry === 'true') ? '1' : '2'}">
+            <td>
               ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">

@@ -139,9 +139,13 @@ export default function endpointTemplate() {
       </div>
       <div class='section-tag-body'>
         <slot name="${tag.elementId}"></slot>
-        <div class="regular-font regular-font-size m-markdown" style="padding-bottom:12px">
-          ${unsafeHTML(marked(tag.description || ''))}
-        </div>
+        ${tag.description
+          ? `html
+          <div class="regular-font regular-font-size m-markdown" style="padding-bottom:12px">
+            ${unsafeHTML(marked(tag.description || ''))}
+          </div>`
+        : ''
+        }
         ${tag.paths.filter((v) => {
           if (this.matchPaths) {
             return pathIsInSearch(this.matchPaths, v);

@@ -16,7 +16,7 @@ export default function overviewTemplate() {
       ${this.resolvedSpec && this.resolvedSpec.info
         ? html`
           <slot name="overview">
-            <div id="api-title" part="label-overview-title" style="font-size:32px">
+            <div id="api-title" part="label-overview-title" style="font-size:32px;" class="section-padding">
               ${this.resolvedSpec.info.title}
               ${!this.resolvedSpec.info.version ? '' : html`
                 <span style = 'font-size:var(--font-size-small);font-weight:bold'>
@@ -24,7 +24,7 @@ export default function overviewTemplate() {
                 </span>`
               }
             </div>
-            <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;">
+            <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;" class="section-padding">
               ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.email
                 ? html`<span>${this.resolvedSpec.info.contact.name || 'Email'}: 
                   <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
@@ -53,7 +53,7 @@ export default function overviewTemplate() {
           ${this.resolvedSpec.info.description
             ? html`${
               unsafeHTML(`
-                <div class="m-markdown regular-font">
+                <div class="m-markdown regular-font section-padding">
                 ${marked(this.resolvedSpec.info.description, this.infoDescriptionHeadingsInNavBar === 'true' ? { renderer: headingRenderer() } : undefined)}
               </div>`)}`
             : ''
