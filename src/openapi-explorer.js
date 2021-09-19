@@ -199,23 +199,6 @@ export default class OpenApiExplorer extends LitElement {
         background-image: linear-gradient(to right, rgba(0,0,0,0), var(--border-color), rgba(0,0,0,0));
       }
 
-      .section-tag-header:hover::after {
-        position:absolute;
-        margin-left:-24px;
-        font-size:20px;
-        top: calc(50% - 14px);
-        color:var(--primary-color);
-        content: '⬆'; 
-      }
-
-      .collapsed .section-tag-header::after {
-        position:absolute;
-        margin-left:-24px;
-        font-size:20px;
-        top: calc(50% - 14px);
-        color: var(--border-color);
-        content: '⬇'; 
-      }
       .collapsed .section-tag-header:hover::after {
         color:var(--primary-color);
       }
