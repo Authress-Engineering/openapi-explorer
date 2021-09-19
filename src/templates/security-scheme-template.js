@@ -284,101 +284,103 @@ export default function securitySchemeTemplate() {
   return html`
   <section id='auth' part="section-auth" class = 'observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
     <slot name="authentication">
-      <div class='sub-title regular-font'> AUTHENTICATION </div>
-      <div class="small-font-size" style="display:flex; align-items: center; min-height:30px">
-        ${providedApiKeys.length > 0
-          ? html`
-            <div class="blue-text"> ${providedApiKeys.length} API key applied </div>
-            <div style="flex:1"></div>
-            <button class="m-btn thin-border" part="btn btn-outline" @click=${() => { onClearAllApiKeys.call(this); }}>CLEAR ALL API KEYS</button>`
-          : html`<div class="red-text">No API key applied</div>`
-        }
-      </div>
-      ${schemes.length > 0
-        ? html`  
-          <table class='m-table' style = "width:100%">
-            ${schemes.map((v) => html`
-              <tr>  
-                <td style="max-width:500px; overflow-wrap: break-word;">
-                  <div style="min-height:24px"> 
-                    <span style="font-weight:bold">${v.typeDisplay}</span> 
-                    ${v.finalKeyValue
+      <div class="section-padding">
+        <div class='sub-title regular-font'>AUTHENTICATION</div>
+        <div class="small-font-size" style="display:flex; align-items: center; min-height:30px">
+          ${providedApiKeys.length > 0
+            ? html`
+              <div class="blue-text"> ${providedApiKeys.length} API key applied </div>
+              <div style="flex:1"></div>
+              <button class="m-btn thin-border" part="btn btn-outline" @click=${() => { onClearAllApiKeys.call(this); }}>CLEAR ALL API KEYS</button>`
+            : html`<div class="red-text">No API key applied</div>`
+          }
+        </div>
+        ${schemes.length > 0
+          ? html`  
+            <table class='m-table' style = "width:100%">
+              ${schemes.map((v) => html`
+                <tr>  
+                  <td style="max-width:500px; overflow-wrap: break-word;">
+                    <div style="min-height:24px"> 
+                      <span style="font-weight:bold">${v.typeDisplay}</span> 
+                      ${v.finalKeyValue
+                        ? html`
+                          <span class='blue-text'>  ${v.finalKeyValue ? 'Key Applied' : ''} </span> 
+                          <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>
+                          `
+                        : ''
+                      }
+                    </div>
+                    ${v.description
                       ? html`
-                        <span class='blue-text'>  ${v.finalKeyValue ? 'Key Applied' : ''} </span> 
-                        <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>
-                        `
+                        <div class="m-markdown"> 
+                          ${unsafeHTML(marked(v.description || ''))}
+                        </div>`
                       : ''
                     }
-                  </div>
-                  ${v.description
-                    ? html`
-                      <div class="m-markdown"> 
-                        ${unsafeHTML(marked(v.description || ''))}
-                      </div>`
-                    : ''
-                  }
-                </td>
-                <td>
-                  ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
-                    ? html`
-                      ${v.type.toLowerCase() === 'apikey'
-                        ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
-                        : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and a Token String.`
-                      }
-                      <div style="display:flex;">
-                        ${v.in === 'cookie'
-                          ? html`
-                          <div style="display: block">
-                            <input type="text" value="${getCookieValue(v.apiKeyId)}" disabled class="api-key-input" placeholder="IygRVGf54B59e0GAkKmigGfuiVlp/uhFfk2ifA+jMMJzau2F1jPldc09gPTfnMw13BFBxqUZIFDm55DPfwkb0A==" spellcheck = "false" style="resize: horizontal; width: 100%">
-                            <br>
-                            <small>
-                              <strong>Cookies</strong>&nbsp;are set and configured by the remote service, therefore it is not possible to configure them from the browser.
-                            </small>
-                          </div>`
-                          : html`
-                            <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
-                            <button class="m-btn thin-border" style = "margin-left:5px;"
-                              part = "btn btn-outline"
-                              @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
-                              ${v.finalKeyValue ? 'UPDATE' : 'SET'}
-                            </button>`
+                  </td>
+                  <td>
+                    ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
+                      ? html`
+                        ${v.type.toLowerCase() === 'apikey'
+                          ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
+                          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and a Token String.`
                         }
-                      </div>`
-                    : ''
-                  }
-                  ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
-                    ? html`
-                      Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
-                      <div style="display:flex;">
-                        <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
-                        <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
-                        <button class="m-btn thin-border"
-                          @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
-                          part = "btn btn-outline"
-                        > 
-                          ${v.finalKeyValue ? 'UPDATE' : 'SET'}
-                        </button>
-                      </div>`
-                    : ''
-                  }
-                </td>
-              </tr>
-              ${v.type.toLowerCase() === 'oauth2'
-                ? html`
-                  <tr>
-                    <td colspan="2" style="border:none; padding-left:48px">
-                      ${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(
-                        this, f, v['x-client-id'], v['x-client-secret'], v.apiKeyId, v.flows[f],
-                      ))} 
-                    </td>
-                  </tr>    
-                  `
-                : ''
-              }    
-            `)}
-          </table>`
-        : ''
-      }
+                        <div style="display:flex;">
+                          ${v.in === 'cookie'
+                            ? html`
+                            <div style="display: block">
+                              <input type="text" value="${getCookieValue(v.apiKeyId)}" disabled class="api-key-input" placeholder="IygRVGf54B59e0GAkKmigGfuiVlp/uhFfk2ifA+jMMJzau2F1jPldc09gPTfnMw13BFBxqUZIFDm55DPfwkb0A==" spellcheck = "false" style="resize: horizontal; width: 100%">
+                              <br>
+                              <small>
+                                <strong>Cookies</strong>&nbsp;are set and configured by the remote service, therefore it is not possible to configure them from the browser.
+                              </small>
+                            </div>`
+                            : html`
+                              <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
+                              <button class="m-btn thin-border" style = "margin-left:5px;"
+                                part = "btn btn-outline"
+                                @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
+                                ${v.finalKeyValue ? 'UPDATE' : 'SET'}
+                              </button>`
+                          }
+                        </div>`
+                      : ''
+                    }
+                    ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
+                      ? html`
+                        Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
+                        <div style="display:flex;">
+                          <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
+                          <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
+                          <button class="m-btn thin-border"
+                            @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
+                            part = "btn btn-outline"
+                          > 
+                            ${v.finalKeyValue ? 'UPDATE' : 'SET'}
+                          </button>
+                        </div>`
+                      : ''
+                    }
+                  </td>
+                </tr>
+                ${v.type.toLowerCase() === 'oauth2'
+                  ? html`
+                    <tr>
+                      <td colspan="2" style="border:none; padding-left:48px">
+                        ${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(
+                          this, f, v['x-client-id'], v['x-client-secret'], v.apiKeyId, v.flows[f],
+                        ))} 
+                      </td>
+                    </tr>    
+                    `
+                  : ''
+                }    
+              `)}
+            </table>`
+          : ''
+        }
+      </div>
     </slot>
   </section>
 `;
