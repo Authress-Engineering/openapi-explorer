@@ -631,7 +631,8 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
 }
 
 /* Create Example object */
-export function generateExample(examples, example, schema, mimeType, includeReadOnly = true, includeWriteOnly = true, outputType) {
+export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType) {
+  const mimeType = rawMimeType || 'application/json';
   const finalExamples = [];
   // First check if examples is provided
   if (examples) {
