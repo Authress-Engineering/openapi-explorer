@@ -245,8 +245,8 @@ export default class ApiRequest extends LitElement {
       tableRows.push(html`
       <tr> 
         <td style="width:160px; min-width:50px;">
-          <div class="param-name">
-            ${param.required ? html`<span style='color:var(--red)'>*</span>` : ''}${param.name}
+          <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}">
+            ${param.name}${!paramSchema.deprecated && param.required ? html`<span style='color:var(--red);'>*</span>` : ''}
           </div>
           <div class="param-type">
             ${paramSchema.type === 'array'
@@ -597,11 +597,8 @@ export default class ApiRequest extends LitElement {
         formDataTableRows.push(html`
         <tr> 
           <td style="width:160px; min-width:100px;">
-            <div class="param-name">
-              ${fieldSchema.required
-                ? html`<span style='color:var(--red);'>*</span>${fieldName}`
-                : html`${fieldName}`
-              }
+            <div class="param-name ${fieldSchema.deprecated ? 'deprecated' : ''}">
+              ${fieldName}${!fieldSchema.deprecated && (schema.required?.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
             <div class="param-type">${paramSchema.type}</div>
           </td>  
