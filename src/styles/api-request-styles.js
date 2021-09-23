@@ -19,6 +19,9 @@ export default css`
   color: var(--fg); 
   font-family: var(--font-mono);
 }
+.api-request .param-name.deprecated {
+  text-decoration: line-through;
+}
 .api-request .param-type {
   color: var(--light-fg); 
   font-family: var(--font-regular);
