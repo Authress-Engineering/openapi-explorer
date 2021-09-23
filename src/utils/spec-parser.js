@@ -281,6 +281,18 @@ function groupByTags(openApiSpec, generateMissingTags = false) {
             finalParameters = pathOrHookObj.parameters ? pathOrHookObj.parameters.slice(0) : [];
           }
 
+          // Remove bad callbacks
+          if (pathOrHookObj.callbacks) {
+            for (const [callbackName, callbackConfig] of Object.entries(pathOrHookObj.callbacks)) {
+              const originalCallbackEntries = Object.entries(callbackConfig);
+              const filteredCallbacks = originalCallbackEntries.filter((entry) => typeof entry[1] === 'object') || [];
+              pathOrHookObj.callbacks[callbackName] = Object.fromEntries(filteredCallbacks);
+              if (filteredCallbacks.length !== originalCallbackEntries.length) {
+                console.warn(`OpenAPI Explorer: Invalid Callback found in ${callbackName}`); // eslint-disable-line no-console
+              }
+            }
+          }
+
           // Update Responses
           tagObj.paths.push({
             show: true,
