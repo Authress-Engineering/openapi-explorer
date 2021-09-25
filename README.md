@@ -24,7 +24,7 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 </p>
 
 ## Check out the Demo
-[OpenAPI Explorer Demo](https://authress.io/app/?utm_source=oae&utm_medium=github&utm_campaign=cross-link&utm_content=demo#get-/v1/users/-userId-/resources)
+[OpenAPI Explorer Demo](https://authress.io/app/?utm_source=oae&utm_medium=github&utm_campaign=cross-link&utm_content=demo#api?route=get-/v1/users/-userId-/resources)
 
 (Curious about the exact styling of this: [here's the exact example](./docs/authress-example.vue))
 
