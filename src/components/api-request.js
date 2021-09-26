@@ -943,7 +943,7 @@ export default class ApiRequest extends LitElement {
     fetchUrl = this.path;
     const fetchOptions = {
       method: this.method.toUpperCase(),
-      headers: {},
+      headers: new Headers()
     };
     // Generate URL using Path Params
     pathParamEls.map((el) => {
@@ -1026,7 +1026,7 @@ export default class ApiRequest extends LitElement {
       }
 
       // Otherwise put it in the header
-      fetchOptions.headers[v.name] = v.finalKeyValue;
+      fetchOptions.headers.append(v.name, v.finalKeyValue);
       curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
     });
 
@@ -1042,7 +1042,7 @@ export default class ApiRequest extends LitElement {
 
     if (acceptHeader) {
       // Uses the acceptHeader from Response panel
-      fetchOptions.headers.Accept = acceptHeader;
+      fetchOptions.headers.append('Accept', acceptHeader);
       curlHeaders += ` -H "Accept: ${acceptHeader}" \\\n`;
     } else if (this.accept) {
       fetchOptions.headers.Accept = this.accept;
@@ -1148,7 +1148,7 @@ export default class ApiRequest extends LitElement {
       // Common for all request-body
       if (!requestBodyType.includes('form-data')) {
         // For multipart/form-data don't set the content-type to allow creation of browser generated part boundaries
-        fetchOptions.headers['Content-Type'] = requestBodyType;
+        fetchOptions.headers.append('Content-Type', requestBodyType);
       }
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
