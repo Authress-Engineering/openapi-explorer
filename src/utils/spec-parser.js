@@ -56,7 +56,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
     } else if (v.type === 'apiKey') {
       v.typeDisplay = `API Key (${v.name})`;
     } else if (v.type === 'oauth2') {
-      v.typeDisplay = `OAuth (${v.apiKeyId})`;
+      v.typeDisplay = 'OAuth2.0';
     } else {
       v.typeDisplay = v.type;
     }

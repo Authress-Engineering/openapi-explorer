@@ -386,25 +386,35 @@ export default function securitySchemeTemplate() {
 `;
 }
 
+function getOauthScopeTemplate(scopes) {
+  if (!scopes || !scopes.length || !Array.isArray(scopes)) {
+    return '';
+  }
+
+  return html`
+    <div>
+      <b>Required scopes:</b> 
+      <br/> 
+      <div style="margin-left:8px">  
+        ${scopes.map(scope => html`<span>${scope}</span>&nbsp;`)}
+      </div>  
+    </div>`;
+}
+
 export function pathSecurityTemplate(pathSecurity) {
   if (this.resolvedSpec.securitySchemes && pathSecurity) {
     const orSecurityKeys1 = [];
     pathSecurity.forEach((pSecurity) => {
       const andSecurityKeys1 = [];
       const andKeyTypes = [];
-      let pathScopes = '';
       Object.keys(pSecurity).forEach((pathSecurityKey) => {
         const s = this.resolvedSpec.securitySchemes.find((ss) => ss.apiKeyId === pathSecurityKey);
-        if (!pathScopes) {
-          pathScopes = pSecurity[pathSecurityKey].join(', ');
-        }
         if (s) {
           andKeyTypes.push(s.typeDisplay);
-          andSecurityKeys1.push(s);
+          andSecurityKeys1.push({ ...s, scopes: pSecurity[pathSecurityKey] });
         }
       });
       orSecurityKeys1.push({
-        pathScopes,
         securityTypes: andKeyTypes.length > 1 ? `${andKeyTypes[0]} + ${andKeyTypes.length - 1} more` : andKeyTypes[0],
         securityDefs: andSecurityKeys1,
       });
@@ -430,22 +440,21 @@ export function pathSecurityTemplate(pathSecurity) {
                     ? html`
                       <div>
                         ${orSecurityItem1.securityDefs.length > 1 ? html`<b>${j + 1}.</b> &nbsp;` : html`Requires`}
-                        OAuth Token (${andSecurityItem.apiKeyId}) in <b>Authorization header</b>
-                        ${orSecurityItem1.pathScopes !== ''
-                          ? html`. Required scopes: <ul>${orSecurityItem1.pathScopes.split(',').map((scope) => html`<li>${scope}</li>`)}</ul>`
-                          : ''
-                        }
+                        OAuth token (${andSecurityItem.apiKeyId}) in <b>Authorization header</b>
+                        ${getOauthScopeTemplate(andSecurityItem.scopes)}
                       </div>`
                     : andSecurityItem.type === 'http'
                       ? html`
                         <div>
                           ${orSecurityItem1.securityDefs.length > 1 ? html`<b>${j + 1}.</b> &nbsp;` : html`Requires`} 
                           ${andSecurityItem.scheme === 'basic' ? 'Base 64 encoded username:password' : 'Bearer Token'} in <b>Authorization header</b>
+                          ${getOauthScopeTemplate(andSecurityItem.scopes)}
                         </div>`
                       : html`
                         <div>
                           ${orSecurityItem1.securityDefs.length > 1 ? html`<b>${j + 1}.</b> &nbsp;` : html`Requires`} 
                           Token in <b>${andSecurityItem.name} ${andSecurityItem.in}</b>
+                          ${getOauthScopeTemplate(andSecurityItem.scopes)}
                         </div>`
                   }
                 `)}

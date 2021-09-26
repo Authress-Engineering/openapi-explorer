@@ -83,7 +83,7 @@
               }
             }
           },
-          "security": [{ "basicAuth": [] }],
+          "security": [{ "oauth": ["scope:read", "scope:write"] }],
           "components": {
             "schemas": {
               "Tag": {
@@ -165,6 +165,18 @@
                 "type": "http",
                 "scheme": "basic",
                 "in": "header"
+              },
+              "oauth": {
+                "type": "oauth2",
+                "flows": {
+                  "implicit": {
+                    "authorizationUrl": "https://example.com/api/oauth/dialog",
+                    "scopes": {
+                      "scope:read": "read scope",
+                      "scope:write": "modify write scope"
+                    }
+                  }
+                }
               },
               "cookieAuth": {
                 "type": "apiKey",
