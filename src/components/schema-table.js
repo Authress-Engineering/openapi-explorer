@@ -247,7 +247,10 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-type ${dataTypeCss}'>
           ${dataType === 'array' ? `${type}[]` : type}
-          <span style="font-family: var(--font-mono);">${readorWriteOnly} </span> </div>
+          <span style="font-family: var(--font-mono);" title="${readorWriteOnly === '🆁' && 'Read only attribute' || readorWriteOnly === '🆆' && 'Write only attribute' || ''}">
+            ${readorWriteOnly}
+          </span>
+        </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
           ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(schemaDescription))}</span>` : ''}
