@@ -255,12 +255,12 @@ export default class SchemaTree extends LitElement {
           }
           <span class="${dataTypeCss}">
             ${dataType === 'array' ? `${type}[]` : `${type}`}
-            ${readorWriteOnly}
           </span>
         </div>
-        <div class='td key-descr'>
-          ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(schemaDescription))}</span>` : ''}
+        <div class="td key-descr">
+          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${readorWriteOnly === '🆁' && 'Read only attribute' || readorWriteOnly === '🆆' && 'Write only attribute' || ''}">
+            ${unsafeHTML(marked(`${readorWriteOnly && `${readorWriteOnly} ` || ''}${dataType === 'array' && description || schemaDescription || ''}`))}
+          </span>
           ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraint}</div>` : ''}
           ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div>` : ''}
           ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues}</div>` : ''}

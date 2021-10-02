@@ -29,11 +29,7 @@ export function getTypeInfo(schema) {
     type: dataType,
     format: schema.format || '',
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
-    readOrWriteOnly: schema.readOnly
-      ? '🆁'
-      : schema.writeOnly
-        ? '🆆'
-        : '',
+    readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: schema.deprecated ? '❌' : '',
     example: typeof schema.example === 'undefined'
       ? ''

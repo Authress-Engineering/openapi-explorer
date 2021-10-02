@@ -658,7 +658,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.type === 'array' ? '[ ' : ''}
                       <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                         data-default-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                        data-default = "${paramSchema.type === 'array' ? (paramSchema.example && paramSchema.example.join('~|~') || '') : (paramSchema.example)}"
+                        data-default = "${Array.isArray(paramSchema.example) && paramSchema.example.join('~|~') || paramSchema.example || ''}"
                         @click="${(e) => {
                           const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
                           if (inputEl) {
