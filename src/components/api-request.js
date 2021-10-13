@@ -421,7 +421,6 @@ export default class ApiRequest extends LitElement {
 
     // For Loop - Main
     requestBodyTypes.forEach((reqBody) => {
-      let schemaAsObj;
       let reqBodyExamples = [];
 
       if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
@@ -511,7 +510,7 @@ export default class ApiRequest extends LitElement {
 
       // Generate Schema
       if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text')) {
-        schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
+        const schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
         if (this.schemaStyle === 'table') {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
@@ -1019,7 +1018,7 @@ export default class ApiRequest extends LitElement {
     }
 
     // Add Authentication api keys if provided
-    this.api_keys.forEach((v) => {
+    this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
       if (v.in === 'query') {
         fetchUrl = `${fetchUrl}${fetchUrl.includes('?') ? '&' : '?'}${v.name}=${encodeURIComponent(v.finalKeyValue)}`;
         return;
