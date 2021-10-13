@@ -152,7 +152,7 @@ export default class ApiRequest extends LitElement {
             ${paramSchema.type === 'array'
               ? `${paramSchema.arrayType}`
               : `${paramSchema.format ? paramSchema.format : paramSchema.type}`
-            }
+            }${!paramSchema.deprecated && param.required ? html`<span style='opacity: 0;'>*</span>` : ''}
           </div>
         </td>  
         ${this.allowTry === 'true'
@@ -240,7 +240,7 @@ export default class ApiRequest extends LitElement {
     }
 
     return html`
-    <div class="table-title top-gap">${title}</div>
+    <div class="table-title top-gap">${title}${paramType === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
     <div style="display:block; overflow-x:auto; max-width:100%;">
       <table class="m-table" style="width:100%; word-break:break-word;">
         ${tableRows}
