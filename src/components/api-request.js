@@ -597,7 +597,7 @@ export default class ApiRequest extends LitElement {
         <tr> 
           <td style="width:160px; min-width:100px;">
             <div class="param-name ${fieldSchema.deprecated ? 'deprecated' : ''}">
-              ${fieldName}${!fieldSchema.deprecated && (schema.required?.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
+              ${fieldName}${!fieldSchema.deprecated && (schema.required && schema.required.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
             <div class="param-type">${paramSchema.type}</div>
           </td>  
