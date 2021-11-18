@@ -29,6 +29,7 @@ import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep 
 import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/main-body-template';
 import apiRequestStyles from './styles/api-request-styles';
+import { checkForAuthToken } from './templates/security-scheme-template';
 
 export default class OpenApiExplorer extends LitElement {
   constructor() {
@@ -75,7 +76,6 @@ export default class OpenApiExplorer extends LitElement {
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
-      oauthReceiver: { type: String, attribute: 'oauth-redirect-url' },
 
       // Hide/Show Sections & Enable Disable actions
       showSideNav: { type: String, attribute: 'show-side-nav' },
@@ -549,18 +549,30 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   setSecuritySchemeToken(apiKeyId, token) {
+    this.setAuthenticationConfiguration(apiKeyId, { token });
+  }
+
+  async setAuthenticationConfiguration(apiKeyId, { token, clientId, clientSecret, redirectUri }) {
     const securityObj = this.resolvedSpec && this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
     if (!securityObj) {
       throw Error('SecuritySchemeNotFound');
     }
 
-    let authorizationToken = token.replace(/^(Bearer|Basic)\s+/i, '');
-    if (securityObj.type && securityObj.type === 'http' && securityObj.scheme && securityObj.scheme.toLowerCase() === 'basic') {
+    let authorizationToken = token && token.replace(/^(Bearer|Basic)\s+/i, '').trim();
+    if (authorizationToken && securityObj.type && securityObj.type === 'http' && securityObj.scheme && securityObj.scheme.toLowerCase() === 'basic') {
       authorizationToken = `Basic ${btoa(authorizationToken)}`;
-    } else if (securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
+    } else if (authorizationToken && securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
       authorizationToken = `Bearer ${authorizationToken}`;
+    } else {
+      authorizationToken = null;
     }
+
+    securityObj.clientId = clientId && clientId.trim();
+    securityObj.clientSecret = clientSecret && clientSecret.trim();
+    securityObj.redirectUri = new URL(redirectUri && redirectUri.trim() || '', window.location.href).toString();
+
     securityObj.finalKeyValue = authorizationToken;
+    await checkForAuthToken.call(this);
     this.requestUpdate();
   }
 
@@ -797,4 +809,6 @@ export default class OpenApiExplorer extends LitElement {
     }, delay);
   }
 }
+
 customElements.define('openapi-explorer', OpenApiExplorer);
+import './openapi-explorer-oauth-handler';

@@ -34,8 +34,16 @@ Note: These properties will likely be deprecated in favor of global css variable
 
 ### Library API
 * `async loadSpec(spec)` - Load a spec from an object rather than looking it up from a remote url.
-* `setSecuritySchemeToken(securitySchemeId, token)` - Set a token for methods that require security for a particular security scheme id.
-  * If the securityScheme id was `auth` and the `type` of that scheme was basic: `setSecuritySchemeToken('auth', 'user:password');`
+* `setAuthenticationConfiguration(securitySchemeId, { token, clientId, redirectUri })` - Set a token for methods that require security for a particular security scheme id.
+  * If the securityScheme id was `auth` and the `type` of that scheme was basic: `setAuthenticationConfiguration('auth', { token: 'user:password' });`
+  
+#### OAuth configuration
+You can use the `setAuthenticationConfiguration` with OAuth to fetch a user access token for the API.
+* Set the OAuth configuration: `setAuthenticationConfiguration('auth', { clientId: 'CLIENT_ID' });`.
+
+[Optional] If the redirect location has to be different location than where the OpenAPI Explorer is located:
+* The `redirectUri` in the `setAuthenticationConfiguration` options object to the temporary location that works as a redirect.
+* At this location import `<openapi-explorer-oauth-handler />` from this library.
 
 ### Events
 * `@spec-loaded` - Event trigger after the specification is loaded. Can be used to modify the spec including updating values.
