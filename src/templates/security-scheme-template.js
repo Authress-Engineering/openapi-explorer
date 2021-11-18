@@ -1,6 +1,8 @@
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import marked from 'marked';
+import base64url from 'base64url';
+import randomBytes from 'randombytes';
 
 function onApiKeyChange(apiKeyId, e) {
   let apiKeyValue = '';
@@ -47,7 +49,6 @@ function updateOAuthKey(apiKeyId, tokenType = 'Bearer', accessToken) {
   this.requestUpdate();
 }
 
-/* eslint-disable no-console */
 // Gets Access-Token in exchange of Authorization Code
 async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, grantType, authCode, sendClientSecretIn = 'header', apiKeyId, authFlowDivEl, scopes = null) {
   const respDisplayEl = authFlowDivEl ? authFlowDivEl.querySelector('.oauth-resp-display') : undefined;
@@ -64,10 +65,18 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
     headers.set('Authorization', `Basic ${btoa(`${clientId}:${clientSecret}`)}`);
   } else {
     urlFormParams.append('client_id', clientId);
-    urlFormParams.append('client_secret', clientSecret);
+    if (clientSecret) {
+      urlFormParams.append('client_secret', clientSecret);
+    }
   }
   if (scopes) {
     urlFormParams.append('scope', scopes);
+  }
+
+  const { codeVerifier } = JSON.parse(localStorage.getItem('openapi-explorer-oauth') || '{}');
+  localStorage.removeItem('openapi-explorer-oauth');
+  if (codeVerifier) {
+    urlFormParams.append('code_verifier', codeVerifier);
   }
 
   try {
@@ -98,43 +107,72 @@ function getCookieValue(keyId) {
   return foundCookie && foundCookie.split('=')[1] || '';
 }
 
-// Gets invoked when it receives the Authorization Code from the other window via message-event
-function onWindowMessageEvent(msgEvent, winObj, tokenUrl, clientId, clientSecret, redirectUrl, grantType, sendClientSecretIn, apiKeyId, authFlowDivEl) {
-  sessionStorage.removeItem('winMessageEventActive');
-  winObj.close();
-  if (msgEvent.data.fake) {
-    return;
+function toObject(urlSearchParams) {
+  const result = {};
+
+  const entries = urlSearchParams && urlSearchParams.entries() || [];
+  for (const [key, value] of entries) {
+    result[key] = value;
   }
-  if (!msgEvent.data) {
-    console.warn('OpenAPI Explorer: Received no data with authorization message');
-  }
-  if (msgEvent.data.error) {
-    console.warn('OpenAPI Explorer: Error while receiving data');
-  }
-  if (msgEvent.data) {
-    if (msgEvent.data.responseType === 'code') {
-      // Authorization Code flow
-      fetchAccessToken.call(this, tokenUrl, clientId, clientSecret, redirectUrl, grantType, msgEvent.data.code, sendClientSecretIn, apiKeyId, authFlowDivEl);
-    } else if (msgEvent.data.responseType === 'token') {
-      // Implicit flow
-      updateOAuthKey.call(this, apiKeyId, msgEvent.data.token_type, msgEvent.data.access_token);
-    }
-  }
+  return result;
 }
 
-function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
+// Gets invoked when it receives the Authorization Code from the other window via message-event
+export async function checkForAuthToken(redirectToApiLocation) {
+  const parameters = toObject(new URLSearchParams(window.location.search));
+  const hashQuery = toObject(new URLSearchParams(window.location.hash.slice(1)));
+
+  Object.assign(parameters, hashQuery);
+
+  const newUrl = new URL(window.location);
+  newUrl.searchParams.delete('nonce');
+  newUrl.searchParams.delete('expires_in');
+  newUrl.searchParams.delete('access_token');
+  newUrl.searchParams.delete('token_type');
+  newUrl.searchParams.delete('id_token');
+  newUrl.searchParams.delete('state');
+  newUrl.searchParams.delete('code');
+  newUrl.searchParams.delete('iss');
+  newUrl.searchParams.delete('scope');
+  newUrl.searchParams.delete('prompt');
+  newUrl.searchParams.delete('hd');
+  newUrl.searchParams.delete('authuser');
+  newUrl.searchParams.delete('redirect_auth');
+  if (!parameters.state) {
+    return;
+  }
+  const sanitizedUrlWithHash = newUrl.toString().replace(/#((code|state|access_token|id_token|authuser|expires_in|hd|prompt|scope|token_type)=[^&]+&?)*$/ig, '');
+  history.replaceState({}, undefined, sanitizedUrlWithHash);
+
+  const { apiKeyId, flowId, url } = JSON.parse(base64url.decode(parameters.state));
+  if (redirectToApiLocation && url && !parameters.redirect_auth) {
+    const apiExplorerLocation = new URL(url);
+    Object.keys(parameters).forEach(key => apiExplorerLocation.searchParams.append(key, parameters[key]));
+    apiExplorerLocation.searchParams.append('redirect_auth', true);
+    window.location.replace(apiExplorerLocation.toString());
+    return;
+  }
+  if (parameters.code) {
+    const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
+    const tokenUrl = securityObj && securityObj.flows[flowId] && new URL(securityObj.flows[flowId].tokenUrl || '', this.selectedServer.computedUrl);
+    await fetchAccessToken.call(this, tokenUrl, securityObj.clientId, securityObj.clientSecret, securityObj.redirectUri, 'authorization_code', parameters.code, null, apiKeyId);
+    return;
+  }
+
+  updateOAuthKey.call(this, apiKeyId, parameters.token_type, parameters.access_token);
+}
+
+async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   const authFlowDivEl = e.target.closest('.oauth-flow');
   const clientId = authFlowDivEl.querySelector('.oauth-client-id') ? authFlowDivEl.querySelector('.oauth-client-id').value.trim() : '';
   const clientSecret = authFlowDivEl.querySelector('.oauth-client-secret') ? authFlowDivEl.querySelector('.oauth-client-secret').value.trim() : '';
   const sendClientSecretIn = authFlowDivEl.querySelector('.oauth-send-client-secret-in') ? authFlowDivEl.querySelector('.oauth-send-client-secret-in').value.trim() : 'header';
 
   const checkedScopeEls = [...authFlowDivEl.querySelectorAll('input[type="checkbox"]:checked')];
-  const state = (`${Math.random().toString(36)}random`).slice(2, 9);
-  const nonce = (`${Math.random().toString(36)}random`).slice(2, 9);
-  const redirectUrlObj = new URL(this.oauthReceiver);
+  const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
+  const redirectUrlObj = new URL(securityObj.redirectUri);
   let grantType = '';
   let responseType = '';
-  let newWindow;
 
   // clear previous error messages
   const errEls = [...authFlowDivEl.parentNode.querySelectorAll('.oauth-resp-display')];
@@ -142,13 +180,21 @@ function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 
   if (flowType === 'authorizationCode' || flowType === 'implicit') {
     const authUrlObj = new URL(authUrl);
+    const authCodeParams = new URLSearchParams(authUrlObj.search);
     if (flowType === 'authorizationCode') {
+      authCodeParams.set('nonce', randomBytes(64).toString('hex'));
       grantType = 'authorization_code';
       responseType = 'code';
+      const codeVerifier = randomBytes(64).toString('hex');
+      const hash = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
+      const codeChallenge = base64url(hash);
+
+      authCodeParams.set('code_challenge', codeChallenge);
+      authCodeParams.set('code_challenge_method', 'S256');
+      localStorage.setItem('openapi-explorer-oauth', JSON.stringify({ codeVerifier }));
     } else if (flowType === 'implicit') {
       responseType = 'token';
     }
-    const authCodeParams = new URLSearchParams(authUrlObj.search);
     const selectedScopes = checkedScopeEls.map((v) => v.value).join(' ');
     if (selectedScopes) {
       authCodeParams.set('scope', selectedScopes);
@@ -156,38 +202,21 @@ function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
     authCodeParams.set('client_id', clientId);
     authCodeParams.set('redirect_uri', redirectUrlObj.toString());
     authCodeParams.set('response_type', responseType);
-    authCodeParams.set('state', state);
-    authCodeParams.set('nonce', nonce);
-    authCodeParams.set('show_dialog', true);
+    authCodeParams.set('state', base64url.encode(JSON.stringify({ apiKeyId, flowId: flowType, url: window.location.href })));
+
     authUrlObj.search = authCodeParams.toString();
-    // If any older message-event-listener is active then fire a fake message to remove it (these are single time listeners)
-    if (sessionStorage.getItem('winMessageEventActive') === 'true') {
-      window.postMessage({ fake: true }, this);
-    }
-    setTimeout(() => {
-      newWindow = window.open(authUrlObj.toString());
-      if (!newWindow) {
-        console.error(`OpenAPI Explorer: Unable to open ${authUrlObj.toString()} in a new window`);
-      } else {
-        sessionStorage.setItem('winMessageEventActive', 'true');
-        window.addEventListener(
-          'message',
-          (msgEvent) => onWindowMessageEvent.call(this, msgEvent, newWindow, tokenUrl, clientId, clientSecret, redirectUrlObj.toString(), grantType, sendClientSecretIn, apiKeyId, authFlowDivEl),
-          { once: true },
-        );
-      }
-    }, 10);
+    window.location.assign(authUrlObj.toString());
   } else if (flowType === 'clientCredentials') {
     grantType = 'client_credentials';
     const selectedScopes = checkedScopeEls.map((v) => v.value).join(' ');
     fetchAccessToken.call(this, tokenUrl, clientId, clientSecret, redirectUrlObj.toString(), grantType, '', sendClientSecretIn, apiKeyId, authFlowDivEl, selectedScopes);
   }
 }
-/* eslint-enable no-console */
 
 /* eslint-disable indent */
 
-function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow) {
+function oAuthFlowTemplate(flowName, securityObj, authFlow) {
+  const apiKeyId = securityObj.apiKeyId;
   const getFullUrl = url => (url ? new URL(url, this.selectedServer.computedUrl) : undefined);
   const authorizationUrl = getFullUrl(authFlow.authorizationUrl, this.selectedServer.computedUrl);
   const tokenUrl = getFullUrl(authFlow.tokenUrl, this.selectedServer.computedUrl);
@@ -222,10 +251,10 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
           ${authFlow.scopes
             ? html`
               <span> Scopes </span>
-              <div class= "oauth-scopes" part="section-auth-scopes" style = "width:100%; display:flex; flex-direction:column; flex-wrap:wrap; margin:0 0 10px 24px">
+              <div class= "oauth-scopes" part="section-auth-scopes" style = "width:100%; display:flex; flex-direction:column; flex-wrap:wrap; margin:0 0 .125rem 0">
                 ${Object.entries(authFlow.scopes).map((scopeAndDescr, index) => html`
                   <div class="m-checkbox" style="display:inline-flex; align-items:center">
-                    <input type="checkbox" part="checkbox checkbox-auth-scope" id="${flowName}${index}" value="${scopeAndDescr[0]}">
+                    <input type="checkbox" checked part="checkbox checkbox-auth-scope" id="${flowName}${index}" value="${scopeAndDescr[0]}">
                     <label for="${flowName}${index}" style="margin-left:5px">
                       <span class="mono-font">${scopeAndDescr[0]}</span>
                         ${scopeAndDescr[0] !== scopeAndDescr[1] ? ` - ${scopeAndDescr[1] || ''}` : ''}
@@ -237,25 +266,21 @@ function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow)
             : ''
           }
           <div style="display:flex;">
-            <input type="text" part="textbox textbox-auth-client-id" value = "${clientId || ''}" placeholder="client-id" spellcheck="false" class="oauth-client-id">
-            ${flowName === 'authorizationCode' || flowName === 'clientCredentials'
+            <input type="text" part="textbox textbox-auth-client-id" value="${securityObj.clientId || ''}" placeholder="Client ID" spellcheck="false" class="oauth-client-id">
+            ${flowName === 'clientCredentials'
               ? html`
-                <input type="password" part="textbox textbox-auth-client-secret" value = "${clientSecret || ''}" placeholder="client-secret" spellcheck="false" class="oauth-client-secret" style = "margin:0 5px;">
-                ${flowName === 'authorizationCode' || flowName === 'clientCredentials'
-                  ? html`
-                    <select style="margin-right:5px;" class="oauth-send-client-secret-in">
-                      <option value = 'header' selected> Authorization Header </option> 
-                      <option value = 'request-body'> Request Body </option> 
-                    </select>`
-                  : ''
-                }`
+                <input type="password" part="textbox textbox-auth-client-secret" value = "" placeholder="Client Secret" spellcheck="false" class="oauth-client-secret" style = "margin:0 5px;">
+                <select style="margin-right:5px;" class="oauth-send-client-secret-in">
+                  <option value = 'header' selected> Authorization Header </option> 
+                  <option value = 'request-body'> Request Body </option> 
+                </select>`
               : html`<div style='width:5px'></div>`
             }
             ${flowName === 'authorizationCode' || flowName === 'clientCredentials' || flowName === 'implicit'
               ? html`
                 <button class="m-btn thin-border" part="btn btn-outline"
                   @click="${(e) => { onInvokeOAuthFlow.call(this, apiKeyId, flowName, authorizationUrl, tokenUrl, e); }}"
-                > GET TOKEN </button>`
+                >GET TOKEN</button>`
               : ''
             }
           </div>  
@@ -360,9 +385,7 @@ export default function securitySchemeTemplate() {
                   ? html`
                     <tr>
                       <td colspan="2" style="border:none; padding-left:48px">
-                        ${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(
-                          this, f, v['x-client-id'], v['x-client-secret'], v.apiKeyId, v.flows[f],
-                        ))} 
+                        ${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(this, f, v, v.flows[f]))}
                       </td>
                     </tr>    
                     `

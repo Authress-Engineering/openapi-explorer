@@ -171,11 +171,13 @@
               "oauth": {
                 "type": "oauth2",
                 "flows": {
-                  "implicit": {
-                    "authorizationUrl": "https://example.com/api/oauth/dialog",
+                  "authorizationCode": {
+                    "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+                    "tokenUrl": "https://oauth2.googleapis.com/token",
                     "scopes": {
-                      "scope:read": "read scope",
-                      "scope:write": "modify write scope"
+                      "profile": "profile",
+                      "openid": "openid",
+                      "email": "email"
                     }
                   }
                 }
@@ -189,8 +191,9 @@
           }
         };
         await document.getElementsByTagName("openapi-explorer")[0].loadSpec(objSpec);
-        document.getElementsByTagName("openapi-explorer")[0].setSecuritySchemeToken('basicAuth', 'user:password');
-      })
+        // document.getElementsByTagName("openapi-explorer")[0].setAuthenticationConfiguration('basicAuth', { token: 'user:password' });
+        // document.getElementsByTagName("openapi-explorer")[0].setAuthenticationConfiguration('oauth', {});
+      });
 
     </script>
   </body>

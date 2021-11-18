@@ -181,12 +181,11 @@ input[type="checkbox"] {
   appearance: none;
   display: inline-block;
   background-color: var(--light-bg);
-  border: 1px solid var(--light-bg);
   border-radius: 9px;
   cursor: pointer;
   height: 18px;
   position: relative;
-  transition: border .25s .15s, box-shadow .25s .3s, padding .25s;
+  transition: border .15s, padding .25s;
   min-width: 36px;
   width: 36px;
   vertical-align: top;
@@ -195,7 +194,6 @@ input[type="checkbox"] {
 input[type="checkbox"]:after {
   position: absolute;
   background-color: var(--bg);
-  border: 1px solid var(--light-bg);
   border-radius: 8px;
   content: '';
   top: 0px;
@@ -203,7 +201,7 @@ input[type="checkbox"]:after {
   right: 16px;
   display: block;
   height: 16px;
-  transition: border .25s .15s, left .25s .1s, right .15s .175s;
+  transition: left .25s .1s, right .15s .175s;
 }
 
 /* Toggle Body - Checked */
@@ -217,5 +215,14 @@ input[type="checkbox"]:checked:after {
   left: 16px;
   right: 1px;
   transition: border .25s, left .15s .25s, right .25s .175s;
+}
+
+input.oauth-client-id {
+  flex-grow: 1;
+  max-width: 300px;
+}
+input.oauth-client-secret {
+  flex-grow: 1;
+  max-width: 300px;
 }
 `;
