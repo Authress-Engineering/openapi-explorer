@@ -65,7 +65,7 @@ onSpecLoaded(data) {
 
 ```js
 requestInterceptor(event) {
-  Object.assign(event.detail.request.options.headers, { Authorization: `Bearer ${userToken}` });
+  event.detail.request.options.headers.append('Authorization', `Bearer ${userToken}`);
 }
 ```
 

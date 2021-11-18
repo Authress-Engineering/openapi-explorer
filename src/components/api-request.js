@@ -152,7 +152,7 @@ export default class ApiRequest extends LitElement {
             ${paramSchema.type === 'array'
               ? `${paramSchema.arrayType}`
               : `${paramSchema.format ? paramSchema.format : paramSchema.type}`
-            }
+            }${!paramSchema.deprecated && param.required ? html`<span style='opacity: 0;'>*</span>` : ''}
           </div>
         </td>  
         ${this.allowTry === 'true'
@@ -240,7 +240,7 @@ export default class ApiRequest extends LitElement {
     }
 
     return html`
-    <div class="table-title top-gap">${title}</div>
+    <div class="table-title top-gap">${title}${paramType === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
     <div style="display:block; overflow-x:auto; max-width:100%;">
       <table class="m-table" style="width:100%; word-break:break-word;">
         ${tableRows}
@@ -321,7 +321,6 @@ export default class ApiRequest extends LitElement {
 
     // For Loop - Main
     requestBodyTypes.forEach((reqBody) => {
-      let schemaAsObj;
       let reqBodyExamples = [];
 
       if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
@@ -411,7 +410,7 @@ export default class ApiRequest extends LitElement {
 
       // Generate Schema
       if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text')) {
-        schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
+        const schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
         if (this.schemaStyle === 'table') {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
@@ -498,7 +497,7 @@ export default class ApiRequest extends LitElement {
         <tr> 
           <td style="width:160px; min-width:100px;">
             <div class="param-name ${fieldSchema.deprecated ? 'deprecated' : ''}">
-              ${fieldName}${!fieldSchema.deprecated && (schema.required?.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
+              ${fieldName}${!fieldSchema.deprecated && (schema.required && schema.required.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
             <div class="param-type">${paramSchema.type}</div>
           </td>  
@@ -658,7 +657,7 @@ export default class ApiRequest extends LitElement {
                       ${paramSchema.type === 'array' ? '[ ' : ''}
                       <a part="anchor anchor-param-example" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                         data-default-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                        data-default = "${paramSchema.type === 'array' ? (paramSchema.example && paramSchema.example.join('~|~') || '') : (paramSchema.example)}"
+                        data-default = "${Array.isArray(paramSchema.example) && paramSchema.example.join('~|~') || paramSchema.example || ''}"
                         @click="${(e) => {
                           const inputEl = e.target.closest('table').querySelector(`[data-pname="${fieldName}"]`);
                           if (inputEl) {
@@ -886,7 +885,7 @@ export default class ApiRequest extends LitElement {
     }
 
     // Add Authentication api keys if provided
-    this.api_keys.forEach((v) => {
+    this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
       if (v.in === 'query') {
         fetchUrl = `${fetchUrl}${fetchUrl.includes('?') ? '&' : '?'}${v.name}=${encodeURIComponent(v.finalKeyValue)}`;
         return;
