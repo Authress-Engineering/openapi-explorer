@@ -188,19 +188,10 @@ function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 /* eslint-disable indent */
 
 function oAuthFlowTemplate(flowName, clientId, clientSecret, apiKeyId, authFlow) {
-  let authorizationUrl = authFlow.authorizationUrl;
-  let tokenUrl = authFlow.tokenUrl;
-  let refreshUrl = authFlow.refreshUrl;
-  const isUrlAbsolute = (url) => (url.indexOf('://') > 0 || url.indexOf('//') === 0);
-  if (refreshUrl && !isUrlAbsolute(refreshUrl)) {
-    refreshUrl = `${this.selectedServer.computedUrl}/${refreshUrl.replace(/^\//, '')}`;
-  }
-  if (tokenUrl && !isUrlAbsolute(tokenUrl)) {
-    tokenUrl = `${this.selectedServer.computedUrl}/${tokenUrl.replace(/^\//, '')}`;
-  }
-  if (authorizationUrl && !isUrlAbsolute(authorizationUrl)) {
-    authorizationUrl = `${this.selectedServer.computedUrl}/${authorizationUrl.replace(/^\//, '')}`;
-  }
+  const getFullUrl = url => (url ? new URL(url, this.selectedServer.computedUrl) : undefined);
+  const authorizationUrl = getFullUrl(authFlow.authorizationUrl, this.selectedServer.computedUrl);
+  const tokenUrl = getFullUrl(authFlow.tokenUrl, this.selectedServer.computedUrl);
+  const refreshUrl = getFullUrl(authFlow.refreshUrl, this.selectedServer.computedUrl);
   let flowNameDisplay;
   if (flowName === 'authorizationCode') {
     flowNameDisplay = 'Authorization Code Flow';
