@@ -216,4 +216,13 @@ input[type="checkbox"]:checked:after {
   right: 1px;
   transition: border .25s, left .15s .25s, right .25s .175s;
 }
+
+input.oauth-client-id {
+  flex-grow: 1;
+  max-width: 300px;
+}
+input.oauth-client-secret {
+  flex-grow: 1;
+  max-width: 300px;
+}
 `;

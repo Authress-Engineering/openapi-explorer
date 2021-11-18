@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 0.7 ##
+Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
+
 ## 0.6 ##
 * Route navigation is contained fully in a query string inside the hash, it will now no longer affect hash based routing
 * Adds the `nonce` to oauth requests to generate an access token.

@@ -4,9 +4,11 @@
         "lib/*": true
     },
     "cSpell.words": [
+        "authuser",
         "exportparts",
         "kyleshockey",
         "prismjs",
+        "randombytes",
         "rapidoc",
         "redoc",
         "sublicensees"
