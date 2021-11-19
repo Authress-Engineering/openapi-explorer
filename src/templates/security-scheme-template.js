@@ -55,8 +55,8 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   const urlFormParams = new URLSearchParams();
   const headers = new Headers();
   urlFormParams.append('grant_type', grantType);
-  if (grantType !== 'client_credentials') {
-    urlFormParams.append('redirect_uri', redirectUrl);
+  if (redirectUrl) {
+    urlFormParams.append('redirect_uri', redirectUrl || window.location.href);
   }
   if (authCode) {
     urlFormParams.append('code', authCode);
