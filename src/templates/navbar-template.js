@@ -118,7 +118,7 @@ export default function navbarTemplate() {
         <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
         <div class='nav-bar-section-title'>OPERATIONS</div>  
         <div style="display:flex; margin-left:10px;">
-            ${this.renderStyle === 'focused'
+            ${this.renderStyle === 'focused' && this.resolvedSpec.tags.length > 1
               ? html`
                 ${this.operationsCollapsed
                   ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
