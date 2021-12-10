@@ -57,7 +57,6 @@ export default class OpenApiExplorer extends LitElement {
 
       // Spec
       specUrl: { type: String, attribute: 'spec-url' },
-      generateMissingTags: { type: String, attribute: 'generate-missing-tags' },
       specFile: { type: String, attribute: false },
 
       // UI Layouts
@@ -399,7 +398,6 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
 
-    if (!this.generateMissingTags || !'true, false,'.includes(`${this.generateMissingTags},`)) { this.generateMissingTags = 'false'; }
     if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
     if (!this.usePathInNavBar || !'true, false,'.includes(`${this.usePathInNavBar},`)) { this.usePathInNavBar = 'false'; }
     if (!this.fontSize || !'default, large, largest,'.includes(`${this.fontSize},`)) { this.fontSize = 'default'; }
@@ -533,7 +531,7 @@ export default class OpenApiExplorer extends LitElement {
       if (!this.serverUrl && isServerUrl) {
         this.serverUrl = new URL(specUrlOrObject).origin;
       }
-      const spec = await ProcessSpec(isServerUrl, specUrlOrObject, this.generateMissingTags === 'true', this.serverUrl);
+      const spec = await ProcessSpec(isServerUrl, specUrlOrObject, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
