@@ -16,9 +16,7 @@ export default css`
 .m-table td, 
 .m-table th {
   font-size: var(--font-size-small);
-  line-height: calc(var(--font-size-small) + 4px);
   padding: 4px 5px 4px;
-  vertical-align: top;
 }
 
 .m-table td:not([align]), 
