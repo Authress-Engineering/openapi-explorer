@@ -1348,7 +1348,7 @@ export default class ApiRequest extends LitElement {
     this.responseText = '';
     this.responseStatus = '';
     this.responseMessage = '';
-    this.responseElapsedMs = '';
+    this.responseElapsedMs = 0;
     this.responseIsBlob = false;
     this.responseBlobType = '';
     this.respContentDisposition = '';
