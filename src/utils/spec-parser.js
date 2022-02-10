@@ -3,7 +3,7 @@ import marked from 'marked';
 import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
-export default async function ProcessSpec(requiresLookup, specUrlOrObject, generateMissingTags = false, serverUrl = '') {
+export default async function ProcessSpec(requiresLookup, specUrlOrObject, serverUrl = '') {
   let specMeta;
   if (requiresLookup) {
     specMeta = await SwaggerClient(specUrlOrObject);
@@ -19,7 +19,7 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, gener
   }
 
   // Tags with Paths and WebHooks
-  const tags = groupByTags(jsonParsedSpec, generateMissingTags);
+  const tags = groupByTags(jsonParsedSpec);
 
   // Components
   const components = getComponents(jsonParsedSpec);
@@ -188,7 +188,7 @@ function getComponents(openApiSpec) {
   return components || [];
 }
 
-function groupByTags(openApiSpec, generateMissingTags = false) {
+function groupByTags(openApiSpec) {
   const supportedMethods = ['get', 'put', 'post', 'delete', 'patch', 'head', 'options']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
     ? openApiSpec.tags.map((t) => ({
@@ -223,18 +223,7 @@ function groupByTags(openApiSpec, generateMissingTags = false) {
         // If path.methods are tagged, else generate it from path
         const pathTags = pathOrHookObj.tags || [];
         if (pathTags.length === 0) {
-          if (generateMissingTags) {
-            const pathOrHookNameKey = pathOrHookName.replace(/^\/+|\/+$/g, '');
-            const firstWordEndIndex = pathOrHookNameKey.indexOf('/');
-            if (firstWordEndIndex === -1) {
-              pathTags.push(pathOrHookNameKey);
-            } else {
-              // firstWordEndIndex -= 1;
-              pathTags.push(pathOrHookNameKey.substr(0, firstWordEndIndex));
-            }
-          } else {
-            pathTags.push('General ⦂');
-          }
+          pathTags.push('General ⦂');
         }
 
         pathTags.forEach((tag) => {

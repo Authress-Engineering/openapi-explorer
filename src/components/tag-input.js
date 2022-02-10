@@ -1,23 +1,17 @@
 import { LitElement, html, css } from 'lit-element';
 
 export default class TagInput extends LitElement {
-  /* eslint-disable indent */
   render() {
-    let tagItemTmpl = '';
-    if (Array.isArray(this.value)) {
-      tagItemTmpl = html`${this.value
-        .filter((v) => v.trim() !== '')
-        .map((v) => html`<span class='tag'>${v}</span>`)
-      }`;
-    }
+    const tagItemTemplate = html`${
+      (this.value || []).filter(v => v.trim()).map((v) => html`<span class='tag'>${v}</span>`)
+    }`;
     return html`
       <div class='tags' tabindex="0">
-        ${tagItemTmpl}
+        ${tagItemTemplate}
         <input type="text" class='editor' @paste="${(e) => this.afterPaste(e)}" @keydown="${this.afterKeyDown}" placeholder="${this.placeholder || ''}">
       </div>
     `;
   }
-  /* eslint-enable indent */
 
   static get properties() {
     return {
@@ -26,10 +20,17 @@ export default class TagInput extends LitElement {
     };
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    if (!Array.isArray(this.value)) {
+      this.value = this.value !== '' ? [this.value] : [];
+    }
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (name === 'value') {
       if (newVal && oldVal !== newVal) {
-        this.value = newVal.split(',').filter((v) => v.trim() !== '');
+        this.value = newVal.split(',').filter(v => v.trim());
       }
     }
     super.attributeChangedCallback(name, oldVal, newVal);
@@ -38,7 +39,8 @@ export default class TagInput extends LitElement {
   afterPaste(e) {
     const clipboardData = e.clipboardData || window.clipboardData;
     const pastedData = clipboardData.getData('Text');
-    this.value = pastedData ? pastedData.split(',').filter((v) => v.trim() !== '') : '';
+    const pastedArray = pastedData && pastedData.split(',').filter(v => v.trim()) || [];
+    this.value = this.value.concat(pastedArray);
     e.preventDefault();
   }
 
@@ -46,20 +48,11 @@ export default class TagInput extends LitElement {
     if (e.keyCode === 13) {
       e.stopPropagation();
       e.preventDefault();
-      if (e.target.value) {
-        if (Array.isArray(this.value)) {
-          this.value = [...this.value, e.target.value];
-        } else {
-          this.value = [e.target.value];
-        }
-        e.target.value = '';
-      }
+      this.value = this.value.concat(e.target.value || []);
+      e.target.value = '';
     } else if (e.keyCode === 8) {
       if (e.target.value.length === 0) {
-        if (Array.isArray(this.value) && this.value.length > 0) {
-          this.value.splice(-1);
-          this.value = [...this.value];
-        }
+        this.value = this.value.slice(0, -1);
       }
     }
   }

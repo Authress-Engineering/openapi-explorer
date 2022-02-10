@@ -55,7 +55,7 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   const urlFormParams = new URLSearchParams();
   const headers = new Headers();
   urlFormParams.append('grant_type', grantType);
-  if (grantType !== 'client_credentials') {
+  if (redirectUrl) {
     urlFormParams.append('redirect_uri', redirectUrl);
   }
   if (authCode) {
@@ -155,7 +155,7 @@ export async function checkForAuthToken(redirectToApiLocation) {
   if (parameters.code) {
     const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
     const tokenUrl = securityObj && securityObj.flows[flowId] && new URL(securityObj.flows[flowId].tokenUrl || '', this.selectedServer.computedUrl);
-    await fetchAccessToken.call(this, tokenUrl, securityObj.clientId, securityObj.clientSecret, securityObj.redirectUri, 'authorization_code', parameters.code, null, apiKeyId);
+    await fetchAccessToken.call(this, tokenUrl, securityObj.clientId, securityObj.clientSecret, securityObj.redirectUri || window.location.href, 'authorization_code', parameters.code, null, apiKeyId);
     return;
   }
 
@@ -170,7 +170,6 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 
   const checkedScopeEls = [...authFlowDivEl.querySelectorAll('input[type="checkbox"]:checked')];
   const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
-  const redirectUrlObj = new URL(securityObj.redirectUri);
   let grantType = '';
   let responseType = '';
 
@@ -200,7 +199,7 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
       authCodeParams.set('scope', selectedScopes);
     }
     authCodeParams.set('client_id', clientId);
-    authCodeParams.set('redirect_uri', redirectUrlObj.toString());
+    authCodeParams.set('redirect_uri', securityObj.redirectUri || window.location.href);
     authCodeParams.set('response_type', responseType);
     authCodeParams.set('state', base64url.encode(JSON.stringify({ apiKeyId, flowId: flowType, url: window.location.href })));
 
@@ -209,7 +208,7 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   } else if (flowType === 'clientCredentials') {
     grantType = 'client_credentials';
     const selectedScopes = checkedScopeEls.map((v) => v.value).join(' ');
-    fetchAccessToken.call(this, tokenUrl, clientId, clientSecret, redirectUrlObj.toString(), grantType, '', sendClientSecretIn, apiKeyId, authFlowDivEl, selectedScopes);
+    fetchAccessToken.call(this, tokenUrl, clientId, clientSecret, '', grantType, '', sendClientSecretIn, apiKeyId, authFlowDivEl, selectedScopes);
   }
 }
 

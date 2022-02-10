@@ -24,6 +24,7 @@ export default class ApiRequest extends LitElement {
     this.responseHeaders = '';
     this.responseText = '';
     this.responseUrl = '';
+    this.responseElapsedMs = 0;
     this.curlSyntax = '';
     this.activeResponseTab = 'response'; // allowed values: response, headers, curl
     this.selectedRequestBodyType = '';
@@ -47,6 +48,7 @@ export default class ApiRequest extends LitElement {
       responseHeaders: { type: String, attribute: false },
       responseStatus: { type: String, attribute: false },
       responseUrl: { type: String, attribute: false },
+      responseElapsedMs: { type: Number, attribute: false },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
       allowTry: { type: String, attribute: 'enable-console' },
       renderStyle: { type: String, attribute: 'render-style' },
@@ -704,8 +706,10 @@ export default class ApiRequest extends LitElement {
     const responseFormat = this.responseHeaders.includes('json') ? 'json' : (this.responseHeaders.includes('html') || this.responseHeaders.includes('xml')) ? 'html' : '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
-        <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}</div>
-        <div style="flex:1"></div>
+      <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}
+        ${this.responseElapsedMs ? html`<span><br>Execution Time: ${this.responseElapsedMs}ms</span>` : ''}
+      </div>
+      <div style="flex:1"></div>
         <button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
       </div>
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
@@ -1050,10 +1054,12 @@ export default class ApiRequest extends LitElement {
       let respJson;
       let respText;
       tryBtnEl.disabled = true;
+      const fetchStart = new Date();
       fetchResponse = await fetch(fetchRequestObject);
+      this.responseElapsedMs = new Date() - fetchStart;
       tryBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
-      this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText}:${fetchResponse.status}` : fetchResponse.status;
+      this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText} (${fetchResponse.status})` : fetchResponse.status;
       this.responseUrl = fetchResponse.url;
       this.responseHeaders = '';
       const headers = {};
@@ -1210,6 +1216,7 @@ export default class ApiRequest extends LitElement {
     this.responseText = '';
     this.responseStatus = '';
     this.responseMessage = '';
+    this.responseElapsedMs = 0;
     this.responseIsBlob = false;
     this.responseBlobType = '';
     this.respContentDisposition = '';
