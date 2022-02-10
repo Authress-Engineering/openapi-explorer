@@ -704,7 +704,7 @@ export default class ApiRequest extends LitElement {
     const responseFormat = this.responseHeaders.includes('json') ? 'json' : (this.responseHeaders.includes('html') || this.responseHeaders.includes('xml')) ? 'html' : '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
-        <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}</div>
+        <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage} in ${this.elapsedMs}ms</div>
         <div style="flex:1"></div>
         <button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
       </div>
@@ -1050,7 +1050,9 @@ export default class ApiRequest extends LitElement {
       let respJson;
       let respText;
       tryBtnEl.disabled = true;
+      const fetchStart = new Date();
       fetchResponse = await fetch(fetchRequestObject);
+      this.elapsedMs = new Date() - fetchStart;
       tryBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
       this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText}:${fetchResponse.status}` : fetchResponse.status;
