@@ -1191,7 +1191,7 @@ export default class ApiRequest extends LitElement {
       this.responseElapsedMs = new Date() - fetchStart;
       tryBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
-      this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText}:${fetchResponse.status}` : fetchResponse.status;
+      this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText} (${fetchResponse.status})` : fetchResponse.status;
       this.responseUrl = fetchResponse.url;
       this.responseHeaders = '';
       const headers = {};
