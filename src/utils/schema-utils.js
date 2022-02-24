@@ -571,6 +571,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
         } else if (v === 'object') {
           // If object type iterate all the properties and create an object-type-option
           const objTypeOption = {
+            '::title': schema.title || '',
             '::description': schema.description || '',
             '::type': 'object',
             '::deprecated': schema.deprecated || false,
@@ -585,6 +586,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
           multiTypeOptions[`::OPTION~${i + 1}`] = objTypeOption;
         } else if (v === 'array') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
+            '::title': schema.title || '',
             '::description': schema.description || '',
             '::type': 'array',
             '::props': schemaInObjectNotation(schema.items, {}, (level + 1)),
@@ -595,6 +597,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
       obj['::ONE~OF'] = multiTypeOptions;
     }
   } else if (schema.type === 'object' || schema.properties) {
+    obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
     obj['::type'] = 'object';
     obj['::deprecated'] = schema.deprecated || false;
@@ -609,6 +612,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
       obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, {});
     }
   } else if (schema.type === 'array' || schema.items) { // If Array
+    obj['::title'] = schema.title || '';
     obj['::description'] = schema.description
       ? schema.description
       : (schema.items && schema.items.description)
