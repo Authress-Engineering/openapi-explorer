@@ -206,10 +206,10 @@ export default class ApiRequest extends LitElement {
         ${this.renderStyle === 'focused'
           ? html`
             <td>
-              ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
+              ${paramSchema.default || paramSchema.constraint || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
-                    ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
+                    ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br/>` : ''}
                     ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br/>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
@@ -613,11 +613,11 @@ export default class ApiRequest extends LitElement {
             ? ''
             : html`
               <td>
-                ${paramSchema.default || paramSchema.constrain || paramSchema.allowedValues || paramSchema.pattern
+                ${paramSchema.default || paramSchema.constraint || paramSchema.allowedValues || paramSchema.pattern
                   ? html`
                     <div class="param-constraint">
                       ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${paramSchema.pattern}<br/>` : ''}
-                      ${paramSchema.constrain ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constrain}<br/>` : ''}
+                      ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br/>` : ''}
                       ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                         ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                         ${html`

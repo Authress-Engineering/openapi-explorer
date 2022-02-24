@@ -9,7 +9,7 @@ export function getTypeInfo(schema) {
     return undefined;
   }
   let dataType = '';
-  let constrain = '';
+  let constraint = '';
 
   if (schema.$ref) {
     const n = schema.$ref.lastIndexOf('/');
@@ -30,15 +30,12 @@ export function getTypeInfo(schema) {
     format: schema.format || '',
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
-    deprecated: schema.deprecated ? '❌' : '',
-    example: typeof schema.example === 'undefined'
-      ? ''
-      : Array.isArray(schema.example)
-        ? schema.example
-        : `${schema.example}`,
+    deprecated: !!schema.deprecated,
+    example: Array.isArray(schema.example) ? schema.example : (typeof schema.example !== 'undefined' ? `${schema.example}` : ''),
     default: schema.default || '',
+    title: schema.title || '',
     description: schema.description || '',
-    constrain: '',
+    constraint: '',
     allowedValues: '',
     arrayType: '',
     html: '',
@@ -67,23 +64,33 @@ export function getTypeInfo(schema) {
     const leftBound = schema.minimum !== undefined ? '[' : '(';
     const rightBound = schema.maximum !== undefined ? ']' : ')';
     if (typeof minimum === 'number' || typeof maximum === 'number') {
-      constrain = `Range: ${leftBound}${minimum || ''},${maximum || ''}${rightBound}`;
+      constraint = `Range: ${leftBound}${minimum || ''},${maximum || ''}${rightBound}`;
     }
     if (schema.multipleOf !== undefined) {
-      constrain += `${constrain ? ', ' : ''}Multiples: ${schema.multipleOf}`;
+      constraint += `${constraint ? ', ' : ''}Multiples: ${schema.multipleOf}`;
     }
   }
   if (dataType.match(/string/g)) {
     if (schema.minLength !== undefined && schema.maxLength !== undefined) {
-      constrain += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
+      constraint += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
     } else if (schema.minLength !== undefined) {
-      constrain += `Min length: ${schema.minLength}`;
+      constraint += `Min length: ${schema.minLength}`;
     } else if (schema.maxLength !== undefined) {
-      constrain += `Max length: ${schema.maxLength}`;
+      constraint += `Max length: ${schema.maxLength}`;
     }
   }
-  info.constrain = constrain;
-  info.html = `${info.type}~|~${info.readOrWriteOnly}~|~${info.constrain}~|~${info.default}~|~${info.allowedValues}~|~${info.pattern}~|~${info.description}~|~${schema.title || ''}~|~${info.deprecated ? 'deprecated' : ''}`;
+  info.constraint = constraint;
+  info.html = JSON.stringify({
+    type: info.type,
+    readOrWriteOnly: info.readOrWriteOnly,
+    constraint: info.constraint,
+    defaultValue: info.default,
+    allowedValues: info.allowedValues,
+    pattern: info.pattern,
+    schemaDescription: info.description,
+    schemaTitle: info.title,
+    deprecated: info.deprecated
+  });
   return info;
 }
 
@@ -574,7 +581,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
             '::title': schema.title || '',
             '::description': schema.description || '',
             '::type': 'object',
-            '::deprecated': schema.deprecated || false,
+            '::deprecated': schema.deprecated || false
           };
           for (const key in schema.properties) {
             if (schema.required && schema.required.includes(key)) {
