@@ -2,7 +2,10 @@
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
 ## 0.7 ##
-Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
+* Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
+* Display component titles in bold next to description
+* Enable component scrolling.
+
 
 ## 0.6 ##
 * Route navigation is contained fully in a query string inside the hash, it will now no longer affect hash based routing
