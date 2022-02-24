@@ -201,17 +201,17 @@ export default class SchemaTable extends LitElement {
     }
 
     // For Primitive Data types
-    const [type, readorWriteOnly, constraint, defaultValue, allowedValues, pattern, schemaDescription, schemaTitle, deprecated] = data.split('~|~');
-    if (readorWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
+    const { type, readOrWriteOnly, constraint, defaultValue, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
-    if (readorWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
+    if (readOrWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
       return undefined;
     }
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
       <div class = "tr primitive">
-        <div class="td key ${deprecated || ''}" style='padding-left:${leftPadding}px' >
+        <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px' >
           ${keyLabel && keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
             : key.startsWith('::OPTION')
@@ -221,13 +221,13 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-type ${dataTypeCss}'>
           ${dataType === 'array' ? `${type}[]` : type}
-          <span style="font-family: var(--font-mono);" title="${readorWriteOnly === '🆁' && 'Read only attribute' || readorWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${readorWriteOnly}
+          <span style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
+            ${readOrWriteOnly}
           </span>
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(`${schemaTitle ? `**${schemaTitle}** ` : ''}${schemaDescription}`))}</span>` : ''}
+          ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(`${schemaTitle ? `**${schemaTitle}:** ` : ''}${schemaDescription}`))}</span>` : ''}
           ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Constraints: </span> ${constraint}</div>` : ''}
           ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Default: </span>${defaultValue}</div>` : ''}
           ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Allowed: </span>${allowedValues}</div>` : ''}
