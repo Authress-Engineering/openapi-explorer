@@ -106,14 +106,7 @@ export default class SchemaTable extends LitElement {
             <div class='key-type' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
             <div class='key-descr' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
           </div>
-          ${this.data
-            ? html`
-              ${this.generateTree(
-                this.data['::type'] === 'array' ? this.data['::props'] : this.data,
-                this.data['::type'],
-              )}`
-            : ''
-          }  
+          ${this.data ? html`${this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type'])}` : ''}  
         </div>
       </div>  
     `;
@@ -197,30 +190,11 @@ export default class SchemaTable extends LitElement {
         <div class='object-body'>
         ${Array.isArray(data) && data[0]
           ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
-          : html`
-            ${Object.keys(data).map((dataKey) => html`
-              ${['::description', '::type', '::props', '::deprecated'].includes(dataKey)
-                ? data[dataKey]['::type'] === 'array' || data[dataKey]['::type'] === 'object'
-                  ? html`${this.generateTree(
-                    data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                      data[dataKey]['::type'],
-                      dataKey,
-                      data[dataKey]['::description'],
-                      newSchemaLevel,
-                      newIndentLevel,
-                    )}`
-                  : ''
-                : html`${this.generateTree(
-                  data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                  data[dataKey]['::type'],
-                  dataKey,
-                  data[dataKey]['::description'],
-                  newSchemaLevel,
-                  newIndentLevel,
-                )}`
-              }
-            `)}
-          `
+          : html`${Object.keys(data).map((dataKey) =>
+            ['::title', '::description', '::type', '::props', '::deprecated'].includes(dataKey) && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
+            : html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
+                data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+          )}`
         }
         <div>
       `;
@@ -253,7 +227,7 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(schemaDescription))}</span>` : ''}
+          ${schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(`${schemaTitle ? `**${schemaTitle}** ` : ''}${schemaDescription}`))}</span>` : ''}
           ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Constraints: </span> ${constraint}</div>` : ''}
           ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Default: </span>${defaultValue}</div>` : ''}
           ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Allowed: </span>${allowedValues}</div>` : ''}
