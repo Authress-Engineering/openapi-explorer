@@ -744,7 +744,7 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     // For focused APIs, always scroll to the top of the component
-    if (this.renderStyle === 'focused') {
+    if (this.renderStyle === 'focused' && !elementId.match('cmp--')) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
     } else {
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
