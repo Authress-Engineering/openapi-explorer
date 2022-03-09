@@ -757,9 +757,6 @@ export default class ApiRequest extends LitElement {
       ${
         this.parameters.length > 0 || this.request_body
           ? html`
-            <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onFillRequestData}" title="Fills with example data (if provided)">
-              RESET
-            </button>
             <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onClearRequestData}">
               CLEAR
             </button>`
@@ -771,20 +768,6 @@ export default class ApiRequest extends LitElement {
     `;
   }
   /* eslint-enable indent */
-
-  onFillRequestData(e) {
-    const requestPanelEl = e.target.closest('.request-panel');
-    const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
-    requestPanelInputEls.forEach((el) => {
-      if (el.dataset.default) {
-        if (el.tagName.toUpperCase() === 'TAG-INPUT') {
-          el.value = el.dataset.default.split('~|~');
-        } else {
-          el.value = el.dataset.default;
-        }
-      }
-    });
-  }
 
   onClearRequestData(e) {
     const requestPanelEl = e.target.closest('.request-panel');
