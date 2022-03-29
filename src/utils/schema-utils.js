@@ -502,6 +502,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
     // 1. First iterate the regular properties
     if (schema.type === 'object' || schema.properties) {
       obj['::description'] = schema.description || '';
+      obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
       obj['::type'] = 'object';
       // obj['::deprecated'] = schema.deprecated || false;
       for (const key in schema.properties) {
@@ -580,6 +581,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
           const objTypeOption = {
             '::title': schema.title || '',
             '::description': schema.description || '',
+            '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::type': 'object',
             '::deprecated': schema.deprecated || false
           };
@@ -595,8 +597,9 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
             '::title': schema.title || '',
             '::description': schema.description || '',
+            '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::type': 'array',
-            '::props': schemaInObjectNotation(schema.items, {}, (level + 1)),
+            '::props': schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1)),
           };
         }
       });
@@ -606,6 +609,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
   } else if (schema.type === 'object' || schema.properties) {
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
+    obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'object';
     obj['::deprecated'] = schema.deprecated || false;
     for (const key in schema.properties) {
@@ -625,8 +629,9 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
       : (schema.items && schema.items.description)
         ? `array&lt;${schema.items.description}&gt;`
         : '';
+    obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
-    obj['::props'] = schemaInObjectNotation(schema.items, {}, (level + 1));
+    obj['::props'] = schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1));
   } else {
     const typeObj = getTypeInfo(schema);
     if (typeObj && typeObj.html) {
