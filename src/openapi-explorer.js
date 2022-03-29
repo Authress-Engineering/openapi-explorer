@@ -70,8 +70,6 @@ export default class OpenApiExplorer extends LitElement {
       schemaStyle: { type: String, attribute: 'schema-style' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
-      schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
-      schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
@@ -116,7 +114,7 @@ export default class OpenApiExplorer extends LitElement {
       loading: { type: Boolean }, // indicates spec is being loaded
       operationsCollapsed: { type: Boolean },
       showAdvancedSearchDialog: { type: Boolean },
-      advancedSearchMatches: { type: Object },
+      advancedSearchMatches: { type: Object }
     };
   }
 
@@ -376,17 +374,8 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
     if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'true'; }
-    const writeMethodsWithBody = ['post', 'put', 'patch'];
-    if (!this.schemaHideReadOnly) {
-      this.schemaHideReadOnly = writeMethodsWithBody;
-    } else if (this.schemaHideReadOnly !== 'never') {
-      this.schemaHideReadOnly = writeMethodsWithBody.filter((value) => this.schemaHideReadOnly.includes(value));
-      if (this.schemaHideReadOnly.length === 0) {
-        this.schemaHideReadOnly = writeMethodsWithBody;
-      }
-    }
-    this.schemaHideReadOnly += ['get', 'head', 'delete', 'options'];
-    this.schemaHideWriteOnly = this.schemaHideWriteOnly !== 'never';
+    this.schemaHideReadOnly = ['post', 'put', 'patch'].join(',');
+    this.schemaHideWriteOnly = true;
     if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }
     if (!this.onNavTagClick || !'expand-collapse, show-description,'.includes(`${this.onNavTagClick},`)) { this.onNavTagClick = 'expand-collapse'; }
     if (!this.responseAreaHeight) {
