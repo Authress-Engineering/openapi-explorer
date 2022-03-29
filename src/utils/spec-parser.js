@@ -5,12 +5,21 @@ import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(requiresLookup, specUrlOrObject, serverUrl = '') {
   let specMeta;
+
+  // Dynamically resolve non yaml or json files and insert their descriptions where necessary
+  function responseInterceptor(val) {
+    if (val.ok && val.text && val.parseError && val.parseError.name === 'YAMLException' && (!val.headers['content-type'] || val.headers['content-type'].match('text/plain'))) {
+      val.body = val.text;
+    }
+    return val;
+  }
+
   if (requiresLookup) {
-    specMeta = await SwaggerClient(specUrlOrObject);
+    specMeta = await SwaggerClient({ url: specUrlOrObject, responseInterceptor });
   } else if (typeof specUrlOrObject === 'string') {
-    specMeta = await SwaggerClient({ spec: yaml.load(specUrlOrObject) });
+    specMeta = await SwaggerClient({ spec: yaml.load(specUrlOrObject), responseInterceptor });
   } else {
-    specMeta = await SwaggerClient({ spec: specUrlOrObject });
+    specMeta = await SwaggerClient({ spec: specUrlOrObject, responseInterceptor });
   }
 
   const jsonParsedSpec = specMeta.spec;
