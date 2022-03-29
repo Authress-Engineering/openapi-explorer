@@ -2,7 +2,8 @@
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
 ## 0.8 ##
-* Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back. Also the degaults
+* Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
+* Arrays and Objects read-only indicator is now present at the top level, and these objects are hidden from POST/UPDATE/PATCH bodies.
 
 ## 0.7 ##
 * Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.

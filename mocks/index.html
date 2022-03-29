@@ -80,6 +80,42 @@
                     }
                   }
                 }
+              },
+              "post": {
+                parameters: [{
+                  name: 'typeId',
+                  in: 'path',
+                  schema: {
+                    type: 'string',
+                    default: 'TODO'
+                  }
+                }],
+                requestBody: {
+                  required: true,
+                  content: {
+                    'application/json': {
+                      schema: {
+                        $ref: "#/components/schemas/ComplicatedClass"
+                      }
+                    }
+                  }
+                },
+                "tags": [
+                  "Todo"
+                ],
+                "summary": "Create a Todo",
+                "responses": {
+                  "200": {
+                    "description": "Returns a complicated class.",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/ComplicatedClass"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
@@ -151,7 +187,10 @@
                     }],
                     "description": "Tag."
                   },
-                  "innerClass": {
+                  "classInstance": {
+                    "$ref": "#/components/schemas/InnerClass"
+                  },
+                  "mergedClass": {
                     "allOf": [{
                       "$ref": "#/components/schemas/InnerClass"
                     }],

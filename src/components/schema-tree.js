@@ -171,7 +171,16 @@ export default class SchemaTree extends LitElement {
         closeBracket = ']';
       }
     }
+
     if (typeof data === 'object') {
+      const flags = data['::flags'] || {};
+      if (flags['🆁'] && this.schemaHideReadOnly === 'true') {
+        return undefined;
+      }
+      if (flags['🆆'] && this.schemaHideWriteOnly === 'true') {
+        return undefined;
+      }
+      const displayLine = [flags['🆁'] || flags['🆆'], description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? 'expanded' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -188,13 +197,17 @@ export default class SchemaTree extends LitElement {
             ${data['::type'] === 'xxx-of' && dataType === 'array' ? html`<span style="color:var(--primary-color)">ARRAY</span>` : ''} 
             ${openBracket}
           </div>
-          <div class='td key-descr m-markdown-small'>${unsafeHTML(marked(description || ''))}</div>
+          <div class="td key-descr">
+            <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">
+              ${unsafeHTML(marked(displayLine))}
+            </span>
+          </div>
         </div>
         <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' ? 0 : leftPadding}px;'>
           ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
             : html`
               ${Object.keys(data).map((dataKey) =>
-                ['::title', '::description', '::type', '::props', '::deprecated'].includes(dataKey) && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
+                dataKey.startsWith('::') && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
                 : html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                       data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
               )}`

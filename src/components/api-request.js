@@ -937,8 +937,8 @@ export default class ApiRequest extends LitElement {
     });
 
     // Query Params
+    const urlQueryParam = new URLSearchParams();
     if (queryParamEls.length > 0) {
-      const urlQueryParam = new URLSearchParams();
       queryParamEls.forEach((el) => {
         if (el.dataset.array === 'false') {
           if (el.value !== '') {
@@ -964,12 +964,10 @@ export default class ApiRequest extends LitElement {
           }
         }
       });
-      fetchUrl = `${fetchUrl}${urlQueryParam.toString() ? '?' : ''}${urlQueryParam.toString()}`;
     }
 
     // Query Params (Dynamic - create from JSON)
     if (queryParamObjTypeEls.length > 0) {
-      const urlDynQueryParam = new URLSearchParams();
       queryParamObjTypeEls.map((el) => {
         try {
           let queryParamObj = {};
@@ -980,24 +978,23 @@ export default class ApiRequest extends LitElement {
             if (typeof queryParamObj[key] === 'object') {
               if (Array.isArray(queryParamObj[key])) {
                 if (paramSerializeStyle === 'spaceDelimited') {
-                  urlDynQueryParam.append(key, queryParamObj[key].join(' '));
+                  urlQueryParam.append(key, queryParamObj[key].join(' '));
                 } else if (paramSerializeStyle === 'pipeDelimited') {
-                  urlDynQueryParam.append(key, queryParamObj[key].join('|'));
+                  urlQueryParam.append(key, queryParamObj[key].join('|'));
                 } else {
                   if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
                     queryParamObj[key].forEach((v) => {
-                      urlDynQueryParam.append(key, v);
+                      urlQueryParam.append(key, v);
                     });
                   } else {
-                    urlDynQueryParam.append(key, queryParamObj[key]);
+                    urlQueryParam.append(key, queryParamObj[key]);
                   }
                 }
               }
             } else {
-              urlDynQueryParam.append(key, queryParamObj[key]);
+              urlQueryParam.append(key, queryParamObj[key]);
             }
           }
-          fetchUrl = `${fetchUrl}${urlDynQueryParam.toString() ? '?' : ''}${urlDynQueryParam.toString()}`;
         } catch (err) {
           console.log('OpenAPI Explorer: unable to parse %s into object', el.value); // eslint-disable-line no-console
         }
@@ -1007,7 +1004,7 @@ export default class ApiRequest extends LitElement {
     // Add Authentication api keys if provided
     this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
       if (v.in === 'query') {
-        fetchUrl = `${fetchUrl}${fetchUrl.includes('?') ? '&' : '?'}${v.name}=${encodeURIComponent(v.finalKeyValue)}`;
+        urlQueryParam.append(v.name, v.finalKeyValue);
         return;
       }
 
@@ -1015,6 +1012,8 @@ export default class ApiRequest extends LitElement {
       fetchOptions.headers.append(v.name, v.finalKeyValue);
       curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
     });
+
+    fetchUrl = `${fetchUrl}${urlQueryParam.toString() ? '?' : ''}${urlQueryParam.toString()}`;
 
     // Final URL for API call
     fetchUrl = `${this.serverUrl.replace(/\/$/, '')}${fetchUrl}`;
