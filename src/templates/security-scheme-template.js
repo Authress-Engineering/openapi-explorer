@@ -298,7 +298,7 @@ export default function securitySchemeTemplate() {
   }
   const providedApiKeys = schemes.filter((v) => (v.finalKeyValue));
   return html`
-  <section id='auth' part="section-auth" class = 'observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
+  <section id='auth' part="section-auth" class = 'observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
     <slot name="authentication">
       <div class="section-padding">
         <div class='sub-title regular-font'>AUTHENTICATION</div>

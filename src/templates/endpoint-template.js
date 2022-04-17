@@ -144,7 +144,7 @@ export default function endpointTemplate() {
       <span @click="${(e) => expandCollapseAll.call(this, e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
     </div>
     ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
-    <div class='regular-font section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
+    <div class='regular-font method-section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}' > 
     
       <div class='section-tag-header' @click="${(e) => toggleTag.call(this, e, tag.elementId)}">
         <div id='${tag.elementId}' class="sub-title tag" style="color:var(--primary-color)">${tag.name}</div>
