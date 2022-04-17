@@ -72,7 +72,7 @@ export default function focusedEndpointTemplate() {
   } else if (focusElId === 'section') {
     focusedTemplate = html`
       <section id='section' style="margin-top:24px; margin-bottom:24px;"
-        class='observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
+        class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
         <slot name="custom-section"></slot>
       </section>`;
   } else if (focusElId.startsWith('cmp--') && this.showComponents === 'true') {

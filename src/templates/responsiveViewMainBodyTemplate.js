@@ -12,7 +12,7 @@ import advancedSearchTemplate from './advance-search-template';
 import SetTheme from '../utils/theme';
 import ColorUtils from '../utils/color-utils';
 
-export default function mainBodyTemplate() {
+export default function responsiveViewMainBodyTemplate() {
   const newTheme = {
     bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
     fg1: ColorUtils.isValidHexColor(this.textColor) ? this.textColor : '',
@@ -57,8 +57,8 @@ export default function mainBodyTemplate() {
                     ${this.showInfo === 'true' ? overviewTemplate.call(this) : ''}
                     ${this.allowServerSelection === 'true' ? serverTemplate.call(this) : ''}
                     ${this.allowAuthentication === 'true' ? securitySchemeTemplate.call(this) : ''}
-                    <section id='section' style="margin-top:24px; margin-bottom:24px;"
-                      class='observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
+                    <section id='section'
+                      class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
                       <slot name="custom-section"></slot>
                     </section>
                     ${this.renderStyle === 'read'

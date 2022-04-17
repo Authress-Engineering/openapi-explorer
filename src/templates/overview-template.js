@@ -12,7 +12,7 @@ function headingRenderer() {
 export default function overviewTemplate() {
   return html`
     <section id="overview" part="section-overview"
-      class="observe-me ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}">
+      class="observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}">
       ${this.resolvedSpec && this.resolvedSpec.info
         ? html`
           <slot name="overview">

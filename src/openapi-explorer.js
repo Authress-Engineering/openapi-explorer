@@ -27,7 +27,7 @@ import advancedSearchStyles from './styles/advanced-search-styles';
 
 import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
-import mainBodyTemplate from './templates/main-body-template';
+import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
 import { checkForAuthToken } from './templates/security-scheme-template';
 
@@ -180,8 +180,11 @@ export default class OpenApiExplorer extends LitElement {
       .section-gap.section-tag {
         border-bottom:1px solid var(--border-color);
       }
+      .method-section-gap {
+        padding: 24px 8px 0px 4px;
+      }
       .section-gap { 
-        padding: 0px 4px; 
+        padding: 24px 0px 0px;
       }
       .section-tag-header {
         position:relative;
@@ -432,7 +435,7 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   render() {
-    return mainBodyTemplate.call(this);
+    return responsiveViewMainBodyTemplate.call(this);
   }
 
   observeExpandedContent() {
