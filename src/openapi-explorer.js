@@ -703,8 +703,9 @@ export default class OpenApiExplorer extends LitElement {
 
     let repeatedElementIndex;
     if (navEl.dataset.contentId === 'section') {
-      const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
-      repeatedElementIndex = [].findIndex.call(assignedNodes, (slot) => slot === event.target);
+      const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
+      const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
+      repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => slot === event.target);
     }
     this.isIntersectionObserverActive = false;
     this.scrollTo(navEl.dataset.contentId, true, scrollNavItemToView, repeatedElementIndex);
@@ -760,8 +761,9 @@ export default class OpenApiExplorer extends LitElement {
     // Update NavBar View and Styles
     let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     if (elementId === 'section') {
-      const assignedNodes = this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes();
-      newNavEl = assignedNodes[repeatedElementIndex || 0];
+      const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
+      const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
+      newNavEl = assignedNodes && assignedNodes[repeatedElementIndex || 0];
     }
 
     if (!newNavEl) {
@@ -776,7 +778,9 @@ export default class OpenApiExplorer extends LitElement {
     if (oldNavEl) {
       oldNavEl.classList.remove('active');
     }
-    this.shadowRoot.querySelector('slot.custom-nav-section').assignedNodes().filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
+    const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
+    const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
+    (assignedNodes || []).filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
       node.classList.remove('active');
     });
     newNavEl.classList.add('active'); // must add the class after scrolling
