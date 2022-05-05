@@ -59,6 +59,14 @@ export default css`
   position: absolute;
   top: 8px;
   right: 8px;
+  margin-right: 8px;
+}
+.tab-content .toolbar-btn + pre {
+  white-space: pre;
+  max-height:400px;
+  overflow: auto;
+  display: flex;
+  padding-right: 70px;
 }
 
 input, textarea, select, button, pre {
