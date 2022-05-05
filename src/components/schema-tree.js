@@ -11,7 +11,6 @@ export default class SchemaTree extends LitElement {
       data: { type: Object },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
-      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
     };
@@ -91,18 +90,12 @@ export default class SchemaTree extends LitElement {
   render() {
     return html`
       <div class="tree ${this.schemaDescriptionExpanded === 'true' ? 'expanded-descr' : 'collapsed-descr'}">
-        <div class="toolbar">
-          ${this.allowSchemaDescriptionExpandToggle === 'true'
-            ? html`
-              <div style="flex:1"></div>
-              <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-                ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
-              </div>
-            `
-            : ''
-          }
+        <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center">
+          ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : '<div>&nbsp;</div>'}  
+          <div class="toolbar-item" @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
+            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
+          </div>
         </div>
-        ${this.data && this.data['::description'] ? html`<span class='m-markdown'> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : ''}
         ${this.data
           ? html`${this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type'])}`
           : html`<span class='mono-font' style='color:var(--red)'> Schema not found </span>`

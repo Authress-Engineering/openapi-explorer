@@ -9,7 +9,6 @@ export default class SchemaTable extends LitElement {
     return {
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
-      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
       data: { type: Object },
@@ -86,15 +85,10 @@ export default class SchemaTable extends LitElement {
     return html`
       <div class="table ${this.schemaDescriptionExpanded === 'true' ? 'expanded-descr' : 'collapsed-descr'}">
         <div class='toolbar'>
-          ${this.allowSchemaDescriptionExpandToggle === 'true'
-            ? html`
-              <div style="flex:1"></div>
-              <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-                ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
-              </div>
-            `
-            : ''
-          }
+          <div style="flex:1"></div>
+          <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
+            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
+          </div>
         </div>
         ${this.data && this.data['::description']
           ? html`<span class='m-markdown'> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`

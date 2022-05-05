@@ -94,12 +94,14 @@ export function getTypeInfo(schema) {
   return info;
 }
 
-export function getSampleValueByType(schemaObj, fallbackPropertyName) {
+export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleStrings) {
   const example = schemaObj.examples ? schemaObj.examples[0] : schemaObj.example;
   if (example === '') { return ''; }
   if (example === null) { return null; }
   if (example === 0) { return 0; }
+  if (skipExampleStrings && typeof example === 'string') { return ''; }
   if (example) { return example; }
+
   if (schemaObj.default) { return schemaObj.default; }
 
   if (Object.keys(schemaObj).length === 0) {
@@ -130,6 +132,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName) {
   }
   if (typeValue.match(/^boolean/g)) { return false; }
   if (typeValue.match(/^null/g)) { return null; }
+  if (skipExampleStrings && typeValue.match(/^string/g)) { return ''; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.enum) { return schemaObj.enum[0]; }
     if (schemaObj.pattern) {
@@ -267,20 +270,8 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
     return config.xml ? [xmlTagProperties] : objectExamples;
   }
 
-  const value = getSampleValueByType(schema, config.propertyName);
+  const value = getSampleValueByType(schema, config.propertyName, config.skipExampleStrings);
   return [value];
-}
-
-function addSchemaInfoToExample(schema, obj) {
-  if (typeof obj !== 'object' || obj === null) {
-    return;
-  }
-  if (schema.title) {
-    obj['::TITLE'] = schema.title;
-  }
-  if (schema.description) {
-    obj['::DESCRIPTION'] = schema.description;
-  }
 }
 
 function removeTitlesAndDescriptions(obj) {
@@ -292,173 +283,6 @@ function removeTitlesAndDescriptions(obj) {
   for (const k in obj) {
     removeTitlesAndDescriptions(obj[k]);
   }
-}
-
-function addPropertyExampleToObjectExamples(example, obj, propertyKey) {
-  for (const key in obj) {
-    obj[key][propertyKey] = example;
-  }
-}
-
-function mergePropertyExamples(obj, propertyName, propExamples) {
-  // Create an example for each variant of the propertyExample, merging them with the current (parent) example
-  let i = 0;
-  const maxCombinations = 10;
-  const mergedObj = {};
-  for (const exampleKey in obj) {
-    for (const propExampleKey in propExamples) {
-      mergedObj[`example-${i}`] = { ...obj[exampleKey] };
-      mergedObj[`example-${i}`][propertyName] = propExamples[propExampleKey];
-      i++;
-      if (i >= maxCombinations) {
-        break;
-      }
-    }
-    if (i >= maxCombinations) {
-      break;
-    }
-  }
-  return mergedObj;
-}
-
-/* For changing JSON-Schema to a Sample Object, as per the schema (to generate examples based on schema) */
-export function schemaToSampleObj(schema, config = { }) {
-  let obj = {};
-  if (!schema) {
-    return null;
-  }
-
-  if (schema.allOf) {
-    const objWithAllProps = {};
-
-    if (schema.allOf.length === 1 && !schema.allOf[0].properties && !schema.allOf[0].items) {
-      // If allOf has single item and the type is not an object or array, then its a primitive
-      if (schema.allOf[0].$ref) {
-        return schema.allOf[0].$ref;
-      }
-      if (schema.allOf[0].readOnly && config.includeReadOnly) {
-        const tempSchema = schema.allOf[0];
-        return getSampleValueByType(tempSchema, config.propertyName);
-      }
-      return null;
-    }
-
-    schema.allOf.forEach((v) => {
-      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
-        const partialObj = schemaToSampleObj(v, config);
-        Object.assign(objWithAllProps, partialObj);
-      } else if (v.type === 'array' || v.items) {
-        const partialObj = [schemaToSampleObj(v, config)];
-        Object.assign(objWithAllProps, partialObj);
-      } else if (v.type) {
-        const prop = `prop${Object.keys(objWithAllProps).length}`;
-        objWithAllProps[prop] = getSampleValueByType(v, config.propertyName);
-      }
-    });
-
-    return objWithAllProps;
-  }
-
-  if (schema.oneOf) {
-    if (!schema.oneOf.length) {
-      return obj;
-    }
-
-    const objWithSchemaProps = {};
-    for (const propertyName in (schema.properties || {})) {
-      objWithSchemaProps[propertyName] = getSampleValueByType(schema.properties[propertyName], config.propertyName);
-    }
-
-    let i = 0;
-    // Add all the oneof to examples
-    for (const key in schema.oneOf) {
-      const oneOfSamples = schemaToSampleObj(schema.oneOf[key], config);
-      for (const sampleKey in oneOfSamples) {
-        obj[`example-${i}`] = Object.assign({}, objWithSchemaProps, oneOfSamples[sampleKey]);
-        addSchemaInfoToExample(schema.oneOf[key], obj[`example-${i}`]);
-        i++;
-      }
-    }
-  } else if (schema.anyOf) {
-    // First generate values for regular properties
-    let commonObj;
-    if (schema.type === 'object' || schema.properties) {
-      commonObj = { 'example-0': {} };
-      for (const propertyName in schema.properties) {
-        if (schema.example) {
-          commonObj = schema;
-          break;
-        }
-        if (schema.properties[propertyName].deprecated && !config.includeDeprecated) { continue; }
-        if (schema.properties[propertyName].readOnly && !config.includeReadOnly) { continue; }
-        if (schema.properties[propertyName].writeOnly && !config.includeWriteOnly) { continue; }
-        commonObj = mergePropertyExamples(commonObj, propertyName, schemaToSampleObj(schema.properties[propertyName], { ...config, propertyName }));
-      }
-    }
-
-    // Combine every variant of the regular properties with every variant of the anyOf samples
-    let i = 0;
-    for (const key in schema.anyOf) {
-      const anyOfSamples = schemaToSampleObj(schema.anyOf[key], config);
-      for (const sampleKey in anyOfSamples) {
-        if (typeof commonObj !== 'undefined') {
-          for (const commonKey in commonObj) {
-            obj[`example-${i}`] = { ...commonObj[commonKey], ...anyOfSamples[sampleKey] };
-          }
-        } else {
-          obj[`example-${i}`] = anyOfSamples[sampleKey];
-        }
-        addSchemaInfoToExample(schema.anyOf[key], obj[`example-${i}`]);
-        i++;
-      }
-    }
-  } else if (schema.type === 'object' || schema.properties) {
-    obj['example-0'] = {};
-    addSchemaInfoToExample(schema, obj['example-0']);
-    if (schema.example) {
-      obj['example-0'] = schema.example;
-    } else {
-      for (const propertyName in schema.properties) {
-        if (schema.properties[propertyName].deprecated && !config.includeDeprecated) { continue; }
-        if (schema.properties[propertyName].readOnly && !config.includeReadOnly) { continue; }
-        if (schema.properties[propertyName].writeOnly && !config.includeWriteOnly) { continue; }
-        if (schema.properties[propertyName].type === 'array' || schema.properties[propertyName].items) {
-          if (schema.properties[propertyName].example) {
-            addPropertyExampleToObjectExamples(schema.properties[propertyName].example, obj, propertyName);
-          } else if (schema.properties[propertyName] && schema.properties[propertyName].items && schema.properties[propertyName].items.example) {
-            // schemas and properties support single example but not multiple examples.
-            addPropertyExampleToObjectExamples([schema.properties[propertyName].items.example], obj, propertyName);
-          } else {
-            const itemSamples = schemaToSampleObj(schema.properties[propertyName].items, { ...config, propertyName });
-            const arraySamples = [];
-            for (const key in itemSamples) {
-              arraySamples[key] = [itemSamples[key]];
-            }
-            obj = mergePropertyExamples(obj, propertyName, arraySamples);
-          }
-          continue;
-        }
-        obj = mergePropertyExamples(obj, propertyName, schemaToSampleObj(schema.properties[propertyName], { ...config, propertyName }));
-      }
-    }
-  } else if (schema.type === 'array' || schema.items) {
-    if (schema.example) {
-      obj['example-0'] = schema.example;
-    } else if (schema.items && schema.items.example) { // schemas and properties support single example but not multiple examples.
-      obj['example-0'] = [schema.items.example];
-    } else {
-      const samples = schemaToSampleObj(schema.items, config);
-      let i = 0;
-      for (const key in samples) {
-        obj[`example-${i}`] = [samples[key]];
-        addSchemaInfoToExample(schema.items, obj[`example-${i}`]);
-        i++;
-      }
-    }
-  } else {
-    return { 'example-0': getSampleValueByType(schema, config.propertyName) };
-  }
-  return obj;
 }
 
 /**
@@ -643,7 +467,7 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
 }
 
 /* Create Example object */
-export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType) {
+export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType, skipExampleStrings = false) {
   const mimeType = rawMimeType || 'application/json';
   const finalExamples = [];
   // First check if examples is provided
@@ -735,6 +559,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
     includeReadOnly,
     includeWriteOnly,
     includeDeprecated: true,
+    skipExampleStrings,
     xml: mimeType.toLowerCase().includes('xml'),
   };
 

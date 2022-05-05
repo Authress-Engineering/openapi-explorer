@@ -32,7 +32,6 @@ export default class ApiResponse extends LitElement {
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
-      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
     };
   }
@@ -317,7 +316,6 @@ export default class ApiResponse extends LitElement {
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
-            allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
           > </schema-tree> `
@@ -328,7 +326,6 @@ export default class ApiResponse extends LitElement {
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
-            allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
           > </schema-tree>`

@@ -56,7 +56,6 @@ export default class ApiRequest extends LitElement {
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
-      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
 
@@ -336,6 +335,7 @@ export default class ApiRequest extends LitElement {
             false,
             true,
             'text',
+            true
           );
           if (!this.selectedRequestBodyExample) {
             this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
@@ -395,6 +395,7 @@ export default class ApiRequest extends LitElement {
             false,
             true,
             'text',
+            true
           );
           if (reqBody.schema) {
             reqBodyFormHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
@@ -422,7 +423,6 @@ export default class ApiRequest extends LitElement {
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
               schema-description-expanded = "${this.schemaDescriptionExpanded}"
-              allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-table>
@@ -436,7 +436,6 @@ export default class ApiRequest extends LitElement {
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
               schema-description-expanded = "${this.schemaDescriptionExpanded}"
-              allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-tree>
@@ -459,8 +458,8 @@ export default class ApiRequest extends LitElement {
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
-                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}"   data-tab = 'model'  >MODEL</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'example'>BODY</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >MODEL</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">BODY</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
@@ -493,6 +492,7 @@ export default class ApiRequest extends LitElement {
           false,
           true,
           'text',
+          true
         );
 
         formDataTableRows.push(html`
@@ -568,9 +568,7 @@ export default class ApiRequest extends LitElement {
                         <schema-tree
                           .data = '${formdataPartSchema}'
                           schema-expand-level = "${this.schemaExpandLevel}"
-                          schema-description-expanded = "${this.schemaDescriptionExpanded}"
-                          allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
-                        > </schema-tree>
+                          schema-description-expanded = "${this.schemaDescriptionExpanded}"> </schema-tree>
                       </div>`
                     }
                     ${html`
@@ -732,7 +730,7 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <button class="toolbar-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill"> Copy </button>
+              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">Copy</button>
               <pre>${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
@@ -741,11 +739,11 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button class="toolbar-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill"> Copy </button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">Copy</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="toolbar-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill"> Copy </button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">Copy</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;

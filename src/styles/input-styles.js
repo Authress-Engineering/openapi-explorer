@@ -44,24 +44,24 @@ export default css`
   cursor: progress;
   opacity: 0.4;
 }
-.toolbar-btn{
+.toolbar-copy-btn{
   cursor: pointer;
-  padding: 4px;
+  padding: .125rem .5rem;
   margin:0 2px;
-  font-size: var(--font-size-small);
-  min-width: 50px;
+  font-size: .8rem;
+  width: 56px;
   color: var(--primary-btn-text-color);
   border-radius: 2px;
   border: none;
   background-color: var(--primary-color);
 }
-.tab-content .toolbar-btn {
+.tab-content .toolbar-copy-btn {
   position: absolute;
   top: 8px;
   right: 8px;
   margin-right: 8px;
 }
-.tab-content .toolbar-btn + pre {
+.tab-content .toolbar-copy-btn + pre {
   white-space: pre;
   max-height:400px;
   overflow: auto;

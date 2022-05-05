@@ -75,14 +75,14 @@ export default css`
 .toolbar {
   width:100%;
   padding: 2px 0;
-  color:var(--primary-color);
 }
 .toolbar-item {
   cursor: pointer;
-  padding:5px 0;
-  margin:0 2px;
+  padding: 5px 0 5px 1rem;
+  margin: 0 1rem !important;
   /* TODO: add: The import highlight color variable */
   color: #38b3f9;
+  flex-shrink: 0;
 }
 .schema-root-type {
   cursor:auto;
