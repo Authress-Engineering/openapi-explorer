@@ -84,7 +84,6 @@ export default class OpenApiExplorer extends LitElement {
       allowSearch: { type: String, attribute: 'allow-search' },
       allowAdvancedSearch: { type: String, attribute: 'allow-advanced-search' },
       allowServerSelection: { type: String, attribute: 'show-server-selection' },
-      allowSchemaDescriptionExpandToggle: { type: String, attribute: 'allow-schema-description-expand-toggle' },
       showComponents: { type: String, attribute: 'show-components' },
 
       // Main Colors and Font
@@ -397,7 +396,6 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
     if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
     if (!this.allowAuthentication || !'true, false,'.includes(`${this.allowAuthentication},`)) { this.allowAuthentication = 'true'; }
-    if (!this.allowSchemaDescriptionExpandToggle || !'true, false,'.includes(`${this.allowSchemaDescriptionExpandToggle},`)) { this.allowSchemaDescriptionExpandToggle = 'true'; }
 
     if (!this.showSideNav || !'true false'.includes(this.showSideNav)) { this.showSideNav = 'true'; }
     if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }

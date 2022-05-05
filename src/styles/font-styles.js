@@ -113,7 +113,11 @@ export default css`
 
   .m-markdown p,
   .m-markdown-small p {
-    margin-block-end: 0
+    margin-block-end: 0;
+  }
+
+  .toolbar .m-markdown p, .toolbar .m-markdown-small p {
+    margin-block-start: 0;
   }
 
   .m-markdown code span {

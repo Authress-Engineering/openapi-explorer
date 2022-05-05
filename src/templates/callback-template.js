@@ -34,7 +34,6 @@ export default function callbackTemplate(callbacks) {
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
                       schema-description-expanded = "${this.schemaDescriptionExpanded}"
-                      allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}",
                       schema-hide-read-only = "${this.schemaHideReadOnly}"
                       fetch-credentials = "${this.fetchCredentials}"
                       exportparts="btn btn-fill btn-outline btn-try">
@@ -48,7 +47,6 @@ export default function callbackTemplate(callbacks) {
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
                       schema-description-expanded = "${this.schemaDescriptionExpanded}"
-                      allow-schema-description-expand-toggle = "${this.allowSchemaDescriptionExpandToggle}"
                       exportparts = "btn--resp btn-fill--resp btn-outline--resp"
                     > </api-response>
                   </div>
