@@ -71,8 +71,7 @@ export default function focusedEndpointTemplate() {
     focusedTemplate = serverTemplate.call(this);
   } else if (focusElId === 'section') {
     focusedTemplate = html`
-      <section id='section' style="margin-top:24px; margin-bottom:24px;"
-        class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
+      <section id='section' class='observe-me'>
         <slot name="custom-section"></slot>
       </section>`;
   } else if (focusElId.startsWith('cmp--') && this.showComponents === 'true') {
