@@ -131,7 +131,7 @@ function endpointBodyTemplate(path) {
 
 export default function endpointTemplate() {
   return html`
-    <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px;"> 
+    <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px; margin-top: 16px;"> 
       <span @click="${(e) => expandCollapseAll.call(this, e, 'expand-all')}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
       &nbsp;|&nbsp; 
       <span @click="${(e) => expandCollapseAll.call(this, e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
