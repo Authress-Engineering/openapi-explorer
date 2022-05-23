@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import marked from 'marked';
+import { marked } from 'marked';
 import '../components/json-tree';
 import '../components/schema-tree';
 

@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit-element';
-import marked from 'marked';
+import { marked } from 'marked';
 import Prism from 'prismjs';
 import mime from 'mime-types';
 
