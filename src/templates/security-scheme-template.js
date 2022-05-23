@@ -1,6 +1,6 @@
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import marked from 'marked';
+import { marked } from 'marked';
 import base64url from 'base64url';
 import randomBytes from 'randombytes';
 

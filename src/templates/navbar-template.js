@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import marked from 'marked';
+import { marked } from 'marked';
 import { pathIsInSearch } from '../utils/common-utils';
 
 export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {

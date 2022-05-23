@@ -1,6 +1,6 @@
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import marked from 'marked';
+import { marked } from 'marked';
 import { expandedEndpointBodyTemplate } from './expanded-endpoint-template';
 import '../components/api-request';
 import '../components/api-response';
