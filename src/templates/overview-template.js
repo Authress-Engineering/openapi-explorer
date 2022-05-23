@@ -3,12 +3,6 @@ import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { marked } from 'marked';
 
 /* eslint-disable indent */
-function headingRenderer() {
-  const renderer = new marked.Renderer();
-  renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="overview--${slugger.slug(raw)}">${text}</h${level}>`);
-  return renderer;
-}
-
 export default function overviewTemplate() {
   return html`
     <section id="overview" part="section-overview"
@@ -50,14 +44,10 @@ export default function overviewTemplate() {
             </div>
           </slot>
           <slot name="overview-api-description">
-          ${this.resolvedSpec.info.description
-            ? html`${
-              unsafeHTML(`
-                <div class="m-markdown regular-font section-padding">
-                ${marked(this.resolvedSpec.info.description, this.infoDescriptionHeadingsInNavBar === 'true' ? { renderer: headingRenderer() } : undefined)}
-              </div>`)}`
-            : ''
-          }
+            ${this.resolvedSpec.info.description
+              ? html`${unsafeHTML(`<div class="m-markdown regular-font section-padding">${marked(this.resolvedSpec.info.description)}</div>`)}`
+              : ''
+            }
           </slot>
         `
         : ''

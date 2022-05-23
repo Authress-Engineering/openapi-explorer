@@ -34,6 +34,7 @@ import { checkForAuthToken } from './templates/security-scheme-template';
 export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
+    this.isV1 = false;
     this.loading = true;
     const intersectionObserverOptions = {
       root: this.getRootNode().host,
@@ -101,7 +102,6 @@ export default class OpenApiExplorer extends LitElement {
       navHoverTextColor: { type: String, attribute: 'nav-hover-text-color' },
       navItemSpacing: { type: String, attribute: 'nav-item-spacing' },
       usePathInNavBar: { type: String, attribute: 'use-path-in-nav-bar' },
-      infoDescriptionHeadingsInNavBar: { type: String, attribute: 'info-description-headings-in-navbar' },
 
       // Fetch Options
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
@@ -399,7 +399,6 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.showSideNav || !'true false'.includes(this.showSideNav)) { this.showSideNav = 'true'; }
     if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }
-    if (!this.infoDescriptionHeadingsInNavBar || !'true, false,'.includes(`${this.infoDescriptionHeadingsInNavBar},`)) { this.infoDescriptionHeadingsInNavBar = 'false'; }
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
@@ -424,12 +423,6 @@ export default class OpenApiExplorer extends LitElement {
     this.intersectionObserver.disconnect();
     window.removeEventListener('resize', this.handleResize);
     super.disconnectedCallback();
-  }
-
-  infoDescriptionHeadingRenderer() {
-    const renderer = new marked.Renderer();
-    renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="${slugger.slug(raw)}">${text}</h${level}>`);
-    return renderer;
   }
 
   render() {

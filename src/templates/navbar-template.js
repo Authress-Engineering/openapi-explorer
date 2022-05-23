@@ -1,5 +1,4 @@
 import { html } from 'lit-element';
-import { marked } from 'marked';
 import { pathIsInSearch } from '../utils/common-utils';
 
 export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {
@@ -80,27 +79,9 @@ export default function navbarTemplate() {
     ${html`<nav class='nav-scroll' part="navbar-scroll">
       ${(this.showInfo === 'false' || !this.resolvedSpec.info)
         ? ''
-        : html`
-          ${(this.infoDescriptionHeadingsInNavBar === 'true')
-            ? html`
-              ${this.resolvedSpec.infoDescriptionHeaders.length > 0 ? html`<div class='nav-bar-info' id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}' > Overview </div>` : ''}
-              <div class="overview-headers">
-                ${this.resolvedSpec.infoDescriptionHeaders.map((header) => html`
-                  <div 
-                    class='nav-bar-h${header.depth}' 
-                    id="link-overview--${new marked.Slugger().slug(header.text)}"  
-                    data-content-id='overview--${new marked.Slugger().slug(header.text)}' 
-                    @click='${(e) => this.scrollToEventTarget(e, false)}'
-                  >
-                    ${header.text}
-                  </div>`)
-                }
-              </div>
-              ${this.resolvedSpec.infoDescriptionHeaders.length > 0 ? html`<hr style='border-top: 1px solid var(--nav-hover-bg-color); border-width:1px 0 0 0; margin: 15px 0 0 0'/>` : ''}
-            `
-            : html`<div class='nav-bar-info'  id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}'> Overview </div>`
-          }
-        `
+        : html`<div class='nav-bar-info'  id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}'>
+          ${this.isV1 && this.resolvedSpec.info.title || 'Overview'}
+        </div>`
       }
     
       ${this.allowServerSelection === 'false'
@@ -149,8 +130,7 @@ export default function navbarTemplate() {
                       } else {
                         this.scrollToEventTarget(e, false);
                       }
-                    }}'
-                  >
+                    }}'>
                     <div>${tag.name}</div>
                     <div class="nav-bar-tag-icon" @click="${(e) => {
                       if (this.renderStyle === 'focused' && this.onNavTagClick === 'show-description') {
@@ -160,23 +140,6 @@ export default function navbarTemplate() {
                     </div>
                   </div>
                 `
-              }
-              ${(this.infoDescriptionHeadingsInNavBar === 'true')
-                ? html`
-                  ${this.renderStyle === 'focused' && this.onNavTagClick === 'expand-collapse'
-                    ? ''
-                    : html`
-                      <div class='tag-headers'>
-                        ${tag.headers.map((header) => html`
-                        <div 
-                          class='nav-bar-h${header.depth}' 
-                          id="link-${tag.elementId}--${new marked.Slugger().slug(header.text)}"  
-                          data-content-id='${tag.elementId}--${new marked.Slugger().slug(header.text)}' 
-                          @click='${(e) => this.scrollToEventTarget(e, false)}'
-                        > ${header.text}</div>`)}
-                      </div>`
-                  }`
-                : ''
               }
 
               

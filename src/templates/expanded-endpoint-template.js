@@ -8,12 +8,6 @@ import '../components/api-request';
 import '../components/api-response';
 
 /* eslint-disable indent */
-function headingRenderer(tagElementId) {
-  const renderer = new marked.Renderer();
-  renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="${tagElementId}--${slugger.slug(raw)}">${text}</h${level}>`);
-  return renderer;
-}
-
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
@@ -95,7 +89,7 @@ export default function expandedEndpointTemplate() {
       ${
         unsafeHTML(`
           <div class="m-markdown regular-font">
-          ${marked(tag.description || '', this.infoDescriptionHeadingsInNavBar === 'true' ? { renderer: headingRenderer(tag.elementId) } : undefined)}
+          ${marked(tag.description || '')}
         </div>`)
       }
       </div>

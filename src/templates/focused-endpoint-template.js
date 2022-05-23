@@ -10,12 +10,6 @@ import serverTemplate from './server-template';
 import securitySchemeTemplate from './security-scheme-template';
 import { expandCollapseNavBarTag } from './navbar-template';
 
-function headingRenderer(tagElementId) {
-  const renderer = new marked.Renderer();
-  renderer.heading = ((text, level, raw, slugger) => `<h${level} class="observe-me" id="${tagElementId}--${slugger.slug(raw)}">${text}</h${level}>`);
-  return renderer;
-}
-
 function wrapFocusedTemplate(templateToWrap) {
   return html`
     <div class='regular-font section-gap--focused-mode' part="section-operations-in-tag">
@@ -45,7 +39,7 @@ function focusedTagBodyTemplate(tag) {
           ${
             unsafeHTML(`
             <div class="m-markdown regular-font">
-              ${marked(tag.description || '', this.infoDescriptionHeadingsInNavBar === 'true' ? { renderer: headingRenderer(tag.elementId) } : undefined)}
+              ${marked(tag.description || '')}
             </div>`)
           }
         </div>`
