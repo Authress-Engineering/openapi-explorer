@@ -1,5 +1,5 @@
 import { css, LitElement, unsafeCSS } from 'lit-element';
-import marked from 'marked';
+import { marked } from 'marked';
 import Prism from 'prismjs';
 
 // It's possible none of these imports are actually necessary and should just be removed

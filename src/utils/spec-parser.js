@@ -1,5 +1,5 @@
 import SwaggerClient from 'swagger-client';
-import marked from 'marked';
+import { marked } from 'marked';
 import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
