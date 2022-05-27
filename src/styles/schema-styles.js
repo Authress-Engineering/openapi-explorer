@@ -74,7 +74,6 @@ export default css`
 .enum {color:var(--yellow)}
 .toolbar {
   width:100%;
-  padding: 2px 0;
 }
 .toolbar-item {
   cursor: pointer;
