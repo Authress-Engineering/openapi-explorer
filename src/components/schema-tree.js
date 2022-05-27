@@ -90,10 +90,10 @@ export default class SchemaTree extends LitElement {
   render() {
     return html`
       <div class="tree ${this.schemaDescriptionExpanded === 'true' ? 'expanded-descr' : 'collapsed-descr'}">
-        <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center">
+        <div class="toolbar">
           ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
+            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse descriptions' : 'Expand descriptions'}
           </div>
         </div>
         ${this.data

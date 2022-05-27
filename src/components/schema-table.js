@@ -87,7 +87,7 @@ export default class SchemaTable extends LitElement {
         <div class='toolbar'>
           <div style="flex:1"></div>
           <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse description' : 'Expand description'}
+            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse descriptions' : 'Expand descriptions'}
           </div>
         </div>
         ${this.data && this.data['::description']
