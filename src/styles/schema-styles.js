@@ -72,6 +72,12 @@ export default css`
 .null {color:var(--red);}
 .bool, .boolean{color:var(--orange)}
 .enum {color:var(--yellow)}
+
+.tree .toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
 .toolbar {
   width:100%;
 }
@@ -82,6 +88,9 @@ export default css`
   /* TODO: add: The import highlight color variable */
   color: #38b3f9;
   flex-shrink: 0;
+}
+.tree .toolbar .toolbar-item {
+  display: none;
 }
 .schema-root-type {
   cursor:auto;
@@ -94,8 +103,12 @@ export default css`
 }
 .toolbar-item:first-of-type { margin:0 2px 0 0;}
 
-@media only screen and (min-width: 500px) {
+
+@media only screen and (min-width: 576px) {
   .key-descr {
+    display: block;
+  }
+  .tree .toolbar .toolbar-item {
     display: block;
   }
   .toolbar {
