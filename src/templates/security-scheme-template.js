@@ -2,7 +2,6 @@ import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { marked } from 'marked';
 import base64url from 'base64url';
-import randomBytes from 'randombytes';
 
 function onApiKeyChange(apiKeyId, e) {
   let apiKeyValue = '';
@@ -181,11 +180,13 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
     const authUrlObj = new URL(authUrl);
     const authCodeParams = new URLSearchParams(authUrlObj.search);
     if (flowType === 'authorizationCode') {
-      authCodeParams.set('nonce', randomBytes(64).toString('hex'));
+      const randomBytes = new Uint32Array(3);
+      (window.crypto || window.msCrypto).getRandomValues(randomBytes);
+      authCodeParams.set('nonce', randomBytes.toString('hex').split(',').join(''));
       grantType = 'authorization_code';
       responseType = 'code';
-      const codeVerifier = randomBytes(64).toString('hex');
-      const hash = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
+      const codeVerifier = randomBytes.toString('hex').split(',').join('');
+      const hash = await (window.crypto || window.msCrypto).subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
       const codeChallenge = base64url(hash);
 
       authCodeParams.set('code_challenge', codeChallenge);
