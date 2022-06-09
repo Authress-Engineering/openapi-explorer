@@ -1,8 +1,8 @@
 const { expect } = require('chai');
 const { describe, it } = require('mocha');
-const xmlFormatter = require('@kyleshockey/xml');
+const xmlFormatter = require('../src/utils/xml/xml');
 
-const schemaUtils = require('../lib/utils/schema-utils');
+const schemaUtils = require('../src/utils/schema-utils');
 
 describe('schema-utils.js', () => {
   describe('getExampleValuesFromSchema', () => {
