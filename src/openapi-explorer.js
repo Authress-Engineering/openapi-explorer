@@ -31,11 +31,6 @@ import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTe
 import apiRequestStyles from './styles/api-request-styles';
 import { checkForAuthToken } from './templates/security-scheme-template';
 
-if (typeof global === undefined) {
-  // eslint-disable-next-line no-global-assign
-  global = {};
-}
-
 export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
