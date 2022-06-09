@@ -5,6 +5,7 @@ export default class OpenapiExplorerOauthHandler extends HTMLElement {
     checkForAuthToken(true);
   }
 }
+
 if (!customElements.get('openapi-explorer-oauth-handler')) {
   customElements.define('openapi-explorer-oauth-handler', OpenapiExplorerOauthHandler);
 }

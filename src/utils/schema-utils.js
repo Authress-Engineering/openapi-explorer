@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import { expandN } from 'regex-to-strings';
-import xmlFormatter from '@kyleshockey/xml';
+import xmlFormatter from './xml/xml';
 
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
