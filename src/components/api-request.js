@@ -1167,6 +1167,12 @@ export default class ApiRequest extends LitElement {
       let respText;
       tryBtnEl.disabled = true;
       const fetchStart = new Date();
+
+      this.responseMessage = '';
+      this.responseUrl = '';
+      this.responseHeaders = '';
+      this.responseText = '';
+
       fetchResponse = await fetch(fetchRequestObject);
       this.responseElapsedMs = new Date() - fetchStart;
       tryBtnEl.disabled = false;
@@ -1243,9 +1249,8 @@ export default class ApiRequest extends LitElement {
       this.dispatchEvent(new CustomEvent('response', responseEvent));
     } catch (error) {
       tryBtnEl.disabled = false;
-      this.responseMessage = `${error.message} (CORS or Network Issue)`;
-      this.responseUrl = '';
-      this.responseHeaders = '';
+      this.responseMessage = `${error.message} (Check the browser network tab for more information.)`;
+      this.responseStatus = 'error';
       const responseEvent = {
         bubbles: true,
         composed: true,
