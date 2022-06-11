@@ -54,7 +54,8 @@
     "path-browserify": "^1.0.1",
     "prismjs": "^1.23.0",
     "regex-to-strings": "^2.0.3",
-    "swagger-client": "^3.13"
+    "swagger-client": "^3.13",
+    "xml-but-prettier": "^1.0.1"
   },
   "scripts": {
     "build": "NODE_ENV=production webpack --mode=production",
