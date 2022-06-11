@@ -4,7 +4,9 @@ import Prism from 'prismjs';
 import mime from 'mime-types';
 
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { copyToClipboard, prettyXml } from '../utils/common-utils';
+import formatXml from 'xml-but-prettier';
+
+import { copyToClipboard } from '../utils/common-utils';
 import { schemaInObjectNotation, getTypeInfo, generateExample } from '../utils/schema-utils';
 import './json-tree';
 import './schema-tree';
@@ -704,9 +706,11 @@ export default class ApiRequest extends LitElement {
     const responseFormat = this.responseHeaders.includes('json') ? 'json' : (this.responseHeaders.includes('html') || this.responseHeaders.includes('xml')) ? 'html' : '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
-      <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}
-        ${this.responseElapsedMs ? html`<span><br>Execution Time: ${this.responseElapsedMs}ms</span>` : ''}
-      </div>
+      ${this.responseMessage
+        ? html`<div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}
+          ${this.responseElapsedMs ? html`<span><br>Execution Time: ${this.responseElapsedMs}ms</span>` : ''}
+        </div>` : ''
+      }
       <div style="flex:1"></div>
         <button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
       </div>
@@ -715,8 +719,8 @@ export default class ApiRequest extends LitElement {
             if (e.target.classList.contains('tab-btn') === false) { return; }
             this.activeResponseTab = e.target.dataset.tab;
         }}">
-          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response' > RESPONSE</button>
-          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers' > RESPONSE HEADERS</button>
+          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>RESPONSE</button>
+          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>RESPONSE HEADERS</button>
           <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>CURL</button>
         </div>
         ${this.responseIsBlob
@@ -1036,13 +1040,18 @@ export default class ApiRequest extends LitElement {
       tryBtnEl.disabled = true;
       const fetchStart = new Date();
 
+      this.responseStatus = '';
       this.responseMessage = '';
       this.responseUrl = '';
       this.responseHeaders = '';
-      this.responseText = '';
+      this.responseText = '⌛';
 
+      this.requestUpdate();
+      const awaiter = new Promise(resolve => setTimeout(resolve, 200));
       fetchResponse = await fetch(fetchRequestObject);
       this.responseElapsedMs = new Date() - fetchStart;
+      await awaiter;
+
       tryBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
       this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText} (${fetchResponse.status})` : fetchResponse.status;
