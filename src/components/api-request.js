@@ -1217,9 +1217,10 @@ export default class ApiRequest extends LitElement {
         } else {
           respText = await fetchResponse.text();
           if (contentType.includes('xml')) {
-            this.responseText = prettyXml(respText);
+            this.responseText = formatXml(respText, { textNodesOnSameLine: true, indentor: ' ' });
+          } else {
+            this.responseText = respText;
           }
-          this.responseText = respText;
         }
         if (this.responseIsBlob) {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
