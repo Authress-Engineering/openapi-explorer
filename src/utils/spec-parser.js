@@ -15,11 +15,11 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, serve
   }
 
   if (requiresLookup) {
-    specMeta = await SwaggerClient({ url: specUrlOrObject, responseInterceptor });
+    specMeta = await SwaggerClient({ allowMetaPatches: false, url: specUrlOrObject, responseInterceptor });
   } else if (typeof specUrlOrObject === 'string') {
-    specMeta = await SwaggerClient({ spec: yaml.load(specUrlOrObject), responseInterceptor });
+    specMeta = await SwaggerClient({ allowMetaPatches: false, spec: yaml.load(specUrlOrObject), responseInterceptor });
   } else {
-    specMeta = await SwaggerClient({ spec: specUrlOrObject, responseInterceptor });
+    specMeta = await SwaggerClient({ allowMetaPatches: false, spec: specUrlOrObject, responseInterceptor });
   }
 
   const jsonParsedSpec = specMeta.spec;
