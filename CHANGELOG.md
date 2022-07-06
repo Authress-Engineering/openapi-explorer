@@ -8,6 +8,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
 * Arrays and Objects read-only indicator is now present at the top level, and these objects are hidden from POST/UPDATE/PATCH bodies.
 * Support $refs to load markdown files into the spec and render them appropriately.
+* Correctly show deprecated arrays and hide deprecated elements from examples.
 
 ## 0.7 ##
 * Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
