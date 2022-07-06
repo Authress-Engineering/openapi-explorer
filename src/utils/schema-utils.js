@@ -244,7 +244,7 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
 
     Object.keys(schema.properties || {}).forEach((propertyName) => {
       const innerSchema = schema.properties[propertyName];
-      if (innerSchema.deprecated && !config.includeDeprecated) { return; }
+      if (innerSchema.deprecated) { return; }
       if (innerSchema.readOnly && !config.includeReadOnly) { return; }
       if (innerSchema.writeOnly && !config.includeWriteOnly) { return; }
 
@@ -454,7 +454,8 @@ export function schemaInObjectNotation(schema, obj, level = 0, suffix = '') {
         : '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
-    obj['::props'] = schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1));
+    obj['::deprecated'] = schema.deprecated || false;
+    obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1));
   } else {
     const typeObj = getTypeInfo(schema);
     if (typeObj && typeObj.html) {
@@ -557,7 +558,6 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
   const config = {
     includeReadOnly,
     includeWriteOnly,
-    includeDeprecated: true,
     skipExampleStrings,
     xml: mimeType.toLowerCase().includes('xml'),
   };
