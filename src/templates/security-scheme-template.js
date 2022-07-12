@@ -270,7 +270,7 @@ function oAuthFlowTemplate(flowName, securityObj, authFlow) {
             ${flowName === 'clientCredentials'
               ? html`
                 <input type="password" part="textbox textbox-auth-client-secret" value = "" placeholder="Client Secret" spellcheck="false" class="oauth-client-secret" style = "margin:0 5px;">
-                <select style="margin-right:5px;" class="oauth-send-client-secret-in">
+                <select aria-label='oauth client secret location' style="margin-right:5px;" class="oauth-send-client-secret-in">
                   <option value = 'header' selected> Authorization Header </option> 
                   <option value = 'request-body'> Request Body </option> 
                 </select>`
@@ -314,7 +314,7 @@ export default function securitySchemeTemplate() {
         </div>
         ${schemes.length > 0
           ? html`  
-            <table class='m-table' style = "width:100%">
+            <table role="presentation" class='m-table' style="width:100%">
               ${schemes.map((v) => html`
                 <tr>  
                   <td style="max-width:500px; overflow-wrap: break-word;">
