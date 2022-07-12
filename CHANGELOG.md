@@ -9,6 +9,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Arrays and Objects read-only indicator is now present at the top level, and these objects are hidden from POST/UPDATE/PATCH bodies.
 * Support $refs to load markdown files into the spec and render them appropriately.
 * Correctly show deprecated arrays and hide deprecated elements from examples.
+* Add aria labels and roles to `<select>` and `<table>` elements.
 
 ## 0.7 ##
 * Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.

@@ -26,7 +26,7 @@ function serverVarsTemplate() {
   return this.selectedServer && this.selectedServer.variables
     ? html`
     <div class="table-title"> SERVER VARIABLES</div>
-    <table class='m-table'>
+    <table role="presentation" class='m-table'>
       ${Object.entries(this.selectedServer.variables).map((kv) => html`
         <tr>
           <td style="vertical-align: middle;" >${kv[0]}</td>
