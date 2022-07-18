@@ -64,7 +64,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
 
   // Servers
   let servers = [];
-  if (jsonParsedSpec.servers && Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
+  if (Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
     jsonParsedSpec.servers.forEach((v) => {
       let computedUrl = v.url.trim();
       if (!(computedUrl.startsWith('http') || computedUrl.startsWith('//') || computedUrl.startsWith('{'))) {
@@ -83,11 +83,13 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
       }
       v.computedUrl = computedUrl;
     });
-    if (serverUrl) {
+    if (serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl)) {
       jsonParsedSpec.servers.push({ url: serverUrl, computedUrl: serverUrl });
     }
   } else if (serverUrl) {
     jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }];
+  } else if (inputSpecIsAUrl) {
+    jsonParsedSpec.servers = [{ url: new URL(specUrlOrObject).origin, computedUrl: new URL(specUrlOrObject).origin }];
   } else if (window.location.origin.startsWith('http')) {
     jsonParsedSpec.servers = [{ url: window.location.origin, computedUrl: window.location.origin }];
   } else {
