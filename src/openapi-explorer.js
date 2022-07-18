@@ -510,15 +510,14 @@ export default class OpenApiExplorer extends LitElement {
       this.resolvedSpec = null;
       this.loading = true;
       this.loadFailed = false;
-      const isServerUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/);
-      if (!this.serverUrl && isServerUrl) {
-        this.serverUrl = new URL(specUrlOrObject).origin;
-      }
-      const spec = await ProcessSpec(isServerUrl, specUrlOrObject, this.serverUrl);
+      const spec = await ProcessSpec(specUrlOrObject, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
         return;
+      }
+      if (!this.serverUrl) {
+        this.serverUrl = spec.servers[0].url;
       }
       this.afterSpecParsedAndValidated(spec);
     } catch (err) {

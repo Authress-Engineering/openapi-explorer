@@ -3,7 +3,8 @@ import { marked } from 'marked';
 import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
-export default async function ProcessSpec(requiresLookup, specUrlOrObject, serverUrl = '') {
+export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
+  const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/);
   let specMeta;
 
   // Dynamically resolve non yaml or json files and insert their descriptions where necessary
@@ -14,7 +15,7 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, serve
     return val;
   }
 
-  if (requiresLookup) {
+  if (inputSpecIsAUrl) {
     specMeta = await SwaggerClient({ allowMetaPatches: false, url: specUrlOrObject, responseInterceptor });
   } else if (typeof specUrlOrObject === 'string') {
     specMeta = await SwaggerClient({ allowMetaPatches: false, spec: yaml.load(specUrlOrObject), responseInterceptor });
@@ -71,7 +72,7 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, serve
 
   // Servers
   let servers = [];
-  if (jsonParsedSpec.servers && Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
+  if (Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
     jsonParsedSpec.servers.forEach((v) => {
       let computedUrl = v.url.trim();
       if (!(computedUrl.startsWith('http') || computedUrl.startsWith('//') || computedUrl.startsWith('{'))) {
@@ -90,11 +91,13 @@ export default async function ProcessSpec(requiresLookup, specUrlOrObject, serve
       }
       v.computedUrl = computedUrl;
     });
-    if (serverUrl) {
+    if (serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl)) {
       jsonParsedSpec.servers.push({ url: serverUrl, computedUrl: serverUrl });
     }
   } else if (serverUrl) {
     jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }];
+  } else if (inputSpecIsAUrl) {
+    jsonParsedSpec.servers = [{ url: new URL(specUrlOrObject).origin, computedUrl: new URL(specUrlOrObject).origin }];
   } else if (window.location.origin.startsWith('http')) {
     jsonParsedSpec.servers = [{ url: window.location.origin, computedUrl: window.location.origin }];
   } else {
