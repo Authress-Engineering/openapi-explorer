@@ -1,6 +1,4 @@
 import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { marked } from 'marked';
 import { expandedEndpointBodyTemplate } from './expanded-endpoint-template';
 import '../components/api-request';
 import '../components/api-response';
@@ -31,21 +29,7 @@ function defaultContentTemplate() {
 
 /* eslint-disable indent */
 function focusedTagBodyTemplate(tag) {
-  return html`
-    <h1 id="${tag.elementId}">${tag.name}</h1>
-    ${this.onNavTagClick === 'show-description' && tag.description
-      ? html`
-        <div class="m-markdown">
-          ${
-            unsafeHTML(`
-            <div class="m-markdown regular-font">
-              ${marked(tag.description || '')}
-            </div>`)
-          }
-        </div>`
-      : ''
-    }
-  `;
+  return html`<h1 id="${tag.elementId}">${tag.name}</h1>`;
 }
 
 export default function focusedEndpointTemplate() {

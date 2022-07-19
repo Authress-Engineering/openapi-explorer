@@ -65,7 +65,6 @@ export default class OpenApiExplorer extends LitElement {
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
-      onNavTagClick: { type: String, attribute: 'on-nav-tag-click' },
 
       // Schema Styles
       schemaStyle: { type: String, attribute: 'schema-style' },
@@ -379,7 +378,6 @@ export default class OpenApiExplorer extends LitElement {
     this.schemaHideReadOnly = ['post', 'put', 'patch'].join(',');
     this.schemaHideWriteOnly = true;
     if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }
-    if (!this.onNavTagClick || !'expand-collapse, show-description,'.includes(`${this.onNavTagClick},`)) { this.onNavTagClick = 'expand-collapse'; }
     if (!this.responseAreaHeight) {
       this.responseAreaHeight = '300px';
     }
