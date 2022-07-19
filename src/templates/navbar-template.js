@@ -8,32 +8,44 @@ export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {
     if (expand) {
       tagAndPathEl.classList.remove('collapsed');
       tagAndPathEl.classList.add('expanded');
-    } else {
-      tagAndPathEl.classList.remove('expanded');
-      tagAndPathEl.classList.add('collapsed');
+      return;
     }
+
+    tagAndPathEl.classList.remove('expanded');
+    tagAndPathEl.classList.add('collapsed');
   }
 }
 
-export function expandCollapseAll(navEl, action = 'expand-all') {
+function onExpandCollapse(tagId, e) {
+  const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
+  if (!tag) {
+    return;
+  }
+  expandCollapseNavBarTag(e.target, 'toggle');
+  tag.expanded = !tag.expanded;
+
+  if (this.resolvedSpec.tags.some(t => t.expanded)) {
+    this.operationsCollapsed = false;
+  }
+
+  if (this.resolvedSpec.tags.every(t => !t.expanded)) {
+    this.operationsCollapsed = true;
+  }
+}
+
+export function expandCollapseAll(e, action = 'expand-all') {
+  const navEl = e.target.closest('.nav-scroll');
+
   const elList = [...navEl.querySelectorAll('.nav-bar-tag-and-paths')];
   if (action === 'expand-all') {
-    elList.map((el) => {
-      expandCollapseNavBarTag(el, 'expand');
-    });
+    elList.map((el) => { expandCollapseNavBarTag(el, 'expand'); });
+    this.resolvedSpec.tags.forEach(t => { t.expanded = true; });
+    this.operationsCollapsed = false;
   } else {
-    elList.map((el) => {
-      expandCollapseNavBarTag(el, 'collapse');
-    });
+    elList.map((el) => { expandCollapseNavBarTag(el, 'collapse'); });
+    this.resolvedSpec.tags.forEach(t => { t.expanded = false; });
+    this.operationsCollapsed = true;
   }
-}
-
-function onExpandCollapse(e) {
-  expandCollapseNavBarTag(e.target, 'toggle');
-}
-
-function onExpandCollapseAll(e, action = 'expand-all') {
-  expandCollapseAll(e.target.closest('.nav-scroll'), action);
 }
 
 /* eslint-disable indent */
@@ -96,17 +108,19 @@ export default function navbarTemplate() {
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToEventTarget(e, false)}'></slot>
 
       <slot name="operations-header">
-        <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
-        <div class='nav-bar-section-title'>OPERATIONS</div>  
-        <div style="display:flex; margin-left:10px;">
-            ${this.renderStyle === 'focused' && this.resolvedSpec.tags.length > 1
-              ? html`
-                ${this.operationsCollapsed
-                  ? html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'expand-all'); this.operationsCollapsed = false; }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                  : html`<div @click="${(e) => { onExpandCollapseAll.call(this, e, 'collapse-all'); this.operationsCollapsed = true; }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
-                }`
-              : ''
-            }  
+        <div class="sticky-scroll-element">
+          <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
+          <div class='nav-bar-section-title'>OPERATIONS</div>  
+          <div style="display:flex; margin-left:10px;">
+              ${this.renderStyle === 'focused' && this.resolvedSpec.tags.length > 1
+                ? html`
+                  ${this.operationsCollapsed
+                    ? html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'expand-all'); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                    : html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'collapse-all'); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                  }`
+                : ''
+              }  
+            </div>
           </div>
         </div>
       </slot>
@@ -118,25 +132,15 @@ export default function navbarTemplate() {
           <slot name="nav-${tag.elementId}">
             <div class='nav-bar-tag-and-paths ${tag.expanded ? 'expanded' : 'collapsed'}'>
               ${tag.name === 'General ⦂'
-                ? html`<hr style="border:none; border-top: 1px dotted var(--nav-text-color); opacity:0.4; margin-top:-1px;"/>`
+                ? html``
                 : html`
-                  <div 
-                    class='nav-bar-tag' 
-                    id="link-${tag.elementId}" 
-                    data-content-id='${tag.elementId}'
-                    @click='${(e) => {
-                      if (this.renderStyle === 'focused' && this.onNavTagClick === 'expand-collapse') {
-                        onExpandCollapse.call(this, e);
-                      } else {
-                        this.scrollToEventTarget(e, false);
-                      }
-                    }}'>
-                    <div>${tag.name}</div>
-                    <div class="nav-bar-tag-icon" @click="${(e) => {
-                      if (this.renderStyle === 'focused' && this.onNavTagClick === 'show-description') {
-                        onExpandCollapse.call(this, e);
-                      }
-                    }}">
+                  <div  class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}'
+                    @click='${(e) => { onExpandCollapse.call(this, tag.elementId, e); }}'>
+
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                      <div>${tag.name}</div>
+                      <div class="nav-bar-tag-icon expand-button-arrow">▸</div>
+                      <div class="nav-bar-tag-icon collapse-button-arrow">▾</div>
                     </div>
                   </div>
                 `
@@ -170,8 +174,10 @@ export default function navbarTemplate() {
       <!-- COMPONENTS -->
       ${this.resolvedSpec.components && this.showComponents === 'true'
         ? html`
-          <div id='link-components' class='nav-bar-section'>
-            <div class='nav-bar-section-title'>COMPONENTS</div>
+          <div class="sticky-scroll-element">
+            <div id='link-components' class='nav-bar-section'>
+              <div class='nav-bar-section-title'>COMPONENTS</div>
+            </div>
           </div>
           ${this.resolvedSpec.components.map((component) => (component.subComponents.length
             ? html`

@@ -29,14 +29,11 @@ export default css`
   justify-content: space-between;
   flex-direction: row;
 }
-.nav-bar.read .nav-bar-tag-icon {
-  display:none;
-}
 
 .nav-bar-tag-icon {
+  font-size: 16px;
+  padding-right: 1px;
   color: var(--nav-text-color);
-  font-size: 20px; 
-  margin-right: -16px;
 }
 .nav-bar-tag-icon:hover {
   color:var(--nav-hover-text-color);
@@ -44,15 +41,15 @@ export default css`
 .nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-paths-under-tag {
   display:none;
 }
-.nav-bar.focused .nav-bar-tag-and-paths .nav-bar-tag-icon::after {
-  content: '▸';
-  font-size: 16px;
-  text-align: center;
-  display: inline-block;
+
+.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon.collapse-button-arrow {
+  display: none;
 }
-.nav-bar.focused .nav-bar-tag-and-paths.expanded .nav-bar-tag-icon::after {
-  transform: rotate(90deg);
+
+.nav-bar-tag-and-paths.expanded .nav-bar-tag-icon.expand-button-arrow {
+  display: none;
 }
+
 .nav-bar.focused, .nav-scroll {
   border-top: 1px solid var(--secondary-color);
 }
@@ -71,7 +68,7 @@ export default css`
   color: var(--secondary-color);
   border-left:4px solid transparent;
   font-weight:bold;
-  padding: 15px 30px 15px 10px;
+  padding: 15px 15px 15px 10px;
   text-transform: capitalize;
 }
 
@@ -108,9 +105,13 @@ export default css`
   font-size: var(--font-size-small);
   color: var(--nav-text-color);
   padding: 15px 15px 5px 5px;
-  filter:opacity(0.5);
   font-weight:bold;
   border-bottom: 1px solid var(--nav-text-color);
+  background: var(--nav-bg-color);
+}
+.sticky-scroll-element {
+  position: sticky;
+  top: 0;
 }
 
 .nav-bar-h2 {margin-left:12px;}
