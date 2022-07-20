@@ -4,7 +4,7 @@ import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
-  const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/);
+  const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/) || typeof specUrlOrObject === 'object' && typeof specUrlOrObject.href === 'string';
   let specMeta;
 
   // Dynamically resolve non yaml or json files and insert their descriptions where necessary
@@ -16,7 +16,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   }
 
   if (inputSpecIsAUrl) {
-    specMeta = await SwaggerClient({ allowMetaPatches: false, url: specUrlOrObject, responseInterceptor });
+    specMeta = await SwaggerClient({ allowMetaPatches: false, url: specUrlOrObject.toString(), responseInterceptor });
   } else if (typeof specUrlOrObject === 'string') {
     specMeta = await SwaggerClient({ allowMetaPatches: false, spec: yaml.load(specUrlOrObject), responseInterceptor });
   } else {
