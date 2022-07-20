@@ -68,8 +68,7 @@ export default css`
   color: var(--secondary-color);
   border-left:4px solid transparent;
   font-weight:bold;
-  padding: 15px 15px 15px 10px;
-  text-transform: capitalize;
+  padding: 15px 15px 15px 10px; 
 }
 
 .nav-bar-components,
