@@ -12,6 +12,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add aria labels and roles to `<select>` and `<table>` elements.
 * [Bug] - don't force adding the spec url to the list of servers if the server list is already populated
 * [Bug] - Operations/Components expand/collapse incorrectly was scrolling out of view, now it is sticky at the top of the nav section.
+* [Bug] - Remove unnecessary forced capitalization from tags in the nav bar
 
 ## 0.7 ##
 * Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
