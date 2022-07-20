@@ -1,7 +1,6 @@
 import { html } from 'lit-element';
 
 // Templates
-import expandedEndpointTemplate from './expanded-endpoint-template';
 import focusedEndpointTemplate from './focused-endpoint-template';
 import overviewTemplate from './overview-template';
 import endpointTemplate from './endpoint-template';
@@ -61,11 +60,7 @@ export default function responsiveViewMainBodyTemplate() {
                       class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
                       <slot name="custom-section"></slot>
                     </section>
-                    ${this.renderStyle === 'read'
-                      ? expandedEndpointTemplate.call(this)
-                      : endpointTemplate.call(this)
-                    }
-                  `
+                    ${endpointTemplate.call(this)}`
                 }
                 </div>
               `
