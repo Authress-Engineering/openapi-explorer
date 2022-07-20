@@ -515,7 +515,7 @@ export default class OpenApiExplorer extends LitElement {
         return;
       }
       if (!this.serverUrl) {
-        this.serverUrl = spec.servers[0].url;
+        this.serverUrl = spec.servers[0].computedUrl || spec.servers[0].url;
       }
       this.afterSpecParsedAndValidated(spec);
     } catch (err) {
