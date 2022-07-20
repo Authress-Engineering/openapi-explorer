@@ -571,7 +571,7 @@ export default class OpenApiExplorer extends LitElement {
     const locationHash = this.explorerLocation;
     if (locationHash) {
       if (this.renderStyle === 'view') {
-        this.expandAndGotoOperation(locationHash, true, true);
+        this.expandAndGotoOperation(locationHash);
       } else if (this.renderStyle === 'focused') {
         this.scrollTo(locationHash);
       }
@@ -581,39 +581,28 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
-  expandAndGotoOperation(elementId, scrollToElement = true) {
+  expandAndGotoOperation(elementId) {
     // Expand full operation and tag
-    let isExpandingNeeded = true;
+    let isExpandingNeeded = false;
+    
+    const tag = this.resolvedSpec.tags.find(t => t.paths && t.paths.find(p => p.elementId === elementId));
+    const path = tag && tag.paths && tag.paths.find((p) => p.elementId === elementId);
+    if (path && (!path.expanded || !tag.expanded)) {
+      isExpandingNeeded = true;
+      path.expanded = true;
+      tag.expanded = true;
+      this.requestUpdate();
+    }
+
+    // requestUpdate() and delay required, else we cant find element because it won't exist immediately
     const tmpElementId = elementId.indexOf('#') === -1 ? elementId : elementId.substring(1);
-    if (tmpElementId.startsWith('overview') || tmpElementId === 'servers' || tmpElementId === 'auth') {
-      isExpandingNeeded = false;
-    } else {
-      for (let i = 0; i < this.resolvedSpec.tags && this.resolvedSpec.tags.length; i++) {
-        const tag = this.resolvedSpec.tags[i];
-        const path = tag.paths && tag.paths.find((p) => p.elementId === elementId);
-        if (path) {
-          if (path.expanded && tag.expanded) {
-            isExpandingNeeded = false;
-          } else {
-            path.expanded = true;
-            tag.expanded = true;
-          }
-        }
+    window.setTimeout(() => {
+      const gotoEl = this.shadowRoot.getElementById(tmpElementId);
+      if (gotoEl) {
+        gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+        replaceState(tmpElementId);
       }
-    }
-    if (scrollToElement) {
-      // requestUpdate() and delay required, else we cant find element
-      if (isExpandingNeeded) {
-        this.requestUpdate();
-      }
-      window.setTimeout(() => {
-        const gotoEl = this.shadowRoot.getElementById(tmpElementId);
-        if (gotoEl) {
-          gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
-          replaceState(tmpElementId);
-        }
-      }, isExpandingNeeded ? 150 : 0);
-    }
+    }, isExpandingNeeded ? 150 : 0);
   }
 
   isValidTopId(id) {
@@ -696,20 +685,20 @@ export default class OpenApiExplorer extends LitElement {
       repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => slot === event.target);
     }
     this.isIntersectionObserverActive = false;
-    this.scrollTo(navEl.dataset.contentId, true, scrollNavItemToView, repeatedElementIndex);
+    this.scrollTo(navEl.dataset.contentId, scrollNavItemToView, repeatedElementIndex);
     setTimeout(() => {
       this.isIntersectionObserverActive = true;
     }, 300);
   }
 
   // Public Method (scrolls to a given path and highlights the left-nav selection)
-  async scrollTo(elementId, expandPath = true, scrollNavItemToView = true, repeatedElementIndex) {
+  async scrollTo(elementId, scrollNavItemToView = true, repeatedElementIndex) {
     if (!this.resolvedSpec) {
       return;
     }
 
     if (this.renderStyle === 'view') {
-      this.expandAndGotoOperation(elementId, expandPath, true);
+      this.expandAndGotoOperation(elementId);
       return;
     }
 

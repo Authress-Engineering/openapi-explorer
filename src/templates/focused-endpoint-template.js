@@ -6,7 +6,6 @@ import componentsTemplate from './components-template';
 import overviewTemplate from './overview-template';
 import serverTemplate from './server-template';
 import securitySchemeTemplate from './security-scheme-template';
-import { expandCollapseNavBarTag } from './navbar-template';
 
 function wrapFocusedTemplate(templateToWrap) {
   return html`
@@ -71,9 +70,6 @@ export default function focusedEndpointTemplate() {
       }
     }
     if (selectedPathObj) {
-      // In focused mode we must expand the nav-bar tag element if it is collapsed
-      const newNavEl = this.shadowRoot.getElementById(`link-${focusElId}`);
-      expandCollapseNavBarTag(newNavEl, 'expand');
       focusedTemplate = wrapFocusedTemplate.call(this, expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name));
     } else {
       // if explorerLocation is not found then show the default content (overview or first-path)

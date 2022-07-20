@@ -14,7 +14,7 @@ function toggleExpand(path) {
     replaceState(null);
   } else {
     path.expanded = true; // Expand
-    if (path.elementId === getCurrentElement()) {
+    if (path.elementId !== getCurrentElement()) {
       replaceState(path.elementId);
     }
   }
