@@ -558,26 +558,20 @@ export default class OpenApiExplorer extends LitElement {
     this.resolvedSpec = spec;
     this.selectedServer = this.resolvedSpec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl);
     this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
+    // Wait for 10 milliseconds to account for any changes to the spec via spec-loaded
+    await sleep(10);
     this.requestUpdate();
 
     // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
     this.intersectionObserver.disconnect();
-    if (this.renderStyle === 'read') {
-      await sleep(100);
-      this.observeExpandedContent(); // This will auto-highlight the selected nav-item in read-mode
+
+    if (this.renderStyle === 'focused') {
+      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags && this.resolvedSpec.tags[0] && this.resolvedSpec.tags[0].paths[0];
+      this.scrollTo(this.explorerLocation || defaultElementId);
     }
 
-    // On first time Spec load, try to navigate to location hash if provided
-    const locationHash = this.explorerLocation;
-    if (locationHash) {
-      if (this.renderStyle === 'view') {
-        this.expandAndGotoOperation(locationHash);
-      } else if (this.renderStyle === 'focused') {
-        this.scrollTo(locationHash);
-      }
-    } else if (this.renderStyle === 'focused') {
-      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags[0] && this.resolvedSpec.tags[0].paths[0];
-      this.scrollTo(defaultElementId);
+    if (this.renderStyle === 'view' && this.explorerLocation) {
+      this.expandAndGotoOperation(this.explorerLocation);
     }
   }
 
@@ -702,11 +696,9 @@ export default class OpenApiExplorer extends LitElement {
       return;
     }
 
-    if (this.renderStyle === 'focused') {
-      // explorerLocation will get validated in the focused-endpoint-template
-      this.explorerLocation = elementId;
-      await sleep(0);
-    }
+    // explorerLocation will get validated in the focused-endpoint-template
+    this.explorerLocation = elementId;
+    await sleep(0);
 
     const contentEl = this.shadowRoot.getElementById(elementId);
     if (!contentEl) {
@@ -714,22 +706,20 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     // For focused APIs, always scroll to the top of the component
-    if (this.renderStyle === 'focused' && !elementId.match('cmp--')) {
+    if (!elementId.match('cmp--')) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
     } else {
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
 
     // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
-    if (this.renderStyle === 'focused') {
-      const requestEl = this.shadowRoot.querySelector('api-request');
-      if (requestEl) {
-        requestEl.resetRequestBodySelection();
-      }
-      const responseEl = this.shadowRoot.querySelector('api-response');
-      if (responseEl) {
-        responseEl.resetSelection();
-      }
+    const requestEl = this.shadowRoot.querySelector('api-request');
+    if (requestEl) {
+      requestEl.resetRequestBodySelection();
+    }
+    const responseEl = this.shadowRoot.querySelector('api-response');
+    if (responseEl) {
+      responseEl.resetSelection();
     }
 
     // Update Location Hash
@@ -761,7 +751,7 @@ export default class OpenApiExplorer extends LitElement {
       node.classList.remove('active');
     });
     newNavEl.classList.add('active'); // must add the class after scrolling
-    // this.requestUpdate();
+    this.requestUpdate();
   }
 
   // Event handler for Advanced Search text-inputs and checkboxes
