@@ -22,7 +22,6 @@ function onApiServerVarChange(e, serverObj) {
 
 /* eslint-disable indent */
 function serverVarsTemplate() {
-  // const selectedServerObj = this.resolvedSpec.servers.find((v) => (v.url === this.selectedServer));
   return this.selectedServer && this.selectedServer.variables
     ? html`
     <div class="table-title"> SERVER VARIABLES</div>

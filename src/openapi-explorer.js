@@ -517,6 +517,7 @@ export default class OpenApiExplorer extends LitElement {
       if (!this.serverUrl) {
         this.serverUrl = spec.servers[0].computedUrl || spec.servers[0].url;
       }
+      this.selectedServer = spec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl) || spec.servers[0];
       this.afterSpecParsedAndValidated(spec);
     } catch (err) {
       this.loading = false;
@@ -554,12 +555,10 @@ export default class OpenApiExplorer extends LitElement {
     this.requestUpdate();
   }
 
-  async afterSpecParsedAndValidated(spec) {
+  afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
-    this.selectedServer = this.resolvedSpec.servers.find((s) => s.url === this.serverUrl || !this.serverUrl);
+
     this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
-    // Wait for 10 milliseconds to account for any changes to the spec via spec-loaded
-    await sleep(10);
     this.requestUpdate();
 
     // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
