@@ -107,23 +107,23 @@ export default function navbarTemplate() {
 
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToEventTarget(e, false)}'></slot>
 
-      <slot name="operations-header">
-        <div class="sticky-scroll-element">
-          <div id='link-paths' class='nav-bar-section' part="navbar-operations-header">
-          <div class='nav-bar-section-title'>OPERATIONS</div>  
-          <div style="display:flex; margin-left:10px;">
-              ${this.renderStyle === 'focused' && this.resolvedSpec.tags.length > 1
-                ? html`
-                  ${this.operationsCollapsed
-                    ? html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'expand-all'); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                    : html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'collapse-all'); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
-                  }`
-                : ''
-              }  
-            </div>
+      <div class="sticky-scroll-element">
+        <div class='nav-bar-section' part="navbar-operations-header">
+          <slot name="operations-header">
+            <div class='nav-bar-section-title'>OPERATIONS</div>  
+          </slot>
+          <div style="" part="navbar-operations-header-collapse">
+            ${this.resolvedSpec.tags.length > 1
+              ? html`
+                ${this.operationsCollapsed
+                  ? html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'expand-all'); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                  : html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'collapse-all'); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                }`
+              : ''
+            }  
           </div>
         </div>
-      </slot>
+      </div>
 
       <!-- TAGS AND PATHS-->
       ${this.resolvedSpec.tags

@@ -13,6 +13,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * [Bug] - don't force adding the spec url to the list of servers if the server list is already populated
 * [Bug] - Operations/Components expand/collapse incorrectly was scrolling out of view, now it is sticky at the top of the nav section.
 * [Bug] - Remove unnecessary forced capitalization from tags in the nav bar
+* [Bug] - Fix `explorer-location` tracking for updates triggered outside of component
 
 ## 0.7 ##
 * Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
@@ -37,7 +38,6 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.3 ##
 * Moved npm package target to point at main source location instead of `dist`. The distributable minified version is still present at `/dist/openapi-explorer.min.js`.
-* Add `setSecuritySchemeToken(securitySchemeId, token)` method for setting scheme tokens.
 * Add two `navbar-` css `::parts`
 
 ## 0.2 ##

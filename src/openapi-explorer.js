@@ -463,6 +463,11 @@ export default class OpenApiExplorer extends LitElement {
         this.intersectionObserver.disconnect();
       }
     }
+    if (name === 'explorer-location') {
+      window.setTimeout(() => {
+        this.scrollTo(newVal);
+      }, 0);
+    }
     super.attributeChangedCallback(name, oldVal, newVal);
   }
 
@@ -524,10 +529,7 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
-  setSecuritySchemeToken(apiKeyId, token) {
-    this.setAuthenticationConfiguration(apiKeyId, { token });
-  }
-
+  // Public Method
   async setAuthenticationConfiguration(apiKeyId, { token, clientId, clientSecret, redirectUri }) {
     const securityObj = this.resolvedSpec && this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
     if (!securityObj) {
