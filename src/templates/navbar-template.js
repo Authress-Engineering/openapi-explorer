@@ -1,51 +1,22 @@
 import { html } from 'lit-element';
 import { pathIsInSearch } from '../utils/common-utils';
 
-export function expandCollapseNavBarTag(navLinkEl, action = 'toggle') {
-  const tagAndPathEl = navLinkEl && navLinkEl.closest('.nav-bar-tag-and-paths');
-  if (tagAndPathEl) {
-    const expand = tagAndPathEl.classList.contains('collapsed') && action === 'toggle' || action === 'expand';
-    if (expand) {
-      tagAndPathEl.classList.remove('collapsed');
-      tagAndPathEl.classList.add('expanded');
-      return;
-    }
-
-    tagAndPathEl.classList.remove('expanded');
-    tagAndPathEl.classList.add('collapsed');
-  }
-}
-
-function onExpandCollapse(tagId, e) {
+function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
   if (!tag) {
     return;
   }
-  expandCollapseNavBarTag(e.target, 'toggle');
   tag.expanded = !tag.expanded;
-
-  if (this.resolvedSpec.tags.some(t => t.expanded)) {
-    this.operationsCollapsed = false;
+  if (tag.expanded && this.operationsCollapsed) {
+    this.resolvedSpec.tags.filter(t => t.elementId !== tagId).forEach(t => t.expanded = false);
   }
-
-  if (this.resolvedSpec.tags.every(t => !t.expanded)) {
-    this.operationsCollapsed = true;
-  }
+  this.requestUpdate();
 }
 
-export function expandCollapseAll(e, action = 'expand-all') {
-  const navEl = e.target.closest('.nav-scroll');
-
-  const elList = [...navEl.querySelectorAll('.nav-bar-tag-and-paths')];
-  if (action === 'expand-all') {
-    elList.map((el) => { expandCollapseNavBarTag(el, 'expand'); });
-    this.resolvedSpec.tags.forEach(t => { t.expanded = true; });
-    this.operationsCollapsed = false;
-  } else {
-    elList.map((el) => { expandCollapseNavBarTag(el, 'collapse'); });
-    this.resolvedSpec.tags.forEach(t => { t.expanded = false; });
-    this.operationsCollapsed = true;
-  }
+export function expandCollapseAll() {
+  const expand = this.operationsCollapsed;
+  this.operationsCollapsed = !expand;
+  this.resolvedSpec.tags.forEach(t => { t.expanded = expand; });
 }
 
 /* eslint-disable indent */
@@ -116,8 +87,8 @@ export default function navbarTemplate() {
             ${this.resolvedSpec.tags.length > 1
               ? html`
                 ${this.operationsCollapsed
-                  ? html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'expand-all'); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                  : html`<div @click="${(e) => { expandCollapseAll.call(this, e, 'collapse-all'); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                  ? html`<div @click="${(e) => { expandCollapseAll.call(this, e); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                  : html`<div @click="${(e) => { expandCollapseAll.call(this, e); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
                 }`
               : ''
             }  
@@ -135,7 +106,7 @@ export default function navbarTemplate() {
                 ? html``
                 : html`
                   <div  class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}'
-                    @click='${(e) => { onExpandCollapse.call(this, tag.elementId, e); }}'>
+                    @click='${() => { onExpandCollapse.call(this, tag.elementId); }}'>
 
                     <div style="display: flex; justify-content: space-between; width: 100%;">
                       <div>${tag.name}</div>
