@@ -58,7 +58,6 @@ export default class OpenApiExplorer extends LitElement {
 
       // Spec
       specUrl: { type: String, attribute: 'spec-url' },
-      specFile: { type: String, attribute: false },
 
       // UI Layouts
       layout: { type: String },
@@ -79,8 +78,6 @@ export default class OpenApiExplorer extends LitElement {
       showInfo: { type: String, attribute: 'show-info' },
       allowAuthentication: { type: String, attribute: 'show-authentication' },
       allowTry: { type: String, attribute: 'enable-console' },
-      allowSpecUrlLoad: { type: String, attribute: 'allow-spec-url-load' },
-      allowSpecFileLoad: { type: String, attribute: 'allow-spec-file-load' },
       allowSearch: { type: String, attribute: 'allow-search' },
       allowAdvancedSearch: { type: String, attribute: 'allow-advanced-search' },
       allowServerSelection: { type: String, attribute: 'show-server-selection' },
@@ -558,7 +555,7 @@ export default class OpenApiExplorer extends LitElement {
   afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
 
-    this.dispatchEvent(new CustomEvent('spec-loaded', { detail: spec }));
+    this.dispatchEvent(new CustomEvent('spec-loaded', { bubbles: true, detail: spec }));
     this.requestUpdate();
 
     // Initiate IntersectionObserver and put it at the end of event loop, to allow loading all the child elements (must for larger specs)
