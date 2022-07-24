@@ -11,17 +11,15 @@ function componentBodyTemplate(sComponent) {
 
   return html`
   <div class='expanded-endpoint-body observe-me ${sComponent.name}' id='cmp--${sComponent.id}' >
-    ${html`<h2>${sComponent.name}</h2>
-      ${sComponent.component
-    ? html`
-          <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
-            <schema-tree
-              .data = '${formdataPartSchema}'
-              schema-expand-level = "${this.schemaExpandLevel}"
-              schema-description-expanded = "${this.schemaDescriptionExpanded}"> </schema-tree>
-          </div>`
-    : ''}
-    `}
+    <h2>${sComponent.name}</h2>
+    <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
+      <schema-tree
+        .data = '${formdataPartSchema}'
+        schema-expand-level = "${this.schemaExpandLevel}"
+        schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        schema-hide-read-only=false
+        schema-hide-write-only=false> </schema-tree>
+    </div>
   </div>
   `;
 }
@@ -36,7 +34,7 @@ export default function componentsTemplate() {
       </div>
     </div>
     <div class='regular-font section-gap--read-mode'>
-      ${component.subComponents.map((sComponent) => componentBodyTemplate.call(this, sComponent))}
+      ${component.subComponents.filter(c => c.expanded).map((sComponent) => componentBodyTemplate.call(this, sComponent))}
     </div>
     `)
 }

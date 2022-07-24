@@ -25,7 +25,7 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep, componentIsInSearch } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
@@ -470,6 +470,7 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   onSearchChange(e) {
+    this.operationsCollapsed = false;
     this.matchPaths = e.target.value;
     this.resolvedSpec.tags.forEach((tag) => tag.paths.filter((v) => {
       if (this.matchPaths) {
@@ -479,6 +480,14 @@ export default class OpenApiExplorer extends LitElement {
         }
       }
     }));
+    this.resolvedSpec.components.forEach((component) => {
+      component.subComponents.forEach((subComponent) => {
+        subComponent.expanded = false;
+        if (!this.matchPaths || componentIsInSearch(this.matchPaths, subComponent)) {
+          subComponent.expanded = true;
+        }
+      });
+    });
     this.requestUpdate();
   }
 
@@ -486,6 +495,11 @@ export default class OpenApiExplorer extends LitElement {
     const searchEl = this.shadowRoot.getElementById('nav-bar-search');
     searchEl.value = '';
     this.matchPaths = '';
+    this.resolvedSpec.components.forEach((component) => {
+      component.subComponents.forEach((v) => {
+        v.expanded = true;
+      });
+    });
   }
 
   async onShowSearchModalClicked() {

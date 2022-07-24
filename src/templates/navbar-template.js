@@ -150,7 +150,7 @@ export default function navbarTemplate() {
               <div class='nav-bar-section-title'>COMPONENTS</div>
             </div>
           </div>
-          ${this.resolvedSpec.components.map((component) => (component.subComponents.length
+          ${this.resolvedSpec.components.map((component) => (component.subComponents.filter(s => s.expanded).length
             ? html`
               <div class='nav-bar-tag' 
                 data-content-id='cmp--${component.name.toLowerCase()}' 
@@ -158,7 +158,7 @@ export default function navbarTemplate() {
                 @click='${(e) => this.scrollToEventTarget(e, false)}'>
                 ${component.name}
               </div>
-              ${component.subComponents.map((p) => html`
+              ${component.subComponents.filter(s => s.expanded).map((p) => html`
                 <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
                   <span> ${p.name} </span>
                 </div>`)
