@@ -33,10 +33,7 @@ export default function responsiveViewMainBodyTemplate() {
 
     <div id='the-main-body' class="body">
       <!-- Side Nav -->
-      ${((this.renderStyle === 'read' || this.renderStyle === 'focused')
-          && this.showSideNav === 'true'
-          && this.resolvedSpec
-        ) ? navbarTemplate.call(this) : ''
+      ${(this.renderStyle === 'focused' && this.resolvedSpec) ? navbarTemplate.call(this) : ''
       }
 
       <!-- Main Content -->
