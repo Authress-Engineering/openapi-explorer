@@ -119,24 +119,20 @@ function getComponents(openApiSpec) {
   }
   const components = [];
   for (const component in openApiSpec.components) {
-    const subComponents = [];
-    for (const sComponent in openApiSpec.components[component]) {
-      const scmp = {
-        show: true,
-        id: `${component.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
-        name: sComponent,
-        component: openApiSpec.components[component][sComponent],
-      };
-      subComponents.push(scmp);
-    }
+    const subComponents = Object.keys(openApiSpec.components[component]).map(sComponent => ({
+      show: true,
+      id: `${component.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
+      name: sComponent,
+      component: openApiSpec.components[component][sComponent]
+    })).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-    let cmpDescription = component;
-    let cmpName = component;
+    let cmpDescription;
+    let cmpName;
 
     switch (component) {
       case 'schemas':
         cmpName = 'Schemas';
-        cmpDescription = 'Schemas allows the definition of input and output data types. These types can be objects, but also primitives and arrays.';
+        cmpDescription = '';
         break;
       case 'responses':
         cmpName = 'Responses';
@@ -151,17 +147,12 @@ function getComponents(openApiSpec) {
         cmpDescription = 'List of Examples for operations, can be requests, responses and objects examples.';
         break;
       case 'requestBodies':
-        cmpName = 'Request Bodies';
-        cmpDescription = 'Describes common request bodies that are used across the API operations.';
         break;
       case 'headers':
         cmpName = 'Headers';
         cmpDescription = 'Headers follows the structure of the Parameters but they are explicitly in "header"';
         break;
       case 'securitySchemes':
-        cmpName = 'Security Schemes';
-        // eslint-disable-next-line max-len
-        cmpDescription = 'Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header, a cookie parameter or as a query parameter), OAuth2\'s common flows(client credentials and authorization code) as defined in RFC6749, and OpenID Connect Discovery.';
         break;
       case 'links':
         cmpName = 'Links';
@@ -178,16 +169,17 @@ function getComponents(openApiSpec) {
         break;
     }
 
-    const cmp = {
-      show: true,
-      name: cmpName,
-      description: cmpDescription,
-      subComponents,
-    };
-    components.push(cmp);
+    if (cmpName) {
+      components.push({
+        show: true,
+        name: cmpName,
+        description: cmpDescription,
+        subComponents,
+      });
+    }
   }
 
-  return components || [];
+  return components;
 }
 
 function groupByTags(openApiSpec) {

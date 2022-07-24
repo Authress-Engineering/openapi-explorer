@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { schemaInObjectNotation } from '../utils/schema-utils';
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { marked } from 'marked';
@@ -6,16 +7,19 @@ import '../components/json-tree';
 import '../components/schema-tree';
 
 function componentBodyTemplate(sComponent) {
+  const formdataPartSchema = schemaInObjectNotation(sComponent.component, {});
+
   return html`
-  <div class='divider'></div>
   <div class='expanded-endpoint-body observe-me ${sComponent.name}' id='cmp--${sComponent.id}' >
-    ${html`
-      <h1> ${sComponent.name} </h1>
+    ${html`<h2>${sComponent.name}</h2>
       ${sComponent.component
     ? html`
-      <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
-        <json-tree class="border tree" render-style='${this.renderStyle}' .data="${sComponent.component}"> </json-tree>
-      </div>`
+          <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
+            <schema-tree
+              .data = '${formdataPartSchema}'
+              schema-expand-level = "${this.schemaExpandLevel}"
+              schema-description-expanded = "${this.schemaDescriptionExpanded}"> </schema-tree>
+          </div>`
     : ''}
     `}
   </div>

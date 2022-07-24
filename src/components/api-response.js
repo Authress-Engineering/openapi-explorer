@@ -255,7 +255,7 @@ export default class ApiResponse extends LitElement {
   mimeExampleTemplate(mimeRespDetails) {
     if (!mimeRespDetails) {
       return html`
-        <pre style='color:var(--red)' class = '${this.renderStyle === 'read' ? 'read example-panel border pad-8-16' : 'example-panel border-top'}'> No example provided </pre>
+        <pre style='color:var(--red)' class = 'example-panel border-top'> No example provided </pre>
       `;
     }
     return html`
@@ -268,10 +268,10 @@ export default class ApiResponse extends LitElement {
               <json-tree 
                 render-style = '${this.renderStyle}'
                 .data="${mimeRespDetails.examples[0].exampleValue}"
-                class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
+                class = 'example-panel pad-top-8'
               ></json-tree>`
             : html`
-              <pre class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>${mimeRespDetails.examples[0].exampleValue}</pre>
+              <pre class = 'example-panel generic-tree border-top pad-top-8'>${mimeRespDetails.examples[0].exampleValue}</pre>
             `
           }`
         : html`

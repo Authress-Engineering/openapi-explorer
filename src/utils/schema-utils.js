@@ -2,6 +2,9 @@ import cloneDeep from 'lodash.clonedeep';
 import { expandN } from 'regex-to-strings';
 import xmlFormatter from './xml/xml';
 
+// When the type is not known for a property set the displayed type to be this:
+const IS_MISSING_TYPE_INFO_TYPE = '';
+
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema) {
   if (!schema) {
@@ -21,7 +24,7 @@ export function getTypeInfo(schema) {
       dataType = dataType.replace('string', schema.enum ? 'enum' : schema.format);
     }
   } else {
-    dataType = '{missing-type-info}';
+    dataType = IS_MISSING_TYPE_INFO_TYPE;
   }
 
   const info = {
@@ -42,7 +45,7 @@ export function getTypeInfo(schema) {
 
   if (info.type === '{recursive}') {
     info.description = schema.$ref.substring(schema.$ref.lastIndexOf('/') + 1);
-  } else if (info.type === '{missing-type-info}') {
+  } else if (info.type === IS_MISSING_TYPE_INFO_TYPE) {
     info.description = info.description || '';
   }
 
@@ -50,7 +53,7 @@ export function getTypeInfo(schema) {
   info.allowedValues = Array.isArray(schema.enum) ? schema.enum.join('┃') : '';
   if (dataType === 'array' && schema.items) {
     const arrayItemType = schema.items.type;
-    const arrayItemDefault = schema.items.default !== undefined ? schema.items.default : '';
+    const arrayItemDefault = schema.items.default ?? '';
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;
@@ -58,12 +61,12 @@ export function getTypeInfo(schema) {
   }
 
   if (dataType.match(/integer|number/g)) {
-    const minimum = schema.minimum !== undefined ? schema.minimum : schema.exclusiveMinimum;
-    const maximum = schema.maximum !== undefined ? schema.maximum : schema.exclusiveMaximum;
+    const minimum = schema.minimum ?? schema.exclusiveMinimum;
+    const maximum = schema.maximum ?? schema.exclusiveMaximum;
     const leftBound = schema.minimum !== undefined ? '[' : '(';
     const rightBound = schema.maximum !== undefined ? ']' : ')';
     if (typeof minimum === 'number' || typeof maximum === 'number') {
-      constraint = `Range: ${leftBound}${minimum || ''},${maximum || ''}${rightBound}`;
+      constraint = `Range: ${leftBound}${minimum ?? ''},${maximum ?? ''}${rightBound}`;
     }
     if (schema.multipleOf !== undefined) {
       constraint += `${constraint ? ', ' : ''}Multiples: ${schema.multipleOf}`;
@@ -110,7 +113,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
     // Indicates a Circular ref
     return schemaObj.$ref;
   }
-  const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type.filter((t) => t !== 'null')[0] : schemaObj.type;
+  const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type.filter((t) => t !== 'null')[0] : schemaObj.type ?? '';
 
   if (typeValue.match(/^integer|^number/g)) {
     const multipleOf = Number.isNaN(Number(schemaObj.multipleOf)) ? undefined : Number(schemaObj.multipleOf);
