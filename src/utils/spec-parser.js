@@ -1,6 +1,5 @@
-import SwaggerClient from 'swagger-client';
+import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
 import { marked } from 'marked';
-import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrl, sortTags = false, sortEndpointsBy, attrApiKey = '', attrApiKeyLocation = '', attrApiKeyValue = '', serverUrl = '', allowDuplicatedPathsByTag = false) {
