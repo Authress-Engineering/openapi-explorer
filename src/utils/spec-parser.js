@@ -120,10 +120,10 @@ function getComponents(openApiSpec) {
   const components = [];
   for (const component in openApiSpec.components) {
     const subComponents = Object.keys(openApiSpec.components[component]).map(sComponent => ({
-      show: true,
+      expanded: true,
       id: `${component.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
       name: sComponent,
-      component: openApiSpec.components[component][sComponent]
+      component: openApiSpec.components[component][sComponent],
     })).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
     let cmpDescription;

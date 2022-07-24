@@ -41,6 +41,10 @@ export function getBaseUrlFromUrl(url) {
   return `${pathArray[0]}//${pathArray[2]}`;
 }
 
+export function componentIsInSearch(searchVal, component) {
+  return component.name.toLowerCase().includes(searchVal.toLowerCase());
+}
+
 export function pathIsInSearch(searchVal, path) {
   const stringToSearch = `${path.method} ${path.path} ${path.summary || path.description || ''} ${path.operationId || ''}`.toLowerCase();
   return stringToSearch.includes(searchVal.toLowerCase());
