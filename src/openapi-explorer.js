@@ -391,7 +391,7 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
     if (!this.allowAuthentication || !'true, false,'.includes(`${this.allowAuthentication},`)) { this.allowAuthentication = 'true'; }
 
-    if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }
+    if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'true'; }
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
