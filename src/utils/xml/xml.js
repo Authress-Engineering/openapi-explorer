@@ -18,7 +18,7 @@ function escapeForXML(string) {
 
 const DEFAULT_INDENT = '    ';
 
-function xml(input, rawOptions) {
+export default function xml(input, rawOptions) {
   let options = rawOptions;
   if (typeof options !== 'object') {
     options = {
@@ -78,32 +78,6 @@ function xml(input, rawOptions) {
   }
 
   return output;
-}
-
-function element(/* input, …*/) {
-  const input = Array.prototype.slice.call(arguments);
-  const self = {
-    _elem: resolve(input)
-  };
-
-  self.push = function(pushInput) {
-    if (!this.append) {
-      throw new Error('not assigned to a parent!');
-    }
-    const that = this;
-    const indent = this._elem.indent;
-    format(this.append, resolve(
-      pushInput, indent, this._elem.icount + (indent ? 1 : 0)),
-    function() { that.append(true); });
-  };
-
-  self.close = function(closeInput) {
-    if (closeInput !== undefined) {
-      this.push(closeInput);
-    }
-  };
-
-  return self;
 }
 
 function create_indent(character, count) {
@@ -254,5 +228,3 @@ function attribute(key, value) {
   return `${key}=` + `"${escapeForXML(value)}"`;
 }
 
-module.exports = xml;
-module.exports.element = module.exports.Element = element;
