@@ -74,7 +74,6 @@ export default class OpenApiExplorer extends LitElement {
       serverUrl: { type: String, attribute: 'server-url' },
 
       // Hide/Show Sections & Enable Disable actions
-      showSideNav: { type: String, attribute: 'show-side-nav' },
       showInfo: { type: String, attribute: 'show-info' },
       allowAuthentication: { type: String, attribute: 'show-authentication' },
       allowTry: { type: String, attribute: 'enable-console' },
@@ -392,7 +391,6 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
     if (!this.allowAuthentication || !'true, false,'.includes(`${this.allowAuthentication},`)) { this.allowAuthentication = 'true'; }
 
-    if (!this.showSideNav || !'true false'.includes(this.showSideNav)) { this.showSideNav = 'true'; }
     if (!this.showComponents || !'true false'.includes(this.showComponents)) { this.showComponents = 'false'; }
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 

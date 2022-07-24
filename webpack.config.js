@@ -6,7 +6,6 @@ const { DuplicatesPlugin } = require('inspectpack/plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const path = require('path');
 const { glob } = require('glob');
 
@@ -134,9 +133,6 @@ module.exports = {
     ],
   },
   resolve: {
-    fallback: {
-      path: require.resolve('path-browserify')
-    },
     alias: {
       '~': path.resolve(__dirname, 'src'),
       'lit-html/lib/shady-render.js': path.resolve(__dirname, './node_modules/lit-html/lit-html.js'), // removes shady-render.js from the bundle

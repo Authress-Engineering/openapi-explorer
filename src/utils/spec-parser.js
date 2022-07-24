@@ -1,30 +1,20 @@
-import SwaggerClient from 'swagger-client';
+import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
 import { marked } from 'marked';
-import yaml from 'js-yaml';
 import { invalidCharsRegEx } from './common-utils';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/) || typeof specUrlOrObject === 'object' && typeof specUrlOrObject.href === 'string';
-  let specMeta;
 
-  // Dynamically resolve non yaml or json files and insert their descriptions where necessary
-  function responseInterceptor(val) {
-    if (val.ok && val.text && val.parseError && val.parseError.name === 'YAMLException' && (!val.headers['content-type'] || val.headers['content-type'].match('text/plain'))) {
-      val.body = val.text;
-    }
-    return val;
+  let jsonParsedSpec;
+  try {
+    jsonParsedSpec = await OpenApiResolver(specUrlOrObject);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error parsing specification', error);
+    throw Error('SpecificationNotFound');
   }
 
-  if (inputSpecIsAUrl) {
-    specMeta = await SwaggerClient({ allowMetaPatches: false, url: specUrlOrObject.toString(), responseInterceptor });
-  } else if (typeof specUrlOrObject === 'string') {
-    specMeta = await SwaggerClient({ allowMetaPatches: false, spec: yaml.load(specUrlOrObject), responseInterceptor });
-  } else {
-    specMeta = await SwaggerClient({ allowMetaPatches: false, spec: specUrlOrObject, responseInterceptor });
-  }
-
-  const jsonParsedSpec = specMeta.spec;
-  if (specMeta.message === 'Not Found' || !jsonParsedSpec) {
+  if (!jsonParsedSpec) {
     throw Error('SpecificationNotFound');
   }
 
@@ -233,7 +223,7 @@ function groupByTags(openApiSpec) {
       if (pathsAndWebhooks[pathOrHookName][methodName]) {
         const pathOrHookObj = openApiSpec.paths[pathOrHookName][methodName];
         // If path.methods are tagged, else generate it from path
-        const pathTags = pathOrHookObj.tags || [];
+        const pathTags = Array.isArray(pathOrHookObj.tags) ? pathOrHookObj.tags : pathOrHookObj.tags && [pathOrHookObj.tags] || [];
         if (pathTags.length === 0) {
           pathTags.push('General ⦂');
         }

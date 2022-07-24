@@ -4,6 +4,9 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 ## 1.0 ##
 * By default uses the `info.title` property of the open api specification for the `overview` section name in the navbar. Falls back to the default when not specified.
 
+## 0.9 ##
+* OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
+
 ## 0.8 ##
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
 * Arrays and Objects read-only indicator is now present at the top level, and these objects are hidden from POST/UPDATE/PATCH bodies.
