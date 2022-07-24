@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { describe, it } = require('mocha');
-const xmlFormatter = require('../src/utils/xml/xml');
+const xmlFormatter = require('../src/utils/xml/xml').default;
 
 const schemaUtils = require('../src/utils/schema-utils');
 
