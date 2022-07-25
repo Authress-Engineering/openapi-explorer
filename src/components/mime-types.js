@@ -1,4 +1,4 @@
-const db = require('mime-db');
+import db from 'mime-db';
 
 const EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
 /**
