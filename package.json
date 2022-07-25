@@ -40,7 +40,8 @@
     "package.json",
     "dist/lib",
     "dist/es",
-    "dist/browser"
+    "dist/browser/openapi-explorer.min.js",
+    "dist/browser/openapi-explorer.min.js.map"
   ],
   "mode": "production",
   "dependencies": {
