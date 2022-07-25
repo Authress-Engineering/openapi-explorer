@@ -65,7 +65,7 @@ module.exports = {
   entry: './src/openapi-explorer.js',
   devtool: 'cheap-module-source-map',
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist', 'browser'),
     filename: 'openapi-explorer.min.js',
     publicPath: '',
   },
@@ -109,8 +109,7 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-            // eslint-disable-next-line global-require
-            options: require('./webpack.babelrc.json'),
+            options: require('./babel.config'),
           },
         ],
       },
