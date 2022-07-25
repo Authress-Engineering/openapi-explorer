@@ -32,7 +32,7 @@ export class MyApi extends Component {
 <!doctype html>
 <html>
   <head>
-    <script type="module" src="https://unpkg.com/openapi-explorer/dist/openapi-explorer.min.js"></script>
+    <script type="module" src="https://unpkg.com/openapi-explorer/dist/browser/openapi-explorer.min.js"></script>
     <!-- Or use a local deployed copy -->
     <!-- <script type="module" src="node_modules/openapi-explorer/dist/openapi-explorer.min.js"></script> -->
   </head>
