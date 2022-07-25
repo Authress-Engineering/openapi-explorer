@@ -5,7 +5,7 @@
     "allowImportExportEverywhere": false,
     "ecmaVersion": 2020,
     "babelOptions": {
-      "configFile": "./webpack.babelrc.json"
+      "configFile": "./babel.config.js"
     }
   },
   "settings": {
