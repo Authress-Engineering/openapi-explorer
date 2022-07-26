@@ -53,7 +53,7 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
   - Branding and Personalization features makes it easy to follow any style guide
   - Fully customizeable theme
 - Plenty of customization options 
-  - Add external contents at the top and bottom of the document, extensible with images, link, text, and any framework components
+  - Add external contents throughout the component, extensible with markdown, images, links, and text
   - All properties are reactive
   - Style the element with standard css (change padding, position, border, margin )
   - Styles that reflect your site and your UI/UX frameworks (React, Vue, vanilla js, Bootstrap, Material, and many more...)
