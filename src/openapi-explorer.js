@@ -61,6 +61,7 @@ export default class OpenApiExplorer extends LitElement {
 
       // UI Layouts
       layout: { type: String },
+      operationsCollapsed: { type: Boolean, attribute: 'collapse' },
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
@@ -106,7 +107,6 @@ export default class OpenApiExplorer extends LitElement {
 
       // Internal Properties
       loading: { type: Boolean }, // indicates spec is being loaded
-      operationsCollapsed: { type: Boolean },
       showAdvancedSearchDialog: { type: Boolean },
       advancedSearchMatches: { type: Object }
     };
@@ -568,6 +568,10 @@ export default class OpenApiExplorer extends LitElement {
 
   afterSpecParsedAndValidated(spec) {
     this.resolvedSpec = spec;
+
+    if (this.operationsCollapsed) {
+      this.resolvedSpec.tags.forEach(t => t.expanded = false);
+    }
 
     this.dispatchEvent(new CustomEvent('spec-loaded', { bubbles: true, detail: spec }));
     this.requestUpdate();

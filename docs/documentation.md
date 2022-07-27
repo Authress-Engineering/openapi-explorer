@@ -6,6 +6,7 @@
 * `explorer-location` - current location of the document. Set to dynamically navigate to the location in the doc using the path.
 * `spec-url` - OpenAPI specification document url
 * `server-url` - Set the server url, when not specified will be by default the host of the `spec-url`.
+* `collapse` - Set the operations and components collapsed by default
 
 #### Enable functionality
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.

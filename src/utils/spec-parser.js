@@ -171,7 +171,7 @@ function getComponents(openApiSpec) {
 
     if (cmpName) {
       components.push({
-        show: true,
+        expanded: true,
         name: cmpName,
         description: cmpDescription,
         subComponents,
@@ -186,13 +186,12 @@ function groupByTags(openApiSpec) {
   const supportedMethods = ['get', 'put', 'post', 'delete', 'patch', 'head', 'options']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
     ? openApiSpec.tags.map((t) => ({
-      show: true,
       elementId: `tag--${t.name.replace(invalidCharsRegEx, '-')}`,
       name: t.name,
       description: t.description || '',
       headers: t.description ? getHeadersFromMarkdown(t.description) : [],
       paths: [],
-      expanded: t['x-tag-expanded'] !== false,
+      expanded: true
     }))
     : [];
 
@@ -231,13 +230,12 @@ function groupByTags(openApiSpec) {
           tagObj = tags.find((v) => v.name === tag);
           if (!tagObj) {
             tagObj = {
-              show: true,
               elementId: `tag--${tag.replace(invalidCharsRegEx, '-')}`,
               name: tag,
               description: specTagsItem && specTagsItem.description || '',
               headers: specTagsItem && specTagsItem.description ? getHeadersFromMarkdown(specTagsItem.description) : [],
               paths: [],
-              expanded: (specTagsItem ? specTagsItem['x-tag-expanded'] !== false : true),
+              expanded: true,
             };
             tags.push(tagObj);
           }
@@ -278,7 +276,6 @@ function groupByTags(openApiSpec) {
 
           // Update Responses
           tagObj.paths.push({
-            show: true,
             expanded: false,
             isWebhook,
             expandedAtLeastOnce: false,
