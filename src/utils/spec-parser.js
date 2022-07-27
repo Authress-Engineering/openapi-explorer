@@ -172,7 +172,7 @@ function getComponents(openApiSpec) {
 
     if (cmpName) {
       components.push({
-        show: true,
+        expanded: true,
         name: cmpName,
         description: cmpDescription,
         subComponents,
@@ -190,7 +190,7 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
       show: true,
       name: v.name.toLowerCase(),
       paths: [],
-      expanded: t['x-tag-expanded'] !== false,
+      expanded: true
     }))
     : [];
 
@@ -252,7 +252,6 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
           tagObj = tags.find((v) => v.name === tag);
           if (!tagObj) {
             tagObj = {
-              show: true,
               elementId: `tag--${tag.replace(invalidCharsRegEx, '-')}`,
               name: tag,
               description: tagDescr ? tagDescr.description : '',

@@ -7,8 +7,8 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
 * Enable searching for schemas using the search filter.
-* `show-components` is `true` by default starting in `0.9`
 * Babel source to remove `??` and `?.` so that consumers of the library don't need to worry about those.
+* `collapse` add new switch to automatically start the operations and components in collapsed mode.
 
 ## 0.8 ##
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
