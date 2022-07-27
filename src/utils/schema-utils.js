@@ -13,10 +13,8 @@ export function getTypeInfo(schema) {
   let dataType = '';
   let constraint = '';
 
-  if (schema.$ref) {
-    const n = schema.$ref.lastIndexOf('/');
-    const schemaNode = schema.$ref.substring(n + 1);
-    dataType = `{recursive: ${schemaNode}} `;
+  if (schema.circularReference) {
+    dataType = `{recursive: ${schema.circularReference.name}} `;
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
     dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null').join('┃') : schema.type;
@@ -42,12 +40,6 @@ export function getTypeInfo(schema) {
     arrayType: '',
     html: '',
   };
-
-  if (info.type === '{recursive}') {
-    info.description = schema.$ref.substring(schema.$ref.lastIndexOf('/') + 1);
-  } else if (info.type === IS_MISSING_TYPE_INFO_TYPE) {
-    info.description = info.description || '';
-  }
 
   // Set Allowed Values
   info.allowedValues = Array.isArray(schema.enum) ? schema.enum.join('┃') : '';

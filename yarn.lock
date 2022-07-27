@@ -4884,6 +4884,11 @@ lodash.clonedeep@^4.5, lodash.clonedeep@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
   integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
 
+lodash.clonedeepwith@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeepwith/-/lodash.clonedeepwith-4.5.0.tgz#6ee30573a03a1a60d670a62ef33c10cf1afdbdd4"
+  integrity sha512-QRBRSxhbtsX1nc0baxSkkK5WlVTTm/s48DSukcGcWZwIyI8Zz+lB+kFiELJXtzfH4Aj6kMWQ1VWW4U5uUDgZMA==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -5535,14 +5540,15 @@ openapi-data-validator@^2.0.40:
     media-typer "^1.1"
     require-from-string "^2.0.2"
 
-openapi-resolver@^4.0.23:
-  version "4.0.23"
-  resolved "https://registry.yarnpkg.com/openapi-resolver/-/openapi-resolver-4.0.23.tgz#56377a29304774c35b6b52997c110fc91520368e"
-  integrity sha512-mZ1me87/1rUx9XuovjOSqy/3l7nVYe63we+VusZb9PF6aiLQGjFhbb4tY23od9nfgO08dA2vgXrnQWXX3GQpIw==
+openapi-resolver@^4.0.27:
+  version "4.0.27"
+  resolved "https://registry.yarnpkg.com/openapi-resolver/-/openapi-resolver-4.0.27.tgz#a83729ba23040f93e93aae927239858f8275fd4d"
+  integrity sha512-+pqqyzWqtFyDqY9x0/r0FvW3NnC05kJGfc5wiRzW5iabkbyCyrzRLzhDodPB9HFZI6pXpT6mq5aSiZ049YLFmw==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@babel/runtime-corejs3" "^7.18.9"
     js-yaml "^4.1.0"
+    lodash.clonedeepwith "^4.5.0"
 
 opener@^1.5.2:
   version "1.5.2"
