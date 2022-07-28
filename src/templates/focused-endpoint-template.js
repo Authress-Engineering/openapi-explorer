@@ -51,7 +51,7 @@ export default function focusedEndpointTemplate() {
       <section id='section' class='observe-me'>
         <slot name="custom-section"></slot>
       </section>`;
-  } else if (focusElId.startsWith('cmp--') && this.showComponents === 'true') {
+  } else if (focusElId.startsWith('cmp--') && !this.hideComponents) {
     focusedTemplate = componentsTemplate.call(this);
   } else if (focusElId.startsWith('tag--')) {
     const idToFocus = focusElId.indexOf('--', 4) > 0 ? focusElId.substring(0, focusElId.indexOf('--', 5)) : focusElId;
