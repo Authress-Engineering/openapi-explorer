@@ -13,12 +13,21 @@ function componentBodyTemplate(sComponent) {
   <div class='expanded-endpoint-body observe-me ${sComponent.name}' id='cmp--${sComponent.id}' >
     <h2>${sComponent.name}</h2>
     <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
-      <schema-tree
+    ${this.displaySchemaAsTable
+    ? html`<schema-table
+      .data = '${formdataPartSchema}'
+      schema-expand-level = "${this.schemaExpandLevel}"
+      schema-description-expanded = "${this.schemaDescriptionExpanded}"
+      schema-hide-read-only=false
+      schema-hide-write-only=false> </schema-table>`
+        
+    : html`<schema-tree
         .data = '${formdataPartSchema}'
         schema-expand-level = "${this.schemaExpandLevel}"
         schema-description-expanded = "${this.schemaDescriptionExpanded}"
         schema-hide-read-only=false
-        schema-hide-write-only=false> </schema-tree>
+        schema-hide-write-only=false> </schema-tree>`
+}
     </div>
   </div>
   `;

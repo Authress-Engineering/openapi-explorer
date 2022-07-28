@@ -52,9 +52,6 @@ export default class SchemaTable extends LitElement {
         white-space: normal;
         width: 150px;
       }
-      .collapsed-descr .tr {
-        max-height: calc(var(--font-size-small) + var(--font-size-small) + 4px);
-      }
 
       .obj-toggle {
         padding: 0 2px;
@@ -83,13 +80,7 @@ export default class SchemaTable extends LitElement {
   /* eslint-disable indent */
   render() {
     return html`
-      <div class="table ${this.schemaDescriptionExpanded === 'true' ? 'expanded-descr' : 'collapsed-descr'}">
-        <div class='toolbar'>
-          <div style="flex:1"></div>
-          <div class='toolbar-item' @click='${() => { this.schemaDescriptionExpanded = (this.schemaDescriptionExpanded === 'true' ? 'false' : 'true'); }}'> 
-            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse descriptions' : 'Expand descriptions'}
-          </div>
-        </div>
+      <div class="table">
         ${this.data && this.data['::description']
           ? html`<span class='m-markdown'> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
           : ''
@@ -182,20 +173,20 @@ export default class SchemaTable extends LitElement {
           `
         }
         <div class='object-body'>
-        ${Array.isArray(data) && data[0]
-          ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
-          : html`${Object.keys(data).map((dataKey) =>
-            ['::title', '::description', '::type', '::props', '::deprecated'].includes(dataKey) && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
-            : html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
-          )}`
-        }
+        ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
+            : html`
+              ${Object.keys(data).map((dataKey) =>
+                dataKey.startsWith('::') && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
+                : html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
+                      data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+              )}`
+          }
         <div>
       `;
     }
 
     // For Primitive Data types
-    const { type, readOrWriteOnly, constraint, defaultValue, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -221,11 +212,15 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          ${schemaTitle || schemaDescription ? html`<span class="m-markdown-small">${unsafeHTML(marked(`${schemaTitle ? `**${schemaTitle}:** ` : ''}${schemaDescription || ''}`))}</span>` : ''}
-          ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Constraints: </span> ${constraint}</div>` : ''}
-          ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Default: </span>${defaultValue}</div>` : ''}
-          ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Allowed: </span>${allowedValues}</div>` : ''}
-          ${pattern ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px;'> <span class='bold-text'>Pattern: </span>${pattern}</div>` : ''}
+          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
+            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
+          </span>
+          ${this.schemaDescriptionExpanded ? html`
+            ${constraint ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}
+            ${defaultValue ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
+            ${allowedValues ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues}</div><br>` : ''}
+            ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}
+            ${example ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Example: </span>${example}</div><br>` : ''}` : ''}
         </div>
       </div>
     `;
