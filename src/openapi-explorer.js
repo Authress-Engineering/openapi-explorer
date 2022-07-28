@@ -710,6 +710,7 @@ export default class OpenApiExplorer extends LitElement {
 
     // explorerLocation will get validated in the focused-endpoint-template
     this.explorerLocation = elementId;
+    // Convert to Async and to the background, so that we can be sure that the operation has been expanded and put into view before trying to directly scroll to it (or it won't be found in the next line and even if it is, it might not be able to be scrolled into view)
     await sleep(0);
 
     const contentEl = this.shadowRoot.getElementById(elementId);
