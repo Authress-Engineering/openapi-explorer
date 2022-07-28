@@ -308,8 +308,8 @@ export default class ApiRequest extends LitElement {
               ${paramSchema.default || paramSchema.constraint || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
-                    ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br/>` : ''}
-                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br/>` : ''}
+                    ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br>` : ''}
+                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br>` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
@@ -527,7 +527,7 @@ export default class ApiRequest extends LitElement {
               schema-hide-write-only = false
             > </schema-table>
           `;
-        } else if (this.schemaStyle === 'tree') {
+        } else {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
             <schema-tree

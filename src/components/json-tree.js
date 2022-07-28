@@ -24,7 +24,7 @@ export default class JsonTree extends LitElement {
       .json-tree {
         background: rgb(51, 51, 51);
         color: white;
-        padding: 8px;
+        padding: 12px;
 
         min-height: 30px;
         font-family: var(--font-mono);
@@ -42,6 +42,12 @@ export default class JsonTree extends LitElement {
         border: 1px solid transparent;
         border-radius:3px;
       }
+      .collapsed.open-bracket {
+        padding-right: 0;
+      }
+      .tree > .open-bracket {
+        margin-left: -2px;
+      }
       .open-bracket:hover{
         color:var(--primary-color);
         background-color:var(--hover-color);
@@ -55,6 +61,9 @@ export default class JsonTree extends LitElement {
       .open-bracket.collapsed + .inside-bracket + .close-bracket {
         display:none;
       }
+      .close-bracket {
+        margin-left: -2px;
+      }
 
       .string{color:var(--green);}
       .number{color:var(--blue);}
@@ -63,6 +72,55 @@ export default class JsonTree extends LitElement {
       .object{color:white}
 
       .toolbar {
+        display: none;
+      }
+
+      .tree .toolbar {
+        display: flex;
+        justify-content: space-between;
+        width:100%;
+      }
+
+      .tree .item {
+        /* match schema-tree.tr */
+        border-bottom: 1px dotted transparent;
+      }
+      .toolbar-item {
+        cursor: pointer;
+        padding: 5px 0 5px 1rem;
+        margin: 0 1rem !important;
+        /* TODO: add: The import highlight color variable */
+        color: #38b3f9;
+        flex-shrink: 0;
+      }
+      .tree .toolbar .toolbar-item {
+        display: none;
+      }
+      .inside-bracket.xxx-of {
+        padding:5px 0px;
+        border-style: dotted;
+        border-width: 0 0 1px 0;
+        border-color:var(--primary-color);
+      }
+      .schema-root-type.xxx-of {
+        display:none;
+      }
+      .toolbar-item:first-of-type { margin:0 2px 0 0;}
+      
+      
+      @media only screen and (min-width: 576px) {
+        .key-descr {
+          display: block;
+        }
+        .tree .toolbar .toolbar-item {
+          display: block;
+        }
+        .toolbar {
+          display: flex;
+        }
+      }
+
+      .toolbar-backup {
         position: absolute;
         right:6px;
         display:flex;
@@ -74,9 +132,12 @@ export default class JsonTree extends LitElement {
   /* eslint-disable indent */
   render() {
     return html`
-      <div class = "json-tree" >
-        <div class='toolbar'> 
-          <button class="toolbar-copy-btn" part="btn btn-fill" @click='${(e) => { copyToClipboard(JSON.stringify(this.data, null, 2), e); }}'>Copy</button>
+      <div class="json-tree tree">
+        <div class="toolbar"> 
+          <div>&nbsp;</div>
+          <div class="toolbar-item">
+            <button class="toolbar-copy-btn" part="btn btn-fill" @click='${(e) => { copyToClipboard(JSON.stringify(this.data, null, 2), e); }}'>Copy</button>
+          </div>
         </div>
         ${this.generateTree(this.data, true)}
       </div>  

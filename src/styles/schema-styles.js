@@ -21,27 +21,16 @@ export default css`
   word-break: break-all;
 }
 
-.collapsed-descr .key{
-  overflow:hidden;
-}
-
 .key-descr {
   font-family:var(--font-regular);
   flex-shrink: 1;
   text-overflow: ellipsis;
   overflow: hidden;
   display: none;
+  max-height: auto;
 }
 .toolbar {
   display: none;
-}
-.expanded-descr .key-descr{
-  max-height:auto;
-  overflow:hidden;
-  display: none;
-}
-.collapsed-descr .tr {
-  max-height:20px;
 }
 
 .tr.xxx-of{
@@ -113,9 +102,6 @@ export default css`
   }
   .toolbar {
     display: flex;
-  }
-  .expanded-descr .key-descr{
-    display: block;
   }
 }
 `;

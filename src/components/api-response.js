@@ -315,7 +315,7 @@ export default class ApiResponse extends LitElement {
             schema-description-expanded = "${this.schemaDescriptionExpanded}"
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
-          > </schema-tree> `
+          > </schema-table> `
         : html`
           <schema-tree
             render-style = '${this.renderStyle}'

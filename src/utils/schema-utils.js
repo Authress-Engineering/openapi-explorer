@@ -79,6 +79,7 @@ export function getTypeInfo(schema) {
     readOrWriteOnly: info.readOrWriteOnly,
     constraint: info.constraint,
     defaultValue: info.default,
+    example: info.example,
     allowedValues: info.allowedValues,
     pattern: info.pattern,
     schemaDescription: info.description,

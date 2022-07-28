@@ -67,9 +67,9 @@ export default class OpenApiExplorer extends LitElement {
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
 
       // Schema Styles
-      schemaStyle: { type: String, attribute: 'schema-style' },
+      displaySchemaAsTable: { type: Boolean, attribute: 'table' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
+      schemaDescriptionExpanded: { type: String },
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
@@ -367,7 +367,6 @@ export default class OpenApiExplorer extends LitElement {
     this.renderStyle = 'focused';
     this.explorerLocation = this.explorerLocation || getCurrentElement();
 
-    if (!this.schemaStyle || !'tree, table,'.includes(`${this.schemaStyle},`)) { this.schemaStyle = 'tree'; }
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
     if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'true'; }
