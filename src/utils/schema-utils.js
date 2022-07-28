@@ -268,17 +268,6 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
   return [value];
 }
 
-function removeTitlesAndDescriptions(obj) {
-  if (typeof obj !== 'object' || obj === null) {
-    return;
-  }
-  delete obj['::TITLE'];
-  delete obj['::DESCRIPTION'];
-  for (const k in obj) {
-    removeTitlesAndDescriptions(obj[k]);
-  }
-}
-
 /**
  * For changing OpenAPI-Schema to an Object Notation,
  * This Object would further be an input to UI Components to generate an Object-Tree
@@ -571,10 +560,6 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
   }
 
   return samples.map((sample, sampleCounter) => {
-    const summary = sample['::TITLE'] || `Example ${sampleCounter + 1}`;
-    const description = sample['::DESCRIPTION'] || '';
-    removeTitlesAndDescriptions(sample);
-
     let exampleValue = '';
     if (mimeType.toLowerCase().includes('xml')) {
       exampleValue = xmlFormatter(sample, { declaration: true, indent: '    ' });
@@ -584,8 +569,8 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
 
     return {
       exampleId: `Example-${sampleCounter}`,
-      exampleSummary: summary,
-      exampleDescription: description,
+      exampleSummary: `Example ${sampleCounter + 1}`,
+      exampleDescription: '',
       exampleType: mimeType,
       exampleFormat: mimeType.toLowerCase().includes('xml') ? 'text' : outputType,
       exampleValue,
