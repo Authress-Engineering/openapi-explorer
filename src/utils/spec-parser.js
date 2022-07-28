@@ -83,7 +83,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
       v.computedUrl = computedUrl;
     });
     if (serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl)) {
-      jsonParsedSpec.servers.push({ url: serverUrl, computedUrl: serverUrl });
+      jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }].concat(jsonParsedSpec.servers);
     }
   } else if (serverUrl) {
     jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }];
