@@ -15,6 +15,7 @@
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section
 * `show-server-selection` - Show server selection section
+* `hide-components` - Hide the OpenAPI specification components from being displayed
 
 ### Custom configuration
 * `default-schema-tab` - Default select the `Model` or the `Body/Example` tab in request/response views: [`model`, `body`]

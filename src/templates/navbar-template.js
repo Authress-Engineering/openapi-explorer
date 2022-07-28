@@ -143,7 +143,7 @@ export default function navbarTemplate() {
       }
 
       <!-- COMPONENTS -->
-      ${this.resolvedSpec.components && this.showComponents === 'true'
+      ${this.resolvedSpec.components && !this.hideComponents
         ? html`
           <div class="sticky-scroll-element">
             <div id='link-components' class='nav-bar-section'>

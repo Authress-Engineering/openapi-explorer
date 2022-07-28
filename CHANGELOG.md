@@ -10,6 +10,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Babel source to remove `??` and `?.` so that consumers of the library don't need to worry about those.
 * `collapse` add new switch to automatically start the operations and components in collapsed mode.
 * Support root level `security` field.
+* `hide-components` attribute to disable showing the components.
 
 ## 0.8 ##
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
