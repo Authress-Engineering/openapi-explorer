@@ -1,0 +1,184 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "description": "This is the API Documentation",
+        "version": "1.0.0",
+        "title": "Test API",
+        "termsOfService": "none",
+        "contact": {
+            "email": "support@test.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://testserver:{port}/",
+            "description": "API server",
+            "variables": {
+                "port": {
+                    "enum": [
+                        "443"
+                    ],
+                    "default": "443"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/fsps/{uri_test}/testendpoint": {
+            "get": {
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ],
+                "tags": [
+                    "test endpoint"
+                ],
+                "summary": "get testendpoint",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.test.api+json; version=v1": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/getTestendpointArrayResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "error",
+                        "content": {
+                            "application/vnd.test.api+json; version=v1": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors"
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "uri_test",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "errors": {
+                "type": "object",
+                "required": [
+                    "httpId",
+                    "httpStatus",
+                    "status",
+                    "request",
+                    "at",
+                    "error"
+                ],
+                "properties": {
+                    "httpId": {
+                        "type": "integer"
+                    },
+                    "httpStatus": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "request": {
+                        "type": "string"
+                    },
+                    "at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "error": {
+                        "type": "object",
+                        "required": [
+                            "number",
+                            "message"
+                        ],
+                        "properties": {
+                            "number": {
+                                "type": "integer"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false
+            },
+            "getTestendpointArrayResponse": {
+                "type": "object",
+                "required": [
+                    "httpId",
+                    "httpStatus",
+                    "status",
+                    "request",
+                    "at",
+                    "bizdates"
+                ],
+                "properties": {
+                    "httpId": {
+                        "type": "integer"
+                    },
+                    "httpStatus": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "request": {
+                        "type": "string"
+                    },
+                    "at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "test": {
+                        "type": "object",
+                        "required": [
+                            "testdate",
+                            "testInt",
+                            "testdate2"
+                        ],
+                        "properties": {
+                            "testdate": {
+                                "type": "string",
+                                "format": "date",
+                                "nullable": true
+                            },
+                            "testInt": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "testdate2": {
+                                "type": "string",
+                                "format": "date"
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "securitySchemes": {
+            "basicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            }
+        }
+    }
+}

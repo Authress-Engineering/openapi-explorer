@@ -36,6 +36,7 @@ Note: These properties will likely be deprecated in favor of global css variable
 
 ### Library API
 * `async loadSpec(spec)` - Load a spec from an object rather than looking it up from a remote url.
+  * example: `await document.getElementsByTagName('openapi-explorer')[0].loadSpec(apiSpecificationObject);`
 * `setAuthenticationConfiguration(securitySchemeId, { token, clientId, redirectUri })` - Set a token for methods that require security for a particular security scheme id.
   * If the securityScheme id was `auth` and the `type` of that scheme was basic: `setAuthenticationConfiguration('auth', { token: 'user:password' });`
   
