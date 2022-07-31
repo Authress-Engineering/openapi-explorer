@@ -138,6 +138,13 @@ export default class SchemaTable extends LitElement {
     }
 
     if (typeof data === 'object') {
+      const flags = data['::flags'] || {};
+      if (flags['🆁'] && this.schemaHideReadOnly === 'true') {
+        return undefined;
+      }
+      if (flags['🆆'] && this.schemaHideWriteOnly === 'true') {
+        return undefined;
+      }
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
