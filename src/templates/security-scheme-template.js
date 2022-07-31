@@ -343,7 +343,7 @@ export default function securitySchemeTemplate() {
                           ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
                           : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and a Token String.`
                         }
-                        <div style="display:flex;">
+                        <form style="display:flex;">
                           ${v.in === 'cookie'
                             ? html`
                             <div style="display: block">
@@ -355,28 +355,28 @@ export default function securitySchemeTemplate() {
                             </div>`
                             : html`
                               <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
-                              <button class="m-btn thin-border" style = "margin-left:5px;"
+                              <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                                 part = "btn btn-outline"
                                 @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
                                 ${v.finalKeyValue ? 'UPDATE' : 'SET'}
                               </button>`
                           }
-                        </div>`
+                        </form>`
                       : ''
                     }
                     ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
                       ? html`
                         Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
-                        <div style="display:flex;">
+                        <form style="display:flex;">
                           <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
                           <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
-                          <button class="m-btn thin-border"
+                          <button type="submit" class="m-btn thin-border"
                             @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
                             part = "btn btn-outline"
                           > 
                             ${v.finalKeyValue ? 'UPDATE' : 'SET'}
                           </button>
-                        </div>`
+                        </form>`
                       : ''
                     }
                   </td>
