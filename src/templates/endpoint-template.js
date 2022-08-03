@@ -156,12 +156,7 @@ export default function endpointTemplate() {
           </div>`
         : ''
         }
-        ${tag.paths.filter((v) => {
-          if (this.matchPaths) {
-            return pathIsInSearch(this.matchPaths, v);
-          }
-          return true;
-          }).map((path) => html`
+        ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((path) => html`
           <section id='${path.elementId}' class='m-endpoint regular-font ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
             ${endpointHeadTemplate.call(this, path)}      
             ${path.expanded ? endpointBodyTemplate.call(this, path) : ''}
