@@ -46,7 +46,7 @@ export default function focusedEndpointTemplate() {
     focusedTemplate = securitySchemeTemplate.call(this);
   } else if (focusElId === 'servers' && this.allowServerSelection === 'true') {
     focusedTemplate = serverTemplate.call(this);
-  } else if (focusElId === 'section') {
+  } else if (focusElId.startsWith('section')) {
     focusedTemplate = html`
       <section id='section' class='observe-me'>
         <slot name="custom-section"></slot>

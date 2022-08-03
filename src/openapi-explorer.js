@@ -676,12 +676,22 @@ export default class OpenApiExplorer extends LitElement {
       return;
     }
 
-    let repeatedElementIndex;
-    if (navEl.dataset.contentId === 'section') {
-      const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
-      const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
-      repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => slot === event.target);
+    this.isIntersectionObserverActive = false;
+    this.scrollTo(navEl.dataset.contentId, scrollNavItemToView);
+    setTimeout(() => {
+      this.isIntersectionObserverActive = true;
+    }, 300);
+  }
+
+  scrollToCustomNavSectionTarget(event, scrollNavItemToView = true) {
+    const navEl = event.currentTarget;
+    if (!navEl.dataset.contentId) {
+      return;
     }
+
+    const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
+    const assignedNodes = navSectionSlot?.assignedNodes();
+    const repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => slot === event.target);
     this.isIntersectionObserverActive = false;
     this.scrollTo(navEl.dataset.contentId, scrollNavItemToView, repeatedElementIndex);
     setTimeout(() => {
@@ -705,7 +715,7 @@ export default class OpenApiExplorer extends LitElement {
     // Convert to Async and to the background, so that we can be sure that the operation has been expanded and put into view before trying to directly scroll to it (or it won't be found in the next line and even if it is, it might not be able to be scrolled into view)
     await sleep(0);
 
-    const contentEl = this.shadowRoot.getElementById(elementId);
+    const contentEl = this.shadowRoot.getElementById(elementId?.startsWith('section') ? 'section' : elementId);
     if (!contentEl) {
       return;
     }
@@ -727,15 +737,19 @@ export default class OpenApiExplorer extends LitElement {
       responseEl.resetSelection();
     }
 
-    // Update Location Hash
-    replaceState(elementId);
-
     // Update NavBar View and Styles
     let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
-    if (elementId === 'section') {
+    if (elementId?.startsWith('section')) {
       const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
-      const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
-      newNavEl = assignedNodes && assignedNodes[repeatedElementIndex || 0];
+      const assignedNodes = navSectionSlot?.assignedNodes();
+      const customSectionRepeatedElementIndex = (elementId.replace('section--', '') || 1) - 1;
+      newNavEl = assignedNodes?.[customSectionRepeatedElementIndex || repeatedElementIndex || 0];
+
+      // Update Location Hash
+      replaceState(`section--${repeatedElementIndex + 1 || 1}`);
+    } else {
+      // Update Location Hash
+      replaceState(elementId);
     }
 
     if (!newNavEl) {
@@ -751,10 +765,11 @@ export default class OpenApiExplorer extends LitElement {
       oldNavEl.classList.remove('active');
     }
     const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
-    const assignedNodes = navSectionSlot && navSectionSlot.assignedNodes();
+    const assignedNodes = navSectionSlot?.assignedNodes();
     (assignedNodes || []).filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
       node.classList.remove('active');
     });
+
     newNavEl.classList.add('active'); // must add the class after scrolling
     this.requestUpdate();
   }
