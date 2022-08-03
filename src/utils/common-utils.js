@@ -42,10 +42,13 @@ export function getBaseUrlFromUrl(url) {
 }
 
 export function componentIsInSearch(searchVal, component) {
-  return component.name.toLowerCase().includes(searchVal.toLowerCase());
+  return !searchVal || component.name.toLowerCase().includes(searchVal.toLowerCase());
 }
 
 export function pathIsInSearch(searchVal, path) {
+  if (!searchVal) {
+    return true;
+  }
   const stringToSearch = `${path.method} ${path.path} ${path.summary || path.description || ''} ${path.operationId || ''}`.toLowerCase();
   return stringToSearch.includes(searchVal.toLowerCase());
 }

@@ -25,7 +25,7 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, getCurrentElement, pathIsInSearch, replaceState, sleep, componentIsInSearch } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
@@ -61,7 +61,11 @@ export default class OpenApiExplorer extends LitElement {
 
       // UI Layouts
       layout: { type: String },
-      operationsCollapsed: { type: Boolean, attribute: 'collapse' },
+
+      collapsed: { type: Boolean, attribute: 'collapse' },
+      operationsCollapsed: { type: Boolean },
+      componentsCollapsed: { type: Boolean },
+
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
@@ -365,6 +369,8 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     this.renderStyle = 'focused';
+    this.operationsCollapsed = this.collapsed;
+    this.componentsCollapsed = this.collapsed;
     this.explorerLocation = this.explorerLocation || getCurrentElement();
 
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
@@ -464,28 +470,16 @@ export default class OpenApiExplorer extends LitElement {
         this.scrollTo(newVal);
       }, 0);
     }
+
+    if (name === 'collapsed') {
+      this.operationsCollapsed = newVal;
+      this.componentsCollapsed = newVal;
+    }
     super.attributeChangedCallback(name, oldVal, newVal);
   }
 
   onSearchChange(e) {
-    this.operationsCollapsed = false;
     this.matchPaths = e.target.value;
-    this.resolvedSpec.tags.forEach((tag) => tag.paths.filter((v) => {
-      if (this.matchPaths) {
-        // v.expanded = false;
-        if (pathIsInSearch(this.matchPaths, v)) {
-          tag.expanded = true;
-        }
-      }
-    }));
-    this.resolvedSpec.components.forEach((component) => {
-      component.subComponents.forEach((subComponent) => {
-        subComponent.expanded = false;
-        if (!this.matchPaths || componentIsInSearch(this.matchPaths, subComponent)) {
-          subComponent.expanded = true;
-        }
-      });
-    });
     this.requestUpdate();
   }
 
@@ -493,11 +487,6 @@ export default class OpenApiExplorer extends LitElement {
     const searchEl = this.shadowRoot.getElementById('nav-bar-search');
     searchEl.value = '';
     this.matchPaths = '';
-    this.resolvedSpec.components.forEach((component) => {
-      component.subComponents.forEach((v) => {
-        v.expanded = true;
-      });
-    });
   }
 
   async onShowSearchModalClicked() {
@@ -569,6 +558,9 @@ export default class OpenApiExplorer extends LitElement {
 
     if (this.operationsCollapsed) {
       this.resolvedSpec.tags.forEach(t => t.expanded = false);
+    }
+    if (this.componentsCollapsed) {
+      this.resolvedSpec.components.forEach(c => c.expanded = false);
     }
 
     this.dispatchEvent(new CustomEvent('spec-loaded', { bubbles: true, detail: spec }));

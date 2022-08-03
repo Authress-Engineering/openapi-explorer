@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import { pathIsInSearch } from '../utils/common-utils';
+import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
@@ -16,7 +16,15 @@ function onExpandCollapse(tagId) {
 export function expandCollapseAll() {
   const expand = this.operationsCollapsed;
   this.operationsCollapsed = !expand;
-  this.resolvedSpec.tags.forEach(t => { t.expanded = expand; });
+  this.resolvedSpec.tags.forEach((tag) => { tag.expanded = expand; });
+  this.requestUpdate();
+}
+
+export function expandCollapseAllComponents() {
+  const expand = this.componentsCollapsed;
+  this.componentsCollapsed = !expand;
+  this.resolvedSpec.components.forEach((component) => { component.expanded = expand; });
+  this.requestUpdate();
 }
 
 /* eslint-disable indent */
@@ -84,11 +92,11 @@ export default function navbarTemplate() {
             <div class='nav-bar-section-title'>OPERATIONS</div>  
           </slot>
           <div style="" part="navbar-operations-header-collapse">
-            ${this.resolvedSpec.tags.length > 1
+            ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
               ? html`
                 ${this.operationsCollapsed
-                  ? html`<div @click="${(e) => { expandCollapseAll.call(this, e); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                  : html`<div @click="${(e) => { expandCollapseAll.call(this, e); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                  ? html`<div @click="${() => { expandCollapseAll.call(this); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                  : html`<div @click="${() => { expandCollapseAll.call(this); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
                 }`
               : ''
             }  
@@ -98,7 +106,7 @@ export default function navbarTemplate() {
 
       <!-- TAGS AND PATHS-->
       ${this.resolvedSpec.tags
-        .filter((tag) => tag.paths.filter((path) => pathIsInSearch(this.matchPaths, path)).length)
+        .filter((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
         .map((tag) => html`
           <slot name="nav-${tag.elementId}">
             <div class='nav-bar-tag-and-paths ${tag.expanded ? 'expanded' : 'collapsed'}'>
@@ -120,12 +128,7 @@ export default function navbarTemplate() {
               
               <div class='nav-bar-paths-under-tag'>
                 <!-- Paths in each tag (endpoints) -->
-                ${tag.paths.filter((v) => {
-                  if (this.matchPaths) {
-                    return pathIsInSearch(this.matchPaths, v);
-                  }
-                  return true;
-                }).map((p) => html`
+                ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
                 <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
                   data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
                   <span style="line-break: anywhere; ${p.deprecated ? 'filter:opacity(0.5)' : ''}">
@@ -143,28 +146,44 @@ export default function navbarTemplate() {
       }
 
       <!-- COMPONENTS -->
-      ${this.resolvedSpec.components && !this.hideComponents
+      ${this.resolvedSpec.components?.length && !this.hideComponents
         ? html`
           <div class="sticky-scroll-element">
             <div id='link-components' class='nav-bar-section'>
-              <div class='nav-bar-section-title'>COMPONENTS</div>
+              <slot name="components-header">
+                <div class='nav-bar-section-title'>COMPONENTS</div>
+              </slot>
+              
+              ${this.resolvedSpec.components.some((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s)))
+                ? html`
+                  <div style="" part="navbar-components-header-collapse">
+                    ${this.componentsCollapsed
+                      ? html`<div @click="${() => { expandCollapseAllComponents.call(this); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
+                      : html`<div @click="${() => { expandCollapseAllComponents.call(this); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
+                    }`
+                : ''}
+              </div>
             </div>
           </div>
-          ${this.resolvedSpec.components.map((component) => (component.subComponents.filter(s => s.expanded).length
-            ? html`
-              <div class='nav-bar-tag' 
+
+          ${this.resolvedSpec.components.filter((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s))).map((component) => html`
+            <div class="nav-bar-tag-and-paths ${component.expanded ? 'expanded' : 'collapsed'}">
+              <div class='nav-bar-tag'
                 data-content-id='cmp--${component.name.toLowerCase()}' 
                 id='link-cmp--${component.name.toLowerCase()}' 
                 @click='${(e) => this.scrollToEventTarget(e, false)}'>
                 ${component.name}
               </div>
-              ${component.subComponents.filter(s => s.expanded).map((p) => html`
-                <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
-                  <span> ${p.name} </span>
-                </div>`)
-              }`
-            : ''))
-          }`
+
+              <div class="nav-bar-paths-under-tag">
+                ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
+                  <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                    <span> ${p.name} </span>
+                  </div>`
+                )}
+              </div>
+            </div>`
+          )}`
         : ''
       }
     </nav>`
