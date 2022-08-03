@@ -1,6 +1,7 @@
 import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils';
+import cloneDeep from 'lodash.clonedeep';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/) || typeof specUrlOrObject === 'object' && typeof specUrlOrObject.href === 'string';
@@ -204,13 +205,10 @@ function groupByTags(openApiSpec) {
   }
   // For each path find the tag and push it into the corresponding tag
   for (const pathOrHookName in pathsAndWebhooks) {
-    const commonParams = pathsAndWebhooks[pathOrHookName].parameters;
-    const commonPathProp = {
-      servers: pathsAndWebhooks[pathOrHookName].servers || [],
-      parameters: pathsAndWebhooks[pathOrHookName].parameters || [],
-    };
+    const commonPathPropServers = pathsAndWebhooks[pathOrHookName].servers || [];
     const isWebhook = pathsAndWebhooks[pathOrHookName]._type === 'webhook'; // eslint-disable-line no-underscore-dangle
     supportedMethods.forEach((methodName) => {
+      const commonParams = cloneDeep(pathsAndWebhooks[pathOrHookName].parameters);
       if (pathsAndWebhooks[pathOrHookName][methodName]) {
         const pathOrHookObj = openApiSpec.paths[pathOrHookName][methodName];
         // If path.methods are tagged, else generate it from path
@@ -286,7 +284,7 @@ function groupByTags(openApiSpec) {
             path: pathOrHookName,
             operationId: pathOrHookObj.operationId,
             elementId: `${methodName}-${pathOrHookName.replace(invalidCharsRegEx, '-')}`,
-            servers: pathOrHookObj.servers ? commonPathProp.servers.concat(pathOrHookObj.servers) : commonPathProp.servers,
+            servers: pathOrHookObj.servers ? commonPathPropServers.concat(pathOrHookObj.servers) : commonPathPropServers,
             parameters: finalParameters,
             requestBody: pathOrHookObj.requestBody,
             responses: pathOrHookObj.responses,
