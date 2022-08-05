@@ -154,6 +154,7 @@ function getComponents(openApiSpec) {
         cmpDescription = 'Headers follows the structure of the Parameters but they are explicitly in "header"';
         break;
       case 'securitySchemes':
+      case 'securitySchemas':
         break;
       case 'links':
         cmpName = 'Links';
