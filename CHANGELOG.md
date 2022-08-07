@@ -12,6 +12,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Support root level `security` field.
 * `hide-components` attribute to disable showing the components.
 * Fix components to actually collapse when `collapse` is set.
+* Fix displaying tag descriptions correctly and add supporting slot for subsections.
 
 ## 0.8 ##
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.

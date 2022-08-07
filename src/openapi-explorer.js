@@ -302,6 +302,10 @@ export default class OpenApiExplorer extends LitElement {
         .sub-title.tag {
           margin-left: 1rem;
         }
+        .section-tag-body .description {
+          margin-left: 1rem;
+          margin-right: 1rem;
+        }
       }
 
       @media only screen and (min-width: 768px) {
@@ -715,13 +719,14 @@ export default class OpenApiExplorer extends LitElement {
     // Convert to Async and to the background, so that we can be sure that the operation has been expanded and put into view before trying to directly scroll to it (or it won't be found in the next line and even if it is, it might not be able to be scrolled into view)
     await sleep(0);
 
-    const contentEl = this.shadowRoot.getElementById(elementId?.startsWith('section') ? 'section' : elementId);
+    // In the case of section scrolling, these are hard swaps, so just load "section". In the case of `tags` the headers have the element html Id in the last `--id`, so split that off and check for it
+    const contentEl = this.shadowRoot.getElementById(elementId?.startsWith('section') ? 'section' : elementId) || this.shadowRoot.getElementById(elementId.split('--').slice(-1)[0]);
     if (!contentEl) {
       return;
     }
 
     // For focused APIs, always scroll to the top of the component
-    if (!elementId.match('cmp--')) {
+    if (!elementId.match('cmp--') && !elementId.match('tag--')) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
     } else {
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });

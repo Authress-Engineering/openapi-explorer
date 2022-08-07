@@ -187,14 +187,17 @@ function getComponents(openApiSpec) {
 function groupByTags(openApiSpec) {
   const supportedMethods = ['get', 'put', 'post', 'delete', 'patch', 'head', 'options']; // this is also used for ordering endpoints by methods
   const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
-    ? openApiSpec.tags.map((t) => ({
-      elementId: `tag--${t.name.replace(invalidCharsRegEx, '-')}`,
-      name: t.name,
-      description: t.description || '',
-      headers: t.description ? getHeadersFromMarkdown(t.description) : [],
-      paths: [],
-      expanded: true
-    }))
+    ? openApiSpec.tags.map((t) => {
+      const name = typeof t === 'string' ? t : t.name;
+      return {
+        elementId: `tag--${name.replace(invalidCharsRegEx, '-')}`,
+        name: name,
+        description: t.description || '',
+        headers: t.description ? getHeadersFromMarkdown(t.description) : [],
+        paths: [],
+        expanded: true
+      };
+    })
     : [];
 
   const pathsAndWebhooks = openApiSpec.paths || {};

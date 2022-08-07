@@ -38,7 +38,7 @@ export default css`
 .nav-bar-tag-icon:hover {
   color:var(--nav-hover-text-color);
 }
-.nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-paths-under-tag {
+.nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-paths-under-tag, .nav-bar.focused .nav-bar-tag-and-paths.collapsed .tag-headers {
   display:none;
 }
 
@@ -113,7 +113,9 @@ export default css`
   top: 0;
 }
 
-.nav-bar-h2 {margin-left:12px;}
+/* .nav-bar-tag has left padding of 10px, so add 10px every time */
+.nav-bar-h1 { padding-left: 20px; }
+.nav-bar-h2 { padding-left: 30px; }
 
 .nav-bar-h1.active,
 .nav-bar-h2.active,

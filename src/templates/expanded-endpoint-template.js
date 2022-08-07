@@ -79,26 +79,23 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
   `;
 }
 
-export default function expandedEndpointTemplate() {
+export function expandedTagTemplate(tagId, subsectionFullId) {
+  const tag = (this.resolvedSpec.tags || []).find(t => t.elementId === tagId);
+  const subsectionId = subsectionFullId.replace(`${tagId}--`, '');
   return html`
-  ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
-    <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="border-top:1px solid var(--primary-color);">
+    <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="">
       <div class="title tag" part="label-tag-title">${tag.name}</div>
       <slot name="${tag.elementId}"></slot>
-      <div class="regular-font-size">
-      ${
-        unsafeHTML(`
-          <div class="m-markdown regular-font">
-          ${marked(tag.description || '')}
-        </div>`)
-      }
-      </div>
-    </section>
-    <section class='regular-font section-gap--read-mode' part="section-operations-in-tag">
-      ${tag.paths.map((path) => expandedEndpointBodyTemplate.call(this, path, 'BBB'))}
-    </section>
-    `)
-  }
-`;
+      <slot name="${tag.elementId}--subsection--${subsectionId}">
+        <div class="regular-font-size">
+        ${
+          unsafeHTML(`
+            <div class="m-markdown regular-font">
+            ${marked(tag.description || '')}
+          </div>`)
+        }
+        </div>
+      </slot>
+    </section>`;
 }
 /* eslint-enable indent */
