@@ -145,8 +145,8 @@ export default function endpointTemplate() {
       <div class='section-tag-body'>
         <slot name="${tag.elementId}"></slot>
         ${tag.description
-          ? `html
-          <div class="regular-font regular-font-size m-markdown" style="padding-bottom:12px">
+          ? html`
+          <div class="regular-font regular-font-size m-markdown description" style="padding-bottom:12px">
             ${unsafeHTML(marked(tag.description || ''))}
           </div>`
         : ''

@@ -1,4 +1,5 @@
 import { html } from 'lit-element';
+import { marked } from 'marked';
 import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
 
 function onExpandCollapse(tagId) {
@@ -125,7 +126,17 @@ export default function navbarTemplate() {
                 `
               }
 
-              
+              <div class='tag-headers'>
+                ${tag.headers.map((header) => html`
+                  <div 
+                    class='nav-bar-h${header.depth}' 
+                    id="link-${tag.elementId}--${new marked.Slugger().slug(header.text)}"  
+                    data-content-id='${tag.elementId}--${new marked.Slugger().slug(header.text)}' 
+                    @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                    ${header.text}
+                  </div>`
+                )}
+              </div>
               <div class='nav-bar-paths-under-tag'>
                 <!-- Paths in each tag (endpoints) -->
                 ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`

@@ -135,6 +135,9 @@ responseInterceptor(event) {
 <!-- Hide a tag from navigation -->
 <div div="nav-tag--${tagName}"></div>
 
+<div div="tag--${tagName}"></div>
+<div div="tag--${tagName}--subsection--${subsectionName}"></div>
+
 <!--
   Example: GET /v1/resources/{resourceUri}/users becomes => get-/v1/resources/-resourceUri-/users
   For the parser: https://github.com/Rhosys/openapi-explorer/blob/e43a90c23be4813d2d8381b59a95bc15573c2513/src/utils/common-utils.js#L13

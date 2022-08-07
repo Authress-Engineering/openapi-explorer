@@ -36,7 +36,7 @@ function componentBodyTemplate(sComponent) {
 export default function componentsTemplate() {
   return html`
   ${this.resolvedSpec.components.map((component) => html`
-    <div id="cmp--${component.name.toLowerCase()}" class='regular-font section-gap--read-mode observe-me' style="border-top:1px solid var(--primary-color);">
+    <div id="cmp--${component.name.toLowerCase()}" class='regular-font section-gap--read-mode observe-me'>
       <div class="title tag">${component.name}</div>
       <div class="regular-font-size">
         ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(component.description ? component.description : '')}</div>`)}

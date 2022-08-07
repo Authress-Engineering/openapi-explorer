@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import { expandedEndpointBodyTemplate } from './expanded-endpoint-template';
+import { expandedEndpointBodyTemplate, expandedTagTemplate } from './expanded-endpoint-template';
 import '../components/api-request';
 import '../components/api-response';
 import componentsTemplate from './components-template';
@@ -24,11 +24,6 @@ function defaultContentTemplate() {
   return (selectedTagObj && selectedPathObj)
     ? wrapFocusedTemplate(expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name))
     : wrapFocusedTemplate('');
-}
-
-/* eslint-disable indent */
-function focusedTagBodyTemplate(tag) {
-  return html`<h1 id="${tag.elementId}">${tag.name}</h1>`;
 }
 
 export default function focusedEndpointTemplate() {
@@ -57,7 +52,7 @@ export default function focusedEndpointTemplate() {
     const idToFocus = focusElId.indexOf('--', 4) > 0 ? focusElId.substring(0, focusElId.indexOf('--', 5)) : focusElId;
     selectedTagObj = this.resolvedSpec.tags.find((v) => v.elementId === idToFocus);
     if (selectedTagObj) {
-      focusedTemplate = wrapFocusedTemplate.call(this, focusedTagBodyTemplate.call(this, selectedTagObj));
+      focusedTemplate = expandedTagTemplate.call(this, idToFocus, focusElId);
     } else {
       focusedTemplate = defaultContentTemplate.call(this);
     }
