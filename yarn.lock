@@ -5540,7 +5540,7 @@ openapi-data-validator@^2.0.40:
     media-typer "^1.1"
     require-from-string "^2.0.2"
 
-openapi-resolver@^4.0.27:
+openapi-resolver@^4.0:
   version "4.0.27"
   resolved "https://registry.yarnpkg.com/openapi-resolver/-/openapi-resolver-4.0.27.tgz#a83729ba23040f93e93aae927239858f8275fd4d"
   integrity sha512-+pqqyzWqtFyDqY9x0/r0FvW3NnC05kJGfc5wiRzW5iabkbyCyrzRLzhDodPB9HFZI6pXpT6mq5aSiZ049YLFmw==
