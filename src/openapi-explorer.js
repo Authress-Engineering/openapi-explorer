@@ -25,7 +25,7 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, replaceState, sleep, initI18n, isI18nReady, changeI18nLang } from './utils/common-utils';
 import ProcessSpec from './utils/spec-parser';
 import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
@@ -42,7 +42,6 @@ export default class OpenApiExplorer extends LitElement {
       threshold: 0,
     };
     this.isIntersectionObserverActive = true;
-
     if (typeof IntersectionObserver !== 'undefined') {
       this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
     } else {
@@ -74,6 +73,10 @@ export default class OpenApiExplorer extends LitElement {
       displaySchemaAsTable: { type: Boolean, attribute: 'table' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: String },
+
+      // Language
+      langUrl: { type: String, attribute: 'lang-url'},
+      currentLang: { type: String, attribute: 'current-lang'},
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
@@ -354,8 +357,8 @@ export default class OpenApiExplorer extends LitElement {
     super.connectedCallback();
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
-
     this.loading = true;
+    initI18n(this.langUrl, this.currentLang);    
     const parent = this.parentElement;
     if (parent) {
       if (parent.offsetWidth === 0 && parent.style.width === '') {
@@ -450,6 +453,11 @@ export default class OpenApiExplorer extends LitElement {
   attributeChangedCallback(name, oldVal, newVal) {
     if (name === 'spec-url') {
       if (oldVal !== newVal) {
+        let delay = 0;
+        if (!isI18nReady()){
+          // loadSpec creates text strings that rely on i18n being initialized to show correct language
+          delay = 1000;
+        }
         // put it at the end of event-loop to load all the attributes
         window.setTimeout(async () => {
           await this.loadSpec(newVal);
@@ -457,7 +465,14 @@ export default class OpenApiExplorer extends LitElement {
           if (this.explorerLocation) {
             this.scrollTo(this.explorerLocation);
           }
-        }, 0);
+        }, delay);
+      }
+    }
+    if (name === 'current-lang')    {
+      if (isI18nReady()){
+        if (oldVal !== newVal){
+          changeI18nLang(newVal);
+        }
       }
     }
     if (name === 'render-style') {
@@ -505,6 +520,8 @@ export default class OpenApiExplorer extends LitElement {
 
   // Public Method
   async loadSpec(specUrlOrObject) {
+    console.log('log spec');
+
     if (!specUrlOrObject) {
       return;
     }

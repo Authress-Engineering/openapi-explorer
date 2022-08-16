@@ -2,6 +2,7 @@ import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { marked } from 'marked';
 import base64url from 'base64url';
+import { getI18nText } from '../utils/common-utils';
 
 function onApiKeyChange(apiKeyId, e) {
   let apiKeyValue = '';
@@ -302,14 +303,14 @@ export default function securitySchemeTemplate() {
   <section id='auth' part="section-auth" class = 'observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
     <slot name="authentication">
       <div class="section-padding">
-        <div class='sub-title regular-font'>AUTHENTICATION</div>
+        <div class='sub-title regular-font'>${getI18nText('headers.authentication')}</div>
         <div class="small-font-size" style="display:flex; align-items: center; min-height:30px">
           ${providedApiKeys.length > 0
             ? html`
               <div class="blue-text"> ${providedApiKeys.length} API key applied </div>
               <div style="flex:1"></div>
               <button class="m-btn thin-border" part="btn btn-outline" @click=${() => { onClearAllApiKeys.call(this); }}>CLEAR ALL API KEYS</button>`
-            : html`<div class="red-text">No API key applied</div>`
+            : html`<div class="red-text">${getI18nText('authentication.no-api-key-applied')}</div>`
           }
         </div>
         ${schemes.length > 0
@@ -366,15 +367,15 @@ export default function securitySchemeTemplate() {
                     }
                     ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
                       ? html`
-                        Send the <code>Authorization</code> header containing the type <code>Basic</code> followed by a space and a base64 encoded string of <code>username:password</code>.
+                      ${getI18nText('authentication.http-basic-desc')}
                         <form style="display:flex;">
-                          <input type="text" value = "${v.user}" placeholder="username" spellcheck="false" class="api-key-user" style="width:100px">
-                          <input type="password" value = "${v.password}" placeholder="password" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
+                          <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
+                          <input type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
                           <button type="submit" class="m-btn thin-border"
                             @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
                             part = "btn btn-outline"
                           > 
-                            ${v.finalKeyValue ? 'UPDATE' : 'SET'}
+                            ${v.finalKeyValue ? 'UPDATE' : getI18nText('authentication.set')}
                           </button>
                         </form>`
                       : ''
@@ -461,8 +462,8 @@ export function pathSecurityTemplate(pathSecurity) {
                     : andSecurityItem.type === 'http'
                       ? html`
                         <div>
-                          ${orSecurityItem1.securityDefs.length > 1 ? html`<b>${j + 1}.</b> &nbsp;` : html`Requires`} 
-                          ${andSecurityItem.scheme === 'basic' ? 'Base 64 encoded username:password' : 'Bearer Token'} in <b>Authorization header</b>
+                          ${orSecurityItem1.securityDefs.length > 1 ? html`<b>${j + 1}.</b> &nbsp;` : html`${getI18nText('authentication.requires')}`} 
+                          ${andSecurityItem.scheme === 'basic' ? getI18nText('authentication.http-basic-note') : 'Bearer Token'} ${getI18nText('authentication.in-auth-header')}
                           ${getOauthScopeTemplate(andSecurityItem.scopes)}
                         </div>`
                       : html`

@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit-element';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { schemaInObjectNotation, generateExample } from '../utils/schema-utils';
+import { getI18nText } from '../utils/common-utils';
 import FontStyles from '../styles/font-styles';
 import FlexStyles from '../styles/flex-styles';
 import TableStyles from '../styles/table-styles';
@@ -98,7 +99,7 @@ export default class ApiResponse extends LitElement {
     return html`
     <div class="col regular-font response-panel ${this.renderStyle}-mode">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
-        ${this.callback === 'true' ? 'CALLBACK RESPONSE' : 'RESPONSE'}
+        ${this.callback === 'true' ? 'CALLBACK RESPONSE' : getI18nText('operations.response')}
       </div>
       <div>
         ${this.responseTemplate()}
@@ -170,9 +171,10 @@ export default class ApiResponse extends LitElement {
               part="btn--resp ${this.selectedStatus === respStatus ? 'btn-fill--resp' : 'btn-outline--resp'} btn-response-status"
               style='margin: 8px 4px 0 0'
             > 
-              ${respStatus} 
+              ${respStatus}
             </button>`
           }`)
+          // might consider swapping out value default with i18n property in respStatus
         }
       </div>
 
@@ -190,8 +192,8 @@ export default class ApiResponse extends LitElement {
             : html`  
               <div class="tab-panel col">
                 <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" >
-                  <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab='model'>MODEL</button>
-                  <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab='body'>EXAMPLE</button>
+                  <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab='model'>${getI18nText('operations.model')}</button>
+                  <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab='body'>${getI18nText('operations.example')}</button>
                   <div style="flex:1"></div>
                   ${Object.keys(this.mimeResponsesForEachStatus[status]).length === 1
                     ? html`<span class='small-font-size gray-text' style='align-self:center; margin-top:8px;'> ${Object.keys(this.mimeResponsesForEachStatus[status])[0]} </span>`
@@ -215,7 +217,7 @@ export default class ApiResponse extends LitElement {
 
   responseHeaderListTemplate(respHeaders) {
     return html`
-      <div style="padding:16px 0 8px 0" class="resp-headers small-font-size bold-text">RESPONSE HEADERS</div> 
+      <div style="padding:16px 0 8px 0" class="resp-headers small-font-size bold-text">${getI18nText('operations.response-headers')}</div> 
       <table role="presentation" style="border-collapse: collapse; margin-bottom:16px; border:1px solid var(--border-color); border-radius: var(--border-radius)" class="small-font-size mono-font">
         ${respHeaders.map((v) => html`
           <tr>
