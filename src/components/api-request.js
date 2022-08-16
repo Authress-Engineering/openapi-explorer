@@ -171,7 +171,7 @@ export default class ApiRequest extends LitElement {
     return html`
     <div class="api-request col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
-        ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
+        ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
       </div>
       <div>
         ${this.inputParametersTemplate('path')}
@@ -214,7 +214,7 @@ export default class ApiRequest extends LitElement {
     }
     let title = '';
     if (paramType === 'path') {
-      title = 'PATH PARAMETERS';
+      title = getI18nText('operations.path-params');
     } else if (paramType === 'query') {
       title = 'QUERY-STRING PARAMETERS';
     } else if (paramType === 'header') {
@@ -558,8 +558,8 @@ export default class ApiRequest extends LitElement {
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
-                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >MODEL</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">BODY</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >${getI18nText('operations.model')}</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">${getI18nText('operations.body')}</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
@@ -661,8 +661,8 @@ export default class ApiRequest extends LitElement {
                         }
                         if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; }
                       }}">
-                        <button class="v-tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab = 'model'>MODEL</button>
-                        <button class="v-tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'body'>REQUEST BODY</button>
+                        <button class="v-tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab = 'model'>${getI18nText('operations.model')}</button>
+                        <button class="v-tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'body'>${getI18nText('operations.request-body')}</button>
                       </div>
                     </div>  
                     ${html`
@@ -818,8 +818,8 @@ export default class ApiRequest extends LitElement {
             if (e.target.classList.contains('tab-btn') === false) { return; }
             this.activeResponseTab = e.target.dataset.tab;
         }}">
-          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>RESPONSE</button>
-          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>RESPONSE HEADERS</button>
+          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
+          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
           <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>CURL</button>
         </div>
         ${this.responseIsBlob
@@ -833,7 +833,7 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">Copy</button>
+              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
               <pre>${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
@@ -842,11 +842,11 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">Copy</button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">Copy</button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;
@@ -859,11 +859,11 @@ export default class ApiRequest extends LitElement {
         this.parameters.length > 0 || this.request_body
           ? html`
             <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onClearRequestData}">
-              CLEAR
+              ${getI18nText('operations.clear')}
             </button>`
           : ''
       }
-      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">EXECUTE</button>
+      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
     ${this.responseMessage === ''
       ? ''
