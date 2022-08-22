@@ -90,7 +90,7 @@ export function getTypeInfo(schema) {
 }
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleStrings) {
-  const example = schemaObj.examples ? schemaObj.examples[0] : schemaObj.example;
+  const example = Array.isArray(schemaObj.examples) ? schemaObj.examples[0] : Object.values(schemaObj.examples || {})[0]?.value ?? schemaObj.example;
   if (example === '') { return ''; }
   if (example === null) { return null; }
   if (example === 0) { return 0; }
@@ -529,7 +529,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
     return finalExamples;
   }
 
-  if (schema && schema.example) { // Note: schema.examples (plurals) is not allowed as per spec
+  if (schema?.example) { // Note: schema.examples (plurals) is not allowed as per spec
     return [{
       exampleId: 'Example',
       exampleSummary: '',
