@@ -82,7 +82,7 @@ export default class ApiResponse extends LitElement {
         max-width: 100%
       }
       .example-panel .example {
-        padding-top: 8px;
+        padding: 0 12px;
       }
       .focused-mode,
       .read-mode {
@@ -283,7 +283,7 @@ export default class ApiResponse extends LitElement {
             ${mimeRespDetails.examples.map((v) => html`
               <div class="example" data-example = '${v.exampleId}' style = "display: ${v.exampleId === mimeRespDetails.selectedExample ? 'block' : 'none'}">
                 ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
-                ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
+                ${v.exampleDescription && v.exampleDescription !== v.exampleSummary ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
                 ${v.exampleFormat === 'json'
                   ? html`
                     <json-tree 
