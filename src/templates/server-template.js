@@ -1,6 +1,6 @@
 import { html } from 'lit-element';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
 function onApiServerChange(e, server) {
   if (e && e.target.checked) {
