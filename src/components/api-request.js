@@ -3,7 +3,7 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import mimeTypeResolver from './mime-types';
 
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import formatXml from 'xml-but-prettier';
 
 import { copyToClipboard } from '../utils/common-utils';
@@ -57,7 +57,7 @@ export default class ApiRequest extends LitElement {
       schemaStyle: { type: String, attribute: 'schema-style' },
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
+      schemaDescriptionExpanded: { type: Boolean, attribute: 'schema-description-expanded' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
 
@@ -424,7 +424,7 @@ export default class ApiRequest extends LitElement {
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
-              schema-description-expanded = "${this.schemaDescriptionExpanded}"
+              ${this.schemaDescriptionExpanded ? 'schema-description-expanded' : ''}
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-table>
@@ -437,7 +437,7 @@ export default class ApiRequest extends LitElement {
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
-              schema-description-expanded = "${this.schemaDescriptionExpanded}"
+              ${this.schemaDescriptionExpanded ? 'schema-description-expanded' : ''}
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-tree>
@@ -570,7 +570,7 @@ export default class ApiRequest extends LitElement {
                         <schema-tree
                           .data = '${formdataPartSchema}'
                           schema-expand-level = "${this.schemaExpandLevel}"
-                          schema-description-expanded = "${this.schemaDescriptionExpanded}"> </schema-tree>
+                          ${this.schemaDescriptionExpanded ? 'schema-description-expanded' : ''}> </schema-tree>
                       </div>`
                     }
                     ${html`

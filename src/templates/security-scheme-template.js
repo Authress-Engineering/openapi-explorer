@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { marked } from 'marked';
 import base64url from 'base64url';
 

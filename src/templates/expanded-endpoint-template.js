@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { marked } from 'marked';
 import { pathSecurityTemplate } from './security-scheme-template';
 import codeSamplesTemplate from './code-samples-template';
@@ -54,7 +54,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         schema-style = "${this.displaySchemaAsTable ? 'table' : 'tree'}"
         active-schema-tab = "${this.defaultSchemaTab}"
         schema-expand-level = "${this.schemaExpandLevel}"
-        schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        ${this.schemaDescriptionExpanded ? 'schema-description-expanded' : ''}
         schema-hide-read-only = "${this.schemaHideReadOnly}"
         fetch-credentials = "${this.fetchCredentials}"
         exportparts = "btn btn-fill btn-outline btn-try"
@@ -69,7 +69,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         schema-style = "${this.displaySchemaAsTable ? 'table' : 'tree'}"
         active-schema-tab = "${this.defaultSchemaTab}"
         schema-expand-level = "${this.schemaExpandLevel}"
-        schema-description-expanded = "${this.schemaDescriptionExpanded}"
+        ${this.schemaDescriptionExpanded ? 'schema-description-expanded' : ''}
         schema-hide-write-only = "${this.schemaHideWriteOnly}"
         selected-status = "${Object.keys(path.responses || {})[0] || ''}"
         exportparts = "btn--resp btn-fill--resp btn-outline--resp"

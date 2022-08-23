@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles';
 import SchemaStyles from '../styles/schema-styles';
 import BorderStyles from '../styles/border-styles';
@@ -10,7 +10,7 @@ export default class SchemaTree extends LitElement {
     return {
       data: { type: Object },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
+      schemaDescriptionExpanded: { type: Boolean, attribute: 'schema-description-expanded' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
     };
@@ -19,7 +19,6 @@ export default class SchemaTree extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
-    if (!this.schemaDescriptionExpanded || !'true false'.includes(this.schemaDescriptionExpanded)) { this.schemaDescriptionExpanded = 'true'; }
     if (!this.schemaHideReadOnly || !'true false'.includes(this.schemaHideReadOnly)) { this.schemaHideReadOnly = 'true'; }
     if (!this.schemaHideWriteOnly || !'true false'.includes(this.schemaHideWriteOnly)) { this.schemaHideWriteOnly = 'true'; }
   }
@@ -98,7 +97,7 @@ export default class SchemaTree extends LitElement {
         <div class="toolbar">
           ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
-            ${this.schemaDescriptionExpanded === 'true' ? 'Collapse descriptions' : 'Expand descriptions'}
+            ${this.schemaDescriptionExpanded ? 'Collapse descriptions' : 'Expand descriptions'}
           </div>
         </div>
         ${this.data
