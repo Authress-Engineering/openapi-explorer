@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { schemaInObjectNotation } from '../utils/schema-utils';
 import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { marked } from 'marked';
 import '../components/json-tree';
 import '../components/schema-tree';
@@ -17,14 +17,12 @@ function componentBodyTemplate(sComponent) {
     ? html`<schema-table
       .data = '${formdataPartSchema}'
       schema-expand-level = "${this.schemaExpandLevel}"
-      schema-description-expanded = "${this.schemaDescriptionExpanded}"
       schema-hide-read-only=false
       schema-hide-write-only=false> </schema-table>`
         
     : html`<schema-tree
         .data = '${formdataPartSchema}'
         schema-expand-level = "${this.schemaExpandLevel}"
-        schema-description-expanded = "${this.schemaDescriptionExpanded}"
         schema-hide-read-only=false
         schema-hide-write-only=false> </schema-tree>`
 }

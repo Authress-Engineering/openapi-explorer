@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample } from '../utils/schema-utils';
 import FontStyles from '../styles/font-styles';
 import FlexStyles from '../styles/flex-styles';
@@ -31,7 +31,6 @@ export default class ApiResponse extends LitElement {
       selectedMimeType: { type: String, attribute: 'selected-mime-type' },
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
     };
   }
@@ -315,7 +314,6 @@ export default class ApiResponse extends LitElement {
             .data = '${mimeRespDetails.schemaTree}'
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
-            schema-description-expanded = "${this.schemaDescriptionExpanded}"
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
           > </schema-table> `
@@ -325,7 +323,6 @@ export default class ApiResponse extends LitElement {
             .data = '${mimeRespDetails.schemaTree}'
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
-            schema-description-expanded = "${this.schemaDescriptionExpanded}"
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
           > </schema-tree>`

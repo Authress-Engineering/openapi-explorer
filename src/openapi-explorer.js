@@ -73,7 +73,6 @@ export default class OpenApiExplorer extends LitElement {
       // Schema Styles
       displaySchemaAsTable: { type: Boolean, attribute: 'table' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String },
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
@@ -379,7 +378,6 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
-    if (!this.schemaDescriptionExpanded || !'true, false,'.includes(`${this.schemaDescriptionExpanded},`)) { this.schemaDescriptionExpanded = 'true'; }
     this.schemaHideReadOnly = ['post', 'put', 'patch'].join(',');
     this.schemaHideWriteOnly = true;
     if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }

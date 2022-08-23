@@ -3,7 +3,7 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import mimeTypeResolver from './mime-types';
 
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import formatXml from 'xml-but-prettier';
 
 import { copyToClipboard } from '../utils/common-utils';
@@ -57,7 +57,6 @@ export default class ApiRequest extends LitElement {
       schemaStyle: { type: String, attribute: 'schema-style' },
       activeSchemaTab: { type: String, attribute: 'active-schema-tab' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: String, attribute: 'schema-description-expanded' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
 
@@ -424,7 +423,6 @@ export default class ApiRequest extends LitElement {
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
-              schema-description-expanded = "${this.schemaDescriptionExpanded}"
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-table>
@@ -437,7 +435,6 @@ export default class ApiRequest extends LitElement {
               style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
               .data = '${schemaAsObj}'
               schema-expand-level = "${this.schemaExpandLevel}"
-              schema-description-expanded = "${this.schemaDescriptionExpanded}"
               schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
               schema-hide-write-only = false
             > </schema-tree>
@@ -569,8 +566,7 @@ export default class ApiRequest extends LitElement {
                       <div class="tab-content col" data-tab = 'model' style="display:${this.activeSchemaTab === 'model' ? 'block' : 'none'}; padding-left:5px; width:100%;"> 
                         <schema-tree
                           .data = '${formdataPartSchema}'
-                          schema-expand-level = "${this.schemaExpandLevel}"
-                          schema-description-expanded = "${this.schemaDescriptionExpanded}"> </schema-tree>
+                          schema-expand-level = "${this.schemaExpandLevel}"> </schema-tree>
                       </div>`
                     }
                     ${html`
