@@ -170,7 +170,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
-                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple &#x21a9;'}"
+                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
                     .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"
                   >
                   </tag-input>`
@@ -461,7 +461,7 @@ export default class ApiRequest extends LitElement {
                 <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">BODY</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
-              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
+              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'body' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
             </div>`
           : html`  
             ${reqBodyFileInputHtml}
@@ -500,7 +500,9 @@ export default class ApiRequest extends LitElement {
             <div class="param-name ${fieldSchema.deprecated ? 'deprecated' : ''}">
               ${fieldName}${!fieldSchema.deprecated && (schema.required && schema.required.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
-            <div class="param-type">${paramSchema.type}</div>
+            <div class="param-type">
+            ${paramSchema.type === 'array' ? html`[<span class="formnum">${paramSchema.format}</span>]` : `${paramSchema.type}`}
+            </div>
           </td>  
           <td 
             style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? '' : 'display:none;'} min-width:100px;" 
@@ -531,7 +533,7 @@ export default class ApiRequest extends LitElement {
                     data-pname = "${fieldName}"
                     data-default = "${paramSchema.default || ''}"
                     data-array = "true"
-                    placeholder="${(Array.isArray(paramSchema.example) ? paramSchema.example[0] : paramSchema.example) || 'add-multiple &#x21a9;'}"
+                    placeholder="${(Array.isArray(paramSchema.example) ? paramSchema.example[0] : paramSchema.example) || 'add-multiple ↩'}"
                     .value = "${paramSchema.default || ''}"
                   >
                   </tag-input>
@@ -539,9 +541,9 @@ export default class ApiRequest extends LitElement {
               : html`
                 ${fieldType === 'object'
                   ? html`
-                  <div class="tab-panel row" style="min-height:220px; border-left: 6px solid var(--light-border-color); align-items: stretch;">
+                  <div class="tab-panel row" style="min-height:300px; border-left: 6px solid var(--light-border-color); align-items: stretch;">
                     <div style="width:24px; background-color:var(--light-border-color)">
-                      <div class="row" style="flex-direction:row-reverse; width:160px; height:24px; transform:rotate(270deg) translateX(-160px); transform-origin:top left; display:block;" @click="${(e) => {
+                      <div class="row" style="flex-direction:row-reverse; width:260px; height:24px; transform:rotate(270deg) translateX(-260px); transform-origin:top left; display:block;" @click="${(e) => {
                         if (e.target.classList.contains('v-tab-btn')) {
                           const tab = e.target.dataset.tab;
                           if (tab) {
@@ -570,7 +572,7 @@ export default class ApiRequest extends LitElement {
                       </div>`
                     }
                     ${html`
-                      <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'body' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
+                      <div class="tab-content col" data-tab = 'body' style="display:${this.activeSchemaTab === 'body' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
                         <textarea 
                           class = "textarea" placeholder="${formdataPartExample[0] && formdataPartExample[0].exampleValue || paramSchema.default || ''}"
                           part = "textarea textarea-param"
@@ -580,9 +582,9 @@ export default class ApiRequest extends LitElement {
                           data-pname = "${fieldName}"
                           data-default = "${paramSchema.default || ''}"
                           spellcheck = "false"
-                        >${this.fillRequestWithDefault === 'true' ? paramSchema.default : ''}</textarea>
+                        >${this.fillRequestWithDefault === 'true' ? formdataPartExample[0] && formdataPartExample[0].exampleValue : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
-                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${paramSchema.default}</textarea>
+                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${formdataPartExample[0] && formdataPartExample[0].exampleValue}</textarea>
                       </div>`
                     }
                   </div>`
