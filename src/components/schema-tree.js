@@ -224,7 +224,7 @@ export default class SchemaTree extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -244,7 +244,12 @@ export default class SchemaTree extends LitElement {
                 : ''
           }
           <span class="${dataTypeCss}">
-            ${dataType === 'array' ? `${type}[]` : `${type}`}
+            ${dataType === 'array'
+            ? type.match(/integer|number/g)
+            ? html`[<span class="formnum">${format}</span>]`
+            : `[${type}]` : type.match(/integer|number/g)
+            ? html`${type}(<span class="formnum">${format}</span>)`
+            : `${type}`}
           </span>
         </div>
         <div class="td key-descr">

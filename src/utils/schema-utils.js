@@ -25,6 +25,10 @@ export function getTypeInfo(schema) {
     dataType = IS_MISSING_TYPE_INFO_TYPE;
   }
 
+  if (dataType === 'array' && !schema.format) {
+    schema.format = schema.items.format;
+  }
+
   const info = {
     type: dataType,
     format: schema.format || '',
@@ -76,6 +80,7 @@ export function getTypeInfo(schema) {
   info.constraint = constraint;
   info.html = JSON.stringify({
     type: info.type,
+    format: info.format,
     readOrWriteOnly: info.readOrWriteOnly,
     constraint: info.constraint,
     defaultValue: info.default,
