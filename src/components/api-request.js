@@ -539,9 +539,9 @@ export default class ApiRequest extends LitElement {
               : html`
                 ${fieldType === 'object'
                   ? html`
-                  <div class="tab-panel row" style="min-height:220px; border-left: 6px solid var(--light-border-color); align-items: stretch;">
+                  <div class="tab-panel row" style="min-height:300px; border-left: 6px solid var(--light-border-color); align-items: stretch;">
                     <div style="width:24px; background-color:var(--light-border-color)">
-                      <div class="row" style="flex-direction:row-reverse; width:160px; height:24px; transform:rotate(270deg) translateX(-160px); transform-origin:top left; display:block;" @click="${(e) => {
+                      <div class="row" style="flex-direction:row-reverse; width:260px; height:24px; transform:rotate(270deg) translateX(-260px); transform-origin:top left; display:block;" @click="${(e) => {
                         if (e.target.classList.contains('v-tab-btn')) {
                           const tab = e.target.dataset.tab;
                           if (tab) {
@@ -570,7 +570,7 @@ export default class ApiRequest extends LitElement {
                       </div>`
                     }
                     ${html`
-                      <div class="tab-content col" data-tab = 'example' style="display:${this.activeSchemaTab === 'body' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
+                      <div class="tab-content col" data-tab = 'body' style="display:${this.activeSchemaTab === 'body' ? 'block' : 'none'}; padding-left:5px; width:100%"> 
                         <textarea 
                           class = "textarea" placeholder="${formdataPartExample[0] && formdataPartExample[0].exampleValue || paramSchema.default || ''}"
                           part = "textarea textarea-param"
