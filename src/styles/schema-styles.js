@@ -58,6 +58,7 @@ export default css`
 
 .stri, .string, .uri, .url, .byte, .bina, .date, .pass, .ipv4, .ipv4, .uuid, .emai, .host {color:var(--green);}
 .inte, .numb, .number, .int6, .int3, .floa, .doub, .deci .blue {color:var(--blue);}
+.formnum {color:var(--orange);}
 .null {color:var(--red);}
 .bool, .boolean{color:var(--orange)}
 .enum {color:var(--yellow)}
