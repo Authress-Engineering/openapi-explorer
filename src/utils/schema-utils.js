@@ -25,13 +25,9 @@ export function getTypeInfo(schema) {
     dataType = IS_MISSING_TYPE_INFO_TYPE;
   }
 
-  if (dataType === 'array' && !schema.format) {
-    schema.format = schema.items.format;
-  }
-
   const info = {
     type: dataType,
-    format: schema.format || '',
+    format: schema.format || schema.items?.format || '',
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,

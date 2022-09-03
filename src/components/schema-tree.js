@@ -234,7 +234,7 @@ export default class SchemaTree extends LitElement {
     const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
       <div class="tr primitive">
-        <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px' >
+        <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
           ${keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>:`
             : key.startsWith('::OPTION')
@@ -243,14 +243,8 @@ export default class SchemaTree extends LitElement {
                 ? html`<span class="key-label">${keyLabel}:</span>`
                 : ''
           }
-          <span class="${dataTypeCss}">
-            ${dataType === 'array'
-            ? type.match(/integer|number/g)
-            ? html`[<span class="formnum">${format}</span>]`
-            : `[${type}]` : type.match(/integer|number/g)
-            ? html`${type}(<span class="formnum">${format}</span>)`
-            : `${type}`}
-          </span>
+          <span>${dataType === 'array' ? '[' : ''}<span class="${dataTypeCss}">${format || type}</span>${dataType === 'array' ? ']' : ''}</span>
+
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
