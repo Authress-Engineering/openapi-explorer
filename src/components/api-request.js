@@ -170,7 +170,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
-                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple &#x21a9;'}"
+                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
                     .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"
                   >
                   </tag-input>`
@@ -500,7 +500,9 @@ export default class ApiRequest extends LitElement {
             <div class="param-name ${fieldSchema.deprecated ? 'deprecated' : ''}">
               ${fieldName}${!fieldSchema.deprecated && (schema.required && schema.required.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
-            <div class="param-type">${paramSchema.type}</div>
+            <div class="param-type">
+            ${paramSchema.type === 'array' ? html`[<span>${paramSchema.format || paramSchema.type}</span>]` : `${paramSchema.format || paramSchema.type}`}
+            </div>
           </td>  
           <td 
             style="${fieldType === 'object' ? 'width:100%; padding:0;' : this.allowTry === 'true' ? '' : 'display:none;'} min-width:100px;" 
@@ -531,7 +533,7 @@ export default class ApiRequest extends LitElement {
                     data-pname = "${fieldName}"
                     data-default = "${paramSchema.default || ''}"
                     data-array = "true"
-                    placeholder="${(Array.isArray(paramSchema.example) ? paramSchema.example[0] : paramSchema.example) || 'add-multiple &#x21a9;'}"
+                    placeholder="${(Array.isArray(paramSchema.example) ? paramSchema.example[0] : paramSchema.example) || 'add-multiple ↩'}"
                     .value = "${paramSchema.default || ''}"
                   >
                   </tag-input>

@@ -27,7 +27,7 @@ export function getTypeInfo(schema) {
 
   const info = {
     type: dataType,
-    format: schema.format || '',
+    format: schema.format || schema.items?.format || '',
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
@@ -76,6 +76,7 @@ export function getTypeInfo(schema) {
   info.constraint = constraint;
   info.html = JSON.stringify({
     type: info.type,
+    format: info.format,
     readOrWriteOnly: info.readOrWriteOnly,
     constraint: info.constraint,
     defaultValue: info.default,
