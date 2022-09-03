@@ -193,7 +193,7 @@ export default class SchemaTable extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -211,16 +211,16 @@ export default class SchemaTable extends LitElement {
               : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
           }
         </div>
-        <div class='td key-type ${dataTypeCss}'>
-          ${dataType === 'array' ? `${type}[]` : type}
-          <span style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
+        <div class='td key-type'>
+          <span>${dataType === 'array' ? '[' : ''}<span class="${dataTypeCss}">${format || type}</span>${dataType === 'array' ? ']' : ''}</span>
+          <span class="${dataTypeCss}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
             ${readOrWriteOnly}
           </span>
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
+          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;">
+            ${unsafeHTML(marked(`${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraint ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}

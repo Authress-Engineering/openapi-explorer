@@ -599,7 +599,7 @@ export default class ApiRequest extends LitElement {
               ${fieldName}${!fieldSchema.deprecated && (schema.required && schema.required.includes(fieldName) || fieldSchema.required) ? html`<span style='color:var(--red);'>*</span>` : ''}
             </div>
             <div class="param-type">
-            ${paramSchema.type === 'array' ? html`[<span class="formnum">${paramSchema.format}</span>]` : `${paramSchema.type}`}
+            ${paramSchema.type === 'array' ? html`[<span>${paramSchema.format || paramSchema.type}</span>]` : `${paramSchema.format || paramSchema.type}`}
             </div>
           </td>  
           <td 
@@ -680,9 +680,9 @@ export default class ApiRequest extends LitElement {
                           data-pname = "${fieldName}"
                           data-default = "${paramSchema.default || ''}"
                           spellcheck = "false"
-                        >${this.fillRequestWithDefault === 'true' ? formdataPartExample[0] && formdataPartExample[0].exampleValue : ''}</textarea>
+                        >${this.fillRequestWithDefault === 'true' ? paramSchema.default : ''}</textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
-                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${formdataPartExample[0] && formdataPartExample[0].exampleValue}</textarea>
+                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${paramSchema.default}</textarea>
                       </div>`
                     }
                   </div>`
