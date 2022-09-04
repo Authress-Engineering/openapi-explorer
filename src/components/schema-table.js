@@ -80,11 +80,11 @@ export default class SchemaTable extends LitElement {
   /* eslint-disable indent */
   render() {
     return html`
+      ${this.data && this.data['::description']
+        ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
+        : ''
+      }
       <div class="table">
-        ${this.data && this.data['::description']
-          ? html`<span class='m-markdown'> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
-          : ''
-        }
         <div style = 'border:1px solid var(--light-border-color)'>
           <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
             <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Field </div>
@@ -145,6 +145,8 @@ export default class SchemaTable extends LitElement {
       if (flags['🆆'] && this.schemaHideWriteOnly === 'true') {
         return undefined;
       }
+      
+      const displayLine = [flags['🆁'] || flags['🆆'], description].filter(v => v).join(' ');
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
@@ -170,7 +172,7 @@ export default class SchemaTable extends LitElement {
                 ${data['::type'] === 'xxx-of' && dataType === 'array' ? html`<span style="color:var(--primary-color)">ARRAY</span>` : ''} 
               </div>
               <div class='td key-type'>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>
-              <div class='td key-descr m-markdown-small' style='line-height:1.7'>${unsafeHTML(marked(description || ''))}</div>
+              <div class='td key-descr m-markdown-small' style='line-height:1.7'>${unsafeHTML(marked(displayLine))}</div>
             </div>`
           : html`
               ${data['::type'] === 'array' && dataType === 'array'
@@ -183,9 +185,11 @@ export default class SchemaTable extends LitElement {
         ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
             : html`
               ${Object.keys(data).map((dataKey) =>
-                dataKey.startsWith('::') && data[dataKey]['::type'] !== 'array' && data[dataKey]['::type'] !== 'object' ? ''
-                : html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
+                !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
+                ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                       data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+                : ''
               )}`
           }
         <div>

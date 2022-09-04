@@ -305,26 +305,35 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
   } else if (anyOf || oneOf) {
     const objWithAnyOfProps = {};
+    let writeOnly = true;
+    let readOnly = true;
     (anyOf || oneOf || []).forEach((v, index) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
         const partialObj = schemaInObjectNotation(v, {});
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
+        readOnly &&= partialObj['::flags']?.['🆁'];
+        writeOnly &&= partialObj['::flags']?.['🆆'];
       } else if (v.type === 'array' || v.items) {
         // This else-if block never seems to get executed
         const partialObj = schemaInObjectNotation(v, {});
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-array';
+        readOnly &&= partialObj['::flags']?.['🆁'];
+        writeOnly &&= partialObj['::flags']?.['🆆'];
       } else {
         const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
         objWithAnyOfProps[prop] = `${getTypeInfo(v).html}`;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
+        readOnly &&= objWithAnyOfProps['::flags']?.['🆁'];
+        writeOnly &&= objWithAnyOfProps['::flags']?.['🆆'];
       }
     });
     const obj = schemaInObjectNotation(schema, {}, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
     resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
     resultObj['::type'] = 'xxx-of';
+    resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     return resultObj;
   } else if (Array.isArray(schema.type)) {
     const obj = {};
@@ -430,6 +439,9 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1));
+    if (schema.items?.items) {
+      obj['::array-type'] = schema.items.items.type;
+    }
     return obj;
   }
 
