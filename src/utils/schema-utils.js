@@ -312,21 +312,21 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
         const partialObj = schemaInObjectNotation(v, {});
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
-        readOnly &&= partialObj['::flags']?.['🆁'];
-        writeOnly &&= partialObj['::flags']?.['🆆'];
+        readOnly = readOnly && partialObj['::flags']?.['🆁'];
+        writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else if (v.type === 'array' || v.items) {
         // This else-if block never seems to get executed
         const partialObj = schemaInObjectNotation(v, {});
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-array';
-        readOnly &&= partialObj['::flags']?.['🆁'];
-        writeOnly &&= partialObj['::flags']?.['🆆'];
+        readOnly = readOnly && partialObj['::flags']?.['🆁'];
+        writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else {
         const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
         objWithAnyOfProps[prop] = `${getTypeInfo(v).html}`;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
-        readOnly &&= objWithAnyOfProps['::flags']?.['🆁'];
-        writeOnly &&= objWithAnyOfProps['::flags']?.['🆆'];
+        readOnly = readOnly && objWithAnyOfProps['::flags']?.['🆁'];
+        writeOnly = writeOnly && objWithAnyOfProps['::flags']?.['🆆'];
       }
     });
     const obj = schemaInObjectNotation(schema, {}, 0);
