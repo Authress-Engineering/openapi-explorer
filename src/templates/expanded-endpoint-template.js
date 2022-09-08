@@ -42,6 +42,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
       <api-request class="request-panel"
         method = "${path.method}"
         path = "${path.path}"
+        element-id = "${path.elementId}"
         .parameters = "${path.parameters}"
         .request_body = "${path.requestBody}"
         .api_keys = "${nonEmptyApiKeys}"
