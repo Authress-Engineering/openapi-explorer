@@ -76,7 +76,7 @@ onSpecLoaded(data) {
 
 ```js
 requestInterceptor(event) {
-  event.detail.request.options.headers.append('Authorization', `Bearer ${userToken}`);
+  event.detail.request.headers.append('Authorization', `Bearer ${userToken}`);
 }
 ```
 
@@ -119,8 +119,10 @@ responseInterceptor(event) {
   <div>Methods</div>
   <hr>
 </div>
+```
 
 #### Custom Navigation section
+```html
 <!-- Add custom nav sections to link to the custom section -->
 <div slot="nav-section">Section 1</div>
 <div slot="nav-section">Section 2</div>
@@ -129,14 +131,15 @@ responseInterceptor(event) {
 <div slot="custom-section">
   <h1>A custom section rendered when selected.</h1>
 </div>
+```
 
 #### Tag and operations slot configuration
-
+```html
 <!-- Hide a tag from navigation -->
-<div div="nav-tag--${tagName}"></div>
+<div slot="nav-tag--${tagName}"></div>
 
-<div div="tag--${tagName}"></div>
-<div div="tag--${tagName}--subsection--${subsectionName}"></div>
+<div slot="tag--${tagName}"></div>
+<div slot="tag--${tagName}--subsection--${subsectionName}"></div>
 
 <!--
   Example: GET /v1/resources/{resourceUri}/users becomes => get-/v1/resources/-resourceUri-/users
@@ -148,6 +151,26 @@ responseInterceptor(event) {
 </div>
 
 ```
+
+#### Overwrite request body area
+```html
+<div slot="${this.elementId}--request-body">
+  <!-- Example filling this with a custom text area -->
+  <textarea id="text-body-area-override" class="textarea request-body-param-user-input" part="textarea textarea-param" spellcheck="false" style="width:100%; resize:vertical;">
+    { "Example Data": "" }
+  </textarea>
+</div>
+```
+
+After the user interacts with this component (or your custom implementation), you'll want path this back as input to the actual request:
+
+```js
+requestInterceptor(event) {
+  const textareaObject = document.getElementById("text-body-area-override");
+  event.detail.request.body = textareaObject.value;
+}
+```
+
 
 ### SDK code samples
 OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI vendor extension. Just add your code sample into the array and it will dynamically appear as an example in the doc.

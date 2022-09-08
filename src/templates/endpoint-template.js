@@ -99,10 +99,11 @@ function endpointBodyTemplate(path) {
           style = "width:100%;"
           method = "${path.method}", 
           path = "${path.path}" 
+          element-id = "${path.elementId}"
           .parameters = "${path.parameters}"
           .request_body = "${path.requestBody}"
           .api_keys = "${nonEmptyApiKeys}"
-          .servers = "${path.servers}" 
+          .servers = "${path.servers}"
           server-url = "${path.servers && path.servers.length > 0 ? path.servers[0].url : this.selectedServer.computedUrl}" 
           active-schema-tab = "${this.defaultSchemaTab}"
           fill-defaults = "${this.fillRequestWithDefault}"
