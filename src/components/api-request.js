@@ -43,6 +43,7 @@ export default class ApiRequest extends LitElement {
       servers: { type: Array },
       method: { type: String },
       path: { type: String },
+      elementId: { type: String, attribute: 'element-id' },
       parameters: { type: Array },
       request_body: { type: Object },
       api_keys: { type: Array },
@@ -391,7 +392,7 @@ export default class ApiRequest extends LitElement {
     let reqBodyFileInputHtml = '';
     let reqBodyFormHtml = '';
     let reqBodySchemaHtml = '';
-    let reqBodyExampleHtml = '';
+    let reqBodyDefaultHtml = '';
 
     const requestBodyTypes = [];
     const content = this.request_body.content;
@@ -439,8 +440,8 @@ export default class ApiRequest extends LitElement {
           if (!this.selectedRequestBodyExample) {
             this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
           }
-          reqBodyExampleHtml = html`
-            ${reqBodyExampleHtml}
+          reqBodyDefaultHtml = html`
+            ${reqBodyDefaultHtml}
             <div class = 'example-panel border-top pad-top-8'>
               ${reqBodyExamples.length === 1
                 ? ''
@@ -458,19 +459,20 @@ export default class ApiRequest extends LitElement {
                 <div class="example ${v.exampleId === this.selectedRequestBodyExample ? 'example-selected' : ''}" data-default = '${v.exampleId}'>
                   ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
                   ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
-                  <!-- this textarea is for user to edit the example -->
-                  <textarea 
-                    class = "textarea request-body-param-user-input"
-                    part = "textarea textarea-param"
-                    spellcheck = "false"
-                    data-ptype = "${reqBody.mimeType}" 
-                    data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
-                    data-default-format = "${v.exampleFormat}"
-                    style="width:100%; resize:vertical;"
-                  >${this.fillRequestWithDefault === 'true'
-                      ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))
-                      : ''
-                    }</textarea>
+                    <!-- this textarea is for user to edit the example -->
+                  <slot name="${this.elementId}--request-body">
+                    <textarea 
+                      class = "textarea request-body-param-user-input"
+                      part = "textarea textarea-param"
+                      spellcheck = "false"
+                      data-ptype = "${reqBody.mimeType}" 
+                      data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
+                      data-default-format = "${v.exampleFormat}"
+                      style="width:100%; resize:vertical;">
+                      ${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}
+                    </textarea>
+                  </slot>
+
                   <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
                   <textarea 
                     class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
@@ -559,7 +561,7 @@ export default class ApiRequest extends LitElement {
                 <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">BODY</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
-              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
+              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
             </div>`
           : html`  
             ${reqBodyFileInputHtml}
@@ -1148,7 +1150,8 @@ export default class ApiRequest extends LitElement {
       fetchOptions.credentials = this.fetchCredentials;
     }
 
-    const fetchRequest = { url: fetchUrl, options: fetchOptions };
+    // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
+    const fetchRequest = { elementId: this.elementId, url: fetchUrl, options: fetchOptions, ...fetchOptions };
     const event = {
       bubbles: true,
       composed: true,
@@ -1158,7 +1161,13 @@ export default class ApiRequest extends LitElement {
     };
     this.dispatchEvent(new CustomEvent('before-try', event));
     this.dispatchEvent(new CustomEvent('request', event));
-    const fetchRequestObject = new Request(fetchUrl, fetchOptions);
+    const newFetchOptions = {
+      method: fetchRequest.method || fetchRequest.options.method,
+      headers: fetchRequest.headers || fetchOptions.options.headers,
+      credentials: fetchRequest.credentials || fetchOptions.options.credentials,
+      body: fetchRequest.body || fetchOptions.options.body
+    };
+    const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
 
     let fetchResponse;
     try {
