@@ -107,6 +107,7 @@ function endpointBodyTemplate(path) {
           server-url = "${path.servers && path.servers.length > 0 ? path.servers[0].url : this.selectedServer.computedUrl}" 
           active-schema-tab = "${this.defaultSchemaTab}"
           fill-defaults = "${this.fillRequestWithDefault}"
+          display-nulls="${!!this.includeNulls}"
           enable-console = "${this.allowTry}"
           accept = "${accept}"
           render-style="${this.renderStyle}" 
@@ -121,6 +122,7 @@ function endpointBodyTemplate(path) {
       <api-response  
         class="request response" 
         .responses="${path.responses}"
+        display-nulls="${!!this.includeNulls}"
         active-schema-tab = "${this.defaultSchemaTab}" 
         render-style="${this.renderStyle}" 
         schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"

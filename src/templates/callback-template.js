@@ -28,6 +28,7 @@ export default function callbackTemplate(callbacks) {
                       .parameters = "${method[1] && method[1].parameters || ''}" 
                       .request_body = "${method[1] && method[1].requestBody || ''}"
                       fill-defaults = "${this.fillRequestWithDefault}"
+                      display-nulls="${!!this.includeNulls}"
                       enable-console = "false"
                       render-style="${this.renderStyle}" 
                       schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
@@ -41,6 +42,7 @@ export default function callbackTemplate(callbacks) {
                     <api-response
                       callback = "true"
                       .responses="${method[1] && method[1].responses}"
+                      display-nulls="${!!this.includeNulls}"
                       render-style="${this.renderStyle}"
                       schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
                       active-schema-tab = "${this.defaultSchemaTab}"
