@@ -1,6 +1,6 @@
 import { html } from 'lit-element';
 import { marked } from 'marked';
-import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
+import { componentIsInSearch, pathIsInSearch, getI18nText } from '../utils/common-utils';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
@@ -44,7 +44,7 @@ export default function navbarTemplate() {
                   part = "textbox textbox-nav-filter"
                   style = "width:100%; padding-right:20px; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
                   type = "text"
-                  placeholder = "Filter" 
+                  placeholder = "${getI18nText('menu.filter')}"
                   @change = "${this.onSearchChange}"  
                   spellcheck = "false" 
                 >
@@ -61,7 +61,7 @@ export default function navbarTemplate() {
             ? ''
             : html`
               <button class="m-btn primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
-                Search
+                ${getI18nText('menu.search')}
               </button>
             `
           }
@@ -72,17 +72,17 @@ export default function navbarTemplate() {
       ${(this.showInfo === 'false' || !this.resolvedSpec.info)
         ? ''
         : html`<div class='nav-bar-info'  id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}'>
-          ${this.isV1 && this.resolvedSpec.info.title || 'Overview'}
+          ${this.isV1 && this.resolvedSpec.info.title || getI18nText('menu.overview')}
         </div>`
       }
     
       ${this.allowServerSelection === 'false'
         ? ''
-        : html`<div class='nav-bar-info' id='link-servers' data-content-id='servers' @click = '${(e) => this.scrollToEventTarget(e, false)}'> API Servers </div>`
+        : html`<div class='nav-bar-info' id='link-servers' data-content-id='servers' @click = '${(e) => this.scrollToEventTarget(e, false)}'> ${getI18nText('menu.api-servers')} </div>`
       }
       ${(this.allowAuthentication === 'false' || !this.resolvedSpec.securitySchemes)
         ? ''
-        : html`<div class='nav-bar-info' id='link-auth' data-content-id='auth' @click = '${(e) => this.scrollToEventTarget(e, false)}'> Authentication </div>`
+        : html`<div class='nav-bar-info' id='link-auth' data-content-id='auth' @click = '${(e) => this.scrollToEventTarget(e, false)}'> ${getI18nText('menu.authentication')} </div>`
       }
 
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToCustomNavSectionTarget(e, false)}'></slot>
@@ -90,7 +90,7 @@ export default function navbarTemplate() {
       <div class="sticky-scroll-element">
         <div class='nav-bar-section' part="navbar-operations-header">
           <slot name="operations-header">
-            <div class='nav-bar-section-title'>OPERATIONS</div>  
+            <div class='nav-bar-section-title'>${getI18nText('menu.operations')}</div>  
           </slot>
           <div style="" part="navbar-operations-header-collapse">
             ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
@@ -162,7 +162,7 @@ export default function navbarTemplate() {
           <div class="sticky-scroll-element">
             <div id='link-components' class='nav-bar-section'>
               <slot name="components-header">
-                <div class='nav-bar-section-title'>COMPONENTS</div>
+                <div class='nav-bar-section-title'>${getI18nText('menu.components')}</div>
               </slot>
               
               ${this.resolvedSpec.components.some((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s)))

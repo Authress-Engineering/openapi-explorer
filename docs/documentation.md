@@ -12,6 +12,9 @@
 * `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
 * `fill-defaults` - [true] Fills the request data with the default data.
+*  `lang-url` - base URL to use to look for language json files
+*  `current-lang` - language to load. we look for files under `lang-url` with the naming convention `translation_{current-lang}.json`
+
 
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section

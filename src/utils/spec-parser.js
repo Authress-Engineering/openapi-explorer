@@ -1,6 +1,6 @@
 import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
 import { marked } from 'marked';
-import { invalidCharsRegEx } from './common-utils';
+import { invalidCharsRegEx, getI18nText } from './common-utils';
 import cloneDeep from 'lodash.clonedeep';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
@@ -51,7 +51,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   // Updated Security Type Display Text based on Type
   securitySchemes.forEach((v) => {
     if (v.type === 'http') {
-      v.typeDisplay = v.scheme === 'basic' ? 'HTTP Basic' : 'HTTP Bearer';
+      v.typeDisplay = v.scheme === 'basic' ? getI18nText('authentication.http-basic') : 'HTTP Bearer';
     } else if (v.type === 'apiKey') {
       v.typeDisplay = `API Key (${v.name})`;
     } else if (v.type === 'oauth2') {
@@ -132,7 +132,7 @@ function getComponents(openApiSpec) {
 
     switch (component) {
       case 'schemas':
-        cmpName = 'Schemas';
+        cmpName = getI18nText('menu.schemas');
         cmpDescription = '';
         break;
       case 'responses':
