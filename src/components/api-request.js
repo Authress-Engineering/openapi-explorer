@@ -117,7 +117,7 @@ export default class ApiRequest extends LitElement {
     }
     let title = '';
     if (paramType === 'path') {
-      title = getI18nText('operations.path-params');
+      title = 'PATH PARAMETERS';
     } else if (paramType === 'query') {
       title = 'QUERY-STRING PARAMETERS';
     } else if (paramType === 'header') {
