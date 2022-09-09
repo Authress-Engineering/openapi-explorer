@@ -25,6 +25,7 @@ export default class ApiResponse extends LitElement {
       callback: { type: String },
       responses: { type: Object },
       parser: { type: Object },
+      includeNulls: { type: Boolean, attribute: 'display-nulls', converter(value) { return value === 'true'; } },
       schemaStyle: { type: String, attribute: 'schema-style' },
       renderStyle: { type: String, attribute: 'render-style' },
       selectedStatus: { type: String, attribute: 'selected-status' },
@@ -125,7 +126,7 @@ export default class ApiResponse extends LitElement {
           this.selectedMimeType = mimeResp;
         }
         // Generate Schema
-        const schemaTree = schemaInObjectNotation(mimeRespObj.schema, {});
+        const schemaTree = schemaInObjectNotation(mimeRespObj.schema, { includeNulls: this.includeNulls });
         // Generate Example
         const respExamples = generateExample(
           (mimeRespObj.examples || ''),

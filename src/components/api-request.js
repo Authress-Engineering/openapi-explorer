@@ -53,6 +53,7 @@ export default class ApiRequest extends LitElement {
       responseUrl: { type: String, attribute: false },
       responseElapsedMs: { type: Number, attribute: false },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
+      includeNulls: { type: Boolean, attribute: 'display-nulls', converter(value) { return value === 'true'; } },
       allowTry: { type: String, attribute: 'enable-console' },
       renderStyle: { type: String, attribute: 'render-style' },
       schemaStyle: { type: String, attribute: 'schema-style' },
@@ -129,7 +130,7 @@ export default class ApiRequest extends LitElement {
       if (!param.schema) {
         continue;
       }
-      const paramSchema = getTypeInfo(param.schema);
+      const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
       if (!paramSchema) {
         continue;
       }
@@ -216,7 +217,7 @@ export default class ApiRequest extends LitElement {
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
                         <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
-                          data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                          data-type="${paramSchema.type === 'array' ? 'array' : 'string'}"
                           data-enum="${v.trim()}"
                           @click="${(e) => {
                             const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
@@ -416,7 +417,7 @@ export default class ApiRequest extends LitElement {
 
       // Generate Schema
       if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text')) {
-        const schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
+        const schemaAsObj = schemaInObjectNotation(reqBody.schema, { includeNulls: this.includeNulls });
         if (this.schemaStyle === 'table') {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
@@ -483,8 +484,8 @@ export default class ApiRequest extends LitElement {
         }
 
         const fieldType = fieldSchema.type;
-        const formdataPartSchema = schemaInObjectNotation(fieldSchema, {});
-        const paramSchema = getTypeInfo(fieldSchema);
+        const formdataPartSchema = schemaInObjectNotation(fieldSchema, { includeNulls: this.includeNulls });
+        const paramSchema = getTypeInfo(fieldSchema, { includeNulls: this.includeNulls });
         const formdataPartExample = generateExample(
           '',
           fieldSchema.example ? fieldSchema.example : '',

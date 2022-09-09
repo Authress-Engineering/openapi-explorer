@@ -49,6 +49,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         .servers = "${path.servers}"
         server-url = "${path.servers && path.servers[0] && path.servers[0].url || this.selectedServer.computedUrl}"
         fill-defaults = "${this.fillRequestWithDefault}"
+        display-nulls="${!!this.includeNulls}"
         enable-console = "${this.allowTry}"
         accept = "${accept}"
         render-style="${this.renderStyle}" 
@@ -65,6 +66,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
       <api-response
         class = 'response-panel'
         .responses = "${path.responses}"
+        display-nulls="${!!this.includeNulls}"
         render-style = "${this.renderStyle}"
         schema-style = "${this.displaySchemaAsTable ? 'table' : 'tree'}"
         active-schema-tab = "${this.defaultSchemaTab}"

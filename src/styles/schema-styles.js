@@ -55,11 +55,11 @@ export default css`
     margin-left: 2px;
 }
 
-.stri, .string, .uri, .url, .byte, .bina, .date, .pass, .ipv4, .ipv4, .uuid, .emai, .host {color:var(--green);}
-.inte, .numb, .number, .int6, .int3, .floa, .doub, .deci .blue {color:var(--blue);}
+.stri, .string, .uri, .url, .byte, .bina, .binary, .date, .pass, .password, .ipv4, .ipv4, .uuid, .emai, .email, .host, .hostname {color:var(--green);}
+.inte, .numb, .number, .int6, .int64, .int3, .int32, .floa, .float, .doub, .double, .deci, .decimal, .blue {color:var(--blue);}
 .null {color:var(--red);}
-.bool, .boolean{color:var(--orange)}
-.enum {color:var(--yellow)}
+.bool, .boolean {color:var(--orange)}
+.enum, .cons, .const {color:var(--yellow)}
 
 .tree .toolbar {
   display: flex;
