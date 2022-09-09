@@ -43,7 +43,8 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 ```
 
 ## Features
-- OpenAPI 3.0 
+- OpenAPI 3.0
+- Built in automatic Internationalization
 - Works with any framework
 - View resources, models, and directly make API calls
 - Better Usability, 
@@ -51,7 +52,7 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
   - Takes only one click to make an API call
   - Renders SDK/client code samples
   - Branding and Personalization features makes it easy to follow any style guide
-  - Fully customizeable theme
+  - Fully customizable theme
 - Plenty of customization options 
   - Add external contents throughout the component, extensible with markdown, images, links, and text
   - All properties are reactive

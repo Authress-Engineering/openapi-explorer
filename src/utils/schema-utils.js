@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import { expandN } from 'regex-to-strings';
-import xmlFormatter from './xml/xml';
+import xmlFormatter from './xml/xml.js';
 
 // When the type is not known for a property set the displayed type to be this:
 const IS_MISSING_TYPE_INFO_TYPE = '';

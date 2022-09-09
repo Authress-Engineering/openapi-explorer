@@ -14,7 +14,7 @@ import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-csharp';
 
 // Styles
-import FontStyles from './styles/font-styles';
+import FontStyles from './styles/font-styles.js';
 import InputStyles from './styles/input-styles';
 import FlexStyles from './styles/flex-styles';
 import TableStyles from './styles/table-styles';
