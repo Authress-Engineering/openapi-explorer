@@ -18,6 +18,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Sanitize paths coming from the spec that contain invalid characters.
 * Improve display of array types and number/string formats in parameters and models
 * Fix fetch request options to not require unnecessary extra level in setting properties.
+* Fix support for `const` in json schema
 
 ## 0.8 ##
 * Removing the `RESET` button as it is confusing for users to see. It only repopulated the defaults, and to do that, you can easily switch tabs and come back.
