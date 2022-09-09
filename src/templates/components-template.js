@@ -7,7 +7,7 @@ import '../components/json-tree';
 import '../components/schema-tree';
 
 function componentBodyTemplate(sComponent) {
-  const formdataPartSchema = schemaInObjectNotation(sComponent.component, {});
+  const formdataPartSchema = schemaInObjectNotation(sComponent.component, { includeNulls: this.includeNulls });
 
   return html`
   <div class='expanded-endpoint-body observe-me ${sComponent.name}' id='cmp--${sComponent.id}' >

@@ -9,6 +9,7 @@
 * `collapse` - Set the operations and components collapsed by default
 
 #### Enable functionality
+* `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
 * `fill-defaults` - [true] Fills the request data with the default data.
 

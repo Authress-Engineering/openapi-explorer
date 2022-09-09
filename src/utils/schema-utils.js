@@ -6,22 +6,27 @@ import xmlFormatter from './xml/xml';
 const IS_MISSING_TYPE_INFO_TYPE = '';
 
 /* Generates an schema object containing type and constraint info */
-export function getTypeInfo(schema) {
+export function getTypeInfo(schema, options = { includeNulls: false }) {
   if (!schema) {
     return undefined;
   }
 
-  let dataType = '';
+  let dataType = IS_MISSING_TYPE_INFO_TYPE;
   if (schema.circularReference) {
     dataType = `{recursive: ${schema.circularReference.name}} `;
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
-    dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null').join('┃') : schema.type;
+    dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null' || options.includeNulls).join('┃') : schema.type;
     if (schema.format || schema.enum || schema.const) {
       dataType = dataType.replace('string', schema.enum && 'enum' || schema.const && 'const' || schema.format);
     }
-  } else {
-    dataType = IS_MISSING_TYPE_INFO_TYPE;
+
+    if (schema.nullable && options.includeNulls) {
+      dataType += '┃null';
+    }
+    if (dataType.includes('┃null') && schema.format) {
+      schema.format += '┃null';
+    }
   }
 
   const info = {
@@ -271,11 +276,11 @@ function getExampleValuesFromSchemaRecursive(schema, config = {}) {
  * For changing OpenAPI-Schema to an Object Notation,
  * This Object would further be an input to UI Components to generate an Object-Tree
  * @param {object} schema - Schema object from OpenAPI spec
- * @param {object} obj - recursively pass this object to generate object notation
+ * @param {object} options - recursively pass this object to generate object notation
  * @param {number} level - recursion level
  * @param {string} suffix - used for suffixing property names to avoid duplicate props during object composition
  */
-export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
+export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '') {
   if (!rawSchema) {
     return undefined;
   }
@@ -286,19 +291,19 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     allOf.map((v, i) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
         const propSuffix = (v.anyOf || v.oneOf) && i > 0 ? i : '';
-        const partialObj = schemaInObjectNotation(v, {}, (level + 1), propSuffix);
+        const partialObj = schemaInObjectNotation(v, options, (level + 1), propSuffix);
         Object.assign(objWithAllProps, partialObj);
       } else if (v.type === 'array' || v.items) {
-        const partialObj = schemaInObjectNotation(v, {}, (level + 1));
+        const partialObj = schemaInObjectNotation(v, options, (level + 1));
         Object.assign(objWithAllProps, partialObj);
       } else if (v.type) {
         const prop = `prop${Object.keys(objWithAllProps).length}`;
-        const typeObj = getTypeInfo(v);
+        const typeObj = getTypeInfo(v, options);
         objWithAllProps[prop] = `${typeObj.html}`;
       }
     });
     
-    const obj = schemaInObjectNotation(schema, {}, 0);
+    const obj = schemaInObjectNotation(schema, options, 0);
     return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
   } else if (anyOf || oneOf) {
     const objWithAnyOfProps = {};
@@ -306,27 +311,27 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     let readOnly = true;
     (anyOf || oneOf || []).forEach((v, index) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
-        const partialObj = schemaInObjectNotation(v, {});
+        const partialObj = schemaInObjectNotation(v, options);
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
         readOnly = readOnly && partialObj['::flags']?.['🆁'];
         writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else if (v.type === 'array' || v.items) {
         // This else-if block never seems to get executed
-        const partialObj = schemaInObjectNotation(v, {});
+        const partialObj = schemaInObjectNotation(v, options);
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-array';
         readOnly = readOnly && partialObj['::flags']?.['🆁'];
         writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else {
         const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
-        objWithAnyOfProps[prop] = `${getTypeInfo(v).html}`;
+        objWithAnyOfProps[prop] = `${getTypeInfo(v, options).html}`;
         objWithAnyOfProps['::type'] = 'xxx-of-option';
         readOnly = readOnly && objWithAnyOfProps['::flags']?.['🆁'];
         writeOnly = writeOnly && objWithAnyOfProps['::flags']?.['🆆'];
       }
     });
-    const obj = schemaInObjectNotation(schema, {}, 0);
+    const obj = schemaInObjectNotation(schema, options, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
     resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
     resultObj['::type'] = 'xxx-of';
@@ -356,7 +361,7 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     let multiPrimitiveTypes;
     if (primitiveType.length > 0) {
       subSchema.type = primitiveType.join('┃');
-      multiPrimitiveTypes = getTypeInfo(subSchema);
+      multiPrimitiveTypes = getTypeInfo(subSchema, options);
       if (complexTypes.length === 0) {
         return `${multiPrimitiveTypes && multiPrimitiveTypes.html || ''}`;
       }
@@ -373,7 +378,7 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
           multiTypeOptions[`::OPTION~${i + 1}`] = 'NULL~|~~|~~|~~|~~|~~|~~|~~|~';
         } else if ('integer, number, string, boolean,'.includes(`${v},`)) {
           subSchema.type = Array.isArray(v) ? v.join('┃') : v;
-          const primitiveTypeInfo = getTypeInfo(subSchema);
+          const primitiveTypeInfo = getTypeInfo(subSchema, options);
           multiTypeOptions[`::OPTION~${i + 1}`] = primitiveTypeInfo.html;
         } else if (v === 'object') {
           // If object type iterate all the properties and create an object-type-option
@@ -386,9 +391,9 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
           };
           for (const key in schema.properties) {
             if (schema.required && schema.required.includes(key)) {
-              objTypeOption[`${key}*`] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+              objTypeOption[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
             } else {
-              objTypeOption[key] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+              objTypeOption[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
             }
           }
           multiTypeOptions[`::OPTION~${i + 1}`] = objTypeOption;
@@ -398,7 +403,7 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::type': 'array',
-            '::props': schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1)),
+            '::props': schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), options, (level + 1)),
           };
         }
       });
@@ -415,13 +420,13 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     obj['::deprecated'] = schema.deprecated || false;
     for (const key in schema.properties) {
       if (schema.required && schema.required.includes(key)) {
-        obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+        obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
       } else {
-        obj[key] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+        obj[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
       }
     }
     if (schema.additionalProperties) {
-      obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, {});
+      obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
     }
     return obj;
   } else if (schema.type === 'array' || schema.items) { // If Array
@@ -435,14 +440,14 @@ export function schemaInObjectNotation(rawSchema, _, level = 0, suffix = '') {
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
-    obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), {}, (level + 1));
+    obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), options, (level + 1));
     if (schema.items?.items) {
       obj['::array-type'] = schema.items.items.type;
     }
     return obj;
   }
 
-  const typeObj = getTypeInfo(schema);
+  const typeObj = getTypeInfo(schema, options);
   return `${typeObj?.html || ''}`;
 }
 

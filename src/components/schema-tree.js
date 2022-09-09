@@ -202,7 +202,7 @@ export default class SchemaTree extends LitElement {
                 ? ''
                 : schemaLevel > 0
                   ? html`<span class="key-label">
-                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span style="color:var(--red)">*</span>:` : ''}:
+                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span style="color:var(--red)">*</span>` : ''}:
                     </span>`
                   : ''
             }

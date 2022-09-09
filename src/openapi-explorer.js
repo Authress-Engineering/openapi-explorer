@@ -81,6 +81,7 @@ export default class OpenApiExplorer extends LitElement {
       showInfo: { type: String, attribute: 'show-info' },
       allowAuthentication: { type: String, attribute: 'show-authentication' },
       allowTry: { type: String, attribute: 'enable-console' },
+      includeNulls: { type: Boolean, attribute: 'display-nulls' },
       allowSearch: { type: String, attribute: 'allow-search' },
       allowAdvancedSearch: { type: String, attribute: 'allow-advanced-search' },
       allowServerSelection: { type: String, attribute: 'show-server-selection' },
