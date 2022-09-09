@@ -1,6 +1,7 @@
 import { html } from 'lit-element';
 import { marked } from 'marked';
-import { componentIsInSearch, pathIsInSearch, getI18nText } from '../utils/common-utils';
+import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);

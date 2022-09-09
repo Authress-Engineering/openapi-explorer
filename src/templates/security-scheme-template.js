@@ -2,7 +2,7 @@ import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { marked } from 'marked';
 import base64url from 'base64url';
-import { getI18nText } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 
 function onApiKeyChange(apiKeyId, e) {
   let apiKeyValue = '';

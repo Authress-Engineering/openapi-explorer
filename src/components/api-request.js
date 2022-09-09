@@ -6,7 +6,8 @@ import mimeTypeResolver from './mime-types';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import formatXml from 'xml-but-prettier';
 
-import { copyToClipboard, getI18nText } from '../utils/common-utils';
+import { copyToClipboard } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 import { schemaInObjectNotation, getTypeInfo, generateExample } from '../utils/schema-utils';
 import './json-tree';
 import './schema-tree';

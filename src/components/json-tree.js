@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
-import { copyToClipboard, getI18nText } from '../utils/common-utils';
+import { copyToClipboard } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles';
 import BorderStyles from '../styles/border-styles';
 import InputStyles from '../styles/input-styles';

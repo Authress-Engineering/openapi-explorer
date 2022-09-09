@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import { getI18nText } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles';
 import SchemaStyles from '../styles/schema-styles';
 import BorderStyles from '../styles/border-styles';

@@ -25,7 +25,8 @@ import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
-import { advancedSearch, getCurrentElement, replaceState, sleep, initI18n, isI18nReady, changeI18nLang } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils';
+import { initI18n } from './languages';
 import ProcessSpec from './utils/spec-parser';
 import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';

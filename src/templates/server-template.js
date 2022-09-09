@@ -1,7 +1,7 @@
 import { html } from 'lit-element';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import { getI18nText } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 
 function onApiServerChange(e, server) {
   if (e && e.target.checked) {
