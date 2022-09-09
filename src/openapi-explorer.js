@@ -73,10 +73,6 @@ export default class OpenApiExplorer extends LitElement {
       displaySchemaAsTable: { type: Boolean, attribute: 'table' },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
 
-      // Language
-      langUrl: { type: String, attribute: 'lang-url'},
-      currentLang: { type: String, attribute: 'current-lang'},
-
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
 
@@ -358,7 +354,7 @@ export default class OpenApiExplorer extends LitElement {
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
     this.loading = true;
-    initI18n(this.langUrl, this.currentLang);    
+    initI18n();
     const parent = this.parentElement;
     if (parent) {
       if (parent.offsetWidth === 0 && parent.style.width === '') {
@@ -452,28 +448,16 @@ export default class OpenApiExplorer extends LitElement {
   attributeChangedCallback(name, oldVal, newVal) {
     if (name === 'spec-url') {
       if (oldVal !== newVal) {
-        let delay = 0;
-        if (!isI18nReady()){
-          // loadSpec creates text strings that rely on i18n being initialized to show correct language
-          delay = 1000;
-        }
-        // put it at the end of event-loop to load all the attributes
         window.setTimeout(async () => {
           await this.loadSpec(newVal);
           // If the initial location is set, then attempt to scroll there
           if (this.explorerLocation) {
             this.scrollTo(this.explorerLocation);
           }
-        }, delay);
+        }, 0);
       }
     }
-    if (name === 'current-lang')    {
-      if (isI18nReady()){
-        if (oldVal !== newVal){
-          changeI18nLang(newVal);
-        }
-      }
-    }
+
     if (name === 'render-style') {
       if (newVal === 'read') {
         window.setTimeout(() => {
@@ -519,8 +503,6 @@ export default class OpenApiExplorer extends LitElement {
 
   // Public Method
   async loadSpec(specUrlOrObject) {
-    console.log('log spec');
-
     if (!specUrlOrObject) {
       return;
     }

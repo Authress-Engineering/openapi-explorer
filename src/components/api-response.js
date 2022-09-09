@@ -174,7 +174,6 @@ export default class ApiResponse extends LitElement {
               ${respStatus}
             </button>`
           }`)
-          // might consider swapping out value default with i18n property in respStatus
         }
       </div>
 

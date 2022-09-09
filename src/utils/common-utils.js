@@ -1,106 +1,92 @@
 import i18next from 'i18next';
-import i18nextHttpBackend from 'i18next-http-backend';
-import i18nextResourcesToBackend from 'i18next-resources-to-backend';
-import i18nextChainedBackend from 'i18next-chained-backend';
-
 
 const fallbackResources = {
   en: {
     translation: {
-      "menu":{
-        "filter": "Filter",
-        "search": "Search",
-        "overview": "Overview",
-        "api-servers": "API Servers",
-        "authentication": "Authentication",
-        "operations": "OPERATIONS",
-        "components": "COMPONENTS",
-        "schemas": "Schemas"
+      'menu': {
+        'filter': 'Filter',
+        'search': 'Search',
+        'overview': 'Overview',
+        'api-servers': 'API Servers',
+        'authentication': 'Authentication',
+        'operations': 'OPERATIONS',
+        'components': 'COMPONENTS',
+        'schemas': 'Schemas'
       },
-      "headers":{
-        "api-servers": "API SERVER",
-        "authentication": "AUTHENTICATION",		
+      'headers': {
+        'api-servers': 'API SERVER',
+        'authentication': 'AUTHENTICATION',
       },
-      "overview":{
-        "email": "Email",
-        "terms-of-service": "Terms of Service"
-      },      
-      "api-servers":{
-        "server-variables": "SERVER VARIABLES",
-        "selected": "SELECTED"
+      'overview': {
+        'email': 'Email',
+        'terms-of-service': 'Terms of Service'
       },
-      "authentication":{
-        "no-api-key-applied": "No API key applied",
-        "http-basic": "HTTP Basic",
-        "http-basic-desc":"Send the Authorization header containing the type Basic followed by a space and a base64 encoded string of username:password",
-        "username":"username",
-        "password":"password",
-        "requires": "Requires",
-        "http-basic-note": "Base 64 encoded username:password",
-        "in-auth-header": "in Authorization header",
-        "set": "SET"
-      },      
-      "operations":{
-        "request": "REQUEST",
-        "request-body": "REQUEST BODY",
-        "model": "MODEL",
-        "body": "BODY",
-        "request-headers": "REQUEST HEADERS",
-        "clear": "CLEAR",
-        "clear-response": "CLEAR RESPONSE",		
-        "execute": "EXECUTE",
-        "response": "RESPONSE",
-        "response-headers": "RESPONSE HEADERS",
-        "model": "MODEL",
-        "example": "EXAMPLE",
-        "response-status": "Response Status",
-        "fetch-fail": "Failed to fetch (Check the browser network tab for more information.)",
-        "copy": "Copy",
-        "copied": "Copied"
+      'api-servers': {
+        'server-variables': 'SERVER VARIABLES',
+        'selected': 'SELECTED'
       },
-      "common":{
-        "collapse-desc": "Collapse",
-        "expand-desc": "Expand",
-        "schema-missing": "Schema not found"
+      'authentication': {
+        'no-api-key-applied': 'No API key applied',
+        'http-basic': 'HTTP Basic',
+        'http-basic-desc': 'Send the Authorization header containing the type Basic followed by a space and a base64 encoded string of username:password',
+        'username': 'username',
+        'password': 'password',
+        'requires': 'Requires',
+        'http-basic-note': 'Base 64 encoded username:password',
+        'in-auth-header': 'in Authorization header',
+        'set': 'SET'
+      },
+      'operations': {
+        'request': 'REQUEST',
+        'request-body': 'REQUEST BODY',
+        'model': 'MODEL',
+        'body': 'BODY',
+        'request-headers': 'REQUEST HEADERS',
+        'clear': 'CLEAR',
+        'clear-response': 'CLEAR RESPONSE',
+        'execute': 'EXECUTE',
+        'response': 'RESPONSE',
+        'response-headers': 'RESPONSE HEADERS',
+        'model': 'MODEL',
+        'example': 'EXAMPLE',
+        'response-status': 'Response Status',
+        'fetch-fail': 'Failed to fetch (Check the browser network tab for more information.)',
+        'copy': 'Copy',
+        'copied': 'Copied'
+      },
+      'common': {
+        'collapse-desc': 'Collapse',
+        'expand-desc': 'Expand',
+        'schema-missing': 'Schema not found'
       }
     }
   }
-}
+};
 
 let i18nextReady = false;
 
-export function initI18n(baseUrl, initLang){
-  i18next.use(i18nextChainedBackend).init({
-		lng: initLang, 
+export async function initI18n() {
+  await i18next.init({
+    lng: initLang,
     fallbackLng: 'en',
-		debug: true,
-    ns: [ 'translation' ],
+    ns: ['translation'],
     defaultNS: 'translation',
-    backend:{
-      backends: [
-        i18nextHttpBackend,
-        i18nextResourcesToBackend(fallbackResources)
-      ],
-      backendOptions: [{
-        loadPath: baseUrl ? baseUrl + '/{{ns}}_{{lng}}.json' : null
-      }]
-    }
-	}).then(function(){ i18nextReady = true;});
+    fallbackResources
+  });
+  i18nextReady = true;
 }
 
-export function changeI18nLang(newLang){
+export function changeI18nLang(newLang) {
   i18next.changeLanguage(newLang);
 }
 
-export function isI18nReady(){
+export function isI18nReady() {
   return i18nextReady;
 }
 
-
-export function getI18nText(key){
+export function getI18nText(key) {
   return i18next.t(key);
 }
-
 
 /* For Delayed Event Handler Execution */
 export function debounce(fn, delay) {
