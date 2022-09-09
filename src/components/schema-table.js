@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import FontStyles from '../styles/font-styles';
+import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
 
 export default class SchemaTable extends LitElement {

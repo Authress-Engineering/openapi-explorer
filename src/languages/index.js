@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import en from './en.json';
-import fr from './fr.json';
+import en from './en';
+import fr from './fr';
 
 export async function initI18n() {
   const initLang = window.navigator.language.substring(0, 2);

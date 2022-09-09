@@ -1,15 +1,22 @@
-const webpack = require('webpack');
-const FileManagerPlugin = require('filemanager-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const CompressionPlugin = require('compression-webpack-plugin');
-const { DuplicatesPlugin } = require('inspectpack/plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const path = require('path');
-const { glob } = require('glob');
+import webpack from 'webpack';
+import FileManagerPlugin from 'filemanager-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import CompressionPlugin from 'compression-webpack-plugin';
+import { DuplicatesPlugin } from 'inspectpack/plugin/duplicates.js';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import path from 'path';
+import glob from 'glob';
+import fs from 'fs-extra';
+import * as url from 'url';
 
-const version = JSON.stringify(require('./package.json').version).replace(/"/g, '');
+const packageData = await fs.readJSON('./package.json');
+const babelConfig = await fs.readJSON('./babel.config.json');
+// eslint-disable-next-line no-underscore-dangle
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+const version = JSON.stringify(packageData.version).replace(/"/g, '');
 
 const commonPlugins = [
   new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }),
@@ -60,7 +67,7 @@ if (process.env.NODE_ENV === 'production') {
   }));
 }
 
-module.exports = {
+export default {
   mode: 'production',
   entry: './src/openapi-explorer.js',
   devtool: 'cheap-module-source-map',
@@ -103,12 +110,26 @@ module.exports = {
         },
       },
       {
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
+      {
+        test: /\.m?js/,
+        type: 'javascript/auto',
+      },
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
-            options: require('./babel.config'),
+            options: babelConfig,
           },
         ],
       },
@@ -132,7 +153,9 @@ module.exports = {
   },
   resolve: {
     alias: {
+      // eslint-disable-next-line no-undef
       '~': path.resolve(__dirname, 'src'),
+      // eslint-disable-next-line no-undef
       'lit-html/lib/shady-render.js': path.resolve(__dirname, './node_modules/lit-html/lit-html.js'), // removes shady-render.js from the bundle
     },
   },
