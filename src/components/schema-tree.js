@@ -110,13 +110,7 @@ export default class SchemaTree extends LitElement {
   }
 
   toggleSchemaDescription() {
-    if (this.schemaDescriptionExpanded === 'true'){
-      this.schemaDescriptionExpanded = 'false';
-    }
-    else{
-      this.schemaDescriptionExpanded = 'true';
-    }
-    
+    this.schemaDescriptionExpanded = !this.schemaDescriptionExpanded;
     this.requestUpdate();
   }
 

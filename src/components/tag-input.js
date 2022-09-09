@@ -28,7 +28,6 @@ export default class TagInput extends LitElement {
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
-    console.log('what the what');
     if (name === 'value') {
       if (newVal && oldVal !== newVal) {
         this.value = newVal.split(',').filter(v => v.trim());
