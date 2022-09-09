@@ -10,16 +10,15 @@ export function getTypeInfo(schema) {
   if (!schema) {
     return undefined;
   }
-  let dataType = '';
-  let constraint = '';
 
+  let dataType = '';
   if (schema.circularReference) {
     dataType = `{recursive: ${schema.circularReference.name}} `;
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
     dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null').join('┃') : schema.type;
-    if (schema.format || schema.enum) {
-      dataType = dataType.replace('string', schema.enum ? 'enum' : schema.format);
+    if (schema.format || schema.enum || schema.const) {
+      dataType = dataType.replace('string', schema.enum && 'enum' || schema.const && 'const' || schema.format);
     }
   } else {
     dataType = IS_MISSING_TYPE_INFO_TYPE;
@@ -36,20 +35,17 @@ export function getTypeInfo(schema) {
     title: schema.title || '',
     description: schema.description || '',
     constraint: '',
-    allowedValues: '',
-    arrayType: '',
-    html: '',
+    allowedValues: schema.const ?? (Array.isArray(schema.enum) ? schema.enum.join('┃') : ''),
+    arrayType: ''
   };
 
-  // Set Allowed Values
-  info.allowedValues = Array.isArray(schema.enum) ? schema.enum.join('┃') : '';
   if (dataType === 'array' && schema.items) {
     const arrayItemType = schema.items.type;
     const arrayItemDefault = schema.items.default ?? '';
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;
-    info.allowedValues = Array.isArray(schema.items.enum) ? schema.items.enum.join('┃') : '';
+    info.allowedValues = schema.const ?? (Array.isArray(schema.items.enum) ? schema.items.enum.join('┃') : '');
   }
 
   if (dataType.match(/integer|number/g)) {
@@ -58,22 +54,22 @@ export function getTypeInfo(schema) {
     const leftBound = schema.minimum !== undefined ? '[' : '(';
     const rightBound = schema.maximum !== undefined ? ']' : ')';
     if (typeof minimum === 'number' || typeof maximum === 'number') {
-      constraint = `Range: ${leftBound}${minimum ?? ''},${maximum ?? ''}${rightBound}`;
+      info.constraint = `Range: ${leftBound}${minimum ?? ''},${maximum ?? ''}${rightBound}`;
     }
     if (schema.multipleOf !== undefined) {
-      constraint += `${constraint ? ', ' : ''}Multiples: ${schema.multipleOf}`;
+      info.constraint += `${info.constraint ? ', ' : ''}Multiples: ${schema.multipleOf}`;
     }
   }
   if (dataType.match(/string/g)) {
     if (schema.minLength !== undefined && schema.maxLength !== undefined) {
-      constraint += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
+      info.constraint += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
     } else if (schema.minLength !== undefined) {
-      constraint += `Min length: ${schema.minLength}`;
+      info.constraint += `Min length: ${schema.minLength}`;
     } else if (schema.maxLength !== undefined) {
-      constraint += `Max length: ${schema.maxLength}`;
+      info.constraint += `Max length: ${schema.maxLength}`;
     }
   }
-  info.constraint = constraint;
+
   info.html = JSON.stringify({
     type: info.type,
     format: info.format,
@@ -130,6 +126,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (typeValue.match(/^null/g)) { return null; }
   if (skipExampleStrings && typeValue.match(/^string/g)) { return ''; }
   if (typeValue.match(/^string/g)) {
+    if (schemaObj.const) {return schemaObj.const; }
     if (schemaObj.enum) { return schemaObj.enum[0]; }
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
