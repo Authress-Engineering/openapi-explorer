@@ -101,18 +101,17 @@ export default css`
   }
 
   .m-markdown p:not(:first-child) {
-    margin-block-start: 24px;
+    margin-block-start: 12px;
   }
 
   .m-markdown-small p:not(:first-child) {
     margin-block-start: 12px;
   }
-  .m-markdown-small p:first-child {
+  .m-markdown *:first-child, .m-markdown-small *:first-child {
     margin-block-start: 0;
   }
 
-  .m-markdown p,
-  .m-markdown-small p {
+  .m-markdown p, .m-markdown-small p {
     margin-block-end: 0;
   }
 

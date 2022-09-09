@@ -7,6 +7,7 @@ import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import formatXml from 'xml-but-prettier';
 
 import { copyToClipboard } from '../utils/common-utils';
+import { getI18nText } from '../languages';
 import { schemaInObjectNotation, getTypeInfo, generateExample } from '../utils/schema-utils';
 import './json-tree';
 import './schema-tree';
@@ -39,6 +40,7 @@ export default class ApiRequest extends LitElement {
       servers: { type: Array },
       method: { type: String },
       path: { type: String },
+      elementId: { type: String, attribute: 'element-id' },
       parameters: { type: Array },
       request_body: { type: Object },
       api_keys: { type: Array },
@@ -52,6 +54,7 @@ export default class ApiRequest extends LitElement {
       responseUrl: { type: String, attribute: false },
       responseElapsedMs: { type: Number, attribute: false },
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
+      includeNulls: { type: Boolean, attribute: 'display-nulls', converter(value) { return value === 'true'; } },
       allowTry: { type: String, attribute: 'enable-console' },
       renderStyle: { type: String, attribute: 'render-style' },
       schemaStyle: { type: String, attribute: 'schema-style' },
@@ -71,7 +74,7 @@ export default class ApiRequest extends LitElement {
     return html`
     <div class="api-request col regular-font request-panel ${(this.renderStyle === 'focused' || this.callback === 'true') ? 'focused-mode' : 'view-mode'}">
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
-        ${this.callback === 'true' ? 'CALLBACK REQUEST' : 'REQUEST'}
+        ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
       </div>
       <div>
         ${this.inputParametersTemplate('path')}
@@ -128,7 +131,7 @@ export default class ApiRequest extends LitElement {
       if (!param.schema) {
         continue;
       }
-      const paramSchema = getTypeInfo(param.schema);
+      const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
       if (!paramSchema) {
         continue;
       }
@@ -215,7 +218,7 @@ export default class ApiRequest extends LitElement {
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
                         <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
-                          data-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
+                          data-type="${paramSchema.type === 'array' ? 'array' : 'string'}"
                           data-enum="${v.trim()}"
                           @click="${(e) => {
                             const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
@@ -293,7 +296,7 @@ export default class ApiRequest extends LitElement {
     let reqBodyFileInputHtml = '';
     let reqBodyFormHtml = '';
     let reqBodySchemaHtml = '';
-    let reqBodyExampleHtml = '';
+    let reqBodyDefaultHtml = '';
 
     const requestBodyTypes = [];
     const content = this.request_body.content;
@@ -341,8 +344,8 @@ export default class ApiRequest extends LitElement {
           if (!this.selectedRequestBodyExample) {
             this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
           }
-          reqBodyExampleHtml = html`
-            ${reqBodyExampleHtml}
+          reqBodyDefaultHtml = html`
+            ${reqBodyDefaultHtml}
             <div class = 'example-panel border-top pad-top-8'>
               ${reqBodyExamples.length === 1
                 ? ''
@@ -360,19 +363,20 @@ export default class ApiRequest extends LitElement {
                 <div class="example ${v.exampleId === this.selectedRequestBodyExample ? 'example-selected' : ''}" data-default = '${v.exampleId}'>
                   ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
                   ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
-                  <!-- this textarea is for user to edit the example -->
-                  <textarea 
-                    class = "textarea request-body-param-user-input"
-                    part = "textarea textarea-param"
-                    spellcheck = "false"
-                    data-ptype = "${reqBody.mimeType}" 
-                    data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
-                    data-default-format = "${v.exampleFormat}"
-                    style="width:100%; resize:vertical;"
-                  >${this.fillRequestWithDefault === 'true'
-                      ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))
-                      : ''
-                    }</textarea>
+                    <!-- this textarea is for user to edit the example -->
+                  <slot name="${this.elementId}--request-body">
+                    <textarea 
+                      class = "textarea request-body-param-user-input"
+                      part = "textarea textarea-param"
+                      spellcheck = "false"
+                      data-ptype = "${reqBody.mimeType}" 
+                      data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
+                      data-default-format = "${v.exampleFormat}"
+                      style="width:100%; resize:vertical;">
+                      ${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}
+                    </textarea>
+                  </slot>
+
                   <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
                   <textarea 
                     class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
@@ -414,7 +418,7 @@ export default class ApiRequest extends LitElement {
 
       // Generate Schema
       if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text')) {
-        const schemaAsObj = schemaInObjectNotation(reqBody.schema, {});
+        const schemaAsObj = schemaInObjectNotation(reqBody.schema, { includeNulls: this.includeNulls });
         if (this.schemaStyle === 'table') {
           reqBodySchemaHtml = html`
             ${reqBodySchemaHtml}
@@ -457,11 +461,11 @@ export default class ApiRequest extends LitElement {
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
-                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >MODEL</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">BODY</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >${getI18nText('operations.model')}</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">${getI18nText('operations.body')}</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
-              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyExampleHtml}</div>`}
+              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
             </div>`
           : html`  
             ${reqBodyFileInputHtml}
@@ -481,8 +485,8 @@ export default class ApiRequest extends LitElement {
         }
 
         const fieldType = fieldSchema.type;
-        const formdataPartSchema = schemaInObjectNotation(fieldSchema, {});
-        const paramSchema = getTypeInfo(fieldSchema);
+        const formdataPartSchema = schemaInObjectNotation(fieldSchema, { includeNulls: this.includeNulls });
+        const paramSchema = getTypeInfo(fieldSchema, { includeNulls: this.includeNulls });
         const formdataPartExample = generateExample(
           '',
           fieldSchema.example ? fieldSchema.example : '',
@@ -560,8 +564,8 @@ export default class ApiRequest extends LitElement {
                         }
                         if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; }
                       }}">
-                        <button class="v-tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab = 'model'>MODEL</button>
-                        <button class="v-tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'body'>REQUEST BODY</button>
+                        <button class="v-tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab = 'model'>${getI18nText('operations.model')}</button>
+                        <button class="v-tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab = 'body'>${getI18nText('operations.request-body')}</button>
                       </div>
                     </div>  
                     ${html`
@@ -717,8 +721,8 @@ export default class ApiRequest extends LitElement {
             if (e.target.classList.contains('tab-btn') === false) { return; }
             this.activeResponseTab = e.target.dataset.tab;
         }}">
-          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>RESPONSE</button>
-          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>RESPONSE HEADERS</button>
+          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
+          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
           <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>CURL</button>
         </div>
         ${this.responseIsBlob
@@ -732,7 +736,7 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">Copy</button>
+              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
               <pre>${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
@@ -741,11 +745,11 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">Copy</button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">Copy</button>
+          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;
@@ -758,11 +762,11 @@ export default class ApiRequest extends LitElement {
         this.parameters.length > 0 || this.request_body
           ? html`
             <button class="m-btn thin-border" part="btn btn-outline" style="margin-right:5px;" @click="${this.onClearRequestData}">
-              CLEAR
+              ${getI18nText('operations.clear')}
             </button>`
           : ''
       }
-      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">EXECUTE</button>
+      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
     ${this.responseMessage === '' ? '' : this.apiResponseTabTemplate()}
     `;
@@ -1018,7 +1022,8 @@ export default class ApiRequest extends LitElement {
       fetchOptions.credentials = this.fetchCredentials;
     }
 
-    const fetchRequest = { url: fetchUrl, options: fetchOptions };
+    // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
+    const fetchRequest = { elementId: this.elementId, url: fetchUrl, options: fetchOptions, ...fetchOptions };
     const event = {
       bubbles: true,
       composed: true,
@@ -1028,7 +1033,13 @@ export default class ApiRequest extends LitElement {
     };
     this.dispatchEvent(new CustomEvent('before-try', event));
     this.dispatchEvent(new CustomEvent('request', event));
-    const fetchRequestObject = new Request(fetchUrl, fetchOptions);
+    const newFetchOptions = {
+      method: fetchRequest.method || fetchRequest.options.method,
+      headers: fetchRequest.headers || fetchOptions.options.headers,
+      credentials: fetchRequest.credentials || fetchOptions.options.credentials,
+      body: fetchRequest.body || fetchOptions.options.body
+    };
+    const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
 
     let fetchResponse;
     try {
