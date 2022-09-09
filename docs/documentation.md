@@ -13,6 +13,7 @@
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
 * `fill-defaults` - [true] Fills the request data with the default data.
 
+
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section
 * `show-server-selection` - Show server selection section

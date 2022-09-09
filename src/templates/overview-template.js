@@ -1,6 +1,7 @@
 import { html } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { marked } from 'marked';
+import { getI18nText } from '../languages';
 
 /* eslint-disable indent */
 export default function overviewTemplate() {
@@ -20,7 +21,7 @@ export default function overviewTemplate() {
             </div>
             <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;" class="section-padding">
               ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.email
-                ? html`<span>${this.resolvedSpec.info.contact.name || 'Email'}: 
+                ? html`<span>${this.resolvedSpec.info.contact.name || getI18nText('overview.email')}: 
                   <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
                 </span>`
                 : ''
@@ -38,7 +39,7 @@ export default function overviewTemplate() {
                 : ''
               }
               ${this.resolvedSpec.info.termsOfService
-                ? html`<span><a href="${this.resolvedSpec.info.termsOfService}" part="anchor anchor-overview">Terms of Service</a></span>`
+                ? html`<span><a href="${this.resolvedSpec.info.termsOfService}" part="anchor anchor-overview">${getI18nText('overview.terms-of-service')}</a></span>`
                 : ''
               }
             </div>

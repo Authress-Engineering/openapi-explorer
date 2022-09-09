@@ -1,6 +1,7 @@
 import { html } from 'lit-element';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { getI18nText } from '../languages';
 
 function onApiServerChange(e, server) {
   if (e && e.target.checked) {
@@ -24,7 +25,7 @@ function onApiServerVarChange(e, serverObj) {
 function serverVarsTemplate() {
   return this.selectedServer && this.selectedServer.variables
     ? html`
-    <div class="table-title"> SERVER VARIABLES</div>
+    <div class="table-title">${getI18nText('api-servers.server-variables')}</div>
     <table role="presentation" class='m-table'>
       ${Object.entries(this.selectedServer.variables).map((kv) => html`
         <tr>
@@ -77,7 +78,7 @@ export default function serverTemplate() {
   }
   return html`
   <section id = 'servers' part="section-servers" style="margin-top:24px; margin-bottom:24px;" class='regular-font observe-me section-padding ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
-    <div class = 'sub-title'>API SERVER</div>
+    <div class = 'sub-title'>${getI18nText('headers.api-servers')}</div>
     <div class = 'mono-font' style='margin: 12px 0; font-size:calc(var(--font-size-small) + 1px);'>
       ${!this.resolvedSpec.servers || !this.resolvedSpec.servers.length
         ? ''
@@ -97,7 +98,7 @@ export default function serverTemplate() {
             <br/>
           `)}
       `}
-      <div class="table-title primary-text" part="label-selected-server"> SELECTED: ${this.selectedServer && this.selectedServer.computedUrl || 'none'}</div>
+      <div class="table-title primary-text" part="label-selected-server"> ${getI18nText('api-servers.selected')}: ${this.selectedServer && this.selectedServer.computedUrl || 'none'}</div>
     </div>
     <slot name="servers"></slot>
     ${serverVarsTemplate.call(this)}

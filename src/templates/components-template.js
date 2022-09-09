@@ -34,13 +34,13 @@ function componentBodyTemplate(sComponent) {
 export default function componentsTemplate() {
   return html`
   ${this.resolvedSpec.components.map((component) => html`
-    <div id="cmp--${component.name.toLowerCase()}" class='regular-font section-gap--read-mode observe-me'>
+    <div id="cmp--${component.name.toLowerCase()}" class='regular-font section-gap--focused-mode observe-me' style="padding-bottom: 0">
       <div class="title tag">${component.name}</div>
       <div class="regular-font-size">
         ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(component.description ? component.description : '')}</div>`)}
       </div>
     </div>
-    <div class='regular-font section-gap--read-mode'>
+    <div class='regular-font section-gap--focused-mode' style="padding-top: 0">
       ${component.subComponents.filter(c => c.expanded).map((sComponent) => componentBodyTemplate.call(this, sComponent))}
     </div>
     `)

@@ -14,7 +14,7 @@ import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-csharp';
 
 // Styles
-import FontStyles from './styles/font-styles';
+import FontStyles from './styles/font-styles.js';
 import InputStyles from './styles/input-styles';
 import FlexStyles from './styles/flex-styles';
 import TableStyles from './styles/table-styles';
@@ -26,6 +26,7 @@ import InfoStyles from './styles/info-styles';
 import advancedSearchStyles from './styles/advanced-search-styles';
 
 import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils';
+import { initI18n } from './languages';
 import ProcessSpec from './utils/spec-parser';
 import responsiveViewMainBodyTemplate from './templates/responsiveViewMainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
@@ -42,7 +43,6 @@ export default class OpenApiExplorer extends LitElement {
       threshold: 0,
     };
     this.isIntersectionObserverActive = true;
-
     if (typeof IntersectionObserver !== 'undefined') {
       this.intersectionObserver = new IntersectionObserver((entries) => { this.onIntersect(entries); }, intersectionObserverOptions);
     } else {
@@ -326,7 +326,7 @@ export default class OpenApiExplorer extends LitElement {
           padding: 24px 8px; 
         }
         .section-gap--focused-mode {
-          padding: 2rem 3rem;
+          padding: 1.5rem;
         }
         .endpoint-body {
           position: relative;
@@ -354,8 +354,8 @@ export default class OpenApiExplorer extends LitElement {
     super.connectedCallback();
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
-
     this.loading = true;
+    initI18n();
     const parent = this.parentElement;
     if (parent) {
       if (parent.offsetWidth === 0 && parent.style.width === '') {
@@ -449,7 +449,6 @@ export default class OpenApiExplorer extends LitElement {
   attributeChangedCallback(name, oldVal, newVal) {
     if (name === 'spec-url') {
       if (oldVal !== newVal) {
-        // put it at the end of event-loop to load all the attributes
         window.setTimeout(async () => {
           await this.loadSpec(newVal);
           // If the initial location is set, then attempt to scroll there
@@ -459,6 +458,7 @@ export default class OpenApiExplorer extends LitElement {
         }, 0);
       }
     }
+
     if (name === 'render-style') {
       if (newVal === 'read') {
         window.setTimeout(() => {

@@ -1,6 +1,11 @@
-import db from 'mime-db';
+import db from 'mime-db/db.json';
 
 const EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
+
+const extensions = {};
+const types = {};
+populateMaps();
+
 /**
  * Get the default extension for a MIME type.
  *
@@ -17,7 +22,7 @@ export default function extension(type) {
   const match = EXTRACT_TYPE_REGEXP.exec(type);
 
   // get extensions
-  const exts = match && exports.extensions[match[1].toLowerCase()];
+  const exts = match && extensions[match[1].toLowerCase()];
 
   if (!exts || !exts.length) {
     return false;
@@ -25,10 +30,6 @@ export default function extension(type) {
 
   return exts[0];
 }
-
-const extensions = {};
-const types = {};
-populateMaps();
 
 function populateMaps() {
   // source preference (least -> most)

@@ -49,7 +49,7 @@ export default css`
   padding: .125rem .5rem;
   margin:0 2px;
   font-size: .8rem;
-  width: 56px;
+  width: 60px;
   color: var(--primary-btn-text-color);
   border-radius: 2px;
   border: none;
