@@ -1034,10 +1034,10 @@ export default class ApiRequest extends LitElement {
     this.dispatchEvent(new CustomEvent('before-try', event));
     this.dispatchEvent(new CustomEvent('request', event));
     const newFetchOptions = {
-      method: fetchRequest.method || fetchRequest.options.method,
-      headers: fetchRequest.headers || fetchOptions.options.headers,
-      credentials: fetchRequest.credentials || fetchOptions.options.credentials,
-      body: fetchRequest.body || fetchOptions.options.body
+      method: fetchRequest.method || fetchOptions.method,
+      headers: fetchRequest.headers || fetchOptions.headers,
+      credentials: fetchRequest.credentials || fetchOptions.credentials,
+      body: fetchRequest.body || fetchOptions.body
     };
     const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
 
