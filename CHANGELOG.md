@@ -9,6 +9,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.10 ##
 * Internationalization support with languages `en` and `fr`
+<<<<<<< HEAD
 * Add a `slot` `nav-header` to the top of the navbar.
 * Add ruby to available languages.
 * Handle missing schema's for responses

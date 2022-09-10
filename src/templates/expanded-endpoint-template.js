@@ -58,7 +58,7 @@ function endpointDescriptionRenderer() {
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
-    for (const acceptContentType in path.responses[respStatus] && path.responses[respStatus].content) {
+    for (const acceptContentType in path.responses[respStatus]?.content) {
       acceptContentTypes.add(acceptContentType.trim());
     }
   }

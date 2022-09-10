@@ -20,8 +20,8 @@ function defaultContentTemplate() {
     return overviewTemplate.call(this);
   }
   const selectedTagObj = this.resolvedSpec.tags[0];
-  const selectedPathObj = selectedTagObj && selectedTagObj.paths[0];
-  return (selectedTagObj && selectedPathObj)
+  const selectedPathObj = selectedTagObj?.paths[0];
+  return (selectedPathObj)
     ? wrapFocusedTemplate(expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name))
     : wrapFocusedTemplate('');
 }
