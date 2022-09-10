@@ -99,7 +99,7 @@ export default class SchemaTree extends LitElement {
         <div class="toolbar">
           ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
-            ${this.schemaDescriptionExpanded === 'true' ? getI18nText('schemas.collapse-desc') : getI18nText('schemas.expand-desc')}
+            ${this.schemaDescriptionExpanded ? getI18nText('schemas.collapse-desc') : getI18nText('schemas.expand-desc')}
           </div>
         </div>
         ${this.data
