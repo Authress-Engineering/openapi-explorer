@@ -11,7 +11,7 @@ import '../components/api-response';
 export function expandedEndpointBodyTemplate(path, tagName = '') {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
-    for (const acceptContentType in path.responses[respStatus] && path.responses[respStatus].content) {
+    for (const acceptContentType in path.responses[respStatus]?.content) {
       acceptContentTypes.add(acceptContentType.trim());
     }
   }
@@ -26,15 +26,23 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
     <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
     ${(this.renderStyle === 'focused' && tagName && tagName !== 'General ⦂') ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
     ${path.deprecated ? html`<div class="bold-text red-text"> DEPRECATED </div>` : ''}
-    ${html`
-      <h2> ${path.shortSummary || `${path.method.toUpperCase()} ${path.path}`}</h2>
-      <div class='mono-font part="section-operation-url" regular-font-size' style='padding: 8px 0; color:var(--fg3)'> 
-        ${path.isWebhook ? html`<span style="color:var(--primary-color)"> WEBHOOK </span>` : ''}
-        <span part="label-operation-method" class='regular-font upper method-fg bold-text ${path.method}'>${path.method}</span> 
-        <span part="label-operation-path">${path.path}</span>
-      </div>`
-    }
-    ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
+    <div style="display: flex; justify-content: space-between">
+      <div style="flex-grow: 1">
+        <h2>${path.shortSummary || `${path.method.toUpperCase()} ${path.path}`}</h2>
+        <div class='mono-font part="section-operation-url" regular-font-size' style='padding: 8px 0; color:var(--fg3)'> 
+          ${path.isWebhook ? html`<span style="color:var(--primary-color)"> WEBHOOK </span>` : ''}
+          <span part="label-operation-method" class='regular-font upper method-fg bold-text ${path.method}'>${path.method}</span> 
+          <span part="label-operation-path">${path.path}</span>
+        </div>
+      </div>
+      ${path.externalDocs
+        ? html`<div class="m-markdown" style="margin-top: 2rem; margin-bottom: 0.5rem; max-width: 300px">
+            ${unsafeHTML(marked(path.externalDocs.description || ''))}
+            <a href="${path.externalDocs.url}">Navigate to documentation ↗</a>
+          </div>`
+        : ''}
+    </div>
+    <div class="m-markdown" style="margin-right: 2rem;"> ${unsafeHTML(marked(path.description || ''))}</div>
     <slot name="${path.elementId}"></slot>
     ${pathSecurityTemplate.call(this, path.security)}
     ${codeSampleTabPanel}

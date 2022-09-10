@@ -295,6 +295,7 @@ function groupByTags(openApiSpec) {
             callbacks: pathOrHookObj.callbacks,
             deprecated: pathOrHookObj.deprecated,
             security: pathOrHookObj.security || openApiSpec.security,
+            externalDocs: pathOrHookObj.externalDocs,
             // commonSummary: commonPathProp.summary,
             // commonDescription: commonPathProp.description,
             xCodeSamples: pathOrHookObj['x-codeSamples'] || pathOrHookObj['x-code-samples'] || '',
