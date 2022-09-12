@@ -17,9 +17,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
     dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null' || options.includeNulls).join('┃') : schema.type;
-    if (schema.format || schema.enum || schema.const) {
-      dataType = dataType.replace('string', schema.enum && 'enum' || schema.const && 'const' || schema.format);
-    }
+    dataType = dataType.replace('string', typeof schema.const !== 'undefined' && 'const' || schema.enum && 'enum' || schema.format || 'string');
 
     if (schema.nullable && options.includeNulls) {
       dataType += '┃null';
@@ -110,6 +108,10 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   }
   const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type.filter((t) => t !== 'null')[0] : schemaObj.type ?? '';
 
+  if (typeof schemaObj.const !== 'undefined') {
+    return schemaObj.const;
+  }
+
   if (typeValue.match(/^integer|^number/g)) {
     const multipleOf = Number.isNaN(Number(schemaObj.multipleOf)) ? undefined : Number(schemaObj.multipleOf);
     const maximum = Number.isNaN(Number(schemaObj.maximum)) ? undefined : Number(schemaObj.maximum);
@@ -131,7 +133,6 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (typeValue.match(/^null/g)) { return null; }
   if (skipExampleStrings && typeValue.match(/^string/g)) { return ''; }
   if (typeValue.match(/^string/g)) {
-    if (schemaObj.const) {return schemaObj.const; }
     if (schemaObj.enum) { return schemaObj.enum[0]; }
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
