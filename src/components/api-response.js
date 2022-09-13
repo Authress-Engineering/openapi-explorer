@@ -227,7 +227,7 @@ export default class ApiResponse extends LitElement {
               <div class="regular-font m-markdown m-markdown-small">${unsafeHTML(marked(v.description || ''))}</div>
             </td>
             <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-              ${v.schema.example || ''}
+              ${v.schema?.example || ''}
             </td>
           </tr>
         `)}
