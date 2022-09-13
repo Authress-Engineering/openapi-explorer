@@ -97,6 +97,11 @@ responseInterceptor(event) {
 
 ### Slots
 ```html
+<div slot="nav-header">
+  <h1>Header</h1>
+  <div>Adds a section above the search filter to the navbar</div>
+</div>
+
 <div slot="overview">
   <h1>Overview</h1>
   <div>Replaces the overview section</div>
