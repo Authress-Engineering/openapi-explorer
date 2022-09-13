@@ -6,6 +6,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.10 ##
 * Internationalization support with languages `en` and `fr`
+* Add a `slot` `nav-header` to the top of the navbar.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

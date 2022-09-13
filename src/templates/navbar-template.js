@@ -33,6 +33,7 @@ export function expandCollapseAllComponents() {
 export default function navbarTemplate() {
   return html`
   <nav class='nav-bar ${this.renderStyle}' part="section-navbar">
+    <slot name="nav-header"></slot>
     ${(this.allowSearch === 'false' && this.allowAdvancedSearch === 'false')
       ? ''
       : html`
