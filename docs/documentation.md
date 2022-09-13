@@ -95,6 +95,21 @@ responseInterceptor(event) {
 }
 ```
 
+
+* `@event` - Event triggered for specific UI actions and component navigations
+```html
+<openapi-explorer @event="onEvent"> </openapi-explorer>
+```
+
+```js
+onEvent(event) {
+  // The User clicked the CLEAR button in the operation request section
+  if (event.detail.type === 'RequestCleared') {
+
+  }
+}
+```
+
 ### Slots
 ```html
 <div slot="nav-header">
