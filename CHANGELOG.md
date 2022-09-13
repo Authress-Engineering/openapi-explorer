@@ -9,6 +9,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add a `slot` `nav-header` to the top of the navbar.
 * Add ruby to available languages.
 * Handle missing schema's for responses
+* Update `request-body` slot to include `event` handler for `RequestCleared` for when the user clicks the `CLEAR` button in the API Request operation display.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
