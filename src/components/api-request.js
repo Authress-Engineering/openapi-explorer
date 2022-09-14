@@ -372,9 +372,8 @@ export default class ApiRequest extends LitElement {
                       data-ptype = "${reqBody.mimeType}" 
                       data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
                       data-default-format = "${v.exampleFormat}"
-                      style="width:100%; resize:vertical;">
-                      ${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}
-                    </textarea>
+                      style="width:100%; resize:vertical;"
+                    >${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}</textarea>
                   </slot>
 
                   <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
