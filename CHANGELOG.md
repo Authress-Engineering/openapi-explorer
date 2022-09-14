@@ -10,6 +10,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add ruby to available languages.
 * Handle missing schema's for responses
 * Update `request-body` slot to include `event` handler for `RequestCleared` for when the user clicks the `CLEAR` button in the API Request operation display.
+* Ensure that `explorerLocation` is present in all `custom events` fired in the context of an operation.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
