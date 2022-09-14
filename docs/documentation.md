@@ -176,7 +176,7 @@ onEvent(event) {
 
 #### Overwrite request body area
 ```html
-<div slot="${this.elementId}--request-body">
+<div slot="${explorerLocation}--request-body">
   <!-- Example filling this with a custom text area -->
   <textarea id="text-body-area-override" class="textarea request-body-param-user-input" part="textarea textarea-param" spellcheck="false" style="width:100%; resize:vertical;">
     { "Example Data": "" }
