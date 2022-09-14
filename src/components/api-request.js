@@ -778,7 +778,7 @@ export default class ApiRequest extends LitElement {
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => { el.value = ''; });
 
-    const event = { bubbles: true, composed: true, detail: { type: 'RequestCleared' } };
+    const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, type: 'RequestCleared' } };
     this.dispatchEvent(new CustomEvent('event', event));
   }
 
@@ -1026,7 +1026,7 @@ export default class ApiRequest extends LitElement {
     }
 
     // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
-    const fetchRequest = { elementId: this.elementId, url: fetchUrl, options: fetchOptions, ...fetchOptions };
+    const fetchRequest = { explorerLocation: this.elementId, url: fetchUrl, options: fetchOptions, ...fetchOptions };
     const event = {
       bubbles: true,
       composed: true,
@@ -1127,6 +1127,7 @@ export default class ApiRequest extends LitElement {
         bubbles: true,
         composed: true,
         detail: {
+          explorerLocation: this.elementId,
           request: fetchRequest,
           response: {
             headers,
@@ -1145,6 +1146,7 @@ export default class ApiRequest extends LitElement {
         bubbles: true,
         composed: true,
         detail: {
+          explorerLocation: this.elementId,
           error,
           request: fetchRequest,
         },
