@@ -36,8 +36,11 @@ export default {
 </script>
 ```
 
+## Using the transpiled & pre-bundled version
+There is a pre-bundled version of the library deployed in the npm package which can be pulled in via `require('openapi-explorer/dist/browser/openapi-explorer.min.js')`.
+
 ## Using the non-transpiled version
-The version built and deployed as the entry point is a minified version at `dist/openapi-explorer.min.js`. When usinc `import openapi-explorer` source version (`import openapi-explorer/src/openapi-explorer`), you might see this issue depending on your babel configuration or want a more optimized version. In this case, add `openapi-explorer` to your transpiled packages:
+The version built and deployed as the entry point is a minified version at `dist/browser/openapi-explorer.min.js`. When using `import openapi-explorer` source version (`import openapi-explorer/src/openapi-explorer`), you might see this issue depending on your babel configuration or want a more optimized version. In this case, add `openapi-explorer` to your transpiled packages:
 
 in `webpack.config`
 ```
