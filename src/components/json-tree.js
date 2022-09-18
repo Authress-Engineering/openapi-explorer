@@ -36,7 +36,7 @@ export default class JsonTree extends LitElement {
         line-height: calc(var(--font-size-small) + 6px);
       }
 
-      .open-bracket{
+      .open-bracket {
         display:inline-block;
         padding: 0 20px 0 0;
         cursor: pointer;
@@ -49,21 +49,24 @@ export default class JsonTree extends LitElement {
       .tree > .open-bracket {
         margin-left: -2px;
       }
-      .open-bracket:hover{
+      .open-bracket:hover {
         color:var(--primary-color);
         background-color:var(--hover-color);
         border: 1px solid var(--border-color);
       }
-      .inside-bracket{
+
+      .inside-bracket-wrapper {
+        max-height: 10000px;
+        transition: max-height 1.2s ease-in-out;
+        overflow: hidden;
+      }
+      .open-bracket.collapsed + .inside-bracket-wrapper {
+        transition: max-height 1.2s ease-in-out -1.1s;
+        max-height: 0;
+      }
+      .inside-bracket {
         padding-left:16px;
         border-left:1px dotted var(--border-color);
-      }
-      .open-bracket.collapsed + .inside-bracket,
-      .open-bracket.collapsed + .inside-bracket + .close-bracket {
-        display:none;
-      }
-      .close-bracket {
-        margin-left: -2px;
       }
 
       .string{color:var(--green);}
@@ -155,16 +158,18 @@ export default class JsonTree extends LitElement {
         return html`${(Array.isArray(data) ? '[ ],' : '{ },')}`;
       }
       return html`
-      <div class="open-bracket expanded ${detailType === 'array' ? 'array' : 'object'} " @click="${this.toggleExpand}" > ${detailType === 'array' ? '[' : '{'}</div>
-      <div class="inside-bracket">
-        ${Object.keys(data).map((key, i, a) => html`
-          <div class="item"> 
-            ${detailType === 'pure_object' ? html`"${key}":` : ''}
-            ${this.generateTree(data[key], i === (a.length - 1))}
-          </div>`)
-        }
+      <div class="open-bracket ${detailType === 'array' ? 'array' : 'object'} " @click="${this.toggleExpand}" > ${detailType === 'array' ? '[' : '{'}</div>
+      <div class="inside-bracket-wrapper">
+        <div class="inside-bracket">
+          ${Object.keys(data).map((key, i, a) => html`
+            <div class="item"> 
+              ${detailType === 'pure_object' ? html`"${key}":` : ''}
+              ${this.generateTree(data[key], i === (a.length - 1))}
+            </div>`)
+          }
+        </div>
+        <div class="close-bracket">${detailType === 'array' ? ']' : '}'}${isLast ? '' : ','}</div>
       </div>
-      <div class="close-bracket">${detailType === 'array' ? ']' : '}'}${isLast ? '' : ','}</div>
       `;
     }
 
@@ -176,13 +181,13 @@ export default class JsonTree extends LitElement {
 
   toggleExpand(e) {
     const openBracketEl = e.target;
-    if (openBracketEl.classList.contains('expanded')) {
-      openBracketEl.classList.replace('expanded', 'collapsed');
+    openBracketEl.classList.toggle('collapsed');
+    if (openBracketEl.classList.contains('collapsed')) {
       e.target.innerHTML = e.target.classList.contains('array') ? '[...]' : '{...}';
     } else {
-      openBracketEl.classList.replace('collapsed', 'expanded');
       e.target.innerHTML = e.target.classList.contains('array') ? '[' : '{';
     }
+    this.requestUpdate();
   }
 }
 // Register the element with the browser
