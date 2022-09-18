@@ -33,10 +33,6 @@ export default css`
   display: none;
 }
 
-.tr.xxx-of{
-  border-top: 1px dotted var(--primary-color);
-}
-
 .xxx-of-key {
   font-size: calc(var(--font-size-small) - 2px); 
   font-weight:bold; 

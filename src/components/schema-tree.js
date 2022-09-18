@@ -84,11 +84,8 @@ export default class SchemaTree extends LitElement {
       .inside-bracket.array {
         border-left: 1px dotted var(--border-color);
       }
-      .inside-bracket.xxx-of {
-        padding:5px 0px;
-        border-style: dotted;
-        border-width: 0 0 1px 0;
-        border-color:var(--primary-color);
+      .inside-bracket.xxx-of.option {
+        border-left: 1px solid transparent;
       }`,
     ];
   }
@@ -184,6 +181,13 @@ export default class SchemaTree extends LitElement {
         }
         closeBracket = ']';
       }
+    } else if (data['::type'] === 'xxx-of' && dataType === 'array') {
+      if (schemaLevel < this.schemaExpandLevel) {
+        openBracket = html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[</span>`;
+      } else {
+        openBracket = html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[...]</span>`;
+      }
+      closeBracket = ']';
     }
 
     if (typeof data === 'object') {
@@ -208,7 +212,6 @@ export default class SchemaTree extends LitElement {
                     </span>`
                   : ''
             }
-            ${data['::type'] === 'xxx-of' && dataType === 'array' ? html`<span style="color:var(--primary-color)">ARRAY</span>` : ''} 
             ${openBracket}
           </div>
           <div class="td key-descr">
