@@ -7,7 +7,7 @@ export async function initI18n() {
   await i18next.init({
     lng: initLang,
     fallbackLng: 'en',
-    debug: true,
+    debug: false,
     ns: ['translation'],
     defaultNS: 'translation',
     resources: {

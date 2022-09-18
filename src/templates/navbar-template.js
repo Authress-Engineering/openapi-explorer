@@ -112,7 +112,7 @@ export default function navbarTemplate() {
         .filter((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
         .map((tag) => html`
           <slot name="nav-${tag.elementId}">
-            <div class='nav-bar-tag-and-paths ${tag.expanded ? 'expanded' : 'collapsed'}'>
+            <div class='nav-bar-tag-and-paths ${tag.expanded ? '' : 'collapsed'}'>
               ${tag.name === 'General ⦂'
                 ? html``
                 : html`
@@ -128,30 +128,32 @@ export default function navbarTemplate() {
                 `
               }
 
-              <div class='tag-headers'>
-                ${tag.headers.map((header) => html`
-                  <div 
-                    class='nav-bar-h${header.depth}' 
-                    id="link-${tag.elementId}--${new marked.Slugger().slug(header.text)}"  
-                    data-content-id='${tag.elementId}--${new marked.Slugger().slug(header.text)}' 
-                    @click='${(e) => this.scrollToEventTarget(e, false)}'>
-                    ${header.text}
-                  </div>`
-                )}
-              </div>
-              <div class='nav-bar-paths-under-tag'>
-                <!-- Paths in each tag (endpoints) -->
-                ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
-                <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
-                  data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
-                  <span style="line-break: anywhere; ${p.deprecated ? 'filter:opacity(0.5)' : ''}">
-                    ${this.usePathInNavBar === 'true'
-                      ? html`<span class='mono-font'>${p.method.toUpperCase()} ${p.path}</span>`
-                      : p.summary || p.shortSummary
-                    }
-                    ${p.isWebhook ? '(Webhook)' : ''}
-                  </span>
-                </div>`)}
+              <div class="nav-bar-section-wrapper">
+                <div>
+                  ${tag.headers.map((header) => html`
+                    <div 
+                      class='nav-bar-h${header.depth}' 
+                      id="link-${tag.elementId}--${new marked.Slugger().slug(header.text)}"  
+                      data-content-id='${tag.elementId}--${new marked.Slugger().slug(header.text)}' 
+                      @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                      ${header.text}
+                    </div>`
+                  )}
+                </div>
+                <div class='nav-bar-paths-under-tag'>
+                  <!-- Paths in each tag (endpoints) -->
+                  ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
+                  <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
+                    data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
+                    <span style="line-break: anywhere; ${p.deprecated ? 'filter:opacity(0.5)' : ''}">
+                      ${this.usePathInNavBar === 'true'
+                        ? html`<span class='mono-font'>${p.method.toUpperCase()} ${p.path}</span>`
+                        : p.summary || p.shortSummary
+                      }
+                      ${p.isWebhook ? '(Webhook)' : ''}
+                    </span>
+                  </div>`)}
+                </div>
               </div>
             </div>
           </slot>
@@ -180,7 +182,7 @@ export default function navbarTemplate() {
           </div>
 
           ${this.resolvedSpec.components.filter((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s))).map((component) => html`
-            <div class="nav-bar-tag-and-paths ${component.expanded ? 'expanded' : 'collapsed'}">
+            <div class="nav-bar-tag-and-paths ${component.expanded ? '' : 'collapsed'}">
               <div class='nav-bar-tag'
                 data-content-id='cmp--${component.name.toLowerCase()}' 
                 id='link-cmp--${component.name.toLowerCase()}' 
