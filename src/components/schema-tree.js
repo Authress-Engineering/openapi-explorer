@@ -68,16 +68,18 @@ export default class SchemaTree extends LitElement {
       .close-bracket {
         display:inline-block;
         font-family: var(--font-mono);
-        margin-left: -2px;
       }
 
-      .tr.collapsed .close-bracket {
-        margin-left: 0;
+      .inside-bracket-wrapper {
+        max-height: 10000px;
+        transition: max-height 1.2s ease-in-out;
+        overflow: hidden;
       }
-      .tr.collapsed + .inside-bracket,
-      .tr.collapsed + .inside-bracket + .close-bracket{
-        display:none;
+      .tr.collapsed + .inside-bracket-wrapper {
+        transition: max-height 1.2s ease-in-out -1.1s;
+        max-height: 0;
       }
+
       .inside-bracket.object,
       .inside-bracket.array {
         border-left: 1px dotted var(--border-color);
@@ -194,7 +196,7 @@ export default class SchemaTree extends LitElement {
 
       const displayLine = [flags['🆁'] || flags['🆆'], description].filter(v => v).join(' ');
       return html`
-        <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? 'expanded' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
+        <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
             ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
               ? html`<span class='key-label xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
@@ -215,22 +217,21 @@ export default class SchemaTree extends LitElement {
             </span>
           </div>
         </div>
-        <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' ? 0 : leftPadding}px;'>
-          ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
-            : html`
-              ${Object.keys(data).map((dataKey) =>
-                !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
-                ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                      data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
-                : ''
-              )}`
-          }
+        <div class="inside-bracket-wrapper">
+          <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' ? 0 : leftPadding}px;'>
+            ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
+              : html`
+                ${Object.keys(data).map((dataKey) =>
+                  !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                  || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
+                  ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
+                        data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+                  : ''
+                )}`
+            }
+          </div>
+          ${data['::type'] && data['::type'].includes('xxx-of') ? '' : html`<div class='close-bracket'> ${closeBracket} </div>`}
         </div>
-        ${data['::type'] && data['::type'].includes('xxx-of')
-          ? ''
-          : html`<div class='close-bracket'> ${closeBracket} </div>`
-        }
       `;
     }
 
@@ -275,8 +276,8 @@ export default class SchemaTree extends LitElement {
 
   toggleObjectExpand(e) {
     const rowEl = e.target.closest('.tr');
-    if (rowEl.classList.contains('expanded')) {
-      rowEl.classList.replace('expanded', 'collapsed');
+    rowEl.classList.toggle('collapsed');
+    if (rowEl.classList.contains('collapsed')) {
       e.target.innerHTML = e.target.classList.contains('array-of-object')
         ? '[{...}]'
         : e.target.classList.contains('array-of-array')
@@ -285,7 +286,6 @@ export default class SchemaTree extends LitElement {
             ? '[...]'
             : '{...}';
     } else {
-      rowEl.classList.replace('collapsed', 'expanded');
       e.target.innerHTML = e.target.classList.contains('array-of-object')
         ? '[{'
         : e.target.classList.contains('array-of-array')
@@ -294,6 +294,7 @@ export default class SchemaTree extends LitElement {
             ? '{'
             : '[';
     }
+    this.requestUpdate();
   }
 }
 
