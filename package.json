@@ -55,6 +55,7 @@
     "lit-element": "^3.2.2",
     "lit-html": "^2.3.1",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.merge": "^4.6.2",
     "marked": "^4.0.16",
     "mime-db": "^1.52.0",
     "openapi-data-validator": "^2.0.40",

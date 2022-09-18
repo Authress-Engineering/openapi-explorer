@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
+import merge from 'lodash.merge';
 import { expandN } from 'regex-to-strings';
 import xmlFormatter from './xml/xml.js';
 
@@ -196,34 +197,39 @@ export function getExampleValuesFromSchema(schema, config = {}) {
 }
 
 // TODO: Support getting the `summary` from the examples object or the `title` from the schema object
-function getExampleValuesFromSchemaRecursive(schema, config = {}) {
-  if (!schema) {
+function getExampleValuesFromSchemaRecursive(rawSchema, config = {}) {
+  if (!rawSchema) {
     return [];
   }
 
   // XML Support
   const xmlAttributes = {};
   const xmlTagProperties = [];
-  const { prefix, namespace } = schema.xml || {};
+  const { prefix, namespace } = rawSchema.xml || {};
   if (namespace) {
     xmlAttributes[prefix ? `xmlns:${prefix}` : 'xmlns'] = namespace;
   }
-  const nodeName = schema.items && schema.items.xml && schema.items.xml.name || schema.xml && schema.xml.name || config.propertyName || 'root';
+  const nodeName = rawSchema?.items?.xml?.name || rawSchema?.xml?.name || config.propertyName || 'root';
   const overridePropertyName = prefix ? `${prefix}:${nodeName}` : nodeName;
 
-  if (schema.allOf) {
-    // TODO: allOf support should include merging the schemas together
-    return getExampleValuesFromSchemaRecursive(schema.allOf[0], config);
+  const { allOf, oneOf, anyOf, ...schema } = rawSchema;
+  if (allOf) {
+    const mergedAllOf = merge({}, ...schema.allOf, schema);
+    return getExampleValuesFromSchemaRecursive(mergedAllOf, config);
   }
 
-  if (schema.oneOf) {
-    return schema.oneOf.map((s) => getExampleValuesFromSchemaRecursive(s, config)).flat(1);
+  if (oneOf) {
+    return oneOf.map((s) => getExampleValuesFromSchemaRecursive(merge({}, s, schema), config)).flat(1);
   }
 
-  if (schema.anyOf) {
-    return schema.anyOf.map((s) => getExampleValuesFromSchemaRecursive(s, config)).flat(1);
+  if (anyOf) {
+    return anyOf.map((s) => getExampleValuesFromSchemaRecursive(merge({}, s, schema), config)).flat(1);
   }
 
+  return getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, xmlTagProperties, overridePropertyName);
+}
+
+function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, xmlTagProperties, overridePropertyName) {
   if (schema.type === 'array' || schema.items) {
     if (!config.xml) {
       return [getExampleValuesFromSchemaRecursive(schema.items || {}, config)];
@@ -335,7 +341,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     const obj = schemaInObjectNotation(schema, options, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
     resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
-    resultObj['::type'] = 'xxx-of';
+    resultObj['::type'] = 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     return resultObj;
   } else if (Array.isArray(schema.type)) {
@@ -368,7 +374,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       }
     }
     if (complexTypes.length > 0) {
-      obj['::type'] = 'xxx-of';
+      obj['::type'] = 'object';
       const multiTypeOptions = {
         '::type': 'xxx-of-option',
       };

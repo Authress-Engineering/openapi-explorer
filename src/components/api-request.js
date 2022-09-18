@@ -341,6 +341,7 @@ export default class ApiRequest extends LitElement {
             'text',
             true
           );
+
           if (!this.selectedRequestBodyExample) {
             this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
           }
