@@ -13,6 +13,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Ensure that `explorerLocation` is present in all `custom events` fired in the context of an operation.
 * Fix expand/collapse transition effect
 * Fix oneof examples display
+* Fix navbar transition
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

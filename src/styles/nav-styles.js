@@ -38,16 +38,20 @@ export default css`
 .nav-bar-tag-icon:hover {
   color:var(--nav-hover-text-color);
 }
-.nav-bar.focused .nav-bar-tag-and-paths.collapsed .nav-bar-paths-under-tag, .nav-bar.focused .nav-bar-tag-and-paths.collapsed .tag-headers {
-  display:none;
-}
 
-.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon.collapse-button-arrow {
+.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon.collapse-button-arrow, .nav-bar-tag-and-paths:not(.collapsed) .nav-bar-tag-icon.expand-button-arrow {
   display: none;
 }
 
-.nav-bar-tag-and-paths.expanded .nav-bar-tag-icon.expand-button-arrow {
-  display: none;
+.nav-bar-tag-and-paths > .nav-bar-section-wrapper {
+  max-height: 5000px;
+  transition: max-height 1.2s ease-in-out;
+  overflow: hidden;
+}
+
+.nav-bar-tag-and-paths.collapsed > .nav-bar-section-wrapper {
+  transition: max-height 1.2s ease-in-out -1.0s;
+  max-height: 0;
 }
 
 .nav-bar.focused, .nav-scroll {
