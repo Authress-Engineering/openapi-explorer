@@ -39,6 +39,7 @@ export default function setTheme(theme = {}) {
     `--yellow: ${getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107'}`,
     `--green: ${getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745'}`,
     `--blue: ${getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9'}`,
+    `--gray: ${getComputedStyle(this).getPropertyValue('--gray').trim() || '#465865'}`,
 
     '--pink: #e83e8c',
     '--white: #fff',
@@ -52,6 +53,7 @@ export default function setTheme(theme = {}) {
     `--light-yellow: ${color(getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107').lightness(96).hex()}`,
     `--light-green: ${color(getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745').lightness(96).hex()}`,
     `--light-blue: ${color(getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9').lightness(96).hex()}`,
+    `--light-gray: ${color(getComputedStyle(this).getPropertyValue('--gray').trim() || '#465865').lightness(96).hex()}`,
     '',
   ];
 

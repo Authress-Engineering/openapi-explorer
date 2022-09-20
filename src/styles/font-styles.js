@@ -45,13 +45,9 @@ export default css`
   .method-fg.post { color: var(--green); }
   .method-fg.head, .method-fg.get { color: var(--blue); }
   .method-fg.delete { color: var(--red); }
-  .method-fg.options {
-    color: var(--purple);
-  }
-  
-  .method-fg.patch { 
-    color: var(--yellow); 
-  }
+  .method-fg.query { color: var(--purple); }
+  .method-fg.options { color: var(--gray); }
+  .method-fg.patch { color: var(--yellow); }
 
   h1{ font-family:var(--font-regular); font-size:28px; padding-top: 10px; letter-spacing:normal; font-weight:normal; }
   h2{ font-family:var(--font-regular); font-size:24px; padding-top: 10px; letter-spacing:normal; font-weight:normal; }
