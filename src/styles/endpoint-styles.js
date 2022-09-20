@@ -60,10 +60,15 @@ export default css`
   border-color :var(--yellow); 
   background-color: var(--light-yellow);
 }
-.m-endpoint > .endpoint-head.options:hover,
-.m-endpoint > .endpoint-head.options.expanded {
+.m-endpoint > .endpoint-head.query:hover,
+.m-endpoint > .endpoint-head.query.expanded {
   border-color: var(--purple);
   background-color: var(--light-purple);
+}
+.m-endpoint > .endpoint-head.options:hover,
+.m-endpoint > .endpoint-head.options.expanded {
+  border-color: var(--gray);
+  background-color: var(--light-gray);
 }
 
 .m-endpoint .endpoint-body {
@@ -79,7 +84,8 @@ export default css`
 .m-endpoint .endpoint-body.post{border-color:var(--green);}
 .m-endpoint .endpoint-body.get, .m-endpoint .endpoint-body.head { border-color:var(--blue); }
 .m-endpoint .endpoint-body.patch { border-color:var(--yellow); }
-.m-endpoint .endpoint-body.options { border-color: var(--purple); }
+.m-endpoint .endpoint-body.query { border-color: var(--purple); }
+.m-endpoint .endpoint-body.options { border-color: var(--gray); }
 
 .summary{
   padding:8px 8px;
@@ -108,14 +114,10 @@ export default css`
 .method.delete{ border: 2px solid var(--red);}
 .method.put{ border: 2px solid var(--orange); }
 .method.post{ border: 2px solid var(--green); }
-.method.head, .method.get{ border: 2px solid var(--blue); }
-
-.method.patch {
-  border: 2px solid var(--yellow); 
-}
-.method.options { 
-  border: 2px solid var(--purple); 
-}
+.method.head, .method.get { border: 2px solid var(--blue); }
+.method.patch { border: 2px solid var(--yellow); }
+.method.query { border: 2px solid var(--purple); }
+.method.options { border: 2px solid var(--gray); }
 
 .req-resp-container{
   display: flex;
@@ -149,9 +151,13 @@ export default css`
   border-top: 1px dashed var(--yellow);
   border-color:var(--yellow);
 }
-.options .request { 
+.query .request { 
   border-top: 1px dashed var(--purple);
   border-color: var(--purple);
+}
+.options .request { 
+  border-top: 1px dashed var(--gray);
+  border-color: var(--gray);
 }
 .put .request{ 
   border-top: 1px dashed var(--orange);

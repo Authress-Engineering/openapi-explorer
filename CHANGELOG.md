@@ -14,6 +14,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix expand/collapse transition effect
 * Fix oneof examples display
 * Fix navbar transition
+* Add support for `query` REST verb type
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

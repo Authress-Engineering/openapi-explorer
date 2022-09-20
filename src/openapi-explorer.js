@@ -379,7 +379,7 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
-    this.schemaHideReadOnly = ['post', 'put', 'patch'].join(',');
+    this.schemaHideReadOnly = ['post', 'put', 'patch', 'query'].join(',');
     this.schemaHideWriteOnly = true;
     if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }
     if (!this.responseAreaHeight) {

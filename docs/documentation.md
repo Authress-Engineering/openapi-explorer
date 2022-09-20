@@ -214,12 +214,15 @@ In many cases these might have already been set by your css framework, if not, a
 * CSS (default set to page fonts) - Add to your css
 ```css
 openapi-explorer {
-  --purple: #6f42c1;
-  --pink: #e83e8c;
-  --red: #dc3545;
-  --orange: #fd7e14;
-  --yellow: #ffc107;
+  --blue: #38b3f9;
+  --gray: #465865;
   --green: #28a745;
+  --orange: #fd7e14;
+  --purple: #6f42c1;
+  --red: #dc3545;
+  --yellow: #ffc107;
+
+  --pink: #e83e8c;
   --white: #fff;
 }
 ```
