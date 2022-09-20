@@ -92,11 +92,8 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleStrings) {
   const example = Array.isArray(schemaObj.examples) ? schemaObj.examples[0] : Object.values(schemaObj.examples || {})[0]?.value ?? schemaObj.example;
-  if (example === '') { return ''; }
-  if (example === null) { return null; }
-  if (example === 0) { return 0; }
   if (skipExampleStrings && typeof example === 'string') { return ''; }
-  if (example) { return example; }
+  if (typeof example !== 'undefined') { return example; }
 
   if (schemaObj.default) { return schemaObj.default; }
 
