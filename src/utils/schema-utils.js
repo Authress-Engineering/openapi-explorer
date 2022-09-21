@@ -5,6 +5,7 @@ import xmlFormatter from './xml/xml.js';
 
 // When the type is not known for a property set the displayed type to be this:
 const IS_MISSING_TYPE_INFO_TYPE = '';
+const EXAMPLE_VALUE_FOR_MISSING_TYPE = '';
 
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(schema, options = { includeNulls: false }) {
@@ -98,7 +99,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (schemaObj.default) { return schemaObj.default; }
 
   if (Object.keys(schemaObj).length === 0) {
-    return null;
+    return EXAMPLE_VALUE_FOR_MISSING_TYPE;
   }
   if (schemaObj.$ref) {
     // Indicates a Circular ref
@@ -170,7 +171,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
     }
   }
   // If type cannot be determined
-  return '?';
+  return EXAMPLE_VALUE_FOR_MISSING_TYPE;
 }
 
 function duplicateExampleWithNewPropertyValues(objectExamples, propertyName, propertyValues) {
@@ -215,12 +216,16 @@ function getExampleValuesFromSchemaRecursive(rawSchema, config = {}) {
     return getExampleValuesFromSchemaRecursive(mergedAllOf, config);
   }
 
-  if (oneOf) {
-    return oneOf.map((s) => getExampleValuesFromSchemaRecursive(merge({}, s, schema), config)).flat(1);
-  }
-
-  if (anyOf) {
-    return anyOf.map((s) => getExampleValuesFromSchemaRecursive(merge({}, s, schema), config)).flat(1);
+  if (oneOf || anyOf) {
+    const examples = (oneOf || anyOf).map((s) => getExampleValuesFromSchemaRecursive(merge({}, schema, s), config)).flat(1);
+    const hash = value => {
+      if (typeof value === 'object') {
+        return JSON.stringify(value);
+      }
+      return value;
+    };
+    const uniqueExamples = examples.reduce((acc, e) => {acc[hash(e)] = e; return acc; }, {});
+    return Object.values(uniqueExamples);
   }
 
   return getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, xmlTagProperties, overridePropertyName);
@@ -316,28 +321,34 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     (anyOf || oneOf || []).forEach((v, index) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
         const partialObj = schemaInObjectNotation(v, options);
-        objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
-        objWithAnyOfProps['::type'] = 'xxx-of-option';
-        readOnly = readOnly && partialObj['::flags']?.['🆁'];
-        writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
+        if (partialObj) {
+          objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
+          objWithAnyOfProps['::type'] = 'xxx-of-option';
+          readOnly = readOnly && partialObj['::flags']?.['🆁'];
+          writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
+        }
       } else if (v.type === 'array' || v.items) {
-        // This else-if block never seems to get executed
         const partialObj = schemaInObjectNotation(v, options);
         objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
         objWithAnyOfProps['::type'] = 'xxx-of-array';
         readOnly = readOnly && partialObj['::flags']?.['🆁'];
         writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else {
-        const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
-        objWithAnyOfProps[prop] = `${getTypeInfo(v, options).html}`;
-        objWithAnyOfProps['::type'] = 'xxx-of-option';
-        readOnly = readOnly && objWithAnyOfProps['::flags']?.['🆁'];
-        writeOnly = writeOnly && objWithAnyOfProps['::flags']?.['🆆'];
+        const typeInfo = getTypeInfo(v, options);
+        if (typeInfo?.type) {
+          const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
+          objWithAnyOfProps[prop] = `${typeInfo.html}`;
+          objWithAnyOfProps['::type'] = 'xxx-of-option';
+          readOnly = readOnly && objWithAnyOfProps['::flags']?.['🆁'];
+          writeOnly = writeOnly && objWithAnyOfProps['::flags']?.['🆆'];
+        }
       }
     });
     const obj = schemaInObjectNotation(schema, options, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
-    resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
+    if (Object.keys(objWithAnyOfProps).length) {
+      resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
+    }
     resultObj['::type'] = 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     return resultObj;
