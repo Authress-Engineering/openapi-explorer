@@ -15,6 +15,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix oneof examples display
 * Fix navbar transition
 * Add support for `query` REST verb type
+* Hide empty oneof empty clauses that don't affect displayed properties.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
