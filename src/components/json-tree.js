@@ -22,7 +22,7 @@ export default class JsonTree extends LitElement {
         display:flex;
       }
       .json-tree {
-        background: rgb(51, 51, 51);
+        background: var(--primary-color);
         color: white;
         padding: 12px;
 
@@ -90,10 +90,7 @@ export default class JsonTree extends LitElement {
       }
       .toolbar-item {
         cursor: pointer;
-        padding: 5px 0 5px 1rem;
         margin: 0 1rem !important;
-        /* TODO: add: The import highlight color variable */
-        color: #38b3f9;
         flex-shrink: 0;
       }
       .tree .toolbar .toolbar-item {
@@ -104,6 +101,9 @@ export default class JsonTree extends LitElement {
         border-style: dotted;
         border-width: 0 0 1px 0;
         border-color:var(--primary-color);
+      }
+      .key-descr {
+        line-height: 1.7;
       }
       .schema-root-type.xxx-of {
         display:none;
@@ -139,7 +139,7 @@ export default class JsonTree extends LitElement {
         <div class="toolbar"> 
           <div>&nbsp;</div>
           <div class="toolbar-item">
-            <button class="toolbar-copy-btn" part="btn btn-fill" @click='${(e) => { copyToClipboard(JSON.stringify(this.data, null, 2), e); }}'>${getI18nText('operations.copy')}</button>
+            <button class="m-btn outline-primary" part="btn btn-fill" @click='${(e) => { copyToClipboard(JSON.stringify(this.data, null, 2), e); }}'>${getI18nText('operations.copy')}</button>
           </div>
         </div>
         ${this.generateTree(this.data, true)}

@@ -22,6 +22,7 @@ export default css`
 }
 
 .key-descr {
+  line-height: 1.7;
   font-family:var(--font-regular);
   flex-shrink: 1;
   text-overflow: ellipsis;
@@ -69,8 +70,7 @@ export default css`
   cursor: pointer;
   padding: 5px 0 5px 1rem;
   margin: 0 1rem !important;
-  /* TODO: add: The import highlight color variable */
-  color: #38b3f9;
+  color: var(--secondary-color);
   flex-shrink: 0;
 }
 .tree .toolbar .toolbar-item {
