@@ -28,6 +28,14 @@ export default class SchemaTable extends LitElement {
       FontStyles,
       SchemaStyles,
       css`
+      .no-select {
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+      }
       .table {
         font-size: var(--font-size-small);
         text-align: left;
@@ -65,15 +73,22 @@ export default class SchemaTable extends LitElement {
         font-family: var(--font-mono);
         background-clip: border-box;
       }
-      .obj-toggle:hover {
-        border-color: var(--primary-color);
-      }
-      .tr.expanded + .object-body {
-        display:block;
+      .tr + .object-body {
+        max-height: 5000px;
+        transition: max-height 1.2s ease-in-out;
+        overflow: hidden;
       }
       .tr.collapsed + .object-body {
-        display:none;
-      }`,
+        transition: max-height 1.2s ease-in-out -1.0s;
+        max-height: 0;
+      }
+      .obj-toggle-indicator {
+        transition: transform 0.1s ease;
+      }
+      .tr.collapsed .obj-toggle-indicator {
+        transform: rotate(-90deg);
+      }
+      `,
     ];
   }
 
@@ -146,21 +161,19 @@ export default class SchemaTable extends LitElement {
         return undefined;
       }
       
-      const displayLine = [flags['🆁'] || flags['🆆'], description].filter(v => v).join(' ');
+      const displayLine = [description].filter(v => v).join(' ');
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
-            <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? 'expanded' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
-              <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='padding-left:${leftPadding}px'>
+            <div class='tr no-select ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
+              <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='display: flex; align-items: center; padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
                 ${(keyLabel || keyDescr)
                   ? html`
-                    <span 
-                      class='obj-toggle ${newSchemaLevel < this.schemaExpandLevel ? 'expanded' : 'collapsed'}'
-                      data-obj='${keyLabel}'
-                      @click= ${(e) => this.toggleObjectExpand(e, keyLabel)} 
-                    >
-                      ${schemaLevel < this.schemaExpandLevel ? '-' : '+'}
-                    </span>`
+                    <div class='obj-toggle'
+                      style="margin-right: 0.4rem;"
+                      data-obj='${keyLabel}'>
+                      <div class="obj-toggle-indicator">▾</div>
+                    </div>`
                   : ''
                 }
                 ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
@@ -171,7 +184,7 @@ export default class SchemaTable extends LitElement {
                 }
                 ${data['::type'] === 'xxx-of' && dataType === 'array' ? html`<span style="color:var(--primary-color)">ARRAY</span>` : ''} 
               </div>
-              <div class='td key-type'>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>
+              <div class='td key-type'>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType} ${flags['🆁'] || flags['🆆'] || ''}</div>
               <div class='td key-descr m-markdown-small' style='line-height:1.7'>${unsafeHTML(marked(displayLine))}</div>
             </div>`
           : html`
@@ -240,15 +253,7 @@ export default class SchemaTable extends LitElement {
 
   toggleObjectExpand(e) {
     const rowEl = e.target.closest('.tr');
-    if (rowEl.classList.contains('expanded')) {
-      rowEl.classList.add('collapsed');
-      rowEl.classList.remove('expanded');
-      e.target.innerText = '+';
-    } else {
-      rowEl.classList.remove('collapsed');
-      rowEl.classList.add('expanded');
-      e.target.innerText = '-';
-    }
+    rowEl.classList.toggle('collapsed');
   }
 }
 if (!customElements.get('openapi-explorer')) {

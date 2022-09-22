@@ -34,13 +34,15 @@ export default css`
   font-size: 16px;
   padding-right: 1px;
   color: var(--nav-text-color);
+  cursor: pointer;
+  transition: transform 0.1s ease;
 }
 .nav-bar-tag-icon:hover {
   color:var(--nav-hover-text-color);
 }
 
-.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon.collapse-button-arrow, .nav-bar-tag-and-paths:not(.collapsed) .nav-bar-tag-icon.expand-button-arrow {
-  display: none;
+.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon {
+  transform: rotate(-90deg);
 }
 
 .nav-bar-tag-and-paths > .nav-bar-section-wrapper {

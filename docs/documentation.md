@@ -6,13 +6,13 @@
 * `explorer-location` - current location of the document. Set to dynamically navigate to the location in the doc using the path.
 * `spec-url` - OpenAPI specification document url
 * `server-url` - Set the server url, when not specified defaults to the first listed server in the spec.
-* `collapse` - Set the operations and components collapsed by default
 
-#### Enable functionality
+#### Disable configuration
 * `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
 * `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
 * `fill-defaults` - [true] Fills the request data with the default data.
-
+* `collapse` - [false] Set the operations and components collapsed by default
+* `table` - [false] Converts the body displays from object json to a table for schemas
 
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section

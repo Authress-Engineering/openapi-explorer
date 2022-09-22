@@ -96,10 +96,8 @@ export default function navbarTemplate() {
           <div style="" part="navbar-operations-header-collapse">
             ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
               ? html`
-                ${this.operationsCollapsed
-                  ? html`<div @click="${() => { expandCollapseAll.call(this); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                  : html`<div @click="${() => { expandCollapseAll.call(this); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
-                }`
+                <div @click="${() => { expandCollapseAll.call(this); }}"
+                    style="font-size: 16px; transform: rotate(${this.operationsCollapsed ? '-90deg' : '0deg'}); cursor: pointer; transition: transform 0.1s ease;">▾</div>`
               : ''
             }  
           </div>
@@ -120,8 +118,7 @@ export default function navbarTemplate() {
 
                     <div style="display: flex; justify-content: space-between; width: 100%;">
                       <div>${tag.name}</div>
-                      <div class="nav-bar-tag-icon expand-button-arrow">▸</div>
-                      <div class="nav-bar-tag-icon collapse-button-arrow">▾</div>
+                      <div class="nav-bar-tag-icon">▾</div>
                     </div>
                   </div>
                 `
@@ -171,10 +168,8 @@ export default function navbarTemplate() {
               ${this.resolvedSpec.components.some((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s)))
                 ? html`
                   <div style="" part="navbar-components-header-collapse">
-                    ${this.componentsCollapsed
-                      ? html`<div @click="${() => { expandCollapseAllComponents.call(this); }}" style="font-size: 16px; transform: rotate(0deg); cursor: pointer;">▸</div>`
-                      : html`<div @click="${() => { expandCollapseAllComponents.call(this); }}" style="font-size: 16px;  transform: rotate(90deg); cursor: pointer;">▸</div>`
-                    }`
+                    <div @click="${() => { expandCollapseAllComponents.call(this); }}"
+                    style="font-size: 16px; transform: rotate(${this.componentsCollapsed ? '-90deg' : '0deg'}); cursor: pointer; transition: transform 0.1s ease;">▾</div>`
                 : ''}
               </div>
             </div>
@@ -189,12 +184,14 @@ export default function navbarTemplate() {
                 ${component.name}
               </div>
 
-              <div class="nav-bar-paths-under-tag">
-                ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
-                  <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
-                    <span> ${p.name} </span>
-                  </div>`
-                )}
+              <div class="nav-bar-section-wrapper">
+                <div class="nav-bar-paths-under-tag">
+                  ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
+                    <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                      <span> ${p.name} </span>
+                    </div>`
+                  )}
+                </div>
               </div>
             </div>`
           )}`
