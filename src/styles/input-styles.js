@@ -24,6 +24,14 @@ export default css`
   background-color: var(--primary-color);
   color: var(--primary-btn-text-color);
 }
+.m-btn.outline-primary {
+  color: var(--primary-color);
+  background-color: var(--bg);
+  border: 1px solid var(--bg);
+}
+.m-btn.outline-primary:hover {
+  border: 1px solid var(--bg);
+}
 .m-btn.thin-border { border-width: 1px; }
 .m-btn.large { padding:8px 14px; }
 .m-btn.small { padding:5px 12px; }
@@ -44,24 +52,14 @@ export default css`
   cursor: progress;
   opacity: 0.4;
 }
-.toolbar-copy-btn{
-  cursor: pointer;
-  padding: .125rem .5rem;
-  margin:0 2px;
-  font-size: .8rem;
-  width: 60px;
-  color: var(--primary-btn-text-color);
-  border-radius: 2px;
-  border: none;
-  background-color: var(--primary-color);
-}
-.tab-content .toolbar-copy-btn {
+
+.toolbar-copy-btn {
   position: absolute;
   top: 8px;
   right: 8px;
   margin-right: 8px;
 }
-.tab-content .toolbar-copy-btn + pre {
+.toolbar-copy-btn + pre {
   white-space: pre;
   max-height:400px;
   overflow: auto;
@@ -87,7 +85,7 @@ textarea,
 input[type="file"],
 input[type="text"],
 input[type="password"] {
-  font-family: var(--font-mono);
+  font-family: var(--font-regular);
   font-weight: 400;
   font-size: var(--font-size-small);
   transition: border .2s;

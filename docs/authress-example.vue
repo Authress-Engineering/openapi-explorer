@@ -81,50 +81,5 @@
         <div slot="get-/v1/users/-userId-/resources/-resourceUri-/roles">
             <b-badge variant="outline-secondary">READ: Authress:UserPermissions/{userId}</b-badge> <b-badge variant="outline-primary">$</b-badge>
         </div>
-        <div slot="post-/v1/claims"><b-badge variant="outline-secondary">RESOURCE CLAIM: {resourceUri}</b-badge> or <b-badge variant="outline-secondary">DELEGATE *: {resourceUri}</b-badge></div>
-        <div slot="post-/v1/invites"><b-badge variant="outline-secondary">GRANT: Existing Resource Permissions</b-badge></div>
-        <div slot="delete-/v1/invites/-inviteId-"><b-badge variant="outline-secondary">READ: Authress:UserPermissions/{userId}</b-badge></div>
-        <div slot="get-/v1/records"><b-badge variant="outline-secondary">READ (or Admin): Authress:AccessRecords/{recordId}</b-badge></div>
-        <div slot="post-/v1/records"><b-badge variant="outline-secondary">GRANT: Existing Resource Permissions</b-badge></div>
-        <div slot="get-/v1/records/-recordId-"><b-badge variant="outline-secondary">READ (or Admin): Authress:AccessRecords/{recordId}</b-badge></div>
-        <div slot="put-/v1/records/-recordId-">
-            <b-badge variant="outline-secondary">UPDATE (or Admin): Authress:AccessRecords/{recordId}</b-badge> <b-badge variant="outline-secondary">GRANT: Existing Resource Permissions</b-badge>
-        </div>
-        <div slot="delete-/v1/records/-recordId-"><b-badge variant="outline-secondary">UPDATE (or Admin): Authress:AccessRecords/{recordId}</b-badge></div>
-        <div slot="get-/v1/resources"><b-badge variant="outline-secondary">READ: Authress:ResourcePermissions</b-badge></div>
-        <div slot="get-/v1/resources/-resourceUri-"><b-badge variant="outline-secondary">GRANT *: Authress:ResourcePermissions/{resourceUri}</b-badge></div>
-        <div slot="put-/v1/resources/-resourceUri-"><b-badge variant="outline-secondary">GRANT *: Authress:ResourcePermissions/{resourceUri}</b-badge></div>
-        <div slot="get-/v1/resources/-resourceUri-/users">
-            <b-badge variant="outline-secondary">READ: Authress:UserPermissions</b-badge> <b-badge variant="outline-secondary">GRANT *: Authress:ResourcePermissions/{resourceUri}</b-badge>
-            &nbsp;<b-badge variant="outline-primary">$</b-badge>
-        </div>
-        <div slot="get-/v1/roles"><b-badge variant="outline-secondary">READ: Authress:Roles</b-badge></div>
-        <div slot="post-/v1/roles"><b-badge variant="outline-secondary">CREATE: Authress:Roles</b-badge></div>
-        <div slot="get-/v1/roles/-roleId-"><b-badge variant="outline-secondary">READ: Authress:Roles/{roleId}</b-badge></div>
-        <div slot="put-/v1/roles/-roleId-"><b-badge variant="outline-secondary">UPDATE: Authress:Roles/{roleId}</b-badge></div>
-        <div slot="delete-/v1/roles/-roleId-"><b-badge variant="outline-secondary">UPDATE: Authress:Roles/{roleId}</b-badge></div>
-        <div slot="get-/v1/clients"><b-badge variant="outline-secondary">READ: Authress:ServiceClients/{clientId}</b-badge></div>
-        <div slot="post-/v1/clients">
-            <b-badge variant="outline-secondary">CREATE: Authress:ServiceClients</b-badge> or <b-badge variant="outline-secondary">RESOURCE CLAIM: Authress:ServiceClients</b-badge>
-        </div>
-        <div slot="get-/v1/clients/-clientId-"><b-badge variant="outline-secondary">READ: Authress:ServiceClients/{clientId}</b-badge></div>
-        <div slot="put-/v1/clients/-clientId-"><b-badge variant="outline-secondary">UPDATE: Authress:ServiceClients/{clientId}</b-badge></div>
-        <div slot="delete-/v1/clients/-clientId-"><b-badge variant="outline-secondary">UPDATE: Authress:ServiceClients/{clientId}</b-badge></div>
-        <div slot="post-/v1/clients/-clientId-/access-keys"><b-badge variant="outline-secondary">UPDATE: Authress:ServiceClients/{clientId}/access-keys</b-badge></div>
-        <div slot="delete-/v1/clients/-clientId-/access-keys/-keyId-"><b-badge variant="outline-secondary">UPDATE: Authress:ServiceClients/{clientId}/access-keys/{keyId}</b-badge></div>
-        <div slot="get-/v1/accounts"><b-badge variant="outline-secondary">READ: Authress:Configuration</b-badge></div>
-        <div slot="get-/v1/accounts/-accountId-"><b-badge variant="outline-secondary">READ: Authress:Configuration</b-badge></div>
-        <div slot="get-/v1/identities"><b-badge variant="outline-secondary">READ: Authress:Configuration</b-badge></div>
-        <div slot="post-/v1/identities"><b-badge variant="outline-secondary">UPDATE: Authress:Configuration</b-badge></div>
-        <div slot="get-/v1/connections"><b-badge variant="outline-secondary">READ: Authress:Connections</b-badge></div>
-        <div slot="post-/v1/connections"><b-badge variant="outline-secondary">CREATE: Authress:Connections</b-badge></div>
-        <div slot="get-/v1/connections/-connectionId-"><b-badge variant="outline-secondary">READ: Authress:Connections/{connectionId}</b-badge></div>
-        <div slot="put-/v1/connections/-connectionId-"><b-badge variant="outline-secondary">UPDATE: Authress:Connections/{connectionId}</b-badge></div>
-        <div slot="delete-/v1/connections/-connectionId-"><b-badge variant="outline-secondary">UPDATE: Authress:Connections/{connectionId}</b-badge></div>
-        <div slot="get-/v1/tenants"><b-badge variant="outline-secondary">READ: Authress:Connections</b-badge></div>
-        <div slot="post-/v1/tenants"><b-badge variant="outline-secondary">CREATE: Authress:Connections</b-badge></div>
-        <div slot="get-/v1/tenants/-subdomain-"><b-badge variant="outline-secondary">READ: Authress:Connections/{subdomain}</b-badge></div>
-        <div slot="put-/v1/tenants/-subdomain-"><b-badge variant="outline-secondary">UPDATE: Authress:Connections/{subdomain}</b-badge></div>
-        <div slot="delete-/v1/tenants/-subdomain-"><b-badge variant="outline-secondary">UPDATE: Authress:Connections/{subdomain}</b-badge></div>
     </openapi-explorer>
 </template>

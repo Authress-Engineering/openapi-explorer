@@ -739,9 +739,12 @@ export default class ApiRequest extends LitElement {
               }
             </div>`
           : html`
-            <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
-              <pre>${responseFormat
+            <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
+              ${this.responseText
+                ? html`<button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>`
+                : ''
+              }
+              <pre style="min-height: 60px">${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
               }
@@ -749,11 +752,11 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
+          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
+          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;

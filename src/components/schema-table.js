@@ -4,6 +4,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
 
+const tablePadding = 16;
+
 export default class SchemaTable extends LitElement {
   static get properties() {
     return {
@@ -61,12 +63,17 @@ export default class SchemaTable extends LitElement {
         width: 150px;
       }
 
+      .key-type {
+        display: flex;
+      }
+      .key-type > .attributes {
+        margin: 0.0625rem 0 0 0.25rem;
+      }
+
       .obj-toggle {
-        padding: 0 2px;
-        border-radius:2px;
-        border: 1px solid transparent;
-        display: inline-block;
-        margin-left: -16px;
+        display: inline-flex;
+        margin-left: -0.8rem;
+        margin-right: 0.8rem;
         color:var(--primary-color);
         cursor: pointer;
         font-size: calc(var(--font-size-small) + 4px);
@@ -82,10 +89,10 @@ export default class SchemaTable extends LitElement {
         transition: max-height 1.2s ease-in-out -1.0s;
         max-height: 0;
       }
-      .obj-toggle-indicator {
+      .obj-toggle {
         transition: transform 0.1s ease;
       }
-      .tr.collapsed .obj-toggle-indicator {
+      .tr.collapsed .obj-toggle {
         transform: rotate(-90deg);
       }
       `,
@@ -102,7 +109,7 @@ export default class SchemaTable extends LitElement {
       <div class="table">
         <div style = 'border:1px solid var(--light-border-color)'>
           <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
-            <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Field </div>
+            <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${tablePadding * 2}px'> Field </div>
             <div class='key-type' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
             <div class='key-descr' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
           </div>
@@ -115,7 +122,7 @@ export default class SchemaTable extends LitElement {
   generateTree(data, dataType = 'object', key = '', description = '', schemaLevel = 0, indentLevel = 0) {
     const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
     const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
-    const leftPadding = 16 * newIndentLevel; // 2 space indentation at each level
+    const leftPadding = tablePadding * newIndentLevel; // 2 space indentation at each level
 
     if (!data) {
       return html`<div class="null" style="display:inline;">null</div>`;
@@ -166,26 +173,22 @@ export default class SchemaTable extends LitElement {
         ${newSchemaLevel >= 0 && key
           ? html`
             <div class='tr no-select ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
-              <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='display: flex; align-items: center; padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
-                ${(keyLabel || keyDescr)
-                  ? html`
-                    <div class='obj-toggle'
-                      style="margin-right: 0.4rem;"
-                      data-obj='${keyLabel}'>
-                      <div class="obj-toggle-indicator">▾</div>
-                    </div>`
-                  : ''
-                }
-                ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
-                  ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
-                  : keyLabel.endsWith('*')
-                    ? html`<span class="key-label" style="display:inline-block; margin-left:-6px;"> ${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
-                    : html`<span class="key-label" style="display:inline-block; margin-left:-6px;">${keyLabel === '::props' ? '' : keyLabel}</span>`
-                }
-                ${data['::type'] === 'xxx-of' && dataType === 'array' ? html`<span style="color:var(--primary-color)">ARRAY</span>` : ''} 
+              <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
+                <div style="display: flex; align-items: center">
+                  ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
+                  ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
+                    ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
+                    : keyLabel.endsWith('*')
+                      ? html`<span class="key-label" style="display:inline-block; margin-left:-6px;"> ${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
+                      : html`<span class="key-label" style="display:inline-block; margin-left:-6px;">${keyLabel === '::props' ? '' : keyLabel}</span>`
+                  }
+                </div>
               </div>
-              <div class='td key-type'>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType} ${flags['🆁'] || flags['🆆'] || ''}</div>
-              <div class='td key-descr m-markdown-small' style='line-height:1.7'>${unsafeHTML(marked(displayLine))}</div>
+              <div class='td key-type'>
+                <div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>
+                <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
+              </div>
+              <div class='td key-descr m-markdown-small'>${unsafeHTML(marked(displayLine))}</div>
             </div>`
           : html`
               ${data['::type'] === 'array' && dataType === 'array'
@@ -229,10 +232,8 @@ export default class SchemaTable extends LitElement {
           }
         </div>
         <div class='td key-type'>
-          <span>${dataType === 'array' ? '[' : ''}<span class="${dataTypeCss}">${format || type}</span>${dataType === 'array' ? ']' : ''}</span>
-          <span class="${dataTypeCss}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${readOrWriteOnly}
-          </span>
+          <div>${dataType === 'array' ? '[' : ''}<span class="${dataTypeCss}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
+          <div class="attributes ${dataTypeCss}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
