@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { html } from 'lit';
 import color from 'color';
 import ColorUtils from './color-utils';
 

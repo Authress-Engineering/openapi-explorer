@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
 
 export default class TagInput extends LitElement {
   render() {
@@ -57,7 +57,7 @@ export default class TagInput extends LitElement {
     }
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [css`
       .tags{
         display:flex;

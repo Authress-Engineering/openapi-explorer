@@ -1,4 +1,5 @@
-import { css, LitElement, unsafeCSS } from 'lit-element';
+import { LitElement, css, unsafeCSS } from 'lit';
+
 import { marked } from 'marked';
 import Prism from 'prismjs';
 
@@ -116,7 +117,7 @@ export default class OpenApiExplorer extends LitElement {
     };
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [
       FontStyles,
       InputStyles,

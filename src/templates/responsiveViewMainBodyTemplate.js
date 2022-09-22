@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { html } from 'lit';
 
 // Templates
 import focusedEndpointTemplate from './focused-endpoint-template';

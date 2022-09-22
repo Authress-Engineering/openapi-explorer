@@ -287,7 +287,8 @@ export default class ApiRequest extends LitElement {
                       spellcheck = "false"
                       placeholder="${paramSchema.example || defaultVal || ''}"
                       style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
-                    >${this.fillRequestWithDefault === 'true' ? defaultVal : ''}</textarea>`
+                      .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                    ></textarea>`
                   : html`
                     <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
                       class="request-param"
@@ -471,7 +472,8 @@ export default class ApiRequest extends LitElement {
                       data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
                       data-default-format = "${v.exampleFormat}"
                       style="width:100%; resize:vertical;"
-                    >${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}</textarea>
+                      .value="${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}"
+                    ></textarea>
                   </slot>
 
                   <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
@@ -480,7 +482,8 @@ export default class ApiRequest extends LitElement {
                     spellcheck = "false"
                     data-ptype = "${reqBody.mimeType}" 
                     style="width:100%; resize:vertical; display:none"
-                  >${(v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))}</textarea>
+                    .value="${(v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))}"
+                  ></textarea>
                 </div>  
               `)}
 
@@ -683,9 +686,10 @@ export default class ApiRequest extends LitElement {
                           data-pname = "${fieldName}"
                           data-default = "${paramSchema.default || ''}"
                           spellcheck = "false"
-                        >${this.fillRequestWithDefault === 'true' ? paramSchema.default : ''}</textarea>
+                          .value="${this.fillRequestWithDefault === 'true' ? paramSchema.default : ''}"
+                        ></textarea>
                         <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
-                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none">${paramSchema.default}</textarea>
+                        <textarea data-pname = "hidden-${fieldName}" data-ptype = "${mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none" .value="${paramSchema.default}"></textarea>
                       </div>`
                     }
                   </div>`

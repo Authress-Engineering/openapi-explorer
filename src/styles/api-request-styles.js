@@ -1,4 +1,4 @@
-import { css } from 'lit-element';
+import { css } from 'lit';
 
 export default css`
 *.api-request, *.api-request:before, *.api-request:after, .api-request *, .api-request *:before, .api-request *:after { box-sizing: border-box; }

@@ -12,7 +12,7 @@ export default class JsonTree extends LitElement {
     };
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [
       FontStyles,
       BorderStyles,

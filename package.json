@@ -90,7 +90,6 @@
     "eslint-plugin-vue": "^7.17.0",
     "eslint-webpack-plugin": "2.5.3",
     "file-loader": "^6.2.0",
-    "filemanager-webpack-plugin": "^4.0.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^5.3.1",

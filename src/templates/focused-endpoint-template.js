@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { html } from 'lit';
 import { expandedEndpointBodyTemplate, expandedTagTemplate } from './expanded-endpoint-template';
 import '../components/api-request';
 import '../components/api-response';
