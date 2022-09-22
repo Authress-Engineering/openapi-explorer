@@ -353,7 +353,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     return resultObj;
   } else if (Array.isArray(schema.type)) {
-    const obj = {};
+    const obj = { '::type': '' };
     // When a property has multiple types, then check further if any of the types are array or object, if yes then modify the schema using one-of
     // Clone the schema - as it will be modified to replace multi-data-types with one-of;
     const subSchema = JSON.parse(JSON.stringify(schema));
@@ -427,7 +427,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
     return obj;
   } else if (schema.type === 'object' || schema.properties) {
-    const obj = {};
+    const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
@@ -445,13 +445,11 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
     return obj;
   } else if (schema.type === 'array' || schema.items) { // If Array
-    const obj = {};
+    const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description
       ? schema.description
-      : (schema.items && schema.items.description)
-        ? `array&lt;${schema.items.description}&gt;`
-        : '';
+      : (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
