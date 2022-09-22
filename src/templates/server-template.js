@@ -1,6 +1,6 @@
-import { html } from 'lit-element';
+import { html } from 'lit';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages';
 
 function onApiServerChange(e, server) {

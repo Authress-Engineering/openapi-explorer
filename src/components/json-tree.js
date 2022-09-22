@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
 import { copyToClipboard } from '../utils/common-utils';
 import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
@@ -13,7 +13,7 @@ export default class JsonTree extends LitElement {
     };
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [
       FontStyles,
       BorderStyles,

@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { html } from 'lit';
 import { marked } from 'marked';
 import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
 import { getI18nText } from '../languages';

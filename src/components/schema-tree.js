@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
@@ -25,7 +25,7 @@ export default class SchemaTree extends LitElement {
     if (!this.schemaHideWriteOnly || !'true false'.includes(this.schemaHideWriteOnly)) { this.schemaHideWriteOnly = 'true'; }
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [
       FontStyles,
       SchemaStyles,

@@ -44,6 +44,13 @@
                   "name": "css",
                   "encapsulation": "style"
                 }
+              ],
+              "lit": [
+                "html",
+                {
+                  "name": "css",
+                  "encapsulation": "style"
+                }
               ]
             },
             "htmlMinifier": {
@@ -95,6 +102,13 @@
                   "name": "css",
                   "encapsulation": "style"
                 }
+              ],
+              "lit": [
+                "html",
+                {
+                  "name": "css",
+                  "encapsulation": "style"
+                }
               ]
             },
             "htmlMinifier": {
@@ -141,6 +155,13 @@
                 "html"
               ],
               "lit-element": [
+                "html",
+                {
+                  "name": "css",
+                  "encapsulation": "style"
+                }
+              ],
+              "lit": [
                 "html",
                 {
                   "name": "css",

@@ -1,5 +1,5 @@
-import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { html } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
 import { pathSecurityTemplate } from './security-scheme-template';
 import codeSamplesTemplate from './code-samples-template';

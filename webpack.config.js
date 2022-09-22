@@ -1,5 +1,4 @@
 import webpack from 'webpack';
-import FileManagerPlugin from 'filemanager-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CompressionPlugin from 'compression-webpack-plugin';
 import { DuplicatesPlugin } from 'inspectpack/plugin/duplicates.js';
@@ -24,16 +23,6 @@ const commonPlugins = [
   new CleanWebpackPlugin(),
   new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
   new CompressionPlugin(),
-  new FileManagerPlugin({
-    events: {
-      onEnd: {
-        copy: [
-          { source: 'dist/*.js', destination: 'docs' },
-          { source: 'dist/*.woff2', destination: 'docs' },
-        ],
-      },
-    },
-  }),
 ];
 
 if (!process.env.GITHUB_REF) {
@@ -56,15 +45,6 @@ if (process.env.NODE_ENV === 'production') {
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true, banner,
   }));
-  commonPlugins.push(new FileManagerPlugin({
-    events: {
-      onEnd: {
-        copy: [
-          { source: 'dist/*.js', destination: 'docs' },
-        ],
-      },
-    },
-  }));
 }
 
 export default {
@@ -83,7 +63,7 @@ export default {
           condition: /^\**!|@preserve|@license|@cc_on/i,
           banner: (licenseFile) => `OpenAPI Explorer ${version} | Author - Rhosys Developers | License information can be found in ${licenseFile} `,
         },
-      }),
+      })
     ],
   },
   devServer: {
@@ -154,9 +134,7 @@ export default {
   resolve: {
     alias: {
       // eslint-disable-next-line no-undef
-      '~': path.resolve(__dirname, 'src'),
-      // eslint-disable-next-line no-undef
-      'lit-html/lib/shady-render.js': path.resolve(__dirname, './node_modules/lit-html/lit-html.js'), // removes shady-render.js from the bundle
+      '~': path.resolve(__dirname, 'src')
     },
   },
   plugins: commonPlugins,

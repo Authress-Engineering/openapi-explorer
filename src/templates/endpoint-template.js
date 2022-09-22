@@ -1,5 +1,5 @@
-import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { html } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
 import '../components/api-request';
 import '../components/api-response';

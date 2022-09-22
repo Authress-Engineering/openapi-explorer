@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample } from '../utils/schema-utils';
 import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
@@ -37,7 +37,7 @@ export default class ApiResponse extends LitElement {
     };
   }
 
-  static get styles() {
+  static finalizeStyles() {
     return [
       FontStyles,
       FlexStyles,
