@@ -145,11 +145,13 @@ export default class SchemaTable extends LitElement {
     }
 
     let detailObjType = '';
-    if (data['::type'] === 'object') {
+    if ((data['::type'] || '').includes('xxx-of')) {
+      detailObjType = '';
+    } else if (data['::type'] === 'object') {
       if (dataType === 'array') {
-        detailObjType = 'array'; // Array of Object
+        detailObjType = `[${keyLabel.replace(/(s|Collection|List)[*]?$/i, '')}]`; // Array of Object
       } else {
-        detailObjType = 'object';
+        detailObjType = 'object'; // Object
       }
     } else if (data['::type'] === 'array') {
       if (dataType === 'array') {
