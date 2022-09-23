@@ -208,7 +208,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --nav-hover-text-color:${newTheme.navHoverTextColor};
 
     /*Code Syntax Color*/
-    --code-bg:${newTheme.codeBg};
     --code-fg:${newTheme.codeFg};
     --inline-code-fg:${newTheme.inlineCodeFg};
     

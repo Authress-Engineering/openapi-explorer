@@ -28,6 +28,7 @@
 Note: These properties will likely be deprecated in favor of global css variables being set, are still available
 
 * `bg-color` - Set the background color [Expected Bootstrap value: `$light`]
+* `header-bg-color` - Set the background header color [Defaults to a lighter version of bg-color]
 * `primary-color` - Set the primary [Expected Bootstrap value: `$primary`]
 * `secondary-color` - Set the secondary color used for accents [Expected Bootstrap value: `$primary`]
 * `text-color` - Set the default text color [Expected Bootstrap value: `$grey`]

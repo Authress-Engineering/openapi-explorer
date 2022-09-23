@@ -18,6 +18,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Hide empty oneof empty clauses that don't affect displayed properties.
 * Fix schema table transitions and display
 * Fix response code colors to match the rest of the theme
+* Add `header-bg-color` for setting table headers
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`
