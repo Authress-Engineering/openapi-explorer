@@ -84,18 +84,18 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
       v.computedUrl = computedUrl;
     });
     if (serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl)) {
-      jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }].concat(jsonParsedSpec.servers);
+      servers = [{ url: serverUrl, computedUrl: serverUrl }].concat(jsonParsedSpec.servers);
     }
   } else if (serverUrl) {
-    jsonParsedSpec.servers = [{ url: serverUrl, computedUrl: serverUrl }];
+    servers = [{ url: serverUrl, computedUrl: serverUrl }];
   } else if (inputSpecIsAUrl) {
-    jsonParsedSpec.servers = [{ url: new URL(specUrlOrObject).origin, computedUrl: new URL(specUrlOrObject).origin }];
+    servers = [{ url: new URL(specUrlOrObject).origin, computedUrl: new URL(specUrlOrObject).origin }];
   } else if (window.location.origin.startsWith('http')) {
-    jsonParsedSpec.servers = [{ url: window.location.origin, computedUrl: window.location.origin }];
+    servers = [{ url: window.location.origin, computedUrl: window.location.origin }];
   } else {
-    jsonParsedSpec.servers = [{ url: 'http://localhost', computedUrl: 'http://localhost' }];
+    servers = [{ url: 'http://localhost', computedUrl: 'http://localhost' }];
   }
-  servers = jsonParsedSpec.servers;
+
   const parsedSpec = {
     info: jsonParsedSpec.info,
     infoDescriptionHeaders,
