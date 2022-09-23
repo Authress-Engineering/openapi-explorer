@@ -462,6 +462,10 @@ export default class OpenApiExplorer extends LitElement {
       }
     }
 
+    if (name === 'server-url' && newVal) {
+      this.selectedServer = this.resolvedSpec?.servers.find((s) => s.url === newVal || !newVal) || { url: newVal, computedUrl: newVal };
+    }
+
     if (name === 'render-style') {
       if (newVal === 'read') {
         window.setTimeout(() => {
