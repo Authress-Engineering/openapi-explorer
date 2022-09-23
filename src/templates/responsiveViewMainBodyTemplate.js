@@ -14,6 +14,7 @@ import ColorUtils from '../utils/color-utils';
 export default function responsiveViewMainBodyTemplate() {
   const newTheme = {
     bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
+    bg2: ColorUtils.isValidHexColor(this.bgHeaderColor) ? this.bgHeaderColor : '',
     fg1: ColorUtils.isValidHexColor(this.textColor) ? this.textColor : '',
     primaryColor: ColorUtils.isValidHexColor(this.primaryColor) ? this.primaryColor : '#3E6077',
     secondaryColor: ColorUtils.isValidHexColor(this.secondaryColor) ? this.secondaryColor : '#FBAF0B',

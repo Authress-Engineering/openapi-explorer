@@ -88,7 +88,6 @@ export default function setTheme(theme = {}) {
     placeHolder: theme.placeHolder || ColorUtils.color.brightness(lightFg, 20), // #dedede
     hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -5), // # f1f1f1
 
-    codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
     codeFg: theme.codeFg || '#666',
     codePropertyColor: theme.codePropertyColor || '#905',
     codeKeywordColor: theme.codeKeywordColor || '#07a',
@@ -149,7 +148,6 @@ export default function setTheme(theme = {}) {
     --nav-hover-text-color:${newTheme.navHoverTextColor};
 
     /*Code Syntax Color*/
-    --code-bg:${newTheme.codeBg};
     --code-fg:${newTheme.codeFg};
     --inline-code-fg:${newTheme.inlineCodeFg};
     
