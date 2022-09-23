@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { schemaInObjectNotation, generateExample } from '../utils/schema-utils';
+import { schemaInObjectNotation, generateExample, getTypeInfo } from '../utils/schema-utils';
 import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import FlexStyles from '../styles/flex-styles';
@@ -9,6 +9,7 @@ import TableStyles from '../styles/table-styles';
 import InputStyles from '../styles/input-styles';
 import TabStyles from '../styles/tab-styles';
 import BorderStyles from '../styles/border-styles';
+import SchemaStyles from '../styles/schema-styles';
 import './schema-tree';
 import './schema-table';
 
@@ -39,6 +40,7 @@ export default class ApiResponse extends LitElement {
 
   static finalizeStyles() {
     return [
+      SchemaStyles,
       FontStyles,
       FlexStyles,
       TabStyles,
@@ -216,23 +218,28 @@ export default class ApiResponse extends LitElement {
   responseHeaderListTemplate(respHeaders) {
     return html`
       <div style="padding:16px 0 8px 0" class="resp-headers small-font-size bold-text">${getI18nText('operations.response-headers')}</div> 
-      <table role="presentation" style="border-collapse: collapse; margin-bottom:16px; border:1px solid var(--border-color); border-radius: var(--border-radius)" class="small-font-size mono-font">
-        ${respHeaders.map((v) => html`
-          <tr>
-            <td style="padding:8px; vertical-align: baseline; min-width:120px; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-              ${v.name || ''}
-            </td> 
-            <td style="padding:4px; vertical-align: baseline; padding:0 5px; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-              ${v.schema?.type || ''}
-            </td> 
-            <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color);text-overflow: ellipsis;">
-              <div class="m-markdown-small regular-font" >${unsafeHTML(marked(v.description || ''))}</div>
-            </td>
-            <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-              ${v.schema?.example || ''}
-            </td>
-          </tr>
-        `)}
+      <table role="presentation" style="border-collapse: collapse; margin-bottom:16px; border:1px solid var(--border-color); border-radius: var(--border-radius)"
+        class="small-font-size mono-font">
+        ${respHeaders.map((v) => {
+          const typeData = getTypeInfo(v.schema);
+          return html`
+            <tr>
+              <td style="padding:8px; vertical-align: baseline; min-width:160px; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
+                ${v.name || ''}
+              </td> 
+              <td class="${typeData?.cssType || ''}"
+                style="padding:4px; vertical-align: baseline; min-width: 100px; padding:0 5px; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
+                ${typeData?.format || typeData?.type || ''}
+              </td> 
+              <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color);text-overflow: ellipsis;">
+                <div class="m-markdown-small regular-font" >${unsafeHTML(marked(v.description || ''))}</div>
+              </td>
+              <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
+                ${typeData?.example || ''}
+              </td>
+            </tr>
+          `;
+        })}
     </table>`;
   }
 
