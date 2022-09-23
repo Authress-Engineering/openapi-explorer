@@ -32,6 +32,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   const info = {
     type: dataType,
     format: schema.format || schema.items?.format || '',
+    cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').toLowerCase(),
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
@@ -78,6 +79,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   info.html = JSON.stringify({
     type: info.type,
     format: info.format,
+    cssType: info.cssType,
     readOrWriteOnly: info.readOrWriteOnly,
     constraint: info.constraint,
     defaultValue: info.default,
@@ -378,7 +380,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       subSchema.type = primitiveType.join('┃');
       multiPrimitiveTypes = getTypeInfo(subSchema, options);
       if (complexTypes.length === 0) {
-        return `${multiPrimitiveTypes && multiPrimitiveTypes.html || ''}`;
+        return `${multiPrimitiveTypes?.html || ''}`;
       }
     }
     if (complexTypes.length > 0) {

@@ -9,6 +9,7 @@ import TableStyles from '../styles/table-styles';
 import InputStyles from '../styles/input-styles';
 import TabStyles from '../styles/tab-styles';
 import BorderStyles from '../styles/border-styles';
+import SchemaStyles from '../styles/schema-styles';
 import './schema-tree';
 import './schema-table';
 
@@ -39,6 +40,7 @@ export default class ApiResponse extends LitElement {
 
   static finalizeStyles() {
     return [
+      SchemaStyles,
       FontStyles,
       FlexStyles,
       TabStyles,

@@ -215,14 +215,13 @@ export default class SchemaTable extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, cssType, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
     if (readOrWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
       return undefined;
     }
-    const dataTypeCss = type.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').substring(0, 4).toLowerCase();
     return html`
       <div class = "tr primitive">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px' >
@@ -234,8 +233,8 @@ export default class SchemaTable extends LitElement {
           }
         </div>
         <div class='td key-type'>
-          <div>${dataType === 'array' ? '[' : ''}<span class="${dataTypeCss}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
-          <div class="attributes ${dataTypeCss}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
+          <div>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
+          <div class="attributes ${cssType}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
