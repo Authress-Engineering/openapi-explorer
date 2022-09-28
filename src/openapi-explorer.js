@@ -92,7 +92,7 @@ export default class OpenApiExplorer extends LitElement {
       primaryColor: { type: String, attribute: 'primary-color' },
       secondaryColor: { type: String, attribute: 'secondary-color' },
       bgColor: { type: String, attribute: 'bg-color' },
-      bgHeaderColor:{ type: String, attribute: 'header-bg-color' },
+      bgHeaderColor: { type: String, attribute: 'header-bg-color' },
       textColor: { type: String, attribute: 'text-color' },
       headerColor: { type: String, attribute: 'header-color' },
       fontSize: { type: String, attribute: 'font-size' },
@@ -710,6 +710,16 @@ export default class OpenApiExplorer extends LitElement {
 
   // Public Method (scrolls to a given path and highlights the left-nav selection)
   async scrollTo(elementId, scrollNavItemToView = true, repeatedElementIndex) {
+    try {
+      await this.scrollToUnsafe(elementId, scrollNavItemToView, repeatedElementIndex);
+    } catch (error) {
+      // There's an issue for lit elements for some browsers which are causing this issue we'll log here and still throw
+      console.error('Failed to scroll to target', elementId, scrollNavItemToView, repeatedElementIndex, error); // eslint-disable-line no-console
+      throw error;
+    }
+  }
+
+  async scrollToUnsafe(elementId, scrollNavItemToView = true, repeatedElementIndex) {
     if (!this.resolvedSpec) {
       return;
     }
