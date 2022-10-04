@@ -98,7 +98,7 @@ export default function serverTemplate() {
             <br/>
           `)}
       `}
-      <div class="table-title primary-text" part="label-selected-server"> ${getI18nText('api-servers.selected')}: ${this.selectedServer && this.selectedServer.computedUrl || 'none'}</div>
+      <div class="table-title primary-text" part="label-selected-server"> ${getI18nText('api-servers.selected')}: ${this.selectedServer?.computedUrl || 'none'}</div>
     </div>
     <slot name="servers"></slot>
     ${serverVarsTemplate.call(this)}

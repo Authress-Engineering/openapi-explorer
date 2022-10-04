@@ -65,7 +65,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   // Servers
   let servers = [];
   if (Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
-    jsonParsedSpec.servers.forEach((v) => {
+    jsonParsedSpec.servers.filter(s => s).forEach((v) => {
       let computedUrl = v.url.trim();
       if (!(computedUrl.startsWith('http') || computedUrl.startsWith('//') || computedUrl.startsWith('{'))) {
         if (window.location.origin.startsWith('http')) {
