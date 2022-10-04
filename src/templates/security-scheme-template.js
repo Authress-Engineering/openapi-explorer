@@ -154,7 +154,7 @@ export async function checkForAuthToken(redirectToApiLocation) {
   }
   if (parameters.code) {
     const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
-    const tokenUrl = securityObj && securityObj.flows[flowId] && new URL(securityObj.flows[flowId].tokenUrl || '', this.selectedServer.computedUrl);
+    const tokenUrl = securityObj && securityObj.flows[flowId] && new URL(securityObj.flows[flowId].tokenUrl || '', this.selectedServer?.computedUrl);
     await fetchAccessToken.call(this, tokenUrl, securityObj.clientId, securityObj.clientSecret, securityObj.redirectUri || window.location.href, 'authorization_code', parameters.code, null, apiKeyId);
     return;
   }
@@ -218,10 +218,10 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
 
 function oAuthFlowTemplate(flowName, securityObj, authFlow) {
   const apiKeyId = securityObj.apiKeyId;
-  const getFullUrl = url => (url ? new URL(url, this.selectedServer.computedUrl) : undefined);
-  const authorizationUrl = getFullUrl(authFlow.authorizationUrl, this.selectedServer.computedUrl);
-  const tokenUrl = getFullUrl(authFlow.tokenUrl, this.selectedServer.computedUrl);
-  const refreshUrl = getFullUrl(authFlow.refreshUrl, this.selectedServer.computedUrl);
+  const getFullUrl = url => (url ? new URL(url, this.selectedServer?.computedUrl) : undefined);
+  const authorizationUrl = getFullUrl(authFlow.authorizationUrl, this.selectedServer?.computedUrl);
+  const tokenUrl = getFullUrl(authFlow.tokenUrl, this.selectedServer?.computedUrl);
+  const refreshUrl = getFullUrl(authFlow.refreshUrl, this.selectedServer?.computedUrl);
   let flowNameDisplay;
   if (flowName === 'authorizationCode') {
     flowNameDisplay = 'Authorization Code Flow';
