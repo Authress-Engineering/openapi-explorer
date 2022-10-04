@@ -700,7 +700,13 @@ export default class OpenApiExplorer extends LitElement {
 
     const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
     const assignedNodes = navSectionSlot?.assignedNodes();
-    const repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => slot === event.target);
+
+    // clicked child node could be multiple levels deep in a custom nav
+    const hasChildNode = node => {
+      return node === event.target || node.children && [...node.children].some(c => hasChildNode(c));
+    };
+
+    const repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => hasChildNode(slot));
     this.isIntersectionObserverActive = false;
     this.scrollTo(navEl.dataset.contentId, scrollNavItemToView, repeatedElementIndex);
     setTimeout(() => {
