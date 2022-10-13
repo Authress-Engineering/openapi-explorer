@@ -11,7 +11,7 @@ import advancedSearchTemplate from './advance-search-template';
 import SetTheme from '../utils/theme';
 import ColorUtils from '../utils/color-utils';
 
-export default function responsiveViewMainBodyTemplate() {
+export default function mainBodyTemplate() {
   const newTheme = {
     bg1: ColorUtils.isValidHexColor(this.bgColor) ? this.bgColor : '',
     bg2: ColorUtils.isValidHexColor(this.bgHeaderColor) ? this.bgHeaderColor : '',

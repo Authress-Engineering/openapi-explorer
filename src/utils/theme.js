@@ -80,7 +80,7 @@ export default function setTheme(theme = {}) {
     headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
     headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
 
-    borderColor: theme.borderColor || ColorUtils.color.brightness(bg1, -38),
+    borderColor: theme.bg2 || ColorUtils.color.brightness(bg1, -38),
     lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, -23),
     codeBorderColor: theme.codeBorderColor || 'transparent',
 
