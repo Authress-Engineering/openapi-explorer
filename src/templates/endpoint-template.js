@@ -56,7 +56,7 @@ function endpointHeadTemplate(path) {
   <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
     <div class="method ${path.method}"> ${path.method} </div> 
     <div class="path"> 
-      ${path.path.split('/').map(p => html`<span>${p}/</span>`)} 
+      ${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)} 
       ${path.isWebhook ? html`<span style="color:var(--primary-color)"> (Webhook) </span>` : ''}
     </div>
     ${path.deprecated
