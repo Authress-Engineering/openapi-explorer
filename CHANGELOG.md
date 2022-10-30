@@ -21,6 +21,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add `header-bg-color` for setting table headers
 * Fix `server-url` dynamic updates, so that updates are passed through to api requests
 * Fix padding in code samples for first line and subsequent lines.
+* Fix path wrapping in navbar and on mobile
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

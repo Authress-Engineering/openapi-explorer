@@ -141,9 +141,11 @@ export default function navbarTemplate() {
                   ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
                   <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
                     data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
-                    <span style="line-break: anywhere; ${p.deprecated ? 'filter:opacity(0.5)' : ''}">
+                    <span style="${p.deprecated ? 'filter:opacity(0.5)' : ''}">
                       ${this.usePathInNavBar === 'true'
-                        ? html`<span class='mono-font'>${p.method.toUpperCase()} ${p.path}</span>`
+                        ? html`<span class='mono-font' style="display: flex; flex-wrap: wrap;">
+                          <span style="min-width: 1rem; margin-right: .5rem;">${p.method.toUpperCase()}</span>
+                          ${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</span>`
                         : p.summary || p.shortSummary
                       }
                       ${p.isWebhook ? '(Webhook)' : ''}
