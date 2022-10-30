@@ -491,6 +491,11 @@ export default class OpenApiExplorer extends LitElement {
 
   onSearchChange(e) {
     this.matchPaths = e.target.value;
+    const expand = !!this.matchPaths?.trim();
+    this.operationsCollapsed = !expand;
+    this.componentsCollapsed = !expand;
+    this.resolvedSpec.tags.forEach((tag) => { tag.expanded = expand; });
+    this.resolvedSpec.components.forEach((component) => { component.expanded = expand; });
     this.requestUpdate();
   }
 
@@ -807,7 +812,7 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   // Event handler for Advanced Search text-inputs and checkboxes
-  onAdvancedSearch(ev, delay) {
+  onAdvancedSearch(ev) {
     const eventTargetEl = ev.target;
     clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
@@ -819,7 +824,7 @@ export default class OpenApiExplorer extends LitElement {
       }
       const searchOptions = [...eventTargetEl.closest('.advanced-search-options').querySelectorAll('input:checked')].map((v) => v.id);
       this.advancedSearchMatches = advancedSearch(searchInputEl.value, this.resolvedSpec.tags, searchOptions);
-    }, delay);
+    }, 0);
   }
 }
 

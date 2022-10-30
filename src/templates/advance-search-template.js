@@ -29,27 +29,27 @@ export default function searchByPropertiesModalTemplate() {
             <span class="advanced-search-options">
               <div class="advanced-search-dialog-input">
                 <input id="advanced-search-dialog-input" type="text" part="textbox textbox-search-dialog" placeholder="search text..." spellcheck="false"
-                  @keyup = "${(e) => this.onAdvancedSearch(e, 400)}">
+                  @keyup = "${(e) => this.onAdvancedSearch(e)}">
               </div>
               <div class="advanced-search-locations">
                 <div>
-                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-path" checked @change = "${(e) => this.onAdvancedSearch(e, 0)}">
+                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-path" checked @change = "${(e) => this.onAdvancedSearch(e)}">
                   <label style="cursor: pointer;" for="search-api-path"> API Path </label>
                 </div>
                 <div>
-                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-descr" checked @change = "${(e) => this.onAdvancedSearch(e, 0)}">
+                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-descr" checked @change = "${(e) => this.onAdvancedSearch(e)}">
                   <label style="cursor: pointer;" for="search-api-descr"> API Description </label>
                 </div>
                 <div>
-                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-params" @change = "${(e) => this.onAdvancedSearch(e, 0)}">
+                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-params" @change = "${(e) => this.onAdvancedSearch(e)}">
                   <label style="cursor: pointer;" for="search-api-params"> Request Parameters </label>
                 </div>
                 <div>
-                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-request-body" @change = "${(e) => this.onAdvancedSearch(e, 0)}">
+                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-request-body" @change = "${(e) => this.onAdvancedSearch(e)}">
                   <label style="cursor: pointer;" for="search-api-request-body"> Request Body </label>
                 </div>
                 <div>
-                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-resp-descr" @change = "${(e) => this.onAdvancedSearch(e, 0)}">
+                  <input style="cursor: pointer;" type="checkbox" part="checkbox checkbox-search-dialog" id="search-api-resp-descr" @change = "${(e) => this.onAdvancedSearch(e)}">
                   <label style="cursor: pointer;" for="search-api-resp-descr"> Response Description </label>
                 </div>
               </div>

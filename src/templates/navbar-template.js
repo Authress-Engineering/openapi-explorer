@@ -46,22 +46,14 @@ export default function navbarTemplate() {
                   style = "width:100%; padding-right:20px; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
                   type = "text"
                   placeholder = "${getI18nText('menu.filter')}"
-                  @change = "${this.onSearchChange}"  
-                  spellcheck = "false" 
-                >
-                <div style="margin: 6px 5px 0 -24px; font-size:var(--font-size-regular); cursor: pointer;">&#x21a9;</div>
-              </div>  
-              ${this.matchPaths
-                ? html`
-                  <div @click = '${this.onClearSearch}' style='margin-left:5px; cursor: pointer; align-self:center; color:var(--nav-text-color)' class='small-font-size primary-text bold-text'> CLEAR </div>`
-                : ''
-              }
-            `
+                  @input = "${this.onSearchChange}"  
+                  spellcheck = "false">
+              </div>`
           }
-          ${this.allowAdvancedSearch === 'false' || this.matchPaths
+          ${this.allowAdvancedSearch === 'false'
             ? ''
             : html`
-              <button class="m-btn primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
+              <button class="m-btn outline-primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
                 ${getI18nText('menu.search')}
               </button>
             `
