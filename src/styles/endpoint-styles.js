@@ -7,8 +7,7 @@ export default css`
   font-family:var(--font-mono);
   font-size: var(--font-size-small);
   align-items: center;
-  overflow-wrap: break-word;
-  word-break: break-all;
+  flex-wrap: wrap;
 }
 
 .endpoint-head .descr {

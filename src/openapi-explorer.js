@@ -181,7 +181,7 @@ export default class OpenApiExplorer extends LitElement {
         border-bottom:1px solid var(--border-color);
       }
       .method-section-gap {
-        margin: 1rem 0;
+        margin: 0;
         padding: 0 8px 0 4px;
         border-bottom: 1px solid var(--border-color);
       }
