@@ -73,7 +73,7 @@ export default css`
 .m-endpoint .endpoint-body {
   word-break: break-word;
   flex-wrap:wrap;
-  padding:16px 0px 0 0px;
+  padding: 16px 0 0 0;
   border-width:0px 1px 1px 5px;
   border-style:solid;
   box-shadow: 0px 4px 3px -3px rgba(0, 0, 0, 0.15);

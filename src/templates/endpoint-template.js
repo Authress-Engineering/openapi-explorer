@@ -55,19 +55,13 @@ function endpointHeadTemplate(path) {
   return html`
   <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
     <div class="method ${path.method}"> ${path.method} </div> 
-    <div class="path"> 
-      ${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)} 
+    <div style="${path.deprecated ? 'text-decoration: line-through;' : ''}">
+      ${this.usePathInNavBar === 'true'
+        ? html`<div class="path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>`
+        : html`<div class="">${path.summary || path.shortSummary}</div>`
+      }
       ${path.isWebhook ? html`<span style="color:var(--primary-color)"> (Webhook) </span>` : ''}
     </div>
-    ${path.deprecated
-      ? html`
-        <span style="font-size:var(--font-size-small); text-transform:uppercase; font-weight:bold; color:var(--red); margin:2px 0 0 5px;"> 
-          deprecated 
-        </span>`
-      : ''
-    }
-    <div class="only-large-screen" style="min-width:60px; flex:1"></div>
-    <div class="descr">${path.summary || path.shortSummary} </div>
   </summary>
   `;
 }
@@ -87,7 +81,15 @@ function endpointBodyTemplate(path) {
   return html`
   <div class='endpoint-body ${path.method}'>
     <div class="summary">
-      ${path.summary ? html`<div class="title">${path.summary}<div>` : path.shortSummary !== path.description ? html`<div class="title">${path.shortSummary}</div>` : ''}
+      ${this.usePathInNavBar === 'true'
+        ? path.summary ? html`<div class="title">${path.summary}<div>` : path.shortSummary !== path.description ? html`<div class="title">${path.shortSummary}</div>` : ''
+        : html`
+          <div class='title mono-font regular-font-size' part="section-operation-url" style='display: flex; flex-wrap: wrap; color:var(--fg3)'> 
+            ${path.isWebhook ? html`<span style="color:var(--primary-color)"> WEBHOOK </span>` : ''}
+            <span part="label-operation-method" class='regular-font upper method-fg bold-text ${path.method}'>${path.method}&nbsp;</span> 
+            <span style="display: flex; flex-wrap: wrap;" part="label-operation-path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</span>
+          </div>`
+      }
       ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
       <slot name="${path.elementId}"></slot>
       ${pathSecurityTemplate.call(this, path.security)}
