@@ -143,9 +143,10 @@ export default function navbarTemplate() {
                     data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
                     <span style="${p.deprecated ? 'filter:opacity(0.5)' : ''}">
                       ${this.usePathInNavBar === 'true'
-                        ? html`<span class='mono-font' style="display: flex; flex-wrap: wrap;">
-                          <span style="min-width: 1rem; margin-right: .5rem;">${p.method.toUpperCase()}</span>
-                          ${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</span>`
+                        ? html`<div class='mono-font' style="display: flex;">
+                            <div style="min-width: 1rem; margin-right: .5rem; flex-shrink: 0;">${p.method.toUpperCase()}</div>
+                            <div style="display: flex; flex-wrap: wrap;">${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>
+                          </div>`
                         : p.summary || p.shortSummary
                       }
                       ${p.isWebhook ? '(Webhook)' : ''}
