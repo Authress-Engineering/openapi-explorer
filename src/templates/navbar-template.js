@@ -80,7 +80,7 @@ export default function navbarTemplate() {
 
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToCustomNavSectionTarget(e, false)}'></slot>
 
-      <div class="sticky-scroll-element">
+      <div class="sticky-scroll-element ${this.operationsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAll.call(this); }}">
         <div class='nav-bar-section' part="navbar-operations-header">
           <slot name="operations-header">
             <div class='nav-bar-section-title'>${getI18nText('menu.operations')}</div>  
@@ -88,8 +88,7 @@ export default function navbarTemplate() {
           <div style="" part="navbar-operations-header-collapse">
             ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
               ? html`
-                <div @click="${() => { expandCollapseAll.call(this); }}"
-                    style="font-size: 16px; transform: rotate(${this.operationsCollapsed ? '-90deg' : '0deg'}); cursor: pointer; transition: transform 0.1s ease;">▾</div>`
+                <div class="toggle">▾</div>`
               : ''
             }  
           </div>
@@ -105,12 +104,12 @@ export default function navbarTemplate() {
               ${tag.name === 'General ⦂'
                 ? html``
                 : html`
-                  <div  class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}'
+                  <div class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}'
                     @click='${() => { onExpandCollapse.call(this, tag.elementId); }}'>
 
                     <div style="display: flex; justify-content: space-between; width: 100%;">
-                      <div>${tag.name}</div>
-                      <div class="nav-bar-tag-icon">▾</div>
+                      <div style="margin-right: .5rem">${tag.name}</div>
+                      <div class="toggle">▾</div>
                     </div>
                   </div>
                 `
@@ -154,7 +153,7 @@ export default function navbarTemplate() {
       <!-- COMPONENTS -->
       ${this.resolvedSpec.components?.length && !this.hideComponents
         ? html`
-          <div class="sticky-scroll-element">
+          <div class="sticky-scroll-element ${this.componentsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAllComponents.call(this); }}">
             <div id='link-components' class='nav-bar-section'>
               <slot name="components-header">
                 <div class='nav-bar-section-title'>${getI18nText('menu.components')}</div>
@@ -163,8 +162,7 @@ export default function navbarTemplate() {
               ${this.resolvedSpec.components.some((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s)))
                 ? html`
                   <div style="" part="navbar-components-header-collapse">
-                    <div @click="${() => { expandCollapseAllComponents.call(this); }}"
-                    style="font-size: 16px; transform: rotate(${this.componentsCollapsed ? '-90deg' : '0deg'}); cursor: pointer; transition: transform 0.1s ease;">▾</div>`
+                    <div class="toggle">▾</div>`
                 : ''}
               </div>
             </div>
