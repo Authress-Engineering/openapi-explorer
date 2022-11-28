@@ -83,9 +83,8 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
       }
       v.computedUrl = computedUrl;
     });
-    if (serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl)) {
-      servers = [{ url: serverUrl, computedUrl: serverUrl }].concat(jsonParsedSpec.servers);
-    }
+    const explicitServers = serverUrl && !jsonParsedSpec.servers.some(s => s.url === serverUrl || s.computedUrl === serverUrl) ? [{ url: serverUrl, computedUrl: serverUrl }] : [];
+    servers = explicitServers.concat(jsonParsedSpec.servers);
   } else if (serverUrl) {
     servers = [{ url: serverUrl, computedUrl: serverUrl }];
   } else if (inputSpecIsAUrl) {
