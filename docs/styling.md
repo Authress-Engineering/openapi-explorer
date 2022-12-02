@@ -12,6 +12,11 @@ openapi-explorer {
 }
 ```
 
+The available variables are:
+Explorer location   | Variables
+--------------------|--------------------
+Fonts               | `--font-regular` `--font-mono`
+
 ### Directly amending classes
 While openapi-explorer uses a shadow DOM, it is easy to inject in CSS overrides to the existing styles. After creating the DOM element for the `openapi-explorer` using javascript you can:
 
