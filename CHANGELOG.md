@@ -24,6 +24,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix path wrapping in navbar and on mobile
 * Improve search to automatically update results
 * Fix `servers` list not being used when `server-url` is not specified.
+* Fix display of `integer` and `date-time` schema styling.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

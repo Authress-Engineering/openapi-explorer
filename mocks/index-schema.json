@@ -82,6 +82,10 @@
                     "at",
                     "error"
                 ],
+                "additionalProperties": { "type": "integer" },
+                "patternProperties": {
+                  "S_": { "type": "integer" }
+                },
                 "properties": {
                     "httpId": {
                         "type": "integer"
@@ -115,8 +119,7 @@
                         },
                         "additionalProperties": false
                     }
-                },
-                "additionalProperties": false
+                }
             },
             "getTestendpointArrayResponse": {
                 "type": "object",
