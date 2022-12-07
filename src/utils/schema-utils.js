@@ -442,6 +442,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         obj[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
       }
     }
+    for (const key in schema.patternProperties) {
+      obj[`<pattern: ${key}>`] = schemaInObjectNotation(schema.patternProperties[key], options, (level + 1));
+    }
     if (schema.additionalProperties) {
       obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
     }
