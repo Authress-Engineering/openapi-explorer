@@ -853,8 +853,8 @@ export default class ApiRequest extends LitElement {
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax.replace(/\\$/, ''), e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
-          <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim().replace(/\\$/, ''), Prism.languages.shell, 'shell'))}</code></pre>
+          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
+          <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code></pre>
         </div>
       </div>`;
   }
@@ -921,15 +921,11 @@ export default class ApiRequest extends LitElement {
 
   async onTryClick() {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
-    let fetchUrl;
-    let curlUrl;
-    let curl = '';
-    let curlHeaders = '';
     let curlData = '';
     let curlForm = '';
     const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
     const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
-    const acceptHeader = respEl && respEl.selectedMimeType;
+    const acceptHeader = respEl?.selectedMimeType;
     const requestPanelEl = this.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
@@ -937,23 +933,32 @@ export default class ApiRequest extends LitElement {
     const headerParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='header']")];
     const requestBodyContainerEl = requestPanelEl.querySelector('.request-body-container');
 
-    fetchUrl = this.path.replaceAll(' ', '');
+    let pathUrl = `${this.serverUrl.replace(/\/$/, '')}${this.path.replaceAll(' ', '')}`;
+
+    // Generate URL using Path Params
+    pathParamEls.map((el) => {
+      pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
+    });
+
+    // Handle relative serverUrls
+    if (!pathUrl.startsWith('http')) {
+      const newUrl = new URL(pathUrl, window.location.href);
+      pathUrl = newUrl.toString();
+    }
+
+    const fetchUrl = new URL(pathUrl);
+
     const fetchOptions = {
       method: this.method.toUpperCase(),
       headers: new Headers()
     };
-    // Generate URL using Path Params
-    pathParamEls.map((el) => {
-      fetchUrl = fetchUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value));
-    });
 
     // Query Params
-    const urlQueryParam = new URLSearchParams();
     if (queryParamEls.length > 0) {
       queryParamEls.forEach((el) => {
         if (el.dataset.array === 'false') {
           if (el.value !== '') {
-            urlQueryParam.append(el.dataset.pname, el.value);
+            fetchUrl.searchParams.append(el.dataset.pname, el.value);
           }
         } else {
           const paramSerializeStyle = el.dataset.paramSerializeStyle;
@@ -962,14 +967,14 @@ export default class ApiRequest extends LitElement {
           vals = Array.isArray(vals) ? vals.filter((v) => v !== '') : [];
           if (vals.length > 0) {
             if (paramSerializeStyle === 'spaceDelimited') {
-              urlQueryParam.append(el.dataset.pname, vals.join(' ').replace(/^\s|\s$/g, ''));
+              fetchUrl.searchParams.append(el.dataset.pname, vals.join(' ').replace(/^\s|\s$/g, ''));
             } else if (paramSerializeStyle === 'pipeDelimited') {
-              urlQueryParam.append(el.dataset.pname, vals.join('|').replace(/^\||\|$/g, ''));
+              fetchUrl.searchParams.append(el.dataset.pname, vals.join('|').replace(/^\||\|$/g, ''));
             } else {
               if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
-                vals.forEach((v) => { urlQueryParam.append(el.dataset.pname, v); });
+                vals.forEach((v) => { fetchUrl.searchParams.append(el.dataset.pname, v); });
               } else {
-                urlQueryParam.append(el.dataset.pname, vals.join(',').replace(/^,|,$/g, ''));
+                fetchUrl.searchParams.append(el.dataset.pname, vals.join(',').replace(/^,|,$/g, ''));
               }
             }
           }
@@ -989,21 +994,21 @@ export default class ApiRequest extends LitElement {
             if (typeof queryParamObj[key] === 'object') {
               if (Array.isArray(queryParamObj[key])) {
                 if (paramSerializeStyle === 'spaceDelimited') {
-                  urlQueryParam.append(key, queryParamObj[key].join(' '));
+                  fetchUrl.searchParams.append(key, queryParamObj[key].join(' '));
                 } else if (paramSerializeStyle === 'pipeDelimited') {
-                  urlQueryParam.append(key, queryParamObj[key].join('|'));
+                  fetchUrl.searchParams.append(key, queryParamObj[key].join('|'));
                 } else {
                   if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
                     queryParamObj[key].forEach((v) => {
-                      urlQueryParam.append(key, v);
+                      fetchUrl.searchParams.append(key, v);
                     });
                   } else {
-                    urlQueryParam.append(key, queryParamObj[key]);
+                    fetchUrl.searchParams.append(key, queryParamObj[key]);
                   }
                 }
               }
             } else {
-              urlQueryParam.append(key, queryParamObj[key]);
+              fetchUrl.searchParams.append(key, queryParamObj[key]);
             }
           }
         } catch (err) {
@@ -1015,13 +1020,12 @@ export default class ApiRequest extends LitElement {
     // Add Authentication api keys if provided
     this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
       if (v.in === 'query') {
-        urlQueryParam.append(v.name, v.finalKeyValue);
+        fetchUrl.searchParams.append(v.name, v.finalKeyValue);
         return;
       }
 
       // Otherwise put it in the header
       fetchOptions.headers.append(v.name, v.finalKeyValue);
-      curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}" \\\n`;
     });
 
     fetchUrl = `${fetchUrl}${urlQueryParam.toString() ? '?' : ''}${urlQueryParam.toString()}`;
@@ -1039,7 +1043,6 @@ export default class ApiRequest extends LitElement {
     if (acceptHeader) {
       // Uses the acceptHeader from Response panel
       fetchOptions.headers.append('Accept', acceptHeader);
-      curlHeaders += ` -H "Accept: ${acceptHeader}" \\\n`;
     } else if (this.accept) {
       fetchOptions.headers.Accept = this.accept;
       curlHeaders += ` -H "Accept: ${this.accept}"`;
@@ -1148,21 +1151,20 @@ export default class ApiRequest extends LitElement {
       }
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
-    this.curlSyntax = '';
-    this.responseIsBlob = false;
 
+    this.responseIsBlob = false;
     this.respContentDisposition = '';
     if (this.responseBlobUrl) {
       URL.revokeObjectURL(this.responseBlobUrl);
       this.responseBlobUrl = '';
     }
-    this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
+
     if (this.fetchCredentials) {
       fetchOptions.credentials = this.fetchCredentials;
     }
 
     // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
-    const fetchRequest = { explorerLocation: this.elementId, url: fetchUrl, options: fetchOptions, ...fetchOptions };
+    const fetchRequest = { explorerLocation: this.elementId, url: fetchUrl.toString(), options: fetchOptions, ...fetchOptions };
     const event = {
       bubbles: true,
       composed: true,
@@ -1179,6 +1181,10 @@ export default class ApiRequest extends LitElement {
       body: fetchRequest.body || fetchOptions.body
     };
     const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
+
+    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
+    const curlHeaders = [...newFetchOptions.headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
+    this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
 
     let fetchResponse;
     try {
