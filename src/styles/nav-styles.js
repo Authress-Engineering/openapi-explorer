@@ -30,19 +30,20 @@ export default css`
   flex-direction: row;
 }
 
-.nav-bar-tag-icon {
+.toggle {
   font-size: 16px;
-  padding-right: 1px;
-  color: var(--nav-text-color);
   cursor: pointer;
+  color: var(--nav-text-color);
+  transform: translate(-5px, 0px) rotate(0deg);
   transition: transform 0.1s ease;
 }
-.nav-bar-tag-icon:hover {
+
+.toggle:hover {
   color:var(--nav-hover-text-color);
 }
 
-.nav-bar-tag-and-paths.collapsed .nav-bar-tag-icon {
-  transform: rotate(-90deg);
+*.collapsed .toggle {
+  transform: translate(-6px, 0px) rotate(-90deg);
 }
 
 .nav-bar-tag-and-paths > .nav-bar-section-wrapper {
@@ -117,6 +118,8 @@ export default css`
 .sticky-scroll-element {
   position: sticky;
   top: 0;
+  z-index: 1;
+  cursor: pointer;
 }
 
 /* .nav-bar-tag has left padding of 10px, so add 10px every time */

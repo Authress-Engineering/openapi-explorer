@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: ONE-OF with combinations of various data types
+  version: '1.0'
+paths:
+  /one-of-options-with-object-sibling:
+    post:
+      summary: ONE-OF Options with Object as sibling
+      tags:
+         - ONE-OF and Object Sibling
+      requestBody:
+        description: ONE OF and Object as sibling
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                person:
+                  type: object
+                  properties:
+                    age:
+                      type: number
+                    name:
+                      type: object
+                      properties:
+                        first:
+                          type: string
+                        last:
+                          type: string
+              oneOf:
+                - title: Option 1
+                  type: object
+                  properties:
+                    oneof_opt1_prop1:
+                      type: string
+                    oneof_opt1_prop2:
+                      type: integer
+                - title: Option 2
+                  type: object
+                  properties:
+                    oneof_opt2_prop1:
+                      type: string
+                    oneof_opt2_prop2:
+                      type: integer
