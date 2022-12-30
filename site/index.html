@@ -7,6 +7,7 @@
     <title>OpenAPI Explorer Development Test</title>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/default.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
 
     <script src="https://unpkg.com/openapi-explorer/dist/browser/openapi-explorer.min.js" type="module" defer></script>
 
@@ -40,6 +41,30 @@
         --embossed: #A9D2E9;
         --highlight: #DC7100;
       }
+      openapi-explorer {
+        height: calc(100% - 56px);
+      }
+
+      .fixed-in-bottom-corner {
+        z-index: 100;
+        position: fixed;
+        bottom: .5em;
+        right: 1.5em;
+      }
+
+      .contact-us {
+        cursor: pointer;
+      }
+      .contact-us > * {
+        color: var(--light);
+        background-color: var(--primary) !important;
+      }
+      .badge {
+        font-size: inherit;
+        height: 2rem;
+        border-radius: 100px;
+        padding: 0 0.75rem;
+      }
     </style>
   </head>
 
@@ -47,8 +72,8 @@
     <nav class="navbar navbar-dark bg-dark">
       <div class="container-fluid w-100 d-flex justify-content-between align-items-center">
         <div class="">
-          <div class="navbar-brand" href="#" class="d-inline-flex">
-            <img src="https://rhosys.ch/assets/images/rhosys.png" alt="" height="24" class="d-inline-block align-text-top d-none d-sm-inline-flex">
+          <div class="navbar-brand d-none d-sm-inline-flex" href="#">
+            <img src="https://rhosys.ch/assets/images/rhosys.png" alt="" height="24" class="d-inline-block align-text-top">
             <span>OpenAPI Explorer</span>
           </div>
         </div>
@@ -62,10 +87,18 @@
     </nav>
     <openapi-explorer spec-url="https://api.authress.io/v1" collapse table use-path-in-nav-bar="false" fill-defaults="true" schema-description-expanded="true" nav-item-spacing="compact" show-components="true" bg-color="#FFFFFF" header-bg-color="#DEE2E6" nav-bg-color="#1D2F3B" text-color="#465865" nav-hover-text-color="#FFFFFF"
     primary-color="#1D2F3B" secondary-color="#FBAF0B">
-      <slot name="overview">
-
-      </slot>
     </openapi-explorer>
+
+    <div class="fixed-in-bottom-corner hidden-print">
+      <div class="contact-us mb-1">
+        <span class="badge d-flex align-items-center justify-content-center bg-primary">
+          <a class="d-flex align-items-center" href="https://authress.io" style="text-decoration: none; color: var(--info)">
+            <span class="me-2 d-none d-sm-block" style="font-size: 0.75rem;">Sign up for Authress</span>
+            <i class="far fa-play-circle"></i>
+          </a>
+        </span>
+      </div>
+    </div>
   
     <script>
       document.addEventListener('DOMContentLoaded', async (event) => {
