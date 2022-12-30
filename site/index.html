@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>OpenAPI Explorer Development Test</title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/default.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://unpkg.com/openapi-explorer/dist/browser/openapi-explorer.min.js" type="module" defer></script>
+
+    <style>
+      html, body {
+        height: 100%
+      }
+
+      :root {
+        --primary: #1D2F3B;
+        --secondary: #FBAF0B;
+        --dark: #000515;
+        --horizon: #DEE2E6;
+        --light: #FFFFFF;
+        --gray: #465865;
+        --info: #FFFFFF;
+        --border: #98A1A9;
+        --embossed: #A9D2E9;
+        --highlight: #DC7100;
+      }
+
+      :openapi-explorer {
+        --primary: #1D2F3B;
+        --secondary: #FBAF0B;
+        --dark: #000515;
+        --horizon: #DEE2E6;
+        --light: #FFFFFF;
+        --gray: #465865;
+        --info: #FFFFFF;
+        --border: #98A1A9;
+        --embossed: #A9D2E9;
+        --highlight: #DC7100;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container-fluid w-100 d-flex justify-content-between align-items-center">
+        <div class="">
+          <div class="navbar-brand" href="#" class="d-inline-flex">
+            <img src="https://rhosys.ch/assets/images/rhosys.png" alt="" height="24" class="d-inline-block align-text-top d-none d-sm-inline-flex">
+            <span>OpenAPI Explorer</span>
+          </div>
+        </div>
+        <form class="d-flex">
+          <input id="specUrl" class="form-control me-2" type="search" placeholder="Your OpenAPI url here" aria-label="SpecUrl" style="max-width: 400px">
+          <div class="d-flex align-items-center">
+            <button id="loadButton" class="btn btn-primary btn-sm" type="submit">Load</button>
+          </div>
+        </form>
+      </div>
+    </nav>
+    <openapi-explorer spec-url="https://api.authress.io/v1" collapse table use-path-in-nav-bar="false" fill-defaults="true" schema-description-expanded="true" nav-item-spacing="compact" show-components="true" bg-color="#FFFFFF" header-bg-color="#DEE2E6" nav-bg-color="#1D2F3B" text-color="#465865" nav-hover-text-color="#FFFFFF"
+    primary-color="#1D2F3B" secondary-color="#FBAF0B">
+      <slot name="overview">
+
+      </slot>
+    </openapi-explorer>
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', async (event) => {
+        const specUrl = document.getElementById('specUrl');
+        const currentSpecUrl = new URLSearchParams(window.location.search);
+        const newSpecUrl = currentSpecUrl.get('specUrl') || currentSpecUrl.get('url') || currentSpecUrl.get('spec');
+        if (newSpecUrl) {
+          document.getElementsByTagName("openapi-explorer")[0].setAttribute('spec-url', newSpecUrl);
+          specUrl.value = newSpecUrl;
+        }
+        const loadButton = document.getElementById('loadButton');
+        loadButton.addEventListener('click', () => {
+          
+          document.getElementsByTagName("openapi-explorer")[0].setAttribute('spec-url', specUrl.value);
+        })
+      });
+    </script>
+  </body>
+
+</html>
