@@ -73,7 +73,7 @@
       <div class="container-fluid w-100 d-flex justify-content-between align-items-center">
         <div class="">
           <div class="navbar-brand d-none d-sm-inline-flex" href="#">
-            <img src="https://rhosys.ch/assets/images/rhosys.png" alt="" height="24" class="d-inline-block align-text-top">
+            <img src="https://rhosys.ch/assets/images/rhosys.png" alt="" height="24" class="d-none d-md-inline-block align-text-top me-2">
             <span>OpenAPI Explorer</span>
           </div>
         </div>
@@ -87,6 +87,16 @@
     </nav>
     <openapi-explorer spec-url="https://api.authress.io/v1" collapse table use-path-in-nav-bar="false" fill-defaults="true" schema-description-expanded="true" nav-item-spacing="compact" show-components="true" bg-color="#FFFFFF" header-bg-color="#DEE2E6" nav-bg-color="#1D2F3B" text-color="#465865" nav-hover-text-color="#FFFFFF"
     primary-color="#1D2F3B" secondary-color="#FBAF0B">
+      <slot name="overview">
+        <div class="alert alert-primary d-flex align-items-center m-4" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+          </svg>
+          <small>
+            The Authress API is an example OpenAPI loaded to show how the OpenAPI Explorer works. Try it out with your own OpenAPI spec, but using the load url in the navigation bar at the top of the screen.
+          </small>
+        </div>
+      </slot>
     </openapi-explorer>
 
     <div class="fixed-in-bottom-corner hidden-print">
