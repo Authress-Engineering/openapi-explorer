@@ -92,7 +92,7 @@ export default css`
 .nav-bar-h1,
 .nav-bar-h2,
 .nav-bar-path {
-  font-size: calc(var(--font-size-small) + 1px);
+  font-size: calc(var(--font-size-regular) - 2px);
   padding: var(--nav-item-padding);
 }
 .nav-bar-path.small-font {

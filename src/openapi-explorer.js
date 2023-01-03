@@ -1,4 +1,4 @@
-import { LitElement, css, unsafeCSS } from 'lit';
+import { LitElement, css } from 'lit';
 
 import { marked } from 'marked';
 import Prism from 'prismjs';
@@ -96,7 +96,6 @@ export default class OpenApiExplorer extends LitElement {
       bgHeaderColor: { type: String, attribute: 'header-bg-color' },
       textColor: { type: String, attribute: 'text-color' },
       headerColor: { type: String, attribute: 'header-color' },
-      fontSize: { type: String, attribute: 'font-size' },
 
       // Nav Bar Colors
       navBgColor: { type: String, attribute: 'nav-bg-color' },
@@ -341,7 +340,7 @@ export default class OpenApiExplorer extends LitElement {
 
       @media only screen and (min-width: 1024px) {
         .nav-bar {
-          width: ${unsafeCSS(this.fontSize === 'default' ? '300px' : this.fontSize === 'large' ? '315px' : '330px')};
+          width: 330px;
           display:flex;
         }
         .section-gap--read-mode { 
@@ -398,7 +397,6 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
     if (!this.usePathInNavBar || !'true, false,'.includes(`${this.usePathInNavBar},`)) { this.usePathInNavBar = 'false'; }
-    if (!this.fontSize || !'default, large, largest,'.includes(`${this.fontSize},`)) { this.fontSize = 'default'; }
 
     if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
     if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
