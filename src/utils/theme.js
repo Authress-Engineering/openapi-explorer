@@ -162,9 +162,9 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --layout: ${this.layout || 'column'};
     --nav-item-padding: ${this.navItemSpacing === 'relaxed' ? '10px' : (this.navItemSpacing === 'compact' ? '5px 10px' : '7px 10px')};
     --resp-area-height: ${this.responseAreaHeight};
-    --font-size-small:  ${this.fontSize === 'default' ? '12px' : (this.fontSize === 'large' ? '13px' : '14px')};
-    --font-size-mono:   ${this.fontSize === 'default' ? '13px' : (this.fontSize === 'large' ? '14px' : '15px')};
-    --font-size-regular: ${this.fontSize === 'default' ? '14px' : (this.fontSize === 'large' ? '15px' : '16px')};
+    --font-size-small: 13px;
+    --font-size-mono:  13px;
+    --font-size-regular: 16px;
     --dialog-z-index: 1000;
 
     /* Theme specific styles */  
