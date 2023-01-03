@@ -4,6 +4,10 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 ## 1.0 ##
 * By default uses the `info.title` property of the open api specification for the `overview` section name in the navbar. Falls back to the default when not specified.
 
+## 0.11 ##
+* Fix `allOf` for response schema. #119
+* Fixing handling of openapi paths that include url characters
+
 ## 0.10 ##
 * Internationalization support with languages `en` and `fr`
 * Add a `slot` `nav-header` to the top of the navbar.
@@ -25,7 +29,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Improve search to automatically update results
 * Fix `servers` list not being used when `server-url` is not specified.
 * Fix display of `integer` and `date-time` schema styling.
-* Fixing handling of openapi paths that include url characters
+* Fix `font-size-small` and exposes these variables in the documentation for configuration.
 
 ## 0.9 ##
 * OpenAPI 3.1 support using `APIDevTools/json-schema-ref-parser`

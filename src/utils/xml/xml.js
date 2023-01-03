@@ -30,15 +30,6 @@ export default function xml(input, rawOptions) {
   const indent = !options.indent ? ''
     : options.indent === true ? DEFAULT_INDENT
       : options.indent;
-  let instant = true;
-
-  function delay(func) {
-    if (!instant) {
-      func();
-    } else {
-      process.nextTick(func);
-    }
-  }
 
   function append(_, out) {
     if (out !== undefined) {
@@ -61,9 +52,6 @@ export default function xml(input, rawOptions) {
     add({ '?xml': { _attr: attr } });
     output = output.replace('/>', '?>');
   }
-
-  // disable delay delayed
-  delay(function() { instant = false; });
 
   if (options.declaration) {
     addXmlDeclaration(options.declaration);

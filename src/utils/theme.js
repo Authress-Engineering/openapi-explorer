@@ -25,8 +25,8 @@ export default function setTheme(theme = {}) {
   const selectionBg = '#444';
   const selectionFg = '#eee';
 
-  const headerColor = theme.headerColor ? theme.headerColor : ColorUtils.color.brightness(bg1, -180);
-  const navBgColor = theme.navBgColor ? theme.navBgColor : ColorUtils.color.brightness(bg1, -180);
+  const headerColor = theme.headerColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
+  const navBgColor = theme.navBgColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
   const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
   const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);
   const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
@@ -104,9 +104,9 @@ export default function setTheme(theme = {}) {
     --layout: ${this.layout || 'column'};
     --nav-item-padding: ${this.navItemSpacing === 'relaxed' ? '10px' : (this.navItemSpacing === 'compact' ? '5px 10px' : '7px 10px')};
     --resp-area-height: ${this.responseAreaHeight};
-    --font-size-small:  ${this.fontSize === 'default' ? '12px' : (this.fontSize === 'large' ? '13px' : '14px')};
-    --font-size-mono:   ${this.fontSize === 'default' ? '13px' : (this.fontSize === 'large' ? '14px' : '15px')};
-    --font-size-regular: ${this.fontSize === 'default' ? '14px' : (this.fontSize === 'large' ? '15px' : '16px')};
+    --font-size-small: 13px;
+    --font-size-mono:  13px;
+    --font-size-regular: 16px;
     --dialog-z-index: 1000;
 
     /* Theme specific styles */  
