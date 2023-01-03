@@ -10,6 +10,14 @@ on:
     - main
     - 'release/**'
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+  issues: write
+  statuses: read
+
 jobs:
   nodejs:
     runs-on: ubuntu-20.04
