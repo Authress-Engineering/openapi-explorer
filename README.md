@@ -20,7 +20,9 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 ## Beautiful and responsive API explorer and console
 
 <p>
-  <img src="./docs/desktop-view.png" alt="Desktop demo image" width="800px">
+  <a href="https://rhosys.github.io/openapi-explorer/#?route=get-/v1/users/-userId-/resources/-resourceUri-/permissions/-permission-" target="_blank">
+    <img src="./docs/desktop-view.png" alt="Desktop demo image" width="800px">
+  </a>
 </p>
 
 ## Check out the Demo
