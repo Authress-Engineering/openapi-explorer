@@ -10,11 +10,6 @@ on:
     - main
     - 'release/**'
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
   nodejs:
     runs-on: ubuntu-20.04
