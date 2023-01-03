@@ -6,6 +6,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
+* Fixing handling of openapi paths that include url characters
 
 ## 0.10 ##
 * Internationalization support with languages `en` and `fr`
