@@ -214,7 +214,7 @@ function getExampleValuesFromSchemaRecursive(rawSchema, config = {}) {
 
   const { allOf, oneOf, anyOf, ...schema } = rawSchema;
   if (allOf) {
-    const mergedAllOf = merge({}, ...schema.allOf, schema);
+    const mergedAllOf = merge({}, ...allOf, schema);
     return getExampleValuesFromSchemaRecursive(mergedAllOf, config);
   }
 
