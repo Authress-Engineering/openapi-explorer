@@ -154,6 +154,10 @@ export default class OpenApiExplorer extends LitElement {
         overflow:hidden;
       }
 
+      a {
+        text-decoration: none;
+      }
+
       .main-content { 
         margin:0;
         padding: 0; 
