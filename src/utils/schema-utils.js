@@ -407,7 +407,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::deprecated': schema.deprecated || false
           };
           for (const key in schema.properties) {
-            if (schema.required && schema.required.includes(key)) {
+            if (!schema.deprecated && !schema.properties[key].deprecated && schema.required?.includes(key)) {
               objTypeOption[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
             } else {
               objTypeOption[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
@@ -436,7 +436,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::type'] = 'object';
     obj['::deprecated'] = schema.deprecated || false;
     for (const key in schema.properties) {
-      if (schema.required && schema.required.includes(key)) {
+      if (!schema.deprecated && !schema.properties[key].deprecated && schema.required?.includes(key)) {
         obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
       } else {
         obj[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));

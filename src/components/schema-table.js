@@ -225,7 +225,7 @@ export default class SchemaTable extends LitElement {
     return html`
       <div class = "tr primitive">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px' >
-          ${keyLabel && keyLabel.endsWith('*')
+          ${keyLabel?.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
             : key.startsWith('::OPTION')
               ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
