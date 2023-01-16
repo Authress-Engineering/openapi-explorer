@@ -19,7 +19,9 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   } else if (schema.type) {
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
     dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null' || options.includeNulls).join('┃') : schema.type;
-    dataType = dataType.replace('string', typeof schema.const !== 'undefined' && 'const' || schema.enum && 'enum' || schema.format || 'string');
+    ['string', 'number'].forEach(type => {
+      dataType = dataType.replace(type, typeof schema.const !== 'undefined' && 'const' || schema.enum && `${type} enum` || schema.format || type);
+    });
 
     if (schema.nullable && options.includeNulls) {
       dataType += '┃null';
@@ -32,7 +34,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   const info = {
     type: dataType,
     format: schema.format || schema.items?.format || '',
-    cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+]/g, '').toLowerCase(),
+    cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+\s]/g, '').toLowerCase(),
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
@@ -113,6 +115,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
     return schemaObj.const;
   }
 
+  if (schemaObj.enum) { return schemaObj.enum[0]; }
   if (typeValue.match(/^integer|^number/g)) {
     const multipleOf = Number.isNaN(Number(schemaObj.multipleOf)) ? undefined : Number(schemaObj.multipleOf);
     const maximum = Number.isNaN(Number(schemaObj.maximum)) ? undefined : Number(schemaObj.maximum);
@@ -134,7 +137,6 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (typeValue.match(/^null/g)) { return null; }
   if (skipExampleStrings && typeValue.match(/^string/g)) { return ''; }
   if (typeValue.match(/^string/g)) {
-    if (schemaObj.enum) { return schemaObj.enum[0]; }
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
       return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
@@ -226,7 +228,7 @@ function getExampleValuesFromSchemaRecursive(rawSchema, config = {}) {
       }
       return value;
     };
-    const uniqueExamples = examples.reduce((acc, e) => {acc[hash(e)] = e; return acc; }, {});
+    const uniqueExamples = examples.reduce((acc, e) => { acc[hash(e)] = e; return acc; }, {});
     return Object.values(uniqueExamples);
   }
 
@@ -313,7 +315,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         objWithAllProps[prop] = `${typeObj.html}`;
       }
     });
-    
+
     const obj = schemaInObjectNotation(schema, options, 0);
     return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
   } else if (anyOf || oneOf) {
