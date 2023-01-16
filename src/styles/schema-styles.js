@@ -56,7 +56,7 @@ export default css`
 .inte, .integer, .numb, .number, .int6, .int64, .int3, .int32, .floa, .float, .doub, .double, .deci, .decimal, .blue { color:var(--blue); }
 .null { color:var(--red); }
 .bool, .boolean { color:var(--orange); }
-[class$="enum"], .cons, .const { color:var(--yellow); }
+.enum, .cons, .const { color:var(--yellow); }
 
 .tree .toolbar {
   display: flex;
