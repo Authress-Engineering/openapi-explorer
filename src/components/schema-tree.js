@@ -215,7 +215,7 @@ export default class SchemaTree extends LitElement {
             ${openBracket}
           </div>
           <div class="td key-descr">
-            <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">
+            <span class="m-markdown-small" style="vertical-align: middle;" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">
               ${unsafeHTML(marked(displayLine))}
             </span>
           </div>
@@ -262,7 +262,7 @@ export default class SchemaTree extends LitElement {
 
         </div>
         <div class="td key-descr">
-          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
+          <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
             ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
