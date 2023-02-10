@@ -8,6 +8,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix `allOf` for response schema. #119
 * Fixing handling of openapi paths that include url characters
 * Add support for showing external docs
+* Deprecated properties cannot show as required.
 
 ## 0.10 ##
 * Internationalization support with languages `en` and `fr`
