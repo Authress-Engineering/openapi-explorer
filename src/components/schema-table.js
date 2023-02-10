@@ -238,7 +238,7 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr'>
           ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
-          <span class="m-markdown-small" style="font-family: var(--font-mono); vertical-align: middle;">
+          <span class="m-markdown-small" style="vertical-align: middle;">
             ${unsafeHTML(marked(`${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
