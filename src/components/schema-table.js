@@ -52,7 +52,7 @@ export default class SchemaTable extends LitElement {
         padding: 4px 0;
       }
       .table .key {
-        width: 240px;
+        width: var(--schema-table-key-width, 240px);
       }
       .key.deprecated .key-label {
         text-decoration: line-through;
@@ -60,7 +60,7 @@ export default class SchemaTable extends LitElement {
 
       .table .key-type {
         white-space: normal;
-        width: 150px;
+        width: var(--schema-table-type-width, 150px);
       }
 
       .key-type {
