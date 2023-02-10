@@ -32,6 +32,17 @@ export default css`
 .api-request .param-constraint:empty {
   display:none;
 }
+
+.api-request .param-description {
+  min-width:100px;
+}
+.api-request .param-description:empty {
+  display:none;
+}
+.api-request .param-description p {
+  margin-block: 0 0.5em;
+}
+
 .api-request .top-gap{margin-top:24px;}
 
 .api-request .textarea {
