@@ -210,6 +210,13 @@ export default class ApiRequest extends LitElement {
         ${this.renderStyle === 'focused'
           ? html`
             <td>
+              ${param.description
+                ? html`
+                  <div class="param-description">
+                      ${unsafeHTML(marked(param.description))}
+                  </div>`
+                : ''
+              }
               ${paramSchema.default || paramSchema.constraint || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
