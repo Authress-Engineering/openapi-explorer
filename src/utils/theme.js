@@ -205,6 +205,7 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --nav-bg-color:${newTheme.navBgColor};
     --nav-text-color:${newTheme.navTextColor};
     --nav-hover-bg-color:${newTheme.navHoverBgColor};
+    --nav-hover-scrollbar-color: ${navHoverScrollbarColor};
     --nav-hover-text-color:${newTheme.navHoverTextColor};
 
     /*Code Syntax Color*/
