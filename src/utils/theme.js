@@ -28,7 +28,8 @@ export default function setTheme(theme = {}) {
   const headerColor = theme.headerColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
   const navBgColor = theme.navBgColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
   const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
-  const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);
+  const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -25);
+  const navHoverScrollbarColor = ColorUtils.color.brightness(navHoverBgColor, -5);
   const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
   const overlayBg = 'rgba(0, 0, 0, 0.4)';
 
@@ -145,6 +146,7 @@ export default function setTheme(theme = {}) {
     --nav-bg-color:${newTheme.navBgColor};
     --nav-text-color:${newTheme.navTextColor};
     --nav-hover-bg-color:${newTheme.navHoverBgColor};
+    --nav-hover-scrollbar-color: ${navHoverScrollbarColor};
     --nav-hover-text-color:${newTheme.navHoverTextColor};
 
     /*Code Syntax Color*/

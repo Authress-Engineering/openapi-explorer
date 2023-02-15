@@ -20,7 +20,7 @@ export default css`
   overflow-y: auto;
   overflow-y: overlay;
   scrollbar-width: thin;
-  scrollbar-color: var(--nav-hover-bg-color) transparent;
+  scrollbar-color: var(--nav-hover-scrollbar-color) transparent;
 }
 
 .nav-bar-tag {
@@ -67,7 +67,7 @@ export default css`
   background:transparent;
 }
 .nav-scroll::-webkit-scrollbar-thumb {
-  background-color: var(--nav-hover-bg-color);
+  background-color: var(--nav-hover-scrollbar-color);
 }
 
 .nav-bar-tag {
