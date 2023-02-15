@@ -1,0 +1,136 @@
+openapi: 3.1.0
+info:
+  title: Examples for Styling Improvements
+paths:
+  '/url-params/{foo}/{bar}/{baz}':
+    parameters:
+      - in: path
+        name: foo
+        required: true
+        schema:
+          type: string
+        description: Simple type, with a simple description.
+      - in: path
+        name: bar
+        required: true
+        schema:
+          type: string
+          enum: ['one', 'two', 'three']
+        description: A simple parameter with a short description, and an enum of values.
+      - in: path
+        name: baz
+        required: true
+        schema:
+          type: string
+          pattern: '[a-z_]+'
+        description: |-
+          String with pattern, and a longer, _more complex_ description:
+          The description could even span multiple lines and have:
+            - Bulleted lists
+            - [Embedded links](https://example.com)
+    get:
+      operationId: ParamExample
+      responses:
+        '200':
+          description: OK
+          content:
+            "application/json":
+              schema:
+                properties:
+                  test:
+                    type: string
+  '/schema-descriptions/simple/':
+    get:
+      operationId: SimpleSchemaDescriptions
+      responses:
+        '200':
+          description: OK
+          content:
+            "application/json":
+              schema:
+                properties:
+                  scalar:
+                    type: string
+                    description: This is a straight-forward, one-line, scalar property
+                  long-scalar:
+                    type: string
+                    description: |-
+                      This is a scalar with a much longer description. Descriptions are Markdown, so can include:
+                        - Bulleted lists
+                        - [Embedded links](https://example.com)
+                        - **Bold** and _italic_ text
+                  object:
+                    type: object
+                    description: |-
+                      This property is an object; currently, it displays in a different font
+                      
+                      This description can be long and _formatted_ as well
+                    properties:
+                      nested:
+                        type: string
+                        description: The properties inside are back to the other font
+                  array:
+                    type: array
+                    description: The same is true of arrays
+                    items:
+                      type: object
+                      properties:
+                        inside-array:
+                          type: string
+                          description: Inside an array item
+  '/schema-descriptions/deep/':
+    get:
+      operationId: DepplyNestedSchema
+      responses:
+        '200':
+          description: OK
+          content:
+            "application/json":
+              schema:
+                properties:
+                  topLevelProperty:
+                    type: object
+                    description: Lorem ipsum dolor sit amet
+                    properties:
+                      secondLevelProperty:
+                        type: object
+                        description: Lorem ipsum dolor sit amet
+                        properties:
+                          thirdLevelProperty:
+                            type: object
+                            description: Lorem ipsum dolor sit amet
+                            properties:
+                              fourthLevelProperty:
+                                type: object
+                                description: Lorem ipsum dolor sit amet
+                                properties:
+                                  fifthLevelProperty:
+                                    type: object
+                                    description: Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet
+                                    properties:
+                                      sixthLevelProperty:
+                                        type: object
+                                        description: Lorem ipsum dolor sit amet
+                                        properties:
+                                          seventhLevelProperty:
+                                            type: string
+                                            description: Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet
+                          thirdLevelPropertyOther:
+                            type: object
+                            description: Lorem ipsum dolor sit amet
+                            properties:
+                              fourthLevelProperty:
+                                type: object
+                                description: Lorem ipsum dolor sit amet
+                                properties:
+                                  fifthLevelProperty:
+                                    type: object
+                                    description: Lorem ipsum dolor sit amet
+                                    properties:
+                                      sixthLevelProperty:
+                                        type: object
+                                        description: Lorem ipsum dolor sit amet
+                                        properties:
+                                          seventhLevelProperty:
+                                            type: string
+                                            description: Lorem ipsum dolor sit amet

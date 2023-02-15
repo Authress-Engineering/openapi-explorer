@@ -88,9 +88,12 @@ export default css`
 .toolbar-item:first-of-type { margin:0 2px 0 0;}
 
 
-@media only screen and (min-width: 576px) {
+@media only screen and (min-width: 768px) {
   .key-descr {
     display: block;
+  }
+  table th.key-descr {
+    display: table-cell;
   }
   .tree .toolbar .toolbar-item {
     display: block;
