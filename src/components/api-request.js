@@ -333,126 +333,108 @@ export default class ApiRequest extends LitElement {
       `;
 
     // For Loop - Main
-    requestBodyTypes.forEach((reqBody) => {
-      let reqBodyExamples = [];
+    const reqBody = requestBodyTypes.find(req => req.mimeType === this.selectedRequestBodyType);
+    // Generate Example
+    if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
+      const reqBodyExamples = generateExample(
+        reqBody.examples ? reqBody.examples : '',
+        reqBody.example ? reqBody.example : '',
+        reqBody.schema,
+        reqBody.mimeType,
+        false,
+        true,
+        'text',
+        true
+      );
 
-      if (reqBody.mimeType === this.selectedRequestBodyType) {
-        // Generate Example
-        if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
-          reqBodyExamples = generateExample(
-            reqBody.examples ? reqBody.examples : '',
-            reqBody.example ? reqBody.example : '',
-            reqBody.schema,
-            reqBody.mimeType,
-            false,
-            true,
-            'text',
-            true
-          );
-
-          if (!this.selectedRequestBodyExample) {
-            this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
-          }
-          reqBodyDefaultHtml = html`
-            ${reqBodyDefaultHtml}
-            <div class = 'example-panel border-top pad-top-8'>
-              ${reqBodyExamples.length === 1
-                ? ''
-                : html`
-                  <select aria-label='request body example' style="min-width:100px; max-width:100%;  margin-bottom:-1px;" @change='${(e) => this.onSelectExample(e)}'>
-                    ${reqBodyExamples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === this.selectedRequestBodyExample} > 
-                      ${v.exampleSummary.length > 80 ? v.exampleId : v.exampleSummary ? v.exampleSummary : v.exampleId} 
-                    </option>`)}
-                  </select>
-                `
-              }
-              ${reqBodyExamples
-                .filter((v) => v.exampleId === this.selectedRequestBodyExample)
-                .map((v) => html`
-                <div class="example ${v.exampleId === this.selectedRequestBodyExample ? 'example-selected' : ''}" data-default = '${v.exampleId}'>
-                  ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
-                  ${v.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
-                    <!-- this textarea is for user to edit the example -->
-                  <slot name="${this.elementId}--request-body">
-                    <textarea 
-                      class = "textarea request-body-param-user-input"
-                      part = "textarea textarea-param"
-                      spellcheck = "false"
-                      data-ptype = "${reqBody.mimeType}" 
-                      data-default = "${v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)}"
-                      data-default-format = "${v.exampleFormat}"
-                      style="width:100%; resize:vertical;"
-                      .value="${this.fillRequestWithDefault === 'true' ? (v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8)) : ''}"
-                    ></textarea>
-                  </slot>
-
-                  <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
-                  <textarea 
-                    class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
-                    spellcheck = "false"
-                    data-ptype = "${reqBody.mimeType}" 
-                    style="width:100%; resize:vertical; display:none"
-                    .value="${(v.exampleFormat === 'text' ? v.exampleValue : JSON.stringify(v.exampleValue, null, 8))}"
-                  ></textarea>
-                </div>  
-              `)}
-
-            </div>
-          `;
-        } else if (this.selectedRequestBodyType.includes('form-urlencoded') || this.selectedRequestBodyType.includes('form-data')) {
-          bodyTabNameUseBody = false;
-          const ex = generateExample(
-            reqBody.examples ? reqBody.examples : '',
-            reqBody.example ? reqBody.example : '',
-            reqBody.schema,
-            reqBody.mimeType,
-            false,
-            true,
-            'text',
-            true
-          );
-          if (reqBody.schema) {
-            reqBodyDefaultHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
-          }
-        } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
-          reqBodyFileInputHtml = html`
-            <div class = "small-font-size bold-text row">
-              <input type="file" part="file-input" style="max-width:100%" class="request-body-param-file" data-ptype="${reqBody.mimeType}" spellcheck="false" />
-            </div>  
-          `;
-        }
+      if (!this.selectedRequestBodyExample) {
+        this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
       }
+      const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample);
+      reqBodyDefaultHtml = html`
+        <div class = 'example-panel border-top pad-top-8'>
+          ${reqBodyExamples.length === 1
+            ? ''
+            : html`
+              <select aria-label='request body example' style="min-width:100px; max-width:100%;  margin-bottom:-1px;" @change='${(e) => this.onSelectExample(e)}'>
+                ${reqBodyExamples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === this.selectedRequestBodyExample}> 
+                  ${v.exampleSummary.length > 80 ? v.exampleId : v.exampleSummary ? v.exampleSummary : v.exampleId} 
+                </option>`)}
+              </select>`
+          }
+          <div class="example" data-default = '${displayedBodyExample.exampleId}'>
+            ${displayedBodyExample.exampleSummary && displayedBodyExample.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${displayedBodyExample.exampleSummary} </div>` : ''}
+            ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
+              <!-- this textarea is for user to edit the example -->
+            <slot name="${this.elementId}--request-body">
+              <textarea 
+                class = "textarea request-body-param-user-input"
+                part = "textarea textarea-param"
+                spellcheck = "false"
+                data-ptype = "${reqBody.mimeType}" 
+                data-default = "${displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)}"
+                data-default-format = "${displayedBodyExample.exampleFormat}"
+                style="width:100%; resize:vertical;"
+                .value="${this.fillRequestWithDefault === 'true' ? (displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)) : ''}"
+              ></textarea>
+            </slot>
 
-      // Generate Schema
-      if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text') || reqBody.mimeType.includes('form-')) {
-        const schemaAsObj = schemaInObjectNotation(reqBody.schema, { includeNulls: this.includeNulls });
-        if (this.schemaStyle === 'table') {
-          reqBodySchemaHtml = html`
-            ${reqBodySchemaHtml}
-            <schema-table
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
-              style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
-              .data = '${schemaAsObj}'
-              schema-expand-level = "${this.schemaExpandLevel}"
-              schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
-              schema-hide-write-only = false
-            > </schema-table>
-          `;
-        } else {
-          reqBodySchemaHtml = html`
-            ${reqBodySchemaHtml}
-            <schema-tree
-              class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
-              style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
-              .data = '${schemaAsObj}'
-              schema-expand-level = "${this.schemaExpandLevel}"
-              schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
-              schema-hide-write-only = false
-            > </schema-tree>
-          `;
-        }
+            <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
+            <textarea 
+              class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
+              spellcheck = "false"
+              data-ptype = "${reqBody.mimeType}" 
+              style="width:100%; resize:vertical; display:none"
+              .value="${(displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8))}"
+            ></textarea>
+          </div>  
+
+        </div>
+      `;
+    } else if (this.selectedRequestBodyType.includes('form-urlencoded') || this.selectedRequestBodyType.includes('form-data')) {
+      bodyTabNameUseBody = false;
+      // reqBodyDefaultHtml = html`
+      //   <request-form-table
+      //     class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
+      //     style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
+      //     .data = '${reqBody.schema || {}}'></request-form-table>`;
+    } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
+      reqBodyFileInputHtml = html`
+        <div class = "small-font-size bold-text row">
+          <input type="file" part="file-input" style="max-width:100%" class="request-body-param-file" data-ptype="${reqBody.mimeType}" spellcheck="false" />
+        </div>  
+      `;
+    }
+
+    // Generate Schema
+    if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text') || reqBody.mimeType.includes('form-')) {
+      const schemaAsObj = schemaInObjectNotation(reqBody.schema, { includeNulls: this.includeNulls });
+      if (this.schemaStyle === 'table') {
+        reqBodySchemaHtml = html`
+        ${reqBodySchemaHtml}
+          <schema-table
+            class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
+            style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
+            .data = '${schemaAsObj}'
+            schema-expand-level = "${this.schemaExpandLevel}"
+            schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
+            schema-hide-write-only = false
+          > </schema-table>
+        `;
+      } else {
+        reqBodySchemaHtml = html`
+          ${reqBodySchemaHtml}
+          <schema-tree
+            class = '${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)} pad-top-8'
+            style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
+            .data = '${schemaAsObj}'
+            schema-expand-level = "${this.schemaExpandLevel}"
+            schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
+            schema-hide-write-only = false
+          > </schema-tree>
+        `;
       }
-    });
+    }
 
     return html`
       <div class='request-body-container' data-selected-request-body-type="${this.selectedRequestBodyType}">
