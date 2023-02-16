@@ -18,6 +18,7 @@ import 'prismjs/components/prism-csharp';
 // Styles
 import FontStyles from './styles/font-styles.js';
 import InputStyles from './styles/input-styles';
+import SchemaStyles from './styles/schema-styles';
 import FlexStyles from './styles/flex-styles';
 import TableStyles from './styles/table-styles';
 import EndpointStyles from './styles/endpoint-styles';
@@ -121,6 +122,7 @@ export default class OpenApiExplorer extends LitElement {
   static finalizeStyles() {
     return [
       FontStyles,
+      SchemaStyles,
       InputStyles,
       FlexStyles,
       TableStyles,
@@ -385,7 +387,7 @@ export default class OpenApiExplorer extends LitElement {
     this.componentsCollapsed = this.collapsed;
     this.explorerLocation = this.explorerLocation || getCurrentElement();
 
-    if (!this.defaultSchemaTab || !'body, model,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
+    if (!this.defaultSchemaTab || !'body, model, form,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
     this.schemaHideReadOnly = ['post', 'put', 'patch', 'query'].join(',');
     this.schemaHideWriteOnly = true;

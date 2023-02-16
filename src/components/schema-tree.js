@@ -249,7 +249,7 @@ export default class SchemaTree extends LitElement {
     }
 
     return html`
-      <div class="tr primitive">
+      <div class="tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
           ${keyLabel.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>:`
