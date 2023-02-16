@@ -41,8 +41,7 @@ export default css`
   color: var(--primary-btn-text-color);
   border-radius:2px;
   line-height:calc(var(--font-size-small) + 6px);
-  padding:0px 5px; 
-  margin-bottom:1px; 
+  padding:0px 5px;
   display:inline-block;
 }
 
