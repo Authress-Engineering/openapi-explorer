@@ -399,9 +399,9 @@ export default class ApiRequest extends LitElement {
     // Variable to store partial HTMLs
     let reqBodyTypeSelectorHtml = '';
     let reqBodyFileInputHtml = '';
-    let reqBodyFormHtml = '';
     let reqBodySchemaHtml = '';
     let reqBodyDefaultHtml = '';
+    let bodyTabNameUseBody = true;
 
     const requestBodyTypes = [];
     const content = this.request_body.content;
@@ -433,9 +433,9 @@ export default class ApiRequest extends LitElement {
     requestBodyTypes.forEach((reqBody) => {
       let reqBodyExamples = [];
 
-      if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
+      if (reqBody.mimeType === this.selectedRequestBodyType) {
         // Generate Example
-        if (reqBody.mimeType === this.selectedRequestBodyType) {
+        if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
           reqBodyExamples = generateExample(
             reqBody.examples ? reqBody.examples : '',
             reqBody.example ? reqBody.example : '',
@@ -496,9 +496,8 @@ export default class ApiRequest extends LitElement {
 
             </div>
           `;
-        }
-      } else if (this.selectedRequestBodyType.includes('form-urlencoded') || this.selectedRequestBodyType.includes('form-data')) {
-        if (reqBody.mimeType === this.selectedRequestBodyType) {
+        } else if (this.selectedRequestBodyType.includes('form-urlencoded') || this.selectedRequestBodyType.includes('form-data')) {
+          bodyTabNameUseBody = false;
           const ex = generateExample(
             reqBody.examples ? reqBody.examples : '',
             reqBody.example ? reqBody.example : '',
@@ -510,11 +509,9 @@ export default class ApiRequest extends LitElement {
             true
           );
           if (reqBody.schema) {
-            reqBodyFormHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
+            reqBodyDefaultHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
           }
-        }
-      } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
-        if (reqBody.mimeType === this.selectedRequestBodyType) {
+        } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
           reqBodyFileInputHtml = html`
             <div class = "small-font-size bold-text row">
               <input type="file" part="file-input" style="max-width:100%" class="request-body-param-file" data-ptype="${reqBody.mimeType}" spellcheck="false" />
@@ -524,7 +521,7 @@ export default class ApiRequest extends LitElement {
       }
 
       // Generate Schema
-      if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text')) {
+      if (reqBody.mimeType.includes('json') || reqBody.mimeType.includes('xml') || reqBody.mimeType.includes('text') || reqBody.mimeType.includes('form-')) {
         const schemaAsObj = schemaInObjectNotation(reqBody.schema, { includeNulls: this.includeNulls });
         if (this.schemaStyle === 'table') {
           reqBodySchemaHtml = html`
@@ -564,19 +561,17 @@ export default class ApiRequest extends LitElement {
         </div>
         ${this.request_body.description ? html`<div class="m-markdown" style="margin-bottom:12px">${unsafeHTML(marked(this.request_body.description))}</div>` : ''}
         
-        ${(this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text'))
+        ${reqBodySchemaHtml || reqBodyDefaultHtml
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
               <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
                 <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab="model" >${getI18nText('operations.model')}</button>
-                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">${getI18nText('operations.body')}</button>
+                <button class="tab-btn ${this.activeSchemaTab === 'body' ? 'active' : ''}" data-tab="body">${bodyTabNameUseBody ? getI18nText('operations.body') : getI18nText('operations.form')}</button>
               </div>
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
               ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
             </div>`
-          : html`  
-            ${reqBodyFileInputHtml}
-            ${reqBodyFormHtml}`
+          : html`${reqBodyFileInputHtml}`
         }
       </div>  
     `;
@@ -755,7 +750,7 @@ export default class ApiRequest extends LitElement {
               </td>`
           }
         </tr>
-        ${fieldType === 'object'
+        ${fieldType === 'object' || !fieldSchema.description && !paramSchema.example
           ? ''
           : html`
             <tr>
@@ -785,8 +780,7 @@ export default class ApiRequest extends LitElement {
                       </a>
                       ${paramSchema.type === 'array' ? '] ' : ''}
                     </span>`
-                  : ''
-                }
+                  : ''}
               </td>
             </tr>
           `
