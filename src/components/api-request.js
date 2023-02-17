@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { marked } from 'marked';
 import Prism from 'prismjs';
 import mimeTypeResolver from './mime-types';
@@ -13,7 +13,6 @@ import './json-tree';
 import './schema-tree';
 import getRequestFormTable from './request-form-table';
 import './tag-input';
-import SchemaStyles from '../styles/schema-styles';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
@@ -943,7 +942,7 @@ export default class ApiRequest extends LitElement {
     // File Input
     const newInputEl = document.createElement('input');
     newInputEl.type = 'file';
-    newInputEl.style = 'width:200px; margin-top:2px;';
+    newInputEl.setAttribute('class', 'file-input');
     newInputEl.setAttribute('data-pname', pname);
     newInputEl.setAttribute('data-ptype', ptype.includes('form-urlencode') ? 'form-urlencode' : 'form-data');
     newInputEl.setAttribute('data-array', 'false');
