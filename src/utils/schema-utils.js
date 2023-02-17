@@ -14,6 +14,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   }
 
   let dataType = IS_MISSING_TYPE_INFO_TYPE;
+  let format = schema.format || schema.items?.format || '';
   if (schema.circularReference) {
     dataType = `{recursive: ${schema.circularReference.name}} `;
   } else if (schema.type) {
@@ -27,13 +28,13 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
       dataType += '┃null';
     }
     if (dataType.includes('┃null') && schema.format) {
-      schema.format += '┃null';
+      format += '┃null';
     }
   }
 
   const info = {
     type: dataType,
-    format: schema.format || schema.items?.format || '',
+    format,
     cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+\s]/g, '').toLowerCase(),
     pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
