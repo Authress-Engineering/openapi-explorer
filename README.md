@@ -93,7 +93,7 @@ import 'openapi-explorer';
 
 
 ## Copyright
-Copyright 2021 Rhosys AG
+Copyright 2023 Rhosys AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this repository source except in compliance with the License.
