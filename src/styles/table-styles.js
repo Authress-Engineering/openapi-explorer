@@ -80,4 +80,18 @@ export default css`
 .request-form-table > tr:not(.complex-object-display) + tr:not(.form-parameter-description) > td {
   border-top: 1px solid var(--light-border-color);
 }
+
+.request-form-table > tr:not(.complex-object-display) + tr.complex-object-display > td {
+  border-top: 1px solid var(--primary-color) !important;
+}
+
+.request-form-table .input-set {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.request-form-table .file-input {
+  width: 100%;
+  margin-top: 2px;
+}
 `;

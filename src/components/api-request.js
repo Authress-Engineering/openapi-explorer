@@ -1085,7 +1085,7 @@ export default class ApiRequest extends LitElement {
     // File Input
     const newInputEl = document.createElement('input');
     newInputEl.type = 'file';
-    newInputEl.style = 'width:200px; margin-top:2px;';
+    newInputEl.setAttribute('class', 'file-input');
     newInputEl.setAttribute('data-pname', pname);
     newInputEl.setAttribute('data-ptype', ptype.includes('form-urlencode') ? 'form-urlencode' : 'form-data');
     newInputEl.setAttribute('data-array', 'false');
