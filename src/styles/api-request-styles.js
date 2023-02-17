@@ -9,20 +9,20 @@ export default css`
   margin-top:12px;
   border-top: 1px dashed var(--border-color);
 }
-.api-request .param-name,
-.api-request .param-type {
+.param-name,
+.param-type {
   margin: 1px 0;
   text-align: right;
   line-height: var(--font-size-small);
 }
-.api-request .param-name {
+.param-name {
   color: var(--fg); 
   font-family: var(--font-mono);
 }
-.api-request .param-name.deprecated {
+.param-name.deprecated {
   text-decoration: line-through;
 }
-.api-request .param-type {
+.param-type {
   color: var(--light-fg); 
   font-family: var(--font-regular);
 }

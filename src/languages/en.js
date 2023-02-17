@@ -38,6 +38,7 @@ export default {
       'request-body': 'REQUEST BODY',
       'model': 'MODEL',
       'body': 'BODY',
+      'form': 'FORM',
       'request-headers': 'REQUEST HEADERS',
       'clear': 'CLEAR',
       'clear-response': 'CLEAR RESPONSE',

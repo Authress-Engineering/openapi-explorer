@@ -38,6 +38,7 @@ export default {
       'request-body': 'CORPS DE LA REQUÊTE',
       'model': 'MODÈLE',
       'body': 'CORPS',
+      'form': 'FORME',
       'request-headers': 'EN-TÊTES DE LA REQUÊTE',
       'clear': 'VIDER',
       'clear-response': 'VIDER LA RÉPONSE',
