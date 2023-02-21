@@ -106,8 +106,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (Object.keys(schemaObj).length === 0) {
     return EXAMPLE_VALUE_FOR_MISSING_TYPE;
   }
-  if (schemaObj.$ref) {
-    // Indicates a Circular ref
+  if (schemaObj.circularReference) {
     return schemaObj.$ref;
   }
   const typeValue = Array.isArray(schemaObj.type) ? schemaObj.type.filter((t) => t !== 'null')[0] : schemaObj.type ?? '';
