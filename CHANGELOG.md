@@ -5,6 +5,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * By default uses the `info.title` property of the open api specification for the `overview` section name in the navbar. Falls back to the default when not specified.
 * Fix deeply nested descriptions and property overrides.
 * Update yellow to purple for enums to provide better visibility on white backgrounds.
+* Fix handling of object-type header properties
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119

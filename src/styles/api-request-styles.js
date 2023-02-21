@@ -45,10 +45,13 @@ export default css`
 
 .api-request .top-gap{margin-top:24px;}
 
-.api-request .textarea {
-  min-height:220px; 
+.api-request .textarea:not(.small) {
   padding:5px;
   resize:vertical;
+}
+
+.api-request .textarea:not(.small) {
+  min-height:220px;
 }
 
 .api-request .response-message{
