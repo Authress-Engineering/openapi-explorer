@@ -38,7 +38,6 @@ import { checkForAuthToken } from './templates/security-scheme-template';
 export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
-    this.isV1 = false;
     this.loading = true;
     const intersectionObserverOptions = {
       root: this.getRootNode().host,

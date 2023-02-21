@@ -58,7 +58,7 @@
     "marked": "^4.0.16",
     "mime-db": "^1.52.0",
     "openapi-data-validator": "^2.0.40",
-    "openapi-resolver": "^4.0",
+    "openapi-resolver": "^4.1.33",
     "prismjs": "^1.29.0",
     "regex-to-strings": "^2.0.3",
     "xml-but-prettier": "^1.0.1"
@@ -119,6 +119,6 @@
     "webpack-dev-server": "^3.11.2"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   }
 }
