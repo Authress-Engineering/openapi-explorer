@@ -65,7 +65,7 @@ export default function navbarTemplate() {
       ${(this.showInfo === 'false' || !this.resolvedSpec.info)
         ? ''
         : html`<div class='nav-bar-info'  id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}'>
-          ${this.isV1 && this.resolvedSpec.info.title || getI18nText('menu.overview')}
+          ${this.resolvedSpec.info.title || getI18nText('menu.overview')}
         </div>`
       }
     
