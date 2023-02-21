@@ -5471,10 +5471,10 @@ openapi-data-validator@^2.0.40:
     media-typer "^1.1"
     require-from-string "^2.0.2"
 
-openapi-resolver@^4.1.33:
-  version "4.1.33"
-  resolved "https://registry.yarnpkg.com/openapi-resolver/-/openapi-resolver-4.1.33.tgz#f2030a64136e09789b279ea4eae4aa28e7328a8a"
-  integrity sha512-U/WiQqWPtKlD4XXnPFkr+oztSuOokREC4EDi3zxQAWbjX2qLpy0iWJjGBGdwdr+U3CFNFqHq1R2liwMa5BGowQ==
+openapi-resolver@^4.1.35:
+  version "4.1.35"
+  resolved "https://registry.yarnpkg.com/openapi-resolver/-/openapi-resolver-4.1.35.tgz#e82fd6711e3d07685167d9328e66bf6b9b0aa151"
+  integrity sha512-qOJUQmolYURGFtIOAr8xSago0EQJYjI5aX3T46fYxEWcukt/NFuIStu/mhvw3aoCNV0LD9NSnfwNMmGpkiR9zw==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@babel/runtime-corejs3" "^7.18.9"

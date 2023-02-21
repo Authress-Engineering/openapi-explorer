@@ -116,16 +116,13 @@ export default class ApiRequest extends LitElement {
     if (filteredParams.length === 0) {
       return '';
     }
-    let title = '';
-    if (paramType === 'path') {
-      title = 'PATH PARAMETERS';
-    } else if (paramType === 'query') {
-      title = 'QUERY-STRING PARAMETERS';
-    } else if (paramType === 'header') {
-      title = 'REQUEST HEADERS';
-    } else if (paramType === 'cookie') {
-      title = 'COOKIES';
-    }
+
+    const title = {
+      path: 'PATH PARAMETERS',
+      query: 'QUERY-STRING PARAMETERS',
+      header: 'REQUEST HEADERS',
+      cookie: 'COOKIES'
+    }[paramType];
 
     const tableRows = [];
     for (const param of filteredParams) {
@@ -164,47 +161,43 @@ export default class ApiRequest extends LitElement {
         ${this.allowTry === 'true'
           ? html`
             <td style="min-width:160px;">
-              ${paramSchema.type === 'array'
-                ? html`
-                  <tag-input class="request-param" 
-                    style = "width:100%;" 
-                    data-ptype = "${paramType}"
-                    data-pname = "${param.name}"
-                    data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                    data-param-serialize-style = "${paramStyle}"
-                    data-param-serialize-explode = "${paramExplode}"
-                    data-array = "true"
-                    placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
-                    .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"
-                  >
-                  </tag-input>`
-                : paramSchema.type === 'object'
-                  ? html`
-                    <textarea 
-                      class = "textarea request-param"
-                      part = "textarea textarea-param"
-                      data-ptype = "${paramType}-object"
-                      data-pname = "${param.name}"
-                      data-default = "${defaultVal}"
-                      data-param-serialize-style = "${paramStyle}"
-                      data-param-serialize-explode = "${paramExplode}"
-                      spellcheck = "false"
-                      placeholder="${paramSchema.example || defaultVal || ''}"
-                      style = "resize:vertical; width:100%; height: ${'read focused'.includes(this.renderStyle) ? '180px' : '120px'};"
-                      .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-                    ></textarea>`
-                  : html`
-                    <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
-                      class="request-param"
-                      part="textbox textbox-param"
-                      data-ptype="${paramType}"
-                      data-pname="${param.name}" 
-                      data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                      data-array="false"
-                      @keyup="${this.requestParamFunction}"
-                      .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-                    />`
-                }
+              ${paramSchema.type === 'array' && html`
+                <tag-input class="request-param" 
+                  style = "width:100%;" 
+                  data-ptype = "${paramType}"
+                  data-pname = "${param.name}"
+                  data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                  data-param-serialize-style = "${paramStyle}"
+                  data-param-serialize-explode = "${paramExplode}"
+                  data-array = "true"
+                  placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
+                  .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"></tag-input>`
+              || paramSchema.type === 'object' && html`
+                <textarea 
+                  class = "textarea small request-param"
+                  part = "textarea small textarea-param"
+                  rows = 3
+                  data-ptype = "${paramType}"
+                  data-pname = "${param.name}"
+                  data-default = "${defaultVal}"
+                  data-param-serialize-style = "${paramStyle}"
+                  data-param-serialize-explode = "${paramExplode}"
+                  spellcheck = "false"
+                  placeholder="${paramSchema.example || defaultVal || ''}"
+                  style = "width:100%;"
+                  .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
+              || html`
+                <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
+                  class="request-param"
+                  part="textbox textbox-param"
+                  data-ptype="${paramType}"
+                  data-pname="${param.name}" 
+                  data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                  data-array="false"
+                  @keyup="${this.requestParamFunction}"
+                  .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                />`
+              }
             </td>`
           : ''
         }
