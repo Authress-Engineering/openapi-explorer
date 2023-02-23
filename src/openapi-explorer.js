@@ -741,9 +741,7 @@ export default class OpenApiExplorer extends LitElement {
       return;
     }
 
-    const data = this.resolvedSpec.tags.map(t => t.paths).flat(1).find(p => p.elementId === elementId);
-    const event = { bubbles: true, composed: true, detail: { explorerLocation: elementId, method: data?.method, path: data?.path, type: 'OperationChanged' } };
-    this.dispatchEvent(new CustomEvent('event', event));
+    this.emitOperationChangedEvent(elementId);
 
     if (this.renderStyle === 'view') {
       this.expandAndGotoOperation(elementId);
@@ -833,6 +831,12 @@ export default class OpenApiExplorer extends LitElement {
       const searchOptions = [...eventTargetEl.closest('.advanced-search-options').querySelectorAll('input:checked')].map((v) => v.id);
       this.advancedSearchMatches = advancedSearch(searchInputEl.value, this.resolvedSpec.tags, searchOptions);
     }, 0);
+  }
+
+  emitOperationChangedEvent(elementId) {
+    const operation = this.resolvedSpec.tags.map(t => t.paths).flat(1).find(p => p.elementId === elementId);
+    const event = { bubbles: true, composed: true, detail: { explorerLocation: elementId, operation, type: 'OperationChanged' } };
+    this.dispatchEvent(new CustomEvent('event', event));
   }
 }
 

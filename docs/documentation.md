@@ -108,6 +108,7 @@ onEvent(event) {
     // The User clicked the CLEAR button in the operation request section
   } else if (event.data.type === 'OperationChanged') {
     // User navigated somewhere else
+    console.log(event.data.operation);
   }
 }
 ```
