@@ -37,9 +37,9 @@ export function expandCollapseAll(currentElement, expand) {
 function endpointHeadTemplate(path) {
   return html`
   <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
-    <div class="method ${path.method}"> ${path.method} </div> 
+    <div class="method ${path.method}"><span style="line-height: 1;">${path.method}</span></div> 
     <div style="${path.deprecated ? 'text-decoration: line-through;' : ''}">
-      ${this.usePathInNavBar === 'true'
+      ${this.usePathInNavBar
         ? html`<div class="path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>`
         : html`<div class="">${path.summary || path.shortSummary}</div>`
       }
@@ -64,7 +64,7 @@ function endpointBodyTemplate(path) {
   return html`
   <div class='endpoint-body ${path.method}'>
     <div class="summary">
-      ${this.usePathInNavBar === 'true'
+      ${this.usePathInNavBar
         ? path.summary ? html`<div class="title">${path.summary}<div>` : path.shortSummary !== path.description ? html`<div class="title">${path.shortSummary}</div>` : ''
         : html`
           <div class='title mono-font regular-font-size' part="section-operation-url" style='display: flex; flex-wrap: wrap; color:var(--fg3)'> 

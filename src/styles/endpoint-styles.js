@@ -95,8 +95,11 @@ export default css`
   word-break: break-word;
 }
 
-.method{
-  padding:2px 5px;
+.method {
+  padding-top: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   vertical-align: middle;
   font-size:var(--font-size-small);
   height: calc(var(--font-size-small) + 16px);
@@ -104,7 +107,6 @@ export default css`
   width: 68px;
   flex-shrink: 0;
   border-radius: 2px;
-  display:inline-block;
   text-align: center;
   font-weight: bold;
   text-transform:uppercase;
