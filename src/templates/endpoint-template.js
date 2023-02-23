@@ -8,12 +8,11 @@ import { callbackTemplate } from '@/templates/expanded-endpoint-template';
 
 function toggleExpand(path) {
   if (path.expanded) {
-    path.expanded = false; // collapse
+    path.expanded = false;
     replaceState(null);
   } else {
-    path.expanded = true; // Expand
-    const event = { bubbles: true, composed: true, detail: { explorerLocation: path.elementId, method: path.method, path: path.path, type: 'OperationChanged' } };
-    this.dispatchEvent(new CustomEvent('event', event));
+    path.expanded = true;
+    this.emitOperationChangedEvent(path.elementId);
 
     // Toggle all the other ones off
     this.resolvedSpec.tags.forEach(t => t.paths.filter(p => p.elementId !== path.elementId).forEach(p => p.expanded = false));

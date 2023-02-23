@@ -31,7 +31,7 @@ export default async function ProcessSpec(specUrl, sortTags = false, sortEndpoin
 
   // Security Scheme
   const securitySchemes = [];
-  if (jsonParsedSpec.components && jsonParsedSpec.components.securitySchemes) {
+  if (jsonParsedSpec.components?.securitySchemes) {
     Object.entries(jsonParsedSpec.components.securitySchemes).forEach((kv) => {
       const securityObj = { apiKeyId: kv[0], ...kv[1] };
       securityObj.value = '';
