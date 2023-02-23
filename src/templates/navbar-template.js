@@ -131,12 +131,12 @@ export default function navbarTemplate() {
                 <div class='nav-bar-paths-under-tag'>
                   <!-- Paths in each tag (endpoints) -->
                   ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
-                  <div class='nav-bar-path ${this.usePathInNavBar === 'true' ? 'small-font' : ''}'
+                  <div class='nav-bar-path ${this.usePathInNavBar ? 'small-font' : ''}'
                     data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
                     <span style="${p.deprecated ? 'filter:opacity(0.5)' : ''}">
-                      ${this.usePathInNavBar === 'true'
-                        ? html`<div class='mono-font' style="display: flex;">
-                            <div style="min-width: 1rem; margin-right: .5rem; flex-shrink: 0;">${p.method.toUpperCase()}</div>
+                      ${this.usePathInNavBar
+                        ? html`<div class='mono-font' style="display: flex; align-items: center;">
+                            <div class="method ${p.method}"><span style="line-height: 1;">${p.method}</span></div> 
                             <div style="display: flex; flex-wrap: wrap;">${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>
                           </div>`
                         : p.summary || p.shortSummary
