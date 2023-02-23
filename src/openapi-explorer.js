@@ -103,7 +103,7 @@ export default class OpenApiExplorer extends LitElement {
       navHoverBgColor: { type: String, attribute: 'nav-hover-bg-color' },
       navHoverTextColor: { type: String, attribute: 'nav-hover-text-color' },
       navItemSpacing: { type: String, attribute: 'nav-item-spacing' },
-      usePathInNavBar: { type: String, attribute: 'use-path-in-nav-bar' },
+      usePathInNavBar: { type: Boolean, attribute: 'use-path-in-nav-bar' },
 
       // Fetch Options
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
@@ -401,7 +401,6 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
 
     if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
-    if (!this.usePathInNavBar || !'true, false,'.includes(`${this.usePathInNavBar},`)) { this.usePathInNavBar = 'false'; }
 
     if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
     if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
