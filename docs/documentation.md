@@ -104,9 +104,10 @@ responseInterceptor(event) {
 
 ```js
 onEvent(event) {
-  // The User clicked the CLEAR button in the operation request section
   if (event.detail.type === 'RequestCleared') {
-
+    // The User clicked the CLEAR button in the operation request section
+  } else if (event.data.type === 'OperationChanged') {
+    // User navigated somewhere else
   }
 }
 ```
@@ -209,6 +210,13 @@ OpenAPI Explorer supports inline code samples using the `x-code-samples` OpenAPI
 <p>
   <img src="./code-samples.png" alt="Code Samples" width="600px">
 </p>
+
+### Determining where the user is
+Knowing exactly where the user is can be tricky. One way is add the event listener for the type `event`. Another way is to search for the open slot dedicated to the current path details. The `path-details` slot is dynamically rendered with the appropriate `method` and `path` data properties. You can pull these out by doing this:
+```js
+document.getElementsByTagName("openapi-explorer")[0].shadowRoot.querySelectorAll('slot[name=path-details]')[0].attributes['data-method'].value;
+document.getElementsByTagName("openapi-explorer")[0].shadowRoot.querySelectorAll('slot[name=path-details]')[0].attributes['data-path'].value;
+```
 
 ### Styling using CSS variables
 In many cases these might have already been set by your css framework, if not, and you want to override the the defaults to match your theme. For more in-depth options check out [How to style your openapi-explorer UI](./styling.md).

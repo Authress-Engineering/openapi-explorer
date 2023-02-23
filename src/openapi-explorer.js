@@ -604,7 +604,7 @@ export default class OpenApiExplorer extends LitElement {
     let isExpandingNeeded = false;
     
     const tag = this.resolvedSpec.tags.find(t => t.paths && t.paths.find(p => p.elementId === elementId));
-    const path = tag && tag.paths && tag.paths.find((p) => p.elementId === elementId);
+    const path = tag?.paths?.find((p) => p.elementId === elementId);
     if (path && (!path.expanded || !tag.expanded)) {
       isExpandingNeeded = true;
       path.expanded = true;
@@ -740,6 +740,10 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.resolvedSpec) {
       return;
     }
+
+    const data = this.resolvedSpec.tags.map(t => t.paths).flat(1).find(p => p.elementId === elementId);
+    const event = { bubbles: true, composed: true, detail: { explorerLocation: elementId, method: data?.method, path: data?.path, type: 'OperationChanged' } };
+    this.dispatchEvent(new CustomEvent('event', event));
 
     if (this.renderStyle === 'view') {
       this.expandAndGotoOperation(elementId);
