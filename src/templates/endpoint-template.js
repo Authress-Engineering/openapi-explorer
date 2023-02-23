@@ -12,6 +12,11 @@ function toggleExpand(path) {
     replaceState(null);
   } else {
     path.expanded = true; // Expand
+    const event = { bubbles: true, composed: true, detail: { explorerLocation: path.elementId, method: path.method, path: path.path, type: 'OperationChanged' } };
+    this.dispatchEvent(new CustomEvent('event', event));
+
+    // Toggle all the other ones off
+    this.resolvedSpec.tags.forEach(t => t.paths.filter(p => p.elementId !== path.elementId).forEach(p => p.expanded = false));
     if (path.elementId !== getCurrentElement()) {
       replaceState(path.elementId);
     }
@@ -20,32 +25,13 @@ function toggleExpand(path) {
 }
 
 function toggleTag(tagElement, tagId) {
-  const sectionTag = tagElement.target.closest('.section-tag');
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
   tag.expanded = !tag.expanded;
-  if (tag.expanded) {
-    sectionTag.classList.remove('collapsed');
-    sectionTag.classList.add('expanded');
-  } else {
-    sectionTag.classList.remove('expanded');
-    sectionTag.classList.add('collapsed');
-  }
   this.requestUpdate();
 }
-export function expandCollapseAll(currentElement, action = 'expand-all') {
-  const operationsRootEl = currentElement.target.closest('.operations-root');
-  const elList = [...operationsRootEl.querySelectorAll('.section-tag')];
-  const expand = action === 'expand-all';
+export function expandCollapseAll(currentElement, expand) {
   this.resolvedSpec.tags.forEach(t => t.expanded = expand);
-  elList.map((el) => {
-    if (expand) {
-      el.classList.remove('collapsed');
-      el.classList.add('expanded');
-    } else {
-      el.classList.remove('expanded');
-      el.classList.add('collapsed');
-    }
-  });
+  this.requestUpdate();
 }
 
 /* eslint-disable indent */
@@ -67,13 +53,13 @@ function endpointHeadTemplate(path) {
 function endpointBodyTemplate(path) {
   const acceptContentTypes = new Set();
   for (const respStatus in path.responses) {
-    for (const acceptContentType in path.responses[respStatus] && path.responses[respStatus].content) {
+    for (const acceptContentType in path.responses[respStatus]?.content) {
       acceptContentTypes.add(acceptContentType.trim());
     }
   }
   const accept = [...acceptContentTypes].join(', ');
   // Filter API Keys that are non-empty and are applicable to the the path
-  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => ps[v.apiKeyId]))) || [];
+  const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security?.some((ps) => ps[v.apiKeyId]))) || [];
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate(path.xCodeSamples) : '';
   return html`
@@ -135,9 +121,9 @@ function endpointBodyTemplate(path) {
 export default function endpointTemplate() {
   return html`
     <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px; margin-top: 16px;"> 
-      <span @click="${(e) => expandCollapseAll.call(this, e, 'expand-all')}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
+      <span @click="${(e) => expandCollapseAll.call(this, e, true)}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
       &nbsp;|&nbsp; 
-      <span @click="${(e) => expandCollapseAll.call(this, e, 'collapse-all')}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
+      <span @click="${(e) => expandCollapseAll.call(this, e, false)}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
     </div>
     ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <div class='regular-font method-section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}'> 

@@ -6,6 +6,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix deeply nested descriptions and property overrides.
 * Update yellow to purple for enums to provide better visibility on white backgrounds.
 * Fix handling of object-type header properties
+* Add the `path-details` slot and event subtype `OperationChanged`
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119

@@ -673,7 +673,7 @@ export default class ApiRequest extends LitElement {
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => { el.value = ''; });
 
-    const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, type: 'RequestCleared' } };
+    const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, method: this.method, path: this.path, type: 'RequestCleared' } };
     this.dispatchEvent(new CustomEvent('event', event));
   }
 
