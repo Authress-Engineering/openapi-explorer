@@ -31,7 +31,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
 
   // Security Scheme
   const securitySchemes = [];
-  if (jsonParsedSpec.components && jsonParsedSpec.components.securitySchemes) {
+  if (jsonParsedSpec.components?.securitySchemes) {
     Object.entries(jsonParsedSpec.components.securitySchemes).forEach((kv) => {
       const securityObj = { apiKeyId: kv[0], ...kv[1] };
       securityObj.value = '';
@@ -277,10 +277,9 @@ function groupByTags(openApiSpec) {
           }
 
           // Update Responses
-          tagObj.paths.push({
+          const pathObject = {
             expanded: false,
             isWebhook,
-            expandedAtLeastOnce: false,
             summary: (pathOrHookObj.summary || ''),
             description: (pathOrHookObj.description || ''),
             shortSummary,
@@ -298,8 +297,13 @@ function groupByTags(openApiSpec) {
             externalDocs: pathOrHookObj.externalDocs,
             // commonSummary: commonPathProp.summary,
             // commonDescription: commonPathProp.description,
-            xCodeSamples: pathOrHookObj['x-codeSamples'] || pathOrHookObj['x-code-samples'] || '',
-          });
+            xCodeSamples: pathOrHookObj['x-code-samples'] || '',
+            extensions: Object.keys(pathOrHookObj).filter(k => k.startsWith('x-') && k !== 'x-code-samples').reduce((acc, extensionKey) => {
+              acc[extensionKey] = pathOrHookObj[extensionKey];
+              return acc;
+            }, {})
+          };
+          tagObj.paths.push(pathObject);
         });// End of tag path create
       }
     }); // End of Methods

@@ -44,6 +44,7 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
     </div>
     <div class="m-markdown" style="margin-right: 2rem;"> ${unsafeHTML(marked(path.description || ''))}</div>
     <slot name="${path.elementId}"></slot>
+    <slot name="path-details" data-method="${path.method}" data-path="${path.path}"></slot>
     ${pathSecurityTemplate.call(this, path.security)}
     ${codeSampleTabPanel}
     <div class='expanded-req-resp-container'>
