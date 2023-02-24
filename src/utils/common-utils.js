@@ -88,8 +88,15 @@ export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function copyToClipboard(data, e) {
-  const btnEl = e.currentTarget;
+export function copyToClipboard(copyData, eventTarget) {
+  let data = copyData?.trim().replace(/\s{8}/g, '  ');
+  try {
+    // Convert to 2 spaces in all JSON text
+    data = JSON.stringify(JSON.parse(data), null, 2).trim();
+  } catch (error) {
+    // Ignore non JSON text;
+  }
+
   const textArea = document.createElement('textarea');
   textArea.value = data;
   textArea.style.position = 'fixed'; // avoid scrolling to bottom
@@ -98,10 +105,13 @@ export function copyToClipboard(data, e) {
   textArea.select();
   try {
     document.execCommand('copy');
-    btnEl.innerText = getI18nText('operations.copied');
-    setTimeout(() => {
-      btnEl.innerText = getI18nText('operations.copy');
-    }, 5000);
+    const btnEl = eventTarget?.target;
+    if (btnEl) {
+      btnEl.innerText = getI18nText('operations.copied');
+      setTimeout(() => {
+        btnEl.innerText = getI18nText('operations.copy');
+      }, 5000);
+    }
   } catch (err) {
     console.error('Unable to copy', err); // eslint-disable-line no-console
   }

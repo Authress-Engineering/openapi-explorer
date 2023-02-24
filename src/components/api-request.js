@@ -389,6 +389,10 @@ export default class ApiRequest extends LitElement {
       return '';
     }
 
+    if (this.method === 'get' || this.method === 'head') {
+      return '';
+    }
+
     // Variable to store partial HTMLs
     let reqBodyTypeSelectorHtml = '';
     let reqBodyFileInputHtml = '';
@@ -599,7 +603,7 @@ export default class ApiRequest extends LitElement {
                 ? html`<button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>`
                 : ''
               }
-              <pre style="min-height: 60px">${responseFormat
+              <pre style="min-height: 60px" @copy='${() => { copyToClipboard(window.getSelection().toString()); }}'>${responseFormat
                 ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
                 : `${this.responseText}`
               }
