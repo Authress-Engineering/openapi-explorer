@@ -8,8 +8,8 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
     <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
         <img src="https://badge.fury.io/js/openapi-explorer.svg">
     </a>
-    <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
-      <img src="https://badgen.net/bundlephobia/minzip/openapi-explorer?color=green">
+    <a href="https://rhosys.ch/community" alt="npm version">
+      <img src="https://img.shields.io/badge/community-Discord-green.svg">
     </a>
     <a href="https://www.webcomponents.org/element/openapi-explorer" alt="published on webcomponents.org">
         <img src="https://img.shields.io/badge/webcomponents.org-OpenAPI%20Explorer-blue.svg?style=social">
