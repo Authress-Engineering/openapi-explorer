@@ -402,8 +402,9 @@ export default function securitySchemeTemplate() {
 `;
 }
 
-function getOauthScopeTemplate(scopes) {
-  if (!scopes || !scopes.length || !Array.isArray(scopes)) {
+function getOauthScopeTemplate(rawScopes) {
+  const scopes = Array.isArray(rawScopes) ? rawScopes.map(s => s?.trim()).filter(s => s) : [];
+  if (!scopes.length) {
     return '';
   }
 
