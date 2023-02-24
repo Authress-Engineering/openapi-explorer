@@ -8,6 +8,8 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix handling of object-type header properties
 * Add the `path-details` slot and event subtype `OperationChanged`
 * Add Method coloring to the method verbs when using `use-path-in-nav-bar`.
+* Prevent bad bodies from being passed to GET and HEAD, GET and HEAD do not take bodies in requests
+* Don't copy the 8 spaces <pre> formatted response from JSON requests #138.
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
