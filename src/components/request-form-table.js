@@ -39,7 +39,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
     return html`
       ${newSchemaLevel >= 0 && key
         ? html`
-            <tr class='complex-object-display no-select ${data['::type']}' data-obj='${keyLabel}'>
+            <tr class='complex-object-display ${data['::type']}' data-obj='${keyLabel}'>
               <td class="key ${data['::deprecated'] ? 'deprecated' : ''}">
                 <div style="display: flex; align-items: center">
                   ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
