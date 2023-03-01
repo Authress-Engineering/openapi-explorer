@@ -5,6 +5,7 @@ import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
 
 const tablePadding = 16;
+const firstColumnInitialPadding = tablePadding * 2;
 
 export default class SchemaTable extends LitElement {
   static get properties() {
@@ -101,7 +102,7 @@ export default class SchemaTable extends LitElement {
       <div class="table">
         <div style = 'border:1px solid var(--light-border-color)'>
           <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
-            <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${tablePadding * 2}px'> Field </div>
+            <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
             <div class='key-type' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
             <div class='key-descr' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
           </div>
@@ -114,7 +115,8 @@ export default class SchemaTable extends LitElement {
   generateTree(data, dataType = 'object', key = '', description = '', schemaLevel = 0, indentLevel = 0) {
     const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
     const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
-    const leftPadding = tablePadding * newIndentLevel; // 2 space indentation at each level
+    // 16px space indentation at each level, start the first one at 32px to align with the field hr key row object
+    const leftPadding = Math.max(firstColumnInitialPadding, tablePadding * newIndentLevel);
 
     if (!data) {
       return html`<div class="null" style="display:inline;">null</div>`;
@@ -216,7 +218,7 @@ export default class SchemaTable extends LitElement {
     }
     return html`
       <div class = "tr">
-        <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px' >
+        <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px'>
           ${keyLabel?.endsWith('*')
             ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
             : key.startsWith('::OPTION')
