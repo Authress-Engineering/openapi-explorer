@@ -10,6 +10,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add Method coloring to the method verbs when using `use-path-in-nav-bar`.
 * Prevent bad bodies from being passed to GET and HEAD, GET and HEAD do not take bodies in requests
 * Don't copy the 8 spaces <pre> formatted response from JSON requests #138.
+* Fix initial padding for non-object based field properties, by setting the min at 32px (or 2 * the shift which is 16px)
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
