@@ -77,7 +77,7 @@
             <span>OpenAPI Explorer</span>
           </div>
         </div>
-        <form class="d-flex">
+        <form id="loadSpecForm" class="d-flex">
           <input id="specUrl" class="form-control me-2" type="search" placeholder="Your OpenAPI url here" aria-label="SpecUrl" style="max-width: 400px">
           <div class="d-flex align-items-center">
             <button id="loadButton" class="btn btn-primary btn-sm" type="submit">Load</button>
@@ -119,11 +119,18 @@
           document.getElementsByTagName("openapi-explorer")[0].setAttribute('spec-url', newSpecUrl);
           specUrl.value = newSpecUrl;
         }
+
         const loadButton = document.getElementById('loadButton');
         loadButton.addEventListener('click', () => {
-          
-          document.getElementsByTagName("openapi-explorer")[0].setAttribute('spec-url', specUrl.value);
-        })
+          try {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('url', specUrl.value);
+            window.location.assign(newUrl.toString());
+            document.getElementsByTagName("openapi-explorer")[0].setAttribute('spec-url', specUrl.value);
+          } catch (error) {
+            console.error('Failed to set spec url into url address bar', error);
+          }
+        });
       });
     </script>
   </body>
