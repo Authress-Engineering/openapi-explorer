@@ -5,6 +5,7 @@ import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
 import BorderStyles from '../styles/border-styles';
+import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class SchemaTree extends LitElement {
   static get properties() {
@@ -30,6 +31,7 @@ export default class SchemaTree extends LitElement {
       FontStyles,
       SchemaStyles,
       BorderStyles,
+      KeyFrameStyles,
       css`
       .tree {
         min-height: 30px;

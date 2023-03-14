@@ -21,6 +21,7 @@ import InputStyles from './styles/input-styles';
 import SchemaStyles from './styles/schema-styles';
 import FlexStyles from './styles/flex-styles';
 import TableStyles from './styles/table-styles';
+import KeyFrameStyles from './styles/key-frame-styles';
 import EndpointStyles from './styles/endpoint-styles';
 import PrismStyles from './styles/prism-styles';
 import TabStyles from './styles/tab-styles';
@@ -125,6 +126,7 @@ export default class OpenApiExplorer extends LitElement {
       InputStyles,
       FlexStyles,
       TableStyles,
+      KeyFrameStyles,
       EndpointStyles,
       PrismStyles,
       TabStyles,
@@ -295,11 +297,6 @@ export default class OpenApiExplorer extends LitElement {
       .tooltip:hover .tooltip-text {
         visibility: visible;
         opacity: 1;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
       }
 
       @media only screen and (max-width: 767.98px) {
