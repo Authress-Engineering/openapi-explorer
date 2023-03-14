@@ -73,13 +73,17 @@ export default class SchemaTable extends LitElement {
         font-family: var(--font-mono);
         background-clip: border-box;
       }
+
+
+        
       .tr + .object-body {
-        max-height: 5000px;
-        transition: max-height 1.2s ease-in-out;
         overflow: hidden;
+      } 
+      .tr:not(.collapsed) + .object-body {
+        animation: linear 0.2s expand-height;
       }
       .tr.collapsed + .object-body {
-        transition: max-height 1.2s ease-in-out -1.0s;
+        animation: linear 0.2s collapse-height;
         max-height: 0;
       }
       .obj-toggle {

@@ -55,13 +55,30 @@ export default class JsonTree extends LitElement {
         border: 1px solid var(--border-color);
       }
 
+      /* Expand a block from 0 to something visible, then to probably full screen, then beyond most screens.
+         Unlike with a transition, the final CSS can have an unbounded height, which will take effect after the animation. */
+      @keyframes expand-height {
+        0% { max-height: 0; }
+        50% { max-height: 100px; }
+        95% { max-height: 1000px; }
+        100% { max-height: 5000px; }
+      }
+      /* Inverse of the above, collapsing quickly at first (to avoid a delay if the element is already quite short)
+         then slowing towards 0. */
+      @keyframes collapse-height {
+        0% { max-height: 5000px; }
+        5% { max-height: 500px; }
+        50% { max-height: 100px; }
+        100% { max-height: 0; }
+      }
       .inside-bracket-wrapper {
-        max-height: 10000px;
-        transition: max-height 1.2s ease-in-out;
         overflow: hidden;
       }
+      .open-bracket:not(.collapsed) + .inside-bracket-wrapper {
+        animation: linear 0.2s expand-height;
+      }
       .open-bracket.collapsed + .inside-bracket-wrapper {
-        transition: max-height 1.2s ease-in-out -1.1s;
+        animation: linear 0.2s collapse-height;
         max-height: 0;
       }
       .inside-bracket {
