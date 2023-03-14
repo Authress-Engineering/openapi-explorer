@@ -71,12 +71,13 @@ export default class SchemaTree extends LitElement {
       }
 
       .inside-bracket-wrapper {
-        max-height: 10000px;
-        transition: max-height 1.2s ease-in-out;
         overflow: hidden;
       }
+      .tr:not(.collapsed) + .inside-bracket-wrapper {
+        animation: linear 0.2s expand-height;
+      }
       .tr.collapsed + .inside-bracket-wrapper {
-        transition: max-height 1.2s ease-in-out -1.1s;
+        animation: linear 0.2s collapse-height;
         max-height: 0;
       }
 
