@@ -4,6 +4,7 @@ import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles';
 import SchemaStyles from '../styles/schema-styles';
 import BorderStyles from '../styles/border-styles';
+import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class SchemaTree extends LitElement {
   static get properties() {
@@ -29,6 +30,7 @@ export default class SchemaTree extends LitElement {
       FontStyles,
       SchemaStyles,
       BorderStyles,
+      KeyFrameStyles,
       css`
       .tree {
         min-height: 30px;

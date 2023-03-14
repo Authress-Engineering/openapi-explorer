@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
+import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 const tablePadding = 16;
 const firstColumnInitialPadding = tablePadding * 2;
@@ -29,6 +30,7 @@ export default class SchemaTable extends LitElement {
   static finalizeStyles() {
     return [
       FontStyles,
+      KeyFrameStyles,
       SchemaStyles,
       css`
       .table {
@@ -73,9 +75,6 @@ export default class SchemaTable extends LitElement {
         font-family: var(--font-mono);
         background-clip: border-box;
       }
-
-
-        
       .tr + .object-body {
         overflow: hidden;
       } 
