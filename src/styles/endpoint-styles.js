@@ -96,12 +96,11 @@ export default css`
 }
 
 .method {
-  padding-top: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   vertical-align: middle;
-  font-size: calc(var(--font-size-small) - 1px);
+  font-size: calc(var(--font-size-small) - 2px);
   height: calc(var(--font-size-small) + 0.75rem);
   line-height: calc(var(--font-size-small) + 0.5rem);
   width: 3.5rem;
