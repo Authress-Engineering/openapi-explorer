@@ -96,15 +96,15 @@ export default css`
 }
 
 .method {
-  padding-top: 2px;
+  padding-top: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   vertical-align: middle;
-  font-size:var(--font-size-small);
-  height: calc(var(--font-size-small) + 16px);
-  line-height: calc(var(--font-size-small) + 8px);
-  width: 68px;
+  font-size: calc(var(--font-size-small) - 1px);
+  height: calc(var(--font-size-small) + 0.75rem);
+  line-height: calc(var(--font-size-small) + 0.5rem);
+  width: 3.5rem;
   flex-shrink: 0;
   border-radius: 2px;
   text-align: center;
@@ -112,13 +112,13 @@ export default css`
   text-transform:uppercase;
   margin-right:5px;
 }
-.method.delete{ border: 2px solid var(--red);}
-.method.put{ border: 2px solid var(--orange); }
-.method.post{ border: 2px solid var(--green); }
-.method.head, .method.get { border: 2px solid var(--blue); }
-.method.patch { border: 2px solid var(--yellow); }
-.method.query { border: 2px solid var(--purple); }
-.method.options { border: 2px solid var(--gray); }
+.method.delete{ border: 1px solid var(--red);}
+.method.put{ border: 1px solid var(--orange); }
+.method.post{ border: 1px solid var(--green); }
+.method.head, .method.get { border: 1px solid var(--blue); }
+.method.patch { border: 1px solid var(--yellow); }
+.method.query { border: 1px solid var(--purple); }
+.method.options { border: 1px solid var(--gray); }
 
 .req-resp-container{
   display: flex;
