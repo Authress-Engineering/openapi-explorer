@@ -11,6 +11,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Prevent bad bodies from being passed to GET and HEAD, GET and HEAD do not take bodies in requests
 * Don't copy the 8 spaces <pre> formatted response from JSON requests #138.
 * Fix initial padding for non-object based field properties, by setting the min at 32px (or 2 * the shift which is 16px)
+* Ensure UI recordings do not include curl command which might include security tokens
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119

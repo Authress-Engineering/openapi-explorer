@@ -355,7 +355,7 @@ export default function securitySchemeTemplate() {
                               </small>
                             </div>`
                             : html`
-                              <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
+                              <input type = "text" value = "${v.value}" placeholder = "api-token" spellcheck = "false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
                               <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                                 part = "btn btn-outline"
                                 @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
@@ -370,7 +370,8 @@ export default function securitySchemeTemplate() {
                       ${getI18nText('authentication.http-basic-desc')}
                         <form style="display:flex;">
                           <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
-                          <input type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
+                          <input class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
+                            type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" style = "width:100px; margin:0 5px;">
                           <button type="submit" class="m-btn thin-border"
                             @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
                             part = "btn btn-outline"
