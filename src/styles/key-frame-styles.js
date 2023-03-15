@@ -6,20 +6,25 @@ export default css`
     100% { transform: rotate(360deg); }
   }
 
-  /* Expand a block from 0 to something visible, then to probably full screen, then beyond most screens.
-     Unlike with a transition, the final CSS can have an unbounded height, which will take effect after the animation. */
+  /* 
+    Expand a block smoothly to 100px, then to fill the current viewport.
+    Unlike with a transition, the final CSS can have an unbounded height, which will take effect after the animation.
+    Simultaneously fades in, mostly for symmetry with the collapse animation below.
+  */
   @keyframes expand-height {
-    0% { max-height: 0; }
-    50% { max-height: 100px; }
-    95% { max-height: 1000px; }
-    100% { max-height: 5000px; }
+    0% { max-height: 0; opacity: 0; }
+    50% { max-height: 100px; opacity: 100%; }
+    100% { max-height: 100lvh; }
   }
-  /* Inverse of the above, collapsing quickly at first (to avoid a delay if the element is already quite short)
-     then slowing towards 0. */
+  /*
+    Rough inverse of the above - animate from a maximum of full viewport height down to zero.
+    Since most elements will already be smaller than the viewport, most of the animation time is spent on the last 100px.
+    Simultaneously fades the content out, so that some visible animation starts immediately even for very short elements. 
+   */
   @keyframes collapse-height {
-    0% { max-height: 5000px; }
-    5% { max-height: 500px; }
-    50% { max-height: 100px; }
-    100% { max-height: 0; }
+    0% { max-height: 500lvh; opacity: 100%; }
+    5% { max-height: 50lvh; }
+    40% { max-height: 100px; opacity: 25%; }
+    100% { max-height: 0; opacity: 0; }
   }
 `;
