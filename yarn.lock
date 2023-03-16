@@ -1737,13 +1737,14 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-authress-login@^1.2.104:
-  version "1.2.107"
-  resolved "https://registry.yarnpkg.com/authress-login/-/authress-login-1.2.107.tgz#55cecb8b1ff51818864b56bc610cd45db3200847"
-  integrity sha512-qRMS2ZvTJb0srewoG302cEUFApVDb3e6pTjiepRJBQkTTE+TwwEzkPNTS2eFvafvEUbrwhPNdwgT2HkorQQTYQ==
+authress-login@^2.0:
+  version "2.0.190"
+  resolved "https://registry.yarnpkg.com/authress-login/-/authress-login-2.0.190.tgz#5d2c24b67710461c388a850ea5e8e3ee06819c7a"
+  integrity sha512-P1lGXF+d9MSnZEgZTHFBCVXM/6WSzWosvmTCKwg3LIR+yq/w8ZWc/3ttYW4W5UL72PRQulMAUD77IfSzcOk3ww==
   dependencies:
     axios "^0.21"
     cookie "^0.4.1"
+    lodash.take "^4.1.1"
 
 ava@^4.3.3:
   version "4.3.3"
@@ -4980,6 +4981,11 @@ lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
+
+lodash.take@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.take/-/lodash.take-4.1.1.tgz#0b4146dcb7a70c6153495187fc10b12b71fefadf"
+  integrity sha512-3T118EQjnhr9c0aBKCCMhQn0OBwRMz/O2WaRU6VH0TSKoMCmFtUpr0iUp+eWKODEiRXtYOK7R7SiBneKHdk7og==
 
 lodash.truncate@^4.4.2:
   version "4.4.2"
