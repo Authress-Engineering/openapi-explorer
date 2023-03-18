@@ -36,7 +36,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     type: dataType,
     format,
     cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+\s]/g, '').toLowerCase(),
-    pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
+    pattern: (schema.pattern && !schema.enum) ? schema.pattern.replace(/(^\^)|(\$$)/g, '') : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
     example: Array.isArray(schema.example) ? schema.example : (typeof schema.example !== 'undefined' ? `${schema.example}` : ''),
