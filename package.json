@@ -46,7 +46,7 @@
   ],
   "mode": "production",
   "dependencies": {
-    "authress-login": "^2.0",
+    "@authress/login": "^2.0",
     "base64url": "^3.0.1",
     "buffer": "^6.0.3",
     "color": "^4.2.3",
