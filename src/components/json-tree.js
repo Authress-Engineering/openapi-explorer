@@ -25,8 +25,7 @@ export default class JsonTree extends LitElement {
         display:flex;
       }
       .json-tree {
-        background: var(--primary-color);
-        color: white;
+        background: var(--bg2);
         padding: 12px;
 
         min-height: 30px;
@@ -76,7 +75,6 @@ export default class JsonTree extends LitElement {
       .number{color:var(--blue);}
       .null{color:var(--red);}
       .boolean{color:var(--orange);}
-      .object{color:white}
 
       .toolbar {
         display: none;
