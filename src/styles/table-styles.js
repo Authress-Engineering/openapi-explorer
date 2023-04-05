@@ -2,6 +2,7 @@ import { css } from 'lit';
 
 export default css`
 .m-table {
+  table-layout: fixed;
   border-spacing: 0;  
   border-collapse: separate;
   border: 1px solid var(--light-border-color);

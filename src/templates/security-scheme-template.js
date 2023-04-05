@@ -318,7 +318,7 @@ export default function securitySchemeTemplate() {
             <table role="presentation" class='m-table' style="width:100%">
               ${schemes.map((v) => html`
                 <tr>  
-                  <td style="max-width:500px; overflow-wrap: break-word;">
+                  <td colspan="1" style="max-width:500px; overflow-wrap: break-word;">
                     <div style="min-height:24px"> 
                       <span style="font-weight:bold">${v.typeDisplay}</span> 
                       ${v.finalKeyValue
@@ -337,7 +337,7 @@ export default function securitySchemeTemplate() {
                       : ''
                     }
                   </td>
-                  <td>
+                  <td colspan="3">
                     ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
                       ? html`
                         ${v.type.toLowerCase() === 'apikey'
