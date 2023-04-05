@@ -243,7 +243,7 @@ export default class ApiRequest extends LitElement {
 
       tableRows.push(html`
       <tr> 
-        <td style="width:160px; min-width:50px;">
+        <td colspan="1" style="width:160px; min-width:50px;">
           <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}">
             ${param.name}${!paramSchema.deprecated && param.required ? html`<span style='color:var(--red);'>*</span>` : ''}
           </div>
@@ -256,7 +256,7 @@ export default class ApiRequest extends LitElement {
         </td>  
         ${this.allowTry === 'true'
           ? html`
-            <td style="min-width:160px;">
+            <td colspan="2" style="min-width:160px;">
               ${paramSchema.type === 'array' && html`
                 <tag-input class="request-param" 
                   style = "width:100%;" 
@@ -299,7 +299,7 @@ export default class ApiRequest extends LitElement {
         }
         ${this.renderStyle === 'focused'
           ? html`
-            <td>
+            <td colspan="2">
               ${param.description
                 ? html`
                   <div class="param-description">
