@@ -34,9 +34,8 @@ export default class SchemaTree extends LitElement {
       css`
       .tree {
         min-height: 30px;
-        background: var(--primary-color);
+        background: var(--bg2);
         padding: 12px;
-        color: white;
         font-size:var(--font-size-small);
         text-align: left;
         line-height:calc(var(--font-size-small) + 6px);
