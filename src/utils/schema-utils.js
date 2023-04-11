@@ -167,6 +167,9 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
           return '2001:0db8:5b96:0000:0000:426f:8e17:642a';
         case 'uuid':
           return '4e0ba220-9575-11eb-a8b3-0242ac130003';
+        case 'byte':
+          // Byte type is actually a base64 encoded string: https://spec.openapis.org/oas/v3.0.0#data-types
+          return Buffer.from('example').toString('base64');
         default:
           return schemaObj.format;
       }
