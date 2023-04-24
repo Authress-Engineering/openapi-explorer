@@ -13,6 +13,7 @@
 * `fill-defaults` - [true] Fills the request data with the default data.
 * `collapse` - [false] Set the operations and components collapsed by default
 * `table` - [false] Converts the body displays from object json to a table for schemas
+* `schema-expand-level` - [9999] Expands the display of schemas and models to this depth. Set to `1` to display only the first level properties.
 
 ### Hide/Show Sections
 * `show-authentication` - Show the authentication section
