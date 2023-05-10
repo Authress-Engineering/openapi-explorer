@@ -28,7 +28,7 @@
             "get": {
                 "security": [
                     {
-                        "basicAuth": []
+                        "oauth": []
                     }
                 ],
                 "tags": [
@@ -181,6 +181,14 @@
             "basicAuth": {
                 "type": "http",
                 "scheme": "basic"
+            },
+            "oauth": {
+                "type": "oauth2",
+                "flows": {
+                    "implicit": {
+                        "authorizationUrl": "https://example.com/api/oauth/dialog"
+                    }
+                }
             }
         }
     }

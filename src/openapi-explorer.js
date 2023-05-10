@@ -547,6 +547,13 @@ export default class OpenApiExplorer extends LitElement {
       this.resolvedSpec = null;
       console.error('OpenAPI Explorer: Unable to resolve the API spec..', err); // eslint-disable-line no-console
     }
+
+    try {
+      await checkForAuthToken.call(this);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to check for authentication token', error);
+    }
   }
 
   // Public Method
