@@ -144,7 +144,17 @@ export async function checkForAuthToken(redirectToApiLocation) {
   const sanitizedUrlWithHash = newUrl.toString().replace(/#((code|state|access_token|id_token|authuser|expires_in|hd|prompt|scope|token_type)=[^&]+&?)*$/ig, '');
   history.replaceState({}, undefined, sanitizedUrlWithHash);
 
-  const { apiKeyId, flowId, url } = JSON.parse(base64url.decode(parameters.state));
+  let parsedState;
+  try {
+    // If somehow the state contains a question mark, just remove it, a ? is not a valid here
+    parsedState = JSON.parse(base64url.decode(parameters.state.replace(/\?.*$/, '')));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('The state parameter in the OAuth response is invalid', error, parameters.state);
+    return;
+  }
+
+  const { apiKeyId, flowId, url } = parsedState;
   if (redirectToApiLocation && url && !parameters.redirect_auth) {
     const apiExplorerLocation = new URL(url);
     Object.keys(parameters).forEach(key => apiExplorerLocation.searchParams.append(key, parameters[key]));
