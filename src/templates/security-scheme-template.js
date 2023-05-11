@@ -50,8 +50,14 @@ function updateOAuthKey(apiKeyId, tokenType = 'Bearer', accessToken) {
 }
 
 // Gets Access-Token in exchange of Authorization Code
-async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, grantType, authCode, sendClientSecretIn = 'header', apiKeyId, authFlowDivEl, scopes = null) {
+async function fetchAccessToken(tokenUrl, suggestedClientId, clientSecret, redirectUrl, grantType, authCode, sendClientSecretIn = 'header', apiKeyId, authFlowDivEl, scopes = null) {
   const respDisplayEl = authFlowDivEl ? authFlowDivEl.querySelector('.oauth-resp-display') : undefined;
+  
+  const { codeVerifier, clientId: requestClientId } = JSON.parse(localStorage.getItem('openapi-explorer-oauth') || '{}');
+  localStorage.removeItem('openapi-explorer-oauth');
+
+  const clientId = suggestedClientId || requestClientId;
+
   const urlFormParams = new URLSearchParams();
   const headers = new Headers();
   urlFormParams.append('grant_type', grantType);
@@ -73,8 +79,6 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
     urlFormParams.append('scope', scopes);
   }
 
-  const { codeVerifier } = JSON.parse(localStorage.getItem('openapi-explorer-oauth') || '{}');
-  localStorage.removeItem('openapi-explorer-oauth');
   if (codeVerifier) {
     urlFormParams.append('code_verifier', codeVerifier);
   }
@@ -190,22 +194,25 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   if (flowType === 'authorizationCode' || flowType === 'implicit') {
     const authUrlObj = new URL(authUrl);
     const authCodeParams = new URLSearchParams(authUrlObj.search);
+
+    let codeVerifier;
     if (flowType === 'authorizationCode') {
-      const randomBytes = new Uint32Array(3);
+      const randomBytes = new Uint32Array(12);
       (window.crypto || window.msCrypto).getRandomValues(randomBytes);
       authCodeParams.set('nonce', randomBytes.toString('hex').split(',').join(''));
       grantType = 'authorization_code';
       responseType = 'code';
-      const codeVerifier = randomBytes.toString('hex').split(',').join('');
+      codeVerifier = randomBytes.toString('hex').split(',').join('');
       const hash = await (window.crypto || window.msCrypto).subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
       const codeChallenge = base64url(hash);
 
       authCodeParams.set('code_challenge', codeChallenge);
       authCodeParams.set('code_challenge_method', 'S256');
-      localStorage.setItem('openapi-explorer-oauth', JSON.stringify({ codeVerifier }));
     } else if (flowType === 'implicit') {
       responseType = 'token';
     }
+    localStorage.setItem('openapi-explorer-oauth', JSON.stringify({ codeVerifier, clientId, apiKeyId, flowId: flowType }));
+
     const selectedScopes = checkedScopeEls.map((v) => v.value).join(' ');
     if (selectedScopes) {
       authCodeParams.set('scope', selectedScopes);
