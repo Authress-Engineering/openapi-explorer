@@ -185,8 +185,9 @@
             "oauth": {
                 "type": "oauth2",
                 "flows": {
-                    "implicit": {
-                        "authorizationUrl": "https://example.com/api/oauth/dialog"
+                    "authorizationCode": {
+                        "authorizationUrl": "https://example.com/api/oauth/dialog",
+                        "tokenUrl": "https://example.com/api/oauth/dialog"
                     }
                 }
             }
