@@ -13,6 +13,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix initial padding for non-object based field properties, by setting the min at 32px (or 2 * the shift which is 16px)
 * Ensure UI recordings do not include curl command which might include security tokens
 * Fix table layout so that the path parameters table has a wider input area.
+* Don't filter out tags that have no paths, no-path tags can be used for documentation.
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119

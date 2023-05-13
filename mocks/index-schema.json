@@ -9,6 +9,7 @@
             "email": "support@test.com"
         }
     },
+    "tags": [{ "name": "Example Tag", "description": "# Example tag description\n## Sub Menu example" }],
     "servers": [
         {
             "url": "https://testserver:{port}/",
@@ -169,7 +170,7 @@
                             },
                             "testdate2": {
                                 "type": "string",
-                                "format": "date"
+                                "format": "byte"
                             }
                         }
                     }
