@@ -226,7 +226,7 @@ function groupByTags(openApiSpec) {
           let specTagsItem;
 
           if (openApiSpec.tags) {
-            specTagsItem = openApiSpec.tags.find((v) => (v.name.toLowerCase() === tag.toLowerCase()));
+            specTagsItem = tags.find((v) => (v.name.toLowerCase() === tag.toLowerCase()));
           }
 
           tagObj = tags.find((v) => v.name === tag);
@@ -309,5 +309,5 @@ function groupByTags(openApiSpec) {
     }); // End of Methods
   }
 
-  return tags.filter((tag) => tag.paths && tag.paths.length > 0);
+  return tags;
 }
