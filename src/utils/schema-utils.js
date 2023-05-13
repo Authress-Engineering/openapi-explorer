@@ -139,7 +139,11 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (typeValue.match(/^string/g)) {
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
-      return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+      try {
+        return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+      } catch (error) {
+        return fallbackPropertyName || 'string';
+      }
     }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {

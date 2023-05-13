@@ -16,7 +16,6 @@ import './tag-input';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
-const truncateString = (str, length) => (str && str.length > length ? `${str.substring(0, length - 1)}…` : str);
 
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
@@ -215,7 +214,14 @@ export default class ApiRequest extends LitElement {
                 ? html`
                   <div class="param-constraint">
                     ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br>` : ''}
-                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br>` : ''}
+                    ${paramSchema.pattern ? html`
+                    <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
+                      <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
+                      <div style="white-space:nowrap; text-overflow:ellipsis; max-width:100%; overflow:hidden;">${paramSchema.pattern}</div>
+                      <br>
+                      <div class="tooltip-text" style="position: absolute; display:block;">${paramSchema.pattern}</div>
+                    </div>
+                    ` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
