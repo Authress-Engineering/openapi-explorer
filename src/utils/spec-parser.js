@@ -333,5 +333,5 @@ function groupByTags(openApiSpec, sortEndpointsBy, allowDuplicatedPathsByTag, so
   }
   */
 
-  return tags.filter((tag) => tag.paths && tag.paths.length > 0);
+  return tags;
 }

@@ -86,7 +86,7 @@ export default function navbarTemplate() {
             <div class='nav-bar-section-title'>${getI18nText('menu.operations')}</div>  
           </slot>
           <div style="" part="navbar-operations-header-collapse">
-            ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
+            ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => !tag.paths.length && !this.matchPaths || tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
               ? html`
                 <div class="toggle">▾</div>`
               : ''
@@ -97,7 +97,7 @@ export default function navbarTemplate() {
 
       <!-- TAGS AND PATHS-->
       ${this.resolvedSpec.tags
-        .filter((tag) => tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
+        .filter((tag) => !tag.paths.length && !this.matchPaths || tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
         .map((tag) => html`
           <slot name="nav-${tag.elementId}">
             <div class='nav-bar-tag-and-paths ${tag.expanded ? '' : 'collapsed'}'>
