@@ -463,7 +463,7 @@ export function pathSecurityTemplate(pathSecurity) {
         </svg>
           ${orSecurityKeys1.map((orSecurityItem1, i) => html`
           ${i !== 0 ? html`<div style="padding:3px 4px;"> OR </div>` : ''}
-          <div class="tooltip" style="cursor: pointer;">
+          <div class="security-tooltip tooltip" style="cursor: pointer;">
             <div style="padding:2px 4px; white-space:nowrap; text-overflow:ellipsis;max-width:150px; overflow:hidden;">
               <span part="anchor anchor-operation-security"> ${orSecurityItem1.securityTypes} </span>
             </div>

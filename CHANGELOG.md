@@ -14,6 +14,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Ensure UI recordings do not include curl command which might include security tokens
 * Fix table layout so that the path parameters table has a wider input area.
 * Don't filter out tags that have no paths, no-path tags can be used for documentation.
+* Fix pattern truncation to display full pattern on hover.
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
