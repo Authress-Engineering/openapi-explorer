@@ -103,9 +103,6 @@ export default class JsonTree extends LitElement {
         border-width: 0 0 1px 0;
         border-color:var(--primary-color);
       }
-      .key-descr {
-        line-height: 1.7;
-      }
       .schema-root-type.xxx-of {
         display:none;
       }

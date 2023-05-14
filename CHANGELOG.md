@@ -15,6 +15,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix table layout so that the path parameters table has a wider input area.
 * Don't filter out tags that have no paths, no-path tags can be used for documentation.
 * Fix pattern truncation to display full pattern on hover.
+* Center description in request forms when no constraints are specified.
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
