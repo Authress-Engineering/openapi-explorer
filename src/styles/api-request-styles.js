@@ -40,7 +40,11 @@ export default css`
   display:none;
 }
 .api-request .param-description p {
-  margin-block: 0 0.5em;
+  margin-block: 0 0;
+}
+
+.api-request .param-description + .param-constraint {
+  margin-block-start: 0.5em;
 }
 
 .api-request .top-gap{margin-top:24px;}

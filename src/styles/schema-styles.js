@@ -31,7 +31,6 @@ export default css`
 }
 
 .key-descr {
-  line-height: 1.7;
   font-family:var(--font-regular);
   flex-shrink: 1;
   text-overflow: ellipsis;
