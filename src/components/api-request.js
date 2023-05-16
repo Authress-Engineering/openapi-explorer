@@ -997,12 +997,12 @@ export default class ApiRequest extends LitElement {
             const buffer = await fetchResponse.arrayBuffer();
             try {
               respText = new TextDecoder(encoding).decode(buffer);
-            } catch {
+            } catch (_) {
               respText = new TextDecoder('utf-8').decode(buffer);
             }
             try {
               this.responseText = JSON.stringify(JSON.parse(respText), null, 8);
-            } catch {
+            } catch (_) {
               this.responseText = respText;
             }
           } else {
