@@ -362,6 +362,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
     resultObj['::type'] = 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
+    resultObj['::title'] = schema.title || '';
+    resultObj['::description'] = schema.description || '';
     return resultObj;
   } else if (Array.isArray(schema.type)) {
     const obj = { '::type': '' };
@@ -461,9 +463,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
   } else if (schema.type === 'array' || schema.items) { // If Array
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
-    obj['::description'] = schema.description
-      ? schema.description
-      : (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
+    obj['::description'] = schema.description || (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
