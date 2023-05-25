@@ -115,7 +115,7 @@ export default class SchemaTable extends LitElement {
     `;
   }
 
-  generateTree(data, dataType = 'object', key = '', description = '', schemaLevel = 0, indentLevel = 0) {
+  generateTree(data, dataType = 'object', key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
     const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
     const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
     // 16px space indentation at each level, start the first one at 32px to align with the field hr key row object
@@ -167,7 +167,7 @@ export default class SchemaTable extends LitElement {
         return undefined;
       }
       
-      const displayLine = [description].filter(v => v).join(' ');
+      const displayLine = [title && `**${title}:**`, description].filter(v => v).join(' ');
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
@@ -197,13 +197,13 @@ export default class SchemaTable extends LitElement {
           `
         }
         <div class='object-body'>
-        ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
+        ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
             : html`
               ${Object.keys(data).map((dataKey) =>
                 !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
                 || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
                 ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                      data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+                      data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
                 : ''
               )}`
           }
@@ -234,9 +234,8 @@ export default class SchemaTable extends LitElement {
           <div class="attributes ${cssType}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
         <div class='td key-descr'>
-          ${dataType === 'array' ? html`<span class="m-markdown-small">${unsafeHTML(marked(description))}</span>` : ''}
           <span class="m-markdown-small" style="vertical-align: middle;">
-            ${unsafeHTML(marked(`${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
+            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraint ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}
