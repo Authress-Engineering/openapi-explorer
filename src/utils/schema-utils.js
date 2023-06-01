@@ -36,7 +36,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     type: dataType,
     format,
     cssType: dataType.replace(/┃.*/g, '').replace(/[^a-zA-Z0-9+\s]/g, '').toLowerCase(),
-    pattern: (schema.pattern && !schema.enum) ? schema.pattern : '',
+    pattern: (schema.pattern && !schema.enum) ? schema.pattern.replace(/(^\^)|(\$$)/g, '') : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
     example: Array.isArray(schema.example) ? schema.example : (typeof schema.example !== 'undefined' ? `${schema.example}` : ''),
@@ -139,7 +139,11 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   if (typeValue.match(/^string/g)) {
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
-      return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+      try {
+        return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+      } catch (error) {
+        return fallbackPropertyName || 'string';
+      }
     }
     if (schemaObj.format) {
       switch (schemaObj.format.toLowerCase()) {
@@ -167,6 +171,9 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
           return '2001:0db8:5b96:0000:0000:426f:8e17:642a';
         case 'uuid':
           return '4e0ba220-9575-11eb-a8b3-0242ac130003';
+        case 'byte':
+          // Byte type is actually a base64 encoded string: https://spec.openapis.org/oas/v3.0.0#data-types
+          return Buffer.from('example').toString('base64');
         default:
           return schemaObj.format;
       }
@@ -355,6 +362,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
     resultObj['::type'] = 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
+    resultObj['::title'] = schema.title || '';
+    resultObj['::description'] = schema.description || '';
     return resultObj;
   } else if (Array.isArray(schema.type)) {
     const obj = { '::type': '' };
@@ -454,9 +463,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
   } else if (schema.type === 'array' || schema.items) { // If Array
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
-    obj['::description'] = schema.description
-      ? schema.description
-      : (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
+    obj['::description'] = schema.description || (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;

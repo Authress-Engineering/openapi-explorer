@@ -20,6 +20,15 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
+"@authress/login@^2.0":
+  version "2.2.214"
+  resolved "https://registry.yarnpkg.com/@authress/login/-/login-2.2.214.tgz#7e84ec90d3317525be117afed835b7f8db6b90dd"
+  integrity sha512-pMnzQOvI6p5aer8EqJcfiOp5r+mkIMJQQguxR6RPBvoT73tsX3bKj+08bJ2e+4chfakCqRi1fIY2lGnEuGJ3Vg==
+  dependencies:
+    axios "^0.21"
+    cookie "^0.5.0"
+    lodash.take "^4.1.1"
+
 "@babel/cli@^7.13.14":
   version "7.18.10"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.18.10.tgz#4211adfc45ffa7d4f3cee6b60bb92e9fe68fe56a"
@@ -1737,14 +1746,6 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-authress-login@^1.2.104:
-  version "1.2.107"
-  resolved "https://registry.yarnpkg.com/authress-login/-/authress-login-1.2.107.tgz#55cecb8b1ff51818864b56bc610cd45db3200847"
-  integrity sha512-qRMS2ZvTJb0srewoG302cEUFApVDb3e6pTjiepRJBQkTTE+TwwEzkPNTS2eFvafvEUbrwhPNdwgT2HkorQQTYQ==
-  dependencies:
-    axios "^0.21"
-    cookie "^0.4.1"
-
 ava@^4.3.3:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/ava/-/ava-4.3.3.tgz#4ddcb650ed059e4e999a4b640de53ff00f4a008b"
@@ -2519,15 +2520,10 @@ cookie-signature@1.0.6:
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.6.tgz#e303a882b342cc3ee8ca513a79999734dab3ae2c"
   integrity sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==
 
-cookie@0.5.0:
+cookie@0.5.0, cookie@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
   integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
-
-cookie@^0.4.1:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
-  integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
 
 copy-descriptor@^0.1.0:
   version "0.1.1"
@@ -4980,6 +4976,11 @@ lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
+
+lodash.take@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.take/-/lodash.take-4.1.1.tgz#0b4146dcb7a70c6153495187fc10b12b71fefadf"
+  integrity sha512-3T118EQjnhr9c0aBKCCMhQn0OBwRMz/O2WaRU6VH0TSKoMCmFtUpr0iUp+eWKODEiRXtYOK7R7SiBneKHdk7og==
 
 lodash.truncate@^4.4.2:
   version "4.4.2"

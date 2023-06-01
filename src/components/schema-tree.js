@@ -5,6 +5,7 @@ import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles';
 import BorderStyles from '../styles/border-styles';
+import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class SchemaTree extends LitElement {
   static get properties() {
@@ -30,12 +31,12 @@ export default class SchemaTree extends LitElement {
       FontStyles,
       SchemaStyles,
       BorderStyles,
+      KeyFrameStyles,
       css`
       .tree {
         min-height: 30px;
-        background: var(--primary-color);
+        background: var(--bg2);
         padding: 12px;
-        color: white;
         font-size:var(--font-size-small);
         text-align: left;
         line-height:calc(var(--font-size-small) + 6px);
@@ -72,12 +73,13 @@ export default class SchemaTree extends LitElement {
       }
 
       .inside-bracket-wrapper {
-        max-height: 10000px;
-        transition: max-height 1.2s ease-in-out;
         overflow: hidden;
       }
+      .tr:not(.collapsed) + .inside-bracket-wrapper {
+        animation: linear 0.2s expand-height;
+      }
       .tr.collapsed + .inside-bracket-wrapper {
-        transition: max-height 1.2s ease-in-out -1.1s;
+        animation: linear 0.2s collapse-height;
         max-height: 0;
       }
 
@@ -114,7 +116,7 @@ export default class SchemaTree extends LitElement {
     this.requestUpdate();
   }
 
-  generateTree(data, dataType = 'object', arrayType = '', flags = {}, key = '', description = '', schemaLevel = 0, indentLevel = 0) {
+  generateTree(data, dataType = 'object', arrayType = '', flags = {}, key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
     if (!data) {
       return html`<div class="null" style="display:inline;">
         <span class="key-label xxx-of-key"> ${key.replace('::OPTION~', '')}</span>
@@ -199,7 +201,7 @@ export default class SchemaTree extends LitElement {
         return undefined;
       }
 
-      const displayLine = [flags['🆁'] || flags['🆆'], description].filter(v => v).join(' ');
+      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}:**`, description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -223,13 +225,13 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="inside-bracket-wrapper">
           <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' ? 0 : leftPadding}px;'>
-            ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', '', newSchemaLevel, newIndentLevel)}`
+            ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
               : html`
                 ${Object.keys(data).map((dataKey) =>
                   !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
                   || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
                   ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                        data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+                        data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
                   : ''
                 )}`
             }
@@ -264,7 +266,7 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${dataType === 'array' && description || `${schemaTitle ? `**${schemaTitle}:**` : ''} ${schemaDescription}` || ''}`))}
+            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}

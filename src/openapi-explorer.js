@@ -21,6 +21,7 @@ import InputStyles from './styles/input-styles';
 import SchemaStyles from './styles/schema-styles';
 import FlexStyles from './styles/flex-styles';
 import TableStyles from './styles/table-styles';
+import KeyFrameStyles from './styles/key-frame-styles';
 import EndpointStyles from './styles/endpoint-styles';
 import PrismStyles from './styles/prism-styles';
 import TabStyles from './styles/tab-styles';
@@ -125,6 +126,7 @@ export default class OpenApiExplorer extends LitElement {
       InputStyles,
       FlexStyles,
       TableStyles,
+      KeyFrameStyles,
       EndpointStyles,
       PrismStyles,
       TabStyles,
@@ -269,12 +271,12 @@ export default class OpenApiExplorer extends LitElement {
         width:100%;
       }
 
-      .tooltip {
+      .security-tooltip {
         border: 1px solid var(--border-color);
         border-left-width: 4px;
         margin-left:2px;
       }
-      .tooltip a {
+      .security-tooltip a {
         color: var(--fg2);
         text-decoration: none;
       }
@@ -288,18 +290,17 @@ export default class OpenApiExplorer extends LitElement {
         color: var(--primary-color);
         border-color: var(--primary-color);
       }
+      .tooltip-replace:hover {
+        visibility: hidden;
+      }
       .tooltip:hover a:hover {
         color: var(--primary-color);
       }
 
       .tooltip:hover .tooltip-text {
         visibility: visible;
+        cursor: text;
         opacity: 1;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
       }
 
       @media only screen and (max-width: 767.98px) {
@@ -544,6 +545,13 @@ export default class OpenApiExplorer extends LitElement {
       this.loadFailed = true;
       this.resolvedSpec = null;
       console.error('OpenAPI Explorer: Unable to resolve the API spec..', err); // eslint-disable-line no-console
+    }
+
+    try {
+      await checkForAuthToken.call(this);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to check for authentication token', error);
     }
   }
 

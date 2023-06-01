@@ -80,3 +80,19 @@ module.exports = {
 };
 
 ```
+
+## Typescript
+
+`error TS2339: Property 'openapi-explorer' does not exist on type 'JSX.IntrinsicElements'.`
+
+Add this declaration in your component that references the `import 'openapi-explorer'`:
+
+```tsx
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'openapi-explorer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+```

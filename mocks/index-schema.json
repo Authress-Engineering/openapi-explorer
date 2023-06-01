@@ -9,6 +9,7 @@
             "email": "support@test.com"
         }
     },
+    "tags": [{ "name": "Example Tag", "description": "# Example tag description\n## Sub Menu example" }],
     "servers": [
         {
             "url": "https://testserver:{port}/",
@@ -28,7 +29,7 @@
             "get": {
                 "security": [
                     {
-                        "basicAuth": []
+                        "oauth": []
                     }
                 ],
                 "tags": [
@@ -91,7 +92,8 @@
                         "type": "integer"
                     },
                     "httpStatus": {
-                        "type": "string"
+                        "type": "string",
+                        "pattern": "^(?!.*(\/\/|[*\\w])[*])([*]|[\/]?((([a-zA-Z0-9-_.+=~|@]{1,128}|[*])(:([a-zA-Z0-9-_.+=~|@]{1,128}|[*]))*)\/?){0,15}([\/][*]|[\/]|)|Authress:[*])$"
                     },
                     "status": {
                         "type": "string"
@@ -169,7 +171,7 @@
                             },
                             "testdate2": {
                                 "type": "string",
-                                "format": "date"
+                                "format": "byte"
                             }
                         }
                     }
@@ -181,6 +183,15 @@
             "basicAuth": {
                 "type": "http",
                 "scheme": "basic"
+            },
+            "oauth": {
+                "type": "oauth2",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://example.com/api/oauth/dialog",
+                        "tokenUrl": "https://example.com/api/oauth/dialog"
+                    }
+                }
             }
         }
     }

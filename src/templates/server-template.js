@@ -23,14 +23,14 @@ function onApiServerVarChange(e, serverObj) {
 
 /* eslint-disable indent */
 function serverVarsTemplate() {
-  return this.selectedServer && this.selectedServer.variables
+  return Object.keys(this.selectedServer?.variables || {}).length
     ? html`
     <div class="table-title">${getI18nText('api-servers.server-variables')}</div>
     <table role="presentation" class='m-table'>
       ${Object.entries(this.selectedServer.variables).map((kv) => html`
         <tr>
-          <td style="vertical-align: middle;" >${kv[0]}</td>
-          <td>
+          <td colspan="1" style="vertical-align: middle;" >${kv[0]}</td>
+          <td colspan="2" >
             ${kv[1].enum
             ? html`
             <select

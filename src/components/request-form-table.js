@@ -107,7 +107,9 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
                     data-enum="${v.trim()}"
                     @click="${(e) => {
                       const inputEl = e.target.closest('table').querySelector(`[data-pname="${keyLabel}"]`);
-                      inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
+                      if (inputEl) {
+                        inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
+                      }
                     }}"> 
                     ${v} 
                   </a>`
@@ -132,7 +134,9 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
               data-example = "${Array.isArray(example) && example.join('~|~') || example || ''}"
               @click="${(e) => {
                 const inputEl = e.target.closest('table').querySelector(`[data-pname="${keyLabel}"]`);
-                inputEl.value = e.target.dataset.exampleType === 'array' ? e.target.dataset.example.split('~|~') : e.target.dataset.example;
+                if (inputEl) {
+                  inputEl.value = e.target.dataset.exampleType === 'array' ? e.target.dataset.example.split('~|~') : e.target.dataset.example;
+                }
               }}">
               ${type === 'array' ? example.join(', ') : example}
             </a>

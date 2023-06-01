@@ -4,6 +4,7 @@ import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import BorderStyles from '../styles/border-styles';
 import InputStyles from '../styles/input-styles';
+import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class JsonTree extends LitElement {
   static get properties() {
@@ -18,13 +19,13 @@ export default class JsonTree extends LitElement {
       FontStyles,
       BorderStyles,
       InputStyles,
+      KeyFrameStyles,
       css`
       :host{
         display:flex;
       }
       .json-tree {
-        background: var(--primary-color);
-        color: white;
+        background: var(--bg2);
         padding: 12px;
 
         min-height: 30px;
@@ -56,12 +57,13 @@ export default class JsonTree extends LitElement {
       }
 
       .inside-bracket-wrapper {
-        max-height: 10000px;
-        transition: max-height 1.2s ease-in-out;
         overflow: hidden;
       }
+      .open-bracket:not(.collapsed) + .inside-bracket-wrapper {
+        animation: linear 0.2s expand-height;
+      }
       .open-bracket.collapsed + .inside-bracket-wrapper {
-        transition: max-height 1.2s ease-in-out -1.1s;
+        animation: linear 0.2s collapse-height;
         max-height: 0;
       }
       .inside-bracket {
@@ -73,7 +75,6 @@ export default class JsonTree extends LitElement {
       .number{color:var(--blue);}
       .null{color:var(--red);}
       .boolean{color:var(--orange);}
-      .object{color:white}
 
       .toolbar {
         display: none;
@@ -102,9 +103,6 @@ export default class JsonTree extends LitElement {
         border-style: dotted;
         border-width: 0 0 1px 0;
         border-color:var(--primary-color);
-      }
-      .key-descr {
-        line-height: 1.7;
       }
       .schema-root-type.xxx-of {
         display:none;

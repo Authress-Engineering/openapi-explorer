@@ -16,7 +16,6 @@ import './tag-input';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
-const truncateString = (str, length) => (str && str.length > length ? `${str.substring(0, length - 1)}…` : str);
 
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
@@ -111,8 +110,8 @@ export default class ApiRequest extends LitElement {
   }
 
   /* eslint-disable indent */
-  inputParametersTemplate(paramType) {
-    const filteredParams = this.parameters ? this.parameters.filter((param) => param.in === paramType) : [];
+  inputParametersTemplate(paramLocation) {
+    const filteredParams = this.parameters ? this.parameters.filter((param) => param.in === paramLocation) : [];
     if (filteredParams.length === 0) {
       return '';
     }
@@ -122,7 +121,7 @@ export default class ApiRequest extends LitElement {
       query: 'QUERY-STRING PARAMETERS',
       header: 'REQUEST HEADERS',
       cookie: 'COOKIES'
-    }[paramType];
+    }[paramLocation];
 
     const tableRows = [];
     for (const param of filteredParams) {
@@ -136,7 +135,7 @@ export default class ApiRequest extends LitElement {
       const defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
       let paramStyle = 'form';
       let paramExplode = true;
-      if (paramType === 'query') {
+      if (paramLocation === 'query') {
         if (param.style && 'form spaceDelimited pipeDelimited'.includes(param.style)) {
           paramStyle = param.style;
         }
@@ -147,7 +146,7 @@ export default class ApiRequest extends LitElement {
 
       tableRows.push(html`
       <tr> 
-        <td style="width:160px; min-width:50px;">
+        <td colspan="1" style="width:160px; min-width:50px;">
           <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}">
             ${param.name}${!paramSchema.deprecated && param.required ? html`<span style='color:var(--red);'>*</span>` : ''}
           </div>
@@ -158,52 +157,49 @@ export default class ApiRequest extends LitElement {
             }${!paramSchema.deprecated && param.required ? html`<span style='opacity: 0;'>*</span>` : ''}
           </div>
         </td>  
-        ${this.allowTry === 'true'
-          ? html`
-            <td style="min-width:160px;">
-              ${paramSchema.type === 'array' && html`
-                <tag-input class="request-param" 
-                  style = "width:100%;" 
-                  data-ptype = "${paramType}"
-                  data-pname = "${param.name}"
-                  data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                  data-param-serialize-style = "${paramStyle}"
-                  data-param-serialize-explode = "${paramExplode}"
-                  data-array = "true"
-                  placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
-                  .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"></tag-input>`
-              || paramSchema.type === 'object' && html`
-                <textarea 
-                  class = "textarea small request-param"
-                  part = "textarea small textarea-param"
-                  rows = 3
-                  data-ptype = "${paramType}"
-                  data-pname = "${param.name}"
-                  data-default = "${defaultVal}"
-                  data-param-serialize-style = "${paramStyle}"
-                  data-param-serialize-explode = "${paramExplode}"
-                  spellcheck = "false"
-                  placeholder="${paramSchema.example || defaultVal || ''}"
-                  style = "width:100%;"
-                  .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
-              || html`
-                <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
-                  class="request-param"
-                  part="textbox textbox-param"
-                  data-ptype="${paramType}"
-                  data-pname="${param.name}" 
-                  data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                  data-array="false"
-                  @keyup="${this.requestParamFunction}"
-                  .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-                />`
-              }
-            </td>`
-          : ''
-        }
+        <td colspan="2" style="min-width:160px;">
+          ${this.allowTry === 'true'
+          ? paramSchema.type === 'array' && html`
+              <tag-input class="request-param" 
+                style = "width:100%;" 
+                data-ptype = "${paramLocation}"
+                data-pname = "${param.name}"
+                data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                data-param-serialize-style = "${paramStyle}"
+                data-param-serialize-explode = "${paramExplode}"
+                data-array = "true"
+                placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
+                .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"></tag-input>`
+            || paramSchema.type === 'object' && html`
+              <textarea 
+                class = "textarea small request-param"
+                part = "textarea small textarea-param"
+                rows = 3
+                data-ptype = "${paramLocation}"
+                data-pname = "${param.name}"
+                data-default = "${defaultVal}"
+                data-param-serialize-style = "${paramStyle}"
+                data-param-serialize-explode = "${paramExplode}"
+                spellcheck = "false"
+                placeholder="${paramSchema.example || defaultVal || ''}"
+                style = "width:100%;"
+                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
+            || html`
+              <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
+                class="request-param"
+                part="textbox textbox-param"
+                data-ptype="${paramLocation}"
+                data-pname="${param.name}" 
+                data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                data-array="false"
+                @keyup="${this.requestParamFunction}"
+                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+              />`
+          : ''}
+        </td>
         ${this.renderStyle === 'focused'
           ? html`
-            <td>
+            <td colspan="2">
               ${param.description
                 ? html`
                   <div class="param-description">
@@ -215,7 +211,14 @@ export default class ApiRequest extends LitElement {
                 ? html`
                   <div class="param-constraint">
                     ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br>` : ''}
-                    ${paramSchema.pattern ? html`<span style="font-weight:bold">Pattern: </span>${truncateString(paramSchema.pattern, 60)}<br>` : ''}
+                    ${paramSchema.pattern ? html`
+                    <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
+                      <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
+                      <div style="white-space:nowrap; text-overflow:ellipsis; max-width:100%; overflow:hidden;">${paramSchema.pattern}</div>
+                      <br>
+                      <div class="tooltip-text" style="position: absolute; display:block;">${paramSchema.pattern}</div>
+                    </div>
+                    ` : ''}
                     ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
@@ -225,11 +228,7 @@ export default class ApiRequest extends LitElement {
                           @click="${(e) => {
                             const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
                             if (inputEl) {
-                              if (e.target.dataset.type === 'array') {
-                                inputEl.value = [e.target.dataset.enum];
-                              } else {
-                                inputEl.value = e.target.dataset.enum;
-                              }
+                              inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
                             }
                           }}"
                         >
@@ -244,15 +243,85 @@ export default class ApiRequest extends LitElement {
         : ''
       }
     `);
+
+      const rowExample = this.exampleListTemplate.call(this, param, paramSchema.type);
+      if (rowExample) {
+        tableRows.push(html`
+          <td colspan="1" style="width:160px; min-width:50px;">
+
+          </td>  
+          <td colspan="2" style="min-width:160px;">
+            ${rowExample}
+          </td>
+        `);
+      }
     }
 
     return html`
-    <div class="table-title top-gap">${title}${paramType === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
+    <div class="table-title top-gap">${title}${paramLocation === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
     <div style="display:block; overflow-x:auto; max-width:100%;">
       <table role="presentation" class="m-table" style="width:100%; word-break:break-word;">
         ${tableRows}
       </table>
     </div>`;
+  }
+
+  renderExample(example, paramType, paramName) {
+    return html`
+      <a
+        part="anchor anchor-param-example"
+        class="${this.allowTry === 'true' ? '' : 'inactive-link'}"
+        data-example-type="${paramType === 'array' ? paramType : 'string'}"
+        data-example="${example.exampleValue && Array.isArray(example.exampleValue) ? example.exampleValue?.join('~|~') : example.exampleValue || ''}"
+        @click="${(e) => {
+          const inputEl = e.target.closest('table').querySelector(`[data-pname="${paramName}"]`);
+          if (inputEl) {
+            inputEl.value = paramType === 'array' ? (e.target.dataset.example.split('~|~') || []) : e.target.dataset.example;
+          }
+        }}">${example.exampleValue && Array.isArray(example.exampleValue) ? example.exampleValue?.join(', ') : example.exampleValue || '∅'}
+      </a>
+    `;
+  }
+
+  renderShortFormatExamples(examples, paramType, paramName) {
+    return html`${examples.map((example, i) => html`
+      ${i === 0 ? '' : '┃'}
+      ${this.renderExample(example, paramType, paramName)}`)}`;
+  }
+
+  renderLongFormatExamples(exampleList, paramType, paramName) {
+    return html`
+      <ul style="margin-block-start: 0.25em;">
+        ${exampleList.map(example =>
+          html`
+            <li>
+              ${this.renderExample(example, paramType, paramName)}
+              ${example.exampleSummary?.length > 0 ? html`<span>&lpar;${example.exampleSummary}&rpar;</span>` : ''}
+              ${example.exampleDescription?.length > 0 ? html`<p>${unsafeHTML(marked(example.exampleDescription))}</p>` : ''}
+            </li>`
+        )}
+      </ul>`;
+  }
+
+  /* eslint-disable indent */
+
+  exampleListTemplate(param, paramType) {
+    const paramName = param.name;
+    const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
+
+    const examples = generateExample(
+      param.examples || param.example && { Example: { value: param.example } } || paramSchema.examples || paramSchema.example && { Example: { value: param.example } },
+      null, param.schema, null, false, true, 'json', false);
+
+    const someExampleWithSummaryOrDescription = examples.some((x) => x.exampleSummary?.length > 0 || x.exampleDescription?.length > 0);
+    return html` ${examples.length > 0
+      ? html`<span style="font-weight:bold">Examples: </span>
+          ${
+            someExampleWithSummaryOrDescription
+            ? this.renderLongFormatExamples(examples, paramType, paramName)
+            : this.renderShortFormatExamples(examples, paramType, paramName)
+          }`
+      : ''}`;
   }
 
   resetRequestBodySelection() {
@@ -520,7 +589,9 @@ export default class ApiRequest extends LitElement {
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
           <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
-          <pre><code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code></pre>
+          <pre class="fs-exclude" data-hj-suppress data-sl="mask">
+            <code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code>
+          </pre>
         </div>
       </div>`;
   }
@@ -846,12 +917,12 @@ export default class ApiRequest extends LitElement {
             const buffer = await fetchResponse.arrayBuffer();
             try {
               respText = new TextDecoder(encoding).decode(buffer);
-            } catch {
+            } catch (_) {
               respText = new TextDecoder('utf-8').decode(buffer);
             }
             try {
               this.responseText = JSON.stringify(JSON.parse(respText), null, 8);
-            } catch {
+            } catch (_) {
               this.responseText = respText;
             }
           } else {

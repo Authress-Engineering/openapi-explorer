@@ -50,8 +50,14 @@ function updateOAuthKey(apiKeyId, tokenType = 'Bearer', accessToken) {
 }
 
 // Gets Access-Token in exchange of Authorization Code
-async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, grantType, authCode, sendClientSecretIn = 'header', apiKeyId, authFlowDivEl, scopes = null) {
+async function fetchAccessToken(tokenUrl, suggestedClientId, clientSecret, redirectUrl, grantType, authCode, sendClientSecretIn = 'header', apiKeyId, authFlowDivEl, scopes = null) {
   const respDisplayEl = authFlowDivEl ? authFlowDivEl.querySelector('.oauth-resp-display') : undefined;
+  
+  const { codeVerifier, clientId: requestClientId } = JSON.parse(localStorage.getItem('openapi-explorer-oauth') || '{}');
+  localStorage.removeItem('openapi-explorer-oauth');
+
+  const clientId = suggestedClientId || requestClientId;
+
   const urlFormParams = new URLSearchParams();
   const headers = new Headers();
   urlFormParams.append('grant_type', grantType);
@@ -73,8 +79,6 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
     urlFormParams.append('scope', scopes);
   }
 
-  const { codeVerifier } = JSON.parse(localStorage.getItem('openapi-explorer-oauth') || '{}');
-  localStorage.removeItem('openapi-explorer-oauth');
   if (codeVerifier) {
     urlFormParams.append('code_verifier', codeVerifier);
   }
@@ -144,7 +148,17 @@ export async function checkForAuthToken(redirectToApiLocation) {
   const sanitizedUrlWithHash = newUrl.toString().replace(/#((code|state|access_token|id_token|authuser|expires_in|hd|prompt|scope|token_type)=[^&]+&?)*$/ig, '');
   history.replaceState({}, undefined, sanitizedUrlWithHash);
 
-  const { apiKeyId, flowId, url } = JSON.parse(base64url.decode(parameters.state));
+  let parsedState;
+  try {
+    // If somehow the state contains a question mark, just remove it, a ? is not a valid here
+    parsedState = JSON.parse(base64url.decode(parameters.state.replace(/\?.*$/, '')));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('The state parameter in the OAuth response is invalid', error, parameters.state);
+    return;
+  }
+
+  const { apiKeyId, flowId, url } = parsedState;
   if (redirectToApiLocation && url && !parameters.redirect_auth) {
     const apiExplorerLocation = new URL(url);
     Object.keys(parameters).forEach(key => apiExplorerLocation.searchParams.append(key, parameters[key]));
@@ -180,22 +194,25 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   if (flowType === 'authorizationCode' || flowType === 'implicit') {
     const authUrlObj = new URL(authUrl);
     const authCodeParams = new URLSearchParams(authUrlObj.search);
+
+    let codeVerifier;
     if (flowType === 'authorizationCode') {
-      const randomBytes = new Uint32Array(3);
+      const randomBytes = new Uint32Array(12);
       (window.crypto || window.msCrypto).getRandomValues(randomBytes);
       authCodeParams.set('nonce', randomBytes.toString('hex').split(',').join(''));
       grantType = 'authorization_code';
       responseType = 'code';
-      const codeVerifier = randomBytes.toString('hex').split(',').join('');
+      codeVerifier = randomBytes.toString('hex').split(',').join('');
       const hash = await (window.crypto || window.msCrypto).subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
       const codeChallenge = base64url(hash);
 
       authCodeParams.set('code_challenge', codeChallenge);
       authCodeParams.set('code_challenge_method', 'S256');
-      localStorage.setItem('openapi-explorer-oauth', JSON.stringify({ codeVerifier }));
     } else if (flowType === 'implicit') {
       responseType = 'token';
     }
+    localStorage.setItem('openapi-explorer-oauth', JSON.stringify({ codeVerifier, clientId, apiKeyId, flowId: flowType }));
+
     const selectedScopes = checkedScopeEls.map((v) => v.value).join(' ');
     if (selectedScopes) {
       authCodeParams.set('scope', selectedScopes);
@@ -318,7 +335,7 @@ export default function securitySchemeTemplate() {
             <table role="presentation" class='m-table' style="width:100%">
               ${schemes.map((v) => html`
                 <tr>  
-                  <td style="max-width:500px; overflow-wrap: break-word;">
+                  <td colspan="1" style="max-width:500px; overflow-wrap: break-word;">
                     <div style="min-height:24px"> 
                       <span style="font-weight:bold">${v.typeDisplay}</span> 
                       ${v.finalKeyValue
@@ -337,7 +354,7 @@ export default function securitySchemeTemplate() {
                       : ''
                     }
                   </td>
-                  <td>
+                  <td colspan="3">
                     ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
                       ? html`
                         ${v.type.toLowerCase() === 'apikey'
@@ -355,7 +372,7 @@ export default function securitySchemeTemplate() {
                               </small>
                             </div>`
                             : html`
-                              <input type = "text" value = "${v.value}" class="api-key-input" placeholder = "api-token" spellcheck = "false">
+                              <input type = "text" value = "${v.value}" placeholder = "api-token" spellcheck = "false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
                               <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                                 part = "btn btn-outline"
                                 @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
@@ -370,7 +387,8 @@ export default function securitySchemeTemplate() {
                       ${getI18nText('authentication.http-basic-desc')}
                         <form style="display:flex;">
                           <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
-                          <input type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" class="api-key-password" style = "width:100px; margin:0 5px;">
+                          <input class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
+                            type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" style = "width:100px; margin:0 5px;">
                           <button type="submit" class="m-btn thin-border"
                             @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
                             part = "btn btn-outline"
@@ -445,7 +463,7 @@ export function pathSecurityTemplate(pathSecurity) {
         </svg>
           ${orSecurityKeys1.map((orSecurityItem1, i) => html`
           ${i !== 0 ? html`<div style="padding:3px 4px;"> OR </div>` : ''}
-          <div class="tooltip" style="cursor: pointer;">
+          <div class="security-tooltip tooltip" style="cursor: pointer;">
             <div style="padding:2px 4px; white-space:nowrap; text-overflow:ellipsis;max-width:150px; overflow:hidden;">
               <span part="anchor anchor-operation-security"> ${orSecurityItem1.securityTypes} </span>
             </div>
