@@ -17,6 +17,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix pattern truncation to display full pattern on hover.
 * Center description in request forms when no constraints are specified.
 * Fix nested one-of descriptions.
+* Fix example display for request path + query parameters.
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
