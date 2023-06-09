@@ -5,6 +5,8 @@ import base64url from 'base64url';
 import { getI18nText } from '../utils/common-utils';
 
 function onApiKeyChange(apiKeyId, e) {
+  e.preventDefault();
+
   let apiKeyValue = '';
   const securityObj = this.resolvedSpec.securitySchemes.find((v) => (v.apiKeyId === apiKeyId));
   if (!securityObj) {
