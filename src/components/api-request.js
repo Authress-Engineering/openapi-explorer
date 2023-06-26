@@ -314,7 +314,18 @@ export default class ApiRequest extends LitElement {
       null, param.schema, null, false, true, 'json', false);
 
     const someExampleWithSummaryOrDescription = examples.some((x) => x.exampleSummary?.length > 0 || x.exampleDescription?.length > 0);
-    return html` ${examples.length > 0
+    if (examples.length === 1) {
+      return html` ${examples.length > 0
+        ? html`<span style="font-weight:bold">Example: </span>
+            ${
+              someExampleWithSummaryOrDescription
+              ? this.renderLongFormatExamples(examples, paramType, paramName)
+              : this.renderShortFormatExamples(examples, paramType, paramName)
+            }`
+        : ''}`;
+    }
+
+    return html` ${examples.length > 1
       ? html`<span style="font-weight:bold">Examples: </span>
           ${
             someExampleWithSummaryOrDescription

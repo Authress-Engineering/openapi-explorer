@@ -597,7 +597,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
 
     return {
       exampleId: `Example-${sampleCounter}`,
-      exampleSummary: `Example ${sampleCounter + 1}`,
+      exampleSummary: '',
       exampleDescription: '',
       exampleType: mimeType,
       exampleFormat: mimeType.toLowerCase().includes('xml') ? 'text' : outputType,
