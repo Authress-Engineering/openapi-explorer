@@ -1,6 +1,8 @@
 ## OpenAPI Explorer Examples
 
 ### React
+This is a javascript react example, for typescript, one additional declaration is necessary to make typescript work out of the box. See [Troubleshooting with React + Typescript](./troubleshooting.md#typescript).
+
 ```jsx
 import React, { Component } from 'react';
 import 'openapi-explorer';
