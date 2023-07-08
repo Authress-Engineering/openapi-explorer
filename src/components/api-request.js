@@ -272,13 +272,13 @@ export default class ApiRequest extends LitElement {
         part="anchor anchor-param-example"
         class="${this.allowTry === 'true' ? '' : 'inactive-link'}"
         data-example-type="${paramType === 'array' ? paramType : 'string'}"
-        data-example="${example.exampleValue && Array.isArray(example.exampleValue) ? example.exampleValue?.join('~|~') : example.exampleValue || ''}"
+        data-example="${Array.isArray(example.exampleValue) ? example.exampleValue?.join('~|~') : example.exampleValue}"
         @click="${(e) => {
           const inputEl = e.target.closest('table').querySelector(`[data-pname="${paramName}"]`);
           if (inputEl) {
             inputEl.value = paramType === 'array' ? (e.target.dataset.example.split('~|~') || []) : e.target.dataset.example;
           }
-        }}">${example.exampleValue && Array.isArray(example.exampleValue) ? example.exampleValue?.join(', ') : example.exampleValue || '∅'}
+        }}">${Array.isArray(example.exampleValue) ? example.exampleValue?.join(', ') : example.exampleValue}
       </a>
     `;
   }
