@@ -200,7 +200,7 @@ export default class SchemaTree extends LitElement {
         return undefined;
       }
 
-      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}:**`, description].filter(v => v).join(' ');
+      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -249,6 +249,8 @@ export default class SchemaTree extends LitElement {
       return undefined;
     }
 
+    const titleString = schemaTitle || title;
+    const descriptionString = schemaDescription || description;
     return html`
       <div class="tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -265,7 +267,7 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}

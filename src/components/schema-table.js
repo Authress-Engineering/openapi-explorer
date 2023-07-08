@@ -167,7 +167,7 @@ export default class SchemaTable extends LitElement {
         return undefined;
       }
       
-      const displayLine = [title && `**${title}:**`, description].filter(v => v).join(' ');
+      const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
@@ -235,7 +235,7 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr'>
           <span class="m-markdown-small" style="vertical-align: middle;">
-            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraint ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}
