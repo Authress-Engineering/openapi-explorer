@@ -361,7 +361,7 @@ export default function securitySchemeTemplate() {
                       ? html`
                         ${v.type.toLowerCase() === 'apikey'
                           ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
-                          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and a Token String.`
+                          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and then the ${v.bearerFormat ?? 'Token String'}.`
                         }
                         <form style="display:flex;">
                           ${v.in === 'cookie'
@@ -374,7 +374,8 @@ export default function securitySchemeTemplate() {
                               </small>
                             </div>`
                             : html`
-                              <input type = "text" value = "${v.value}" placeholder = "api-token" spellcheck = "false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
+                              <input type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
+                                spellcheck="false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
                               <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                                 part = "btn btn-outline"
                                 @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
