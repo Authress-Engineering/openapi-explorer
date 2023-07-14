@@ -500,7 +500,8 @@ export default class ApiRequest extends LitElement {
       `;
 
     // For Loop - Main
-    const reqBody = requestBodyTypes.find(req => req.mimeType === this.selectedRequestBodyType);
+    const reqBody = requestBodyTypes.find(req => req.mimeType === this.selectedRequestBodyType) || requestBodyTypes[0];
+    this.selectedRequestBodyType = reqBody.mimeType; // Ensure that the selected type exists.
     // Generate Example
     if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
       const reqBodyExamples = generateExample(
