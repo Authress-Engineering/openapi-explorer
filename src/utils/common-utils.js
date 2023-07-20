@@ -19,10 +19,14 @@ export function sleep(ms) {
 }
 
 export function copyToClipboard(copyData, eventTarget) {
+  // In lots of places we have more than a couple of spaces for <pre> display purposes, we remove those extra spaces here.
   let data = copyData?.trim().replace(/\s{8}/g, '  ');
   try {
-    // Convert to 2 spaces in all JSON text
-    data = JSON.stringify(JSON.parse(data), null, 2).trim();
+    // If the parsed type is a number, then leave it alone
+    if (typeof JSON.parse(data) === 'object') {
+      // Convert to 2 spaces in all JSON text
+      data = JSON.stringify(JSON.parse(data), null, 2).trim();
+    }
   } catch (error) {
     // Ignore non JSON text;
   }
