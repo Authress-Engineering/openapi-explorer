@@ -59,7 +59,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
       }
       ${Array.isArray(data) && data[0] ? html`${generateFormRows.call(this, data[0], options, 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel)}`
         : html`${Object.keys(data).map((dataKey) =>
-          !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+          !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
                     || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
             ? html`${generateFormRows.call(this, data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
               options, data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel)}`
@@ -69,7 +69,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 
   // For Primitive Data types
   const parsedData = JSON.parse(data);
-  const { type, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = parsedData;
+  const { type, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = parsedData;
   if (readOrWriteOnly === '🆁') {
     return undefined;
   }
@@ -94,11 +94,11 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
       ${dataType !== 'array' ? getPrimitiveFormField.call(this, keyLabel, example, defaultValue, format, options) : ''}
       <td>
         ${description ? html`<div class="param-description">${unsafeHTML(marked(description))}</div>` : ''}
-        ${defaultValue || constraint || allowedValues || pattern
+        ${defaultValue || constraints || allowedValues || pattern
           ? html`
             <div class="param-constraint">
               ${pattern ? html`<span style="font-weight:bold">Pattern: </span>${pattern}<br/>` : ''}
-              ${constraint ? html`<span style="font-weight:bold">Constraints: </span>${constraint}<br/>` : ''}
+              ${constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${constraints.join(', ')}<br/>` : ''}
               ${allowedValues?.split('┃').map((v, i) => html`
                 ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                 ${html`

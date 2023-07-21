@@ -18,6 +18,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Center description in request forms when no constraints are specified.
 * Fix nested one-of descriptions.
 * Fix example display for request path + query parameters.
+* Fix array constraints to display
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119

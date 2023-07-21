@@ -242,22 +242,22 @@ export default class ApiRequest extends LitElement {
 
       tableRows.push(html`
       <tr> 
-        <td colspan="1" style="width:160px; min-width:50px;">
-          <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}">
+        <td colspan="1" style="width:160px; min-width:50px; vertical-align: top">
+          <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}" style="margin-top: 1rem;">
             ${param.name}${!paramSchema.deprecated && param.required ? html`<span style='color:var(--red);'>*</span>` : ''}
           </div>
-          <div class="param-type">
+          <div class="param-type" style="margin-bottom: 1rem;">
             ${paramSchema.type === 'array'
               ? `${paramSchema.arrayType}`
               : `${paramSchema.format ? paramSchema.format : paramSchema.type}`
             }${!paramSchema.deprecated && param.required ? html`<span style='opacity: 0;'>*</span>` : ''}
           </div>
         </td>  
-        <td colspan="2" style="min-width:160px;">
+        <td colspan="2" style="min-width:160px; vertical-align: top">
           ${this.allowTry === 'true'
           ? paramSchema.type === 'array' && html`
               <tag-input class="request-param" 
-                style = "width:100%;" 
+                style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;" 
                 data-ptype = "${paramLocation}"
                 data-pname = "${param.name}"
                 data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
@@ -278,10 +278,11 @@ export default class ApiRequest extends LitElement {
                 data-param-serialize-explode = "${paramExplode}"
                 spellcheck = "false"
                 placeholder="${paramSchema.example || defaultVal || ''}"
-                style = "width:100%;"
+                style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                 .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
             || html`
-              <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%" placeholder="${paramSchema.example || defaultVal || ''}"
+              <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                placeholder="${paramSchema.example || defaultVal || ''}"
                 class="request-param"
                 part="textbox textbox-param"
                 data-ptype="${paramLocation}"
@@ -292,6 +293,10 @@ export default class ApiRequest extends LitElement {
                 .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
               />`
           : ''}
+
+          <div style="min-width:50px; margin-bottom: 1rem;">
+            ${this.exampleListTemplate.call(this, param, paramSchema.type)}
+          </div>
         </td>
         ${this.renderStyle === 'focused'
           ? html`
@@ -303,10 +308,10 @@ export default class ApiRequest extends LitElement {
                   </div>`
                 : ''
               }
-              ${paramSchema.default || paramSchema.constraint || paramSchema.allowedValues || paramSchema.pattern
+              ${paramSchema.default || paramSchema.s || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint">
-                    ${paramSchema.constraint ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraint}<br>` : ''}
+                    ${paramSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraints.join(', ')}<br>` : ''}
                     ${paramSchema.pattern ? html`
                     <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
                       <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
@@ -339,18 +344,6 @@ export default class ApiRequest extends LitElement {
         : ''
       }
     `);
-
-      const rowExample = this.exampleListTemplate.call(this, param, paramSchema.type);
-      if (rowExample) {
-        tableRows.push(html`
-          <td colspan="1" style="width:160px; min-width:50px;">
-
-          </td>  
-          <td colspan="2" style="min-width:160px;">
-            ${rowExample}
-          </td>
-        `);
-      }
     }
 
     return html`
@@ -406,7 +399,7 @@ export default class ApiRequest extends LitElement {
     const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
 
     const examples = generateExample(
-      param.examples || param.example && { Example: { value: param.example } } || paramSchema.examples || paramSchema.example && { Example: { value: param.example } },
+      param.examples || param.example && { Example: { value: param.example } } || paramSchema.examples || paramSchema.example && { Example: { value: paramSchema.example } },
       null, param.schema, null, false, true, 'json', false);
 
     const someExampleWithSummaryOrDescription = examples.some((x) => x.exampleSummary?.length > 0 || x.exampleDescription?.length > 0);
