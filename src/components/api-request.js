@@ -89,6 +89,11 @@ export default class ApiRequest extends LitElement {
   }
 
   updated(changedProperties) {
+    if (changedProperties.has('elementId')) {
+      this.selectedRequestBodyType = '';
+      this.selectedRequestBodyExample = '';
+    }
+
     // In focused mode after rendering the request component, update the text-areas(which contains examples) using the original values from hidden textareas.
     // This is done coz, user may update the dom by editing the textarea's and once the DOM is updated externally change detection wont happen, therefore update the values manually
     if (this.renderStyle !== 'focused') {
@@ -393,10 +398,12 @@ export default class ApiRequest extends LitElement {
         example: content[mimeType].example,
         examples: content[mimeType].examples,
       });
-      if (!this.selectedRequestBodyType) {
-        this.selectedRequestBodyType = mimeType;
-      }
     }
+
+    if (!content[this.selectedRequestBodyType]) {
+      this.selectedRequestBodyType = requestBodyTypes[0]?.mimeType;
+    }
+
     // MIME Type selector
     reqBodyTypeSelectorHtml = requestBodyTypes.length === 1
       ? ''
@@ -411,8 +418,7 @@ export default class ApiRequest extends LitElement {
       `;
 
     // For Loop - Main
-    const reqBody = requestBodyTypes.find(req => req.mimeType === this.selectedRequestBodyType) || requestBodyTypes[0];
-    this.selectedRequestBodyType = reqBody.mimeType; // Ensure that the selected type exists.
+    const reqBody = requestBodyTypes.find(req => req.mimeType === this.selectedRequestBodyType);
     // Generate Example
     if (this.selectedRequestBodyType.includes('json') || this.selectedRequestBodyType.includes('xml') || this.selectedRequestBodyType.includes('text')) {
       const reqBodyExamples = generateExample(
@@ -429,7 +435,7 @@ export default class ApiRequest extends LitElement {
       if (!this.selectedRequestBodyExample) {
         this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
       }
-      const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample);
+      const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample) || reqBodyExamples[0];
       reqBodyDefaultHtml = html`
         <div class = 'example-panel border-top pad-top-8'>
           ${reqBodyExamples.length === 1
@@ -441,32 +447,34 @@ export default class ApiRequest extends LitElement {
                 </option>`)}
               </select>`
           }
-          <div class="example" data-default = '${displayedBodyExample.exampleId}'>
-            ${displayedBodyExample.exampleSummary && displayedBodyExample.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${displayedBodyExample.exampleSummary} </div>` : ''}
-            ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
-              <!-- this textarea is for user to edit the example -->
-            <slot name="${this.elementId}--request-body">
+          ${displayedBodyExample ? html`
+            <div class="example" data-default = '${displayedBodyExample.exampleId}'>
+              ${displayedBodyExample.exampleSummary && displayedBodyExample.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${displayedBodyExample.exampleSummary} </div>` : ''}
+              ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
+                <!-- this textarea is for user to edit the example -->
+              <slot name="${this.elementId}--request-body">
+                <textarea 
+                  class = "textarea request-body-param-user-input"
+                  part = "textarea textarea-param"
+                  spellcheck = "false"
+                  data-ptype = "${reqBody.mimeType}" 
+                  data-default = "${displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)}"
+                  data-default-format = "${displayedBodyExample.exampleFormat}"
+                  style="width:100%; resize:vertical;"
+                  .value="${this.fillRequestWithDefault === 'true' ? (displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)) : ''}"
+                ></textarea>
+              </slot>
+
+              <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
               <textarea 
-                class = "textarea request-body-param-user-input"
-                part = "textarea textarea-param"
+                class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
                 spellcheck = "false"
                 data-ptype = "${reqBody.mimeType}" 
-                data-default = "${displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)}"
-                data-default-format = "${displayedBodyExample.exampleFormat}"
-                style="width:100%; resize:vertical;"
-                .value="${this.fillRequestWithDefault === 'true' ? (displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)) : ''}"
+                style="width:100%; resize:vertical; display:none"
+                .value="${(displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8))}"
               ></textarea>
-            </slot>
-
-            <!-- This textarea(hidden) is to store the original example value, this will remain unchanged when users switches from one example to another, its is used to populate the editable textarea -->
-            <textarea 
-              class = "textarea is-hidden request-body-param ${reqBody.mimeType.substring(reqBody.mimeType.indexOf('/') + 1)}" 
-              spellcheck = "false"
-              data-ptype = "${reqBody.mimeType}" 
-              style="width:100%; resize:vertical; display:none"
-              .value="${(displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8))}"
-            ></textarea>
-          </div>  
+            </div>`
+          : ''}
 
         </div>
       `;
