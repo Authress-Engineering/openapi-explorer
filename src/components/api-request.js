@@ -4,6 +4,7 @@ import Prism from 'prismjs';
 import mimeTypeResolver from './mime-types';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { keyed } from 'lit/directives/keyed.js';
 import formatXml from 'xml-but-prettier';
 
 import { copyToClipboard } from '../utils/common-utils';
@@ -71,21 +72,23 @@ export default class ApiRequest extends LitElement {
   }
 
   render() {
-    return html`
-    <div class="api-request col regular-font request-panel ${(this.renderStyle === 'focused' || this.callback === 'true') ? 'focused-mode' : 'view-mode'}">
-      <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
-        ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
+    const id = this.elementId || `${this.method}-${this.path}`;
+    return keyed(id, html`
+      <div id="api-request-${id}"
+        class="api-request col regular-font request-panel ${(this.renderStyle === 'focused' || this.callback === 'true') ? 'focused-mode' : 'view-mode'}">
+        <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
+          ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
+        </div>
+        <div>
+          ${this.inputParametersTemplate('path')}
+          ${this.inputParametersTemplate('query')}
+          ${this.requestBodyTemplate()}
+          ${this.inputParametersTemplate('header')}
+          ${this.inputParametersTemplate('cookie')}
+          ${this.allowTry === 'false' ? '' : html`${this.apiCallTemplate()}`}
+        </div>
       </div>
-      <div>
-        ${this.inputParametersTemplate('path')}
-        ${this.inputParametersTemplate('query')}
-        ${this.requestBodyTemplate()}
-        ${this.inputParametersTemplate('header')}
-        ${this.inputParametersTemplate('cookie')}
-        ${this.allowTry === 'false' ? '' : html`${this.apiCallTemplate()}`}
-      </div>  
-    </div>
-    `;
+    `);
   }
 
   updated(changedProperties) {
