@@ -305,17 +305,17 @@ export default class ApiRequest extends LitElement {
         </td>
         ${this.renderStyle === 'focused'
           ? html`
-            <td colspan="2">
+            <td colspan="2" style="vertical-align: top">
               ${param.description
                 ? html`
-                  <div class="param-description">
+                  <div class="param-description" style="margin-top: 1rem;">
                       ${unsafeHTML(marked(param.description))}
                   </div>`
                 : ''
               }
               ${paramSchema.default || paramSchema.s || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
-                  <div class="param-constraint">
+                  <div class="param-constraint" style="margin-top: 1rem;">
                     ${paramSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraints.join(', ')}<br>` : ''}
                     ${paramSchema.pattern ? html`
                     <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
