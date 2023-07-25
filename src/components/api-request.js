@@ -172,16 +172,7 @@ export default class ApiRequest extends LitElement {
       <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
         ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
       </div>
-      <div>
-        ${this.inputParametersTemplate('path')}
-        ${this.inputParametersTemplate('query')}
-        ${this.requestBodyTemplate()}
-        ${this.inputParametersTemplate('header')}
-        ${this.inputParametersTemplate('cookie')}
-        ${this.allowTry === 'false' ? '' : html`${this.apiCallTemplate()}`}
-      </div>  
-    </div>
-    `;
+    `);
   }
 
   updated(changedProperties) {
