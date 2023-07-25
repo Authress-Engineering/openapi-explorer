@@ -187,7 +187,7 @@ export default class SchemaTable extends LitElement {
               </div>
               <div class='td key-descr'>
                 <span class=" m-markdown-small">${unsafeHTML(marked(displayLine))}</span>
-                ${data['::metadata'].constraints.length
+                ${data['::metadata']?.constraints?.length
                     ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
               </div>
             </div>`

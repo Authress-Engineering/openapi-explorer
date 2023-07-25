@@ -221,7 +221,7 @@ export default class SchemaTree extends LitElement {
               ${unsafeHTML(marked(displayLine))}
             </span>
             ${this.schemaDescriptionExpanded ? html`
-              ${data['::metadata'].constraints.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
+              ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
           </div>
         </div>
         <div class="inside-bracket-wrapper">
