@@ -23,6 +23,7 @@ export default class ApiRequest extends LitElement {
 
   constructor() {
     super();
+    this.storedParamValues = {};
     this.responseMessage = '';
     this.responseStatus = '';
     this.responseHeaders = '';
@@ -168,16 +169,19 @@ export default class ApiRequest extends LitElement {
         <td colspan="2" style="min-width:160px; vertical-align: top">
           ${this.allowTry === 'true'
           ? paramSchema.type === 'array' && html`
+            <div style=" margin-top: 1rem; margin-bottom: 1rem;">    
               <tag-input class="request-param" 
-                style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;" 
+                style = "width:100%;" 
                 data-ptype = "${paramLocation}"
                 data-pname = "${param.name}"
                 data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
                 data-param-serialize-style = "${paramStyle}"
                 data-param-serialize-explode = "${paramExplode}"
                 data-array = "true"
-                placeholder="${paramSchema.example || (Array.isArray(defaultVal) ? defaultVal[0] : defaultVal) || 'add-multiple ↩'}"
-                .value = "${Array.isArray(defaultVal) ? defaultVal : defaultVal.split(',')}"></tag-input>`
+                placeholder="add-multiple ↩"
+                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; }}"
+                .value = "${this.storedParamValues[param.name] ?? (this.fillRequestWithDefault === 'true' && Array.isArray(defaultVal) ? defaultVal : defaultVal.split(','))}"></tag-input>
+            </div>`
             || paramSchema.type === 'object' && html`
               <textarea 
                 class = "textarea small request-param"
@@ -873,6 +877,7 @@ export default class ApiRequest extends LitElement {
         request: fetchRequest,
       },
     };
+
     this.dispatchEvent(new CustomEvent('before-try', event));
     this.dispatchEvent(new CustomEvent('request', event));
     const newFetchOptions = {

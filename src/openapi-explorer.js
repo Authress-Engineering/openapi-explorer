@@ -24,6 +24,7 @@ import TableStyles from './styles/table-styles';
 import KeyFrameStyles from './styles/key-frame-styles';
 import EndpointStyles from './styles/endpoint-styles';
 import PrismStyles from './styles/prism-styles';
+import TagInputStyles from './styles/tag-input-styles';
 import TabStyles from './styles/tab-styles';
 import NavStyles from './styles/nav-styles';
 import InfoStyles from './styles/info-styles';
@@ -132,6 +133,7 @@ export default class OpenApiExplorer extends LitElement {
       TabStyles,
       NavStyles,
       InfoStyles,
+      TagInputStyles,
       advancedSearchStyles,
       apiRequestStyles,
       css`
@@ -851,3 +853,4 @@ if (!customElements.get('openapi-explorer')) {
   customElements.define('openapi-explorer', OpenApiExplorer);
 }
 import './openapi-explorer-oauth-handler';
+
