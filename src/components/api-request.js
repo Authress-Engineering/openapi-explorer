@@ -290,9 +290,7 @@ export default class ApiRequest extends LitElement {
               />`
           : ''}
 
-          <div style="min-width:50px; margin-bottom: 1rem;">
-            ${this.exampleListTemplate.call(this, param, paramSchema.type)}
-          </div>
+          ${this.exampleListTemplate.call(this, param, paramSchema.type)}
         </td>
         ${this.renderStyle === 'focused'
           ? html`
@@ -399,25 +397,22 @@ export default class ApiRequest extends LitElement {
       null, param.schema, null, false, true, 'json', false);
 
     const someExampleWithSummaryOrDescription = examples.some((x) => x.exampleSummary?.length > 0 || x.exampleDescription?.length > 0);
-    if (examples.length === 1) {
-      return html` ${examples.length > 0
-        ? html`<span style="font-weight:bold">Example: </span>
-            ${
-              someExampleWithSummaryOrDescription
-              ? this.renderLongFormatExamples(examples, paramType, paramName)
-              : this.renderShortFormatExamples(examples, paramType, paramName)
-            }`
-        : ''}`;
+    if (!examples.length) {
+      return '';
     }
 
-    return html` ${examples.length > 1
-      ? html`<span style="font-weight:bold">Examples: </span>
-          ${
-            someExampleWithSummaryOrDescription
-            ? this.renderLongFormatExamples(examples, paramType, paramName)
-            : this.renderShortFormatExamples(examples, paramType, paramName)
-          }`
-      : ''}`;
+    // Don't show an example if there is just one without a description because it is the same as the placeholder for the field
+    if (examples.length === 1 && !someExampleWithSummaryOrDescription) {
+      return '';
+    }
+
+    return html`<div style="min-width:50px; margin-bottom: 1rem;">
+      <span style="font-weight:bold">Examples: </span>
+        ${someExampleWithSummaryOrDescription
+          ? this.renderLongFormatExamples(examples, paramType, paramName)
+          : this.renderShortFormatExamples(examples, paramType, paramName)
+        }
+      </div>`;
   }
 
   resetRequestBodySelection() {
