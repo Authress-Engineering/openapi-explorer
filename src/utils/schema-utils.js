@@ -50,7 +50,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
 
   if (dataType === 'array' && schema.items) {
     const arrayItemType = schema.items.type;
-    const arrayItemDefault = schema.items.default ?? '';
+    const arrayItemDefault = schema.items.default ?? schema.default ?? '';
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;

@@ -19,6 +19,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix nested one-of descriptions.
 * Fix example display for request path + query parameters.
 * Fix array constraints to display
+* Support caching query string parameter array values
 
 ## 0.11 ##
 * Fix `allOf` for response schema. #119
