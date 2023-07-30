@@ -618,7 +618,7 @@ export default class ApiRequest extends LitElement {
             </button>`
           : ''
       }
-      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onPrepareClick}">${getI18nText('operations.prepare')}</button>
+      <button class="m-btn primary btn-prepare thin-border" part="btn btn-fill btn-try" @click="${this.onPrepareClick}">${getI18nText('operations.prepare')}</button>
       <div class="tab-content col m-markdown">&nbsp;</div>
       <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
@@ -645,6 +645,7 @@ export default class ApiRequest extends LitElement {
 
   async onTryPrepareClick(execute) {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
+    const prepareBtnEl = this.querySelectorAll('.btn-prepare')[0];
     let curlData = '';
     let curlForm = '';
     const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
@@ -898,6 +899,7 @@ export default class ApiRequest extends LitElement {
 
     if (!execute) {
       tryBtnEl.disabled = false;
+      prepareBtnEl.disabled = false;
       this.responseMessage = 'Prepared example request only, did not execute.';
       this.responseStatus = '';
       this.responseText = '';
@@ -920,6 +922,7 @@ export default class ApiRequest extends LitElement {
       let respJson;
       let respText;
       tryBtnEl.disabled = true;
+      prepareBtnEl.disabled = true;
       const fetchStart = new Date();
 
       this.responseStatus = '';
@@ -935,6 +938,7 @@ export default class ApiRequest extends LitElement {
       await awaiter;
 
       tryBtnEl.disabled = false;
+      prepareBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
       this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText} (${fetchResponse.status})` : fetchResponse.status;
       this.responseUrl = fetchResponse.url;
@@ -1010,6 +1014,7 @@ export default class ApiRequest extends LitElement {
       this.dispatchEvent(new CustomEvent('response', responseEvent));
     } catch (error) {
       tryBtnEl.disabled = false;
+      prepareBtnEl.disabled = false;
       this.responseMessage = `${error.message} (Check the browser network tab for more information.)`;
       this.responseStatus = 'error';
       const responseEvent = {
