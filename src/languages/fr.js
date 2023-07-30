@@ -43,6 +43,7 @@ export default {
       'clear': 'VIDER',
       'clear-response': 'VIDER LA RÉPONSE',
       'execute': 'EXÉCUTER',
+      'prepare': 'PRÉPARER',
       'response': 'RÉPONSE',
       'response-headers': 'EN-TÊTES DE LA RÉPONSE',
       'example': 'EXEMPLE',

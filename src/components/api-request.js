@@ -618,6 +618,8 @@ export default class ApiRequest extends LitElement {
             </button>`
           : ''
       }
+      <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onPrepareClick}">${getI18nText('operations.prepare')}</button>
+      <div class="tab-content col m-markdown">&nbsp;</div>
       <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
     ${this.responseMessage === '' ? '' : this.apiResponseTabTemplate()}
@@ -635,6 +637,13 @@ export default class ApiRequest extends LitElement {
   }
 
   async onTryClick() {
+    await this.onTryPrepareClick(true);
+  }
+  async onPrepareClick() {
+    await this.onTryPrepareClick(false);
+  }
+
+  async onTryPrepareClick(execute) {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
     let curlData = '';
     let curlForm = '';
@@ -886,6 +895,24 @@ export default class ApiRequest extends LitElement {
     const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
     const curlHeaders = [...newFetchOptions.headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
     this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
+
+    if (!execute) {
+      tryBtnEl.disabled = false;
+      this.responseMessage = 'Prepared example request only, did not execute.';
+      this.responseStatus = '';
+      this.responseText = '';
+      const responseEvent = {
+        bubbles: true,
+        composed: true,
+        detail: {
+          explorerLocation: this.elementId,
+          request: ''
+        },
+      };
+      document.dispatchEvent(new CustomEvent('after-try', responseEvent));
+      document.dispatchEvent(new CustomEvent('response', responseEvent));
+      return;
+    }
 
     let fetchResponse;
     try {
