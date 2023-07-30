@@ -618,8 +618,6 @@ export default class ApiRequest extends LitElement {
             </button>`
           : ''
       }
-      <button class="m-btn primary btn-prepare thin-border" part="btn btn-fill btn-try" @click="${this.onPrepareClick}">${getI18nText('operations.prepare')}</button>
-      <div class="tab-content col m-markdown">&nbsp;</div>
       <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
     ${this.responseMessage === '' ? '' : this.apiResponseTabTemplate()}
@@ -636,16 +634,7 @@ export default class ApiRequest extends LitElement {
     this.dispatchEvent(new CustomEvent('event', event));
   }
 
-  async onTryClick() {
-    await this.onTryPrepareClick(true);
-  }
-  async onPrepareClick() {
-    await this.onTryPrepareClick(false);
-  }
-
-  async onTryPrepareClick(execute) {
-    const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
-    const prepareBtnEl = this.querySelectorAll('.btn-prepare')[0];
+  updateSyntax_curl() {
     let curlData = '';
     let curlForm = '';
     const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
@@ -863,6 +852,225 @@ export default class ApiRequest extends LitElement {
       }
     }
 
+    if (this.fetchCredentials) {
+      fetchOptions.credentials = this.fetchCredentials;
+    }
+
+    // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
+    const fetchRequest = { explorerLocation: this.elementId, url: fetchUrl.toString(), options: fetchOptions, ...fetchOptions };
+    const newFetchOptions = {
+      method: fetchRequest.method || fetchOptions.method,
+      headers: fetchRequest.headers || fetchOptions.headers,
+      credentials: fetchRequest.credentials || fetchOptions.credentials,
+      body: fetchRequest.body || fetchOptions.body
+    };
+
+    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
+    const curlHeaders = [...newFetchOptions.headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
+    this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
+  }
+
+  async onTryClick() {
+    const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
+    const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
+    const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
+    const acceptHeader = respEl?.selectedMimeType;
+    const requestPanelEl = this.closest('.request-panel');
+    const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
+    const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
+    const queryParamObjTypeEls = [...requestPanelEl.querySelectorAll("[data-ptype='query-object']")];
+    const headerParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='header']")];
+    const requestBodyContainerEl = requestPanelEl.querySelector('.request-body-container');
+
+    await this.updateSyntax_curl();
+
+    let pathUrl = `${this.serverUrl.replace(/\/$/, '')}${this.path.replaceAll(' ', '')}`;
+
+    // Generate URL using Path Params
+    pathParamEls.map((el) => {
+      pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
+    });
+
+    // Handle relative serverUrls
+    if (!pathUrl.startsWith('http')) {
+      const newUrl = new URL(pathUrl, window.location.href);
+      pathUrl = newUrl.toString();
+    }
+
+    const fetchUrl = new URL(pathUrl);
+
+    const fetchOptions = {
+      method: this.method.toUpperCase(),
+      headers: new Headers()
+    };
+
+    // Query Params
+    if (queryParamEls.length > 0) {
+      queryParamEls.forEach((el) => {
+        if (el.dataset.array === 'false') {
+          if (el.value !== '') {
+            fetchUrl.searchParams.append(el.dataset.pname, el.value);
+          }
+        } else {
+          const paramSerializeStyle = el.dataset.paramSerializeStyle;
+          const paramSerializeExplode = el.dataset.paramSerializeExplode;
+          let vals = ((el.value && Array.isArray(el.value)) ? el.value : []);
+          vals = Array.isArray(vals) ? vals.filter((v) => v !== '') : [];
+          if (vals.length > 0) {
+            if (paramSerializeStyle === 'spaceDelimited') {
+              fetchUrl.searchParams.append(el.dataset.pname, vals.join(' ').replace(/^\s|\s$/g, ''));
+            } else if (paramSerializeStyle === 'pipeDelimited') {
+              fetchUrl.searchParams.append(el.dataset.pname, vals.join('|').replace(/^\||\|$/g, ''));
+            } else {
+              if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
+                vals.forEach((v) => { fetchUrl.searchParams.append(el.dataset.pname, v); });
+              } else {
+                fetchUrl.searchParams.append(el.dataset.pname, vals.join(',').replace(/^,|,$/g, ''));
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Query Params (Dynamic - create from JSON)
+    if (queryParamObjTypeEls.length > 0) {
+      queryParamObjTypeEls.map((el) => {
+        try {
+          let queryParamObj = {};
+          const paramSerializeStyle = el.dataset.paramSerializeStyle;
+          const paramSerializeExplode = el.dataset.paramSerializeExplode;
+          queryParamObj = Object.assign(queryParamObj, JSON.parse(el.value.replace(/\s+/g, ' ')));
+          for (const key in queryParamObj) {
+            if (typeof queryParamObj[key] === 'object') {
+              if (Array.isArray(queryParamObj[key])) {
+                if (paramSerializeStyle === 'spaceDelimited') {
+                  fetchUrl.searchParams.append(key, queryParamObj[key].join(' '));
+                } else if (paramSerializeStyle === 'pipeDelimited') {
+                  fetchUrl.searchParams.append(key, queryParamObj[key].join('|'));
+                } else {
+                  if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
+                    queryParamObj[key].forEach((v) => {
+                      fetchUrl.searchParams.append(key, v);
+                    });
+                  } else {
+                    fetchUrl.searchParams.append(key, queryParamObj[key]);
+                  }
+                }
+              }
+            } else {
+              fetchUrl.searchParams.append(key, queryParamObj[key]);
+            }
+          }
+        } catch (err) {
+          console.log('OpenAPI Explorer: unable to parse %s into object', el.value); // eslint-disable-line no-console
+        }
+      });
+    }
+
+    // Add Authentication api keys if provided
+    this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
+      if (v.in === 'query') {
+        fetchUrl.searchParams.append(v.name, v.finalKeyValue);
+        return;
+      }
+
+      // Otherwise put it in the header
+      fetchOptions.headers.append(v.name, v.finalKeyValue);
+    });
+
+    if (acceptHeader) {
+      // Uses the acceptHeader from Response panel
+      fetchOptions.headers.append('Accept', acceptHeader);
+    } else if (this.accept) {
+      fetchOptions.headers.append('Accept', this.accept);
+    }
+
+    // Add Header Params
+    headerParamEls.map((el) => {
+      if (el.value) {
+        fetchOptions.headers.append(el.dataset.pname, el.value);
+      }
+    });
+
+    // Request Body Params
+    if (requestBodyContainerEl) {
+      const requestBodyType = requestBodyContainerEl.dataset.selectedRequestBodyType;
+      if (requestBodyType.includes('form-urlencoded')) {
+        // url-encoded Form Params (dynamic) - Parse JSON and generate Params
+        const formUrlDynamicTextAreaEl = requestPanelEl.querySelector("[data-ptype='dynamic-form']");
+        if (formUrlDynamicTextAreaEl) {
+          const val = formUrlDynamicTextAreaEl.value;
+          const formUrlDynParams = new URLSearchParams();
+          let proceed = true;
+          let tmpObj;
+          if (val) {
+            try {
+              tmpObj = JSON.parse(val);
+            } catch (err) {
+              proceed = false;
+              console.warn('OpenAPI Explorer: Invalid JSON provided', err); // eslint-disable-line no-console
+            }
+          } else {
+            proceed = false;
+          }
+          if (proceed) {
+            for (const prop in tmpObj) {
+              formUrlDynParams.append(prop, JSON.stringify(tmpObj[prop]));
+            }
+            fetchOptions.body = formUrlDynParams;
+          }
+        } else {
+          // url-encoded Form Params (regular)
+          const formUrlEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-urlencode']")];
+          const formUrlParams = new URLSearchParams();
+          formUrlEls
+            .filter((v) => (v.type !== 'file'))
+            .forEach((el) => {
+              if (el.dataset.array === 'false') {
+                if (el.value) {
+                  formUrlParams.append(el.dataset.pname, el.value);
+                }
+              } else {
+                const vals = (el.value && Array.isArray(el.value)) ? el.value.join(',') : '';
+                formUrlParams.append(el.dataset.pname, vals);
+              }
+            });
+          fetchOptions.body = formUrlParams;
+        }
+      } else if (requestBodyType.includes('form-data')) {
+        const formDataParams = new FormData();
+        const formDataEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-data']")];
+        formDataEls.forEach((el) => {
+          if (el.dataset.array === 'false') {
+            if (el.type === 'file' && el.files[0]) {
+              formDataParams.append(el.dataset.pname, el.files[0], el.files[0].name);
+            } else if (el.value) {
+              formDataParams.append(el.dataset.pname, el.value);
+            }
+          } else if (el.value && Array.isArray(el.value)) {
+            formDataParams.append(el.dataset.pname, el.value.join(','));
+          }
+        });
+        fetchOptions.body = formDataParams;
+      } else if (mediaFileRegex.test(requestBodyType) || textFileRegex.test(requestBodyType)) {
+        const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
+        if (bodyParamFileEl && bodyParamFileEl.files[0]) {
+          fetchOptions.body = bodyParamFileEl.files[0];
+        }
+      } else if (requestBodyType.includes('json') || requestBodyType.includes('xml') || requestBodyType.includes('text')) {
+        const exampleTextAreaEl = requestPanelEl.querySelector('.request-body-param-user-input');
+        if (exampleTextAreaEl && exampleTextAreaEl.value) {
+          fetchOptions.body = exampleTextAreaEl.value;
+        }
+      }
+      // Common for all request-body
+      if (!requestBodyType.includes('form-data')) {
+        // For multipart/form-data don't set the content-type to allow creation of browser generated part boundaries
+        fetchOptions.headers.append('Content-Type', requestBodyType);
+      }
+    }
+
     this.responseIsBlob = false;
     this.respContentDisposition = '';
     if (this.responseBlobUrl) {
@@ -893,36 +1101,12 @@ export default class ApiRequest extends LitElement {
     };
     const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
 
-    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
-    const curlHeaders = [...newFetchOptions.headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
-    this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
-
-    if (!execute) {
-      tryBtnEl.disabled = false;
-      prepareBtnEl.disabled = false;
-      this.responseMessage = 'Prepared example request only, did not execute.';
-      this.responseStatus = '';
-      this.responseText = '';
-      const responseEvent = {
-        bubbles: true,
-        composed: true,
-        detail: {
-          explorerLocation: this.elementId,
-          request: ''
-        },
-      };
-      document.dispatchEvent(new CustomEvent('after-try', responseEvent));
-      document.dispatchEvent(new CustomEvent('response', responseEvent));
-      return;
-    }
-
     let fetchResponse;
     try {
       let respBlob;
       let respJson;
       let respText;
       tryBtnEl.disabled = true;
-      prepareBtnEl.disabled = true;
       const fetchStart = new Date();
 
       this.responseStatus = '';
@@ -938,7 +1122,6 @@ export default class ApiRequest extends LitElement {
       await awaiter;
 
       tryBtnEl.disabled = false;
-      prepareBtnEl.disabled = false;
       this.responseStatus = fetchResponse.ok ? 'success' : 'error';
       this.responseMessage = fetchResponse.statusText ? `${fetchResponse.statusText} (${fetchResponse.status})` : fetchResponse.status;
       this.responseUrl = fetchResponse.url;
@@ -1014,7 +1197,6 @@ export default class ApiRequest extends LitElement {
       this.dispatchEvent(new CustomEvent('response', responseEvent));
     } catch (error) {
       tryBtnEl.disabled = false;
-      prepareBtnEl.disabled = false;
       this.responseMessage = `${error.message} (Check the browser network tab for more information.)`;
       this.responseStatus = 'error';
       const responseEvent = {
