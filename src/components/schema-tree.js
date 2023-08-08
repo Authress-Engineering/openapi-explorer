@@ -201,7 +201,7 @@ export default class SchemaTree extends LitElement {
         return undefined;
       }
 
-      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}:**`, description].filter(v => v).join(' ');
+      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -221,6 +221,8 @@ export default class SchemaTree extends LitElement {
             <span class="m-markdown-small" style="vertical-align: middle;" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">
               ${unsafeHTML(marked(displayLine))}
             </span>
+            ${this.schemaDescriptionExpanded ? html`
+              ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
           </div>
         </div>
         <div class="inside-bracket-wrapper">
@@ -228,7 +230,7 @@ export default class SchemaTree extends LitElement {
             ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
               : html`
                 ${Object.keys(data).map((dataKey) =>
-                  !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                  !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
                   || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
                   ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                         data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
@@ -242,7 +244,7 @@ export default class SchemaTree extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, cssType, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, cssType, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -250,6 +252,8 @@ export default class SchemaTree extends LitElement {
       return undefined;
     }
 
+    const titleString = schemaTitle || title;
+    const descriptionString = schemaDescription || description;
     return html`
       <div class="tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -266,10 +270,10 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
-            ${constraint ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}
+            ${constraints.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
             ${defaultValue ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
             ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues}</div><br>` : ''}
             ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}

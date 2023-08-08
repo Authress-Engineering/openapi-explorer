@@ -88,10 +88,15 @@ module.exports = {
 Add this declaration in your component that references the `import 'openapi-explorer'`:
 
 ```tsx
+interface OpenApiExplorerProps {
+  collapse?: boolean;
+  table?: boolean;
+}
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'openapi-explorer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      'openapi-explorer': OpenApiExplorerProps & React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
     }
   }
 }

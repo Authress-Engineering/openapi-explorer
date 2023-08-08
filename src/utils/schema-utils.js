@@ -43,18 +43,22 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     default: schema.default || '',
     title: schema.title || '',
     description: schema.description || '',
-    constraint: '',
+    constraints: [],
     allowedValues: schema.const ?? (Array.isArray(schema.enum) ? schema.enum.join('┃') : ''),
     arrayType: ''
   };
 
   if (dataType === 'array' && schema.items) {
     const arrayItemType = schema.items.type;
-    const arrayItemDefault = schema.items.default ?? '';
+    const arrayItemDefault = schema.items.default ?? schema.default ?? '';
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;
     info.allowedValues = schema.const ?? (Array.isArray(schema.items.enum) ? schema.items.enum.join('┃') : '');
+  }
+
+  if (schema.uniqueItems) {
+    info.constraints.push('Requires unique items');
   }
 
   if (dataType.match(/integer|number/g)) {
@@ -63,19 +67,19 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     const leftBound = schema.minimum !== undefined ? '[' : '(';
     const rightBound = schema.maximum !== undefined ? ']' : ')';
     if (typeof minimum === 'number' || typeof maximum === 'number') {
-      info.constraint = `Range: ${leftBound}${minimum ?? ''},${maximum ?? ''}${rightBound}`;
+      info.constraints.push(`Range: ${leftBound}${minimum ?? ''},${maximum ?? ''}${rightBound}`);
     }
     if (schema.multipleOf !== undefined) {
-      info.constraint += `${info.constraint ? ', ' : ''}Multiples: ${schema.multipleOf}`;
+      info.constraints.push(`Multiples: ${schema.multipleOf}`);
     }
   }
   if (dataType.match(/string/g)) {
     if (schema.minLength !== undefined && schema.maxLength !== undefined) {
-      info.constraint += `Min length: ${schema.minLength}, Max length: ${schema.maxLength}`;
+      info.constraints.push(`Min length: ${schema.minLength}, Max length: ${schema.maxLength}`);
     } else if (schema.minLength !== undefined) {
-      info.constraint += `Min length: ${schema.minLength}`;
+      info.constraints.push(`Min length: ${schema.minLength}`);
     } else if (schema.maxLength !== undefined) {
-      info.constraint += `Max length: ${schema.maxLength}`;
+      info.constraints.push(`Max length: ${schema.maxLength}`);
     }
   }
 
@@ -84,7 +88,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     format: info.format,
     cssType: info.cssType,
     readOrWriteOnly: info.readOrWriteOnly,
-    constraint: info.constraint,
+    constraints: info.constraints,
     defaultValue: info.default,
     example: info.example,
     allowedValues: info.allowedValues,
@@ -292,6 +296,9 @@ function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, 
   return [value];
 }
 
+export function isPatternProperty(label) {
+  return label.match(/^<any-key>|<pattern:/);
+}
 /**
  * For changing OpenAPI-Schema to an Object Notation,
  * This Object would further be an input to UI Components to generate an Object-Tree
@@ -304,7 +311,14 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
   if (!rawSchema) {
     return undefined;
   }
-  const { allOf, oneOf, anyOf, ...schema } = rawSchema;
+  const { allOf, oneOf, anyOf, items: arrayItemsSchema, properties: schemaProperties, patternProperties: schemaPatternProperties, ...schema } = rawSchema;
+  const propertyType = schema.type;
+  const metadata = { constraints: [] };
+  if (schema.uniqueItems) { metadata.constraints.push('Requires unique items'); }
+  if (typeof schema.minItems === 'number' || typeof schema.maxItems === 'number') {
+    metadata.constraints.push(`Length: [${schema.minItems || 0}${schema.maxItems ? ', ' : '+'}${schema.maxItems || ''}]`);
+  }
+
   if (allOf) {
     // If allOf is an array of multiple elements, then all the keys makes a single object
     const objWithAllProps = {};
@@ -364,8 +378,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
     resultObj['::description'] = schema.description || '';
+    resultObj['::metadata'] = metadata;
     return resultObj;
-  } else if (Array.isArray(schema.type)) {
+  } else if (Array.isArray(propertyType)) {
     const obj = { '::type': '' };
     // When a property has multiple types, then check further if any of the types are array or object, if yes then modify the schema using one-of
     // Clone the schema - as it will be modified to replace multi-data-types with one-of;
@@ -375,7 +390,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     subSchema.type.forEach((v) => {
       if (v.match(/integer|number|string|null|boolean/g)) {
         primitiveType.push(v);
-      } else if (v === 'array' && typeof (subSchema.items && subSchema.items.type) === 'string' && schema.items && subSchema.items.type.match(/integer|number|string|null|boolean/g)) {
+      } else if (v === 'array' && typeof (subSchema.items && subSchema.items.type) === 'string' && arrayItemsSchema && subSchema.items.type.match(/integer|number|string|null|boolean/g)) {
         // Array with primitive types should also be treated as primitive type
         if (subSchema.items.type === 'string' && subSchema.items.format) {
           primitiveType.push(`${subSchema.items.format}[]`);
@@ -415,13 +430,14 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::type': 'object',
-            '::deprecated': schema.deprecated || false
+            '::deprecated': schema.deprecated || false,
+            '::metadata': metadata
           };
-          for (const key in schema.properties) {
-            if (!schema.deprecated && !schema.properties[key].deprecated && schema.required?.includes(key)) {
-              objTypeOption[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
+          for (const key in schemaProperties) {
+            if (!schema.deprecated && !schemaProperties[key].deprecated && schema.required?.includes(key)) {
+              objTypeOption[`${key}*`] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
             } else {
-              objTypeOption[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
+              objTypeOption[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
             }
           }
           multiTypeOptions[`::OPTION~${i + 1}`] = objTypeOption;
@@ -431,7 +447,11 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::type': 'array',
-            '::props': schemaInObjectNotation(Object.assign({ readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), options, (level + 1)),
+            // Array properties are read from the ::props object instead of reading from the keys of this object
+            // '::props': schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1)),
+            '::props': schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema), options, (level + 1)),
+            '::deprecated': schema.deprecated || false,
+            '::metadata': metadata
           };
         }
       });
@@ -439,37 +459,41 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       obj['::ONE~OF'] = multiTypeOptions;
     }
     return obj;
-  } else if (schema.type === 'object' || schema.properties) {
+  } else if (propertyType === 'object' || schemaProperties) {
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'object';
     obj['::deprecated'] = schema.deprecated || false;
-    for (const key in schema.properties) {
-      if (!schema.deprecated && !schema.properties[key].deprecated && schema.required?.includes(key)) {
-        obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
+    obj['::metadata'] = metadata;
+    for (const key in schemaProperties) {
+      if (!schema.deprecated && !schemaProperties[key].deprecated && schema.required?.includes(key)) {
+        obj[`${key}*`] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
       } else {
-        obj[key] = schemaInObjectNotation(schema.properties[key], options, (level + 1));
+        obj[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
       }
     }
-    for (const key in schema.patternProperties) {
-      obj[`<pattern: ${key}>`] = schemaInObjectNotation(schema.patternProperties[key], options, (level + 1));
+    for (const key in schemaPatternProperties) {
+      obj[`<pattern: ${key}>`] = schemaInObjectNotation(schemaPatternProperties[key], options, (level + 1));
     }
     if (schema.additionalProperties) {
       obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
     }
     return obj;
-  } else if (schema.type === 'array' || schema.items) { // If Array
+  } else if (propertyType === 'array' || arrayItemsSchema) { // If Array
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
-    obj['::description'] = schema.description || (schema.items?.description ? `array&lt;${schema.items.description}&gt;` : '');
+    obj['::description'] = schema.description || (arrayItemsSchema?.description ? `array&lt;${arrayItemsSchema.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
-    obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, schema.items), options, (level + 1));
-    if (schema.items?.items) {
-      obj['::array-type'] = schema.items.items.type;
+    obj['::metadata'] = metadata;
+    // Array properties are read from the ::props object instead of reading from the keys of this object
+    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema), options, (level + 1));
+    // obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1));
+    if (arrayItemsSchema?.items) {
+      obj['::array-type'] = arrayItemsSchema.items.type;
     }
     return obj;
   }
@@ -482,6 +506,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
 export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType, skipExampleStrings = false) {
   const mimeType = rawMimeType || 'application/json';
   const finalExamples = [];
+
   // First check if examples is provided
   if (examples) {
     for (const eg in examples) {
@@ -511,7 +536,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
 
       finalExamples.push({
         exampleId: eg,
-        exampleSummary: examples[eg].summary || eg,
+        exampleSummary: examples[eg].summary || '',
         exampleDescription: examples[eg].description || '',
         exampleType: mimeType,
         exampleValue: egContent,
@@ -597,7 +622,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
 
     return {
       exampleId: `Example-${sampleCounter}`,
-      exampleSummary: `Example ${sampleCounter + 1}`,
+      exampleSummary: '',
       exampleDescription: '',
       exampleType: mimeType,
       exampleFormat: mimeType.toLowerCase().includes('xml') ? 'text' : outputType,

@@ -12,7 +12,6 @@ export default class SchemaTable extends LitElement {
   static get properties() {
     return {
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
-      schemaDescriptionExpanded: { type: Boolean },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
       data: { type: Object },
@@ -22,7 +21,6 @@ export default class SchemaTable extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
-    this.schemaDescriptionExpanded = true;
     if (!this.schemaHideReadOnly || !'true false'.includes(this.schemaHideReadOnly)) { this.schemaHideReadOnly = 'true'; }
     if (!this.schemaHideWriteOnly || !'true false'.includes(this.schemaHideWriteOnly)) { this.schemaHideWriteOnly = 'true'; }
   }
@@ -167,7 +165,7 @@ export default class SchemaTable extends LitElement {
         return undefined;
       }
       
-      const displayLine = [title && `**${title}:**`, description].filter(v => v).join(' ');
+      const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         ${newSchemaLevel >= 0 && key
           ? html`
@@ -187,7 +185,11 @@ export default class SchemaTable extends LitElement {
                 <div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
-              <div class='td key-descr m-markdown-small'>${unsafeHTML(marked(displayLine))}</div>
+              <div class='td key-descr'>
+                <span class=" m-markdown-small">${unsafeHTML(marked(displayLine))}</span>
+                ${data['::metadata']?.constraints?.length
+                    ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
+              </div>
             </div>`
           : html`
               ${data['::type'] === 'array' && dataType === 'array'
@@ -200,7 +202,7 @@ export default class SchemaTable extends LitElement {
         ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
             : html`
               ${Object.keys(data).map((dataKey) =>
-                !['::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
                 || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
                 ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                       data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
@@ -212,7 +214,7 @@ export default class SchemaTable extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, cssType, format, readOrWriteOnly, constraint, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, cssType, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -235,14 +237,13 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr'>
           <span class="m-markdown-small" style="vertical-align: middle;">
-            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}:**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
-          ${this.schemaDescriptionExpanded ? html`
-            ${constraint ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraint}</div><br>` : ''}
-            ${defaultValue ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
-            ${allowedValues ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues}</div><br>` : ''}
-            ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}
-            ${example ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Example: </span>${example}</div><br>` : ''}` : ''}
+          ${constraints.length ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
+          ${defaultValue ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
+          ${allowedValues ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues}</div><br>` : ''}
+          ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}
+          ${example ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Example: </span>${example}</div><br>` : ''}
         </div>
       </div>
     `;

@@ -1,6 +1,8 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 
 export default class TagInput extends LitElement {
+  createRenderRoot() { return this; }
+
   render() {
     const tagItemTemplate = html`${
       (this.value || []).filter(v => v.trim()).map((v) => html`<span class='tag'>${v}</span>`)
@@ -8,7 +10,7 @@ export default class TagInput extends LitElement {
     return html`
       <div class='tags' tabindex="0">
         ${tagItemTemplate}
-        <input type="text" class='editor' @paste="${(e) => this.afterPaste(e)}" @keydown="${this.afterKeyDown}" placeholder="${this.placeholder || ''}">
+        <input type="text" class='editor' @change="${this.handleLeave}" @paste="${(e) => this.afterPaste(e)}" @keydown="${this.afterKeyDown}" placeholder="${this.placeholder || ''}">
       </div>
     `;
   }
@@ -42,6 +44,8 @@ export default class TagInput extends LitElement {
     const pastedArray = pastedData && pastedData.split(',').filter(v => v.trim()) || [];
     this.value = this.value.concat(pastedArray);
     e.preventDefault();
+
+    this.emitChanged();
   }
 
   afterKeyDown(e) {
@@ -55,52 +59,23 @@ export default class TagInput extends LitElement {
         this.value = this.value.slice(0, -1);
       }
     }
+    this.emitChanged();
   }
 
-  static finalizeStyles() {
-    return [css`
-      .tags{
-        display:flex;
-        flex-wrap: wrap;
-        outline: none;
-        padding:0;
-        border-radius:var(--border-radius);
-        border:1px solid var(--border-color);
-        cursor:text;
-        overflow:hidden;
-        background:var(--input-bg);
+  handleLeave(e) {
+    e.stopPropagation();
+    this.value = this.value.concat((e.target.value || '').split(',')).filter(v => v !== '');
+    e.target.value = '';
+    this.emitChanged();
+  }
+
+  emitChanged() {
+    const event = new CustomEvent('change', {
+      detail: {
+        value: this.value
       }
-      .tag, .editor {
-        padding:3px;
-        margin:2px;
-      }
-      .tag{
-        border:1px solid var(--border-color);
-        background-color:var(--bg3);
-        color:var(--fg3);
-        border-radius:var(--border-radius);
-        word-break: break-all;
-        font-size: var(--font-size-small);
-      }
-      .tag:hover ~ #cursor {
-        display: block;
-      }
-      .editor{
-        flex:1;
-        border:1px solid transparent;
-        color:var(--fg);
-        min-width:60px;
-        outline: none;
-        line-height: inherit;
-        font-family:inherit;
-        background:transparent;
-        font-size: calc(var(--font-size-small) + 1px);
-      }
-      .editor::placeholder {
-        color: var(--placeholder-color);
-        opacity:1;
-      }
-    `];
+    });
+    this.dispatchEvent(event);
   }
 }
 // Register the element with the browser
