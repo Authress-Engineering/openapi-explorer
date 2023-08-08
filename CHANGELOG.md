@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 1.1 ##
+* Support dynamic curl creation.
+
 ## 1.0 ##
 * By default uses the `info.title` property of the open api specification for the `overview` section name in the navbar. Falls back to the default when not specified.
 * Fix deeply nested descriptions and property overrides.

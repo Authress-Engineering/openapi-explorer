@@ -33,7 +33,7 @@ export default class ApiRequest extends LitElement {
     this.responseUrl = '';
     this.responseElapsedMs = 0;
     this.curlSyntax = '';
-    this.activeResponseTab = 'response'; // allowed values: response, headers, curl
+    this.activeResponseTab = 'curl'; // allowed values: response, headers, curl
     this.selectedRequestBodyType = '';
     this.selectedRequestBodyExample = '';
   }
@@ -260,7 +260,7 @@ export default class ApiRequest extends LitElement {
                 data-param-serialize-explode = "${paramExplode}"
                 data-array = "true"
                 placeholder="add-multiple ↩"
-                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; }}"
+                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; this.computeCurlSyntax(); }}"
                 .value = "${this.storedParamValues[param.name] ?? (this.fillRequestWithDefault === 'true' && Array.isArray(defaultVal) ? defaultVal : defaultVal.split(','))}"></tag-input>
             </div>`
             || paramSchema.type === 'object' && html`
@@ -279,6 +279,7 @@ export default class ApiRequest extends LitElement {
                 .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
             || html`
               <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                @input="${() => { this.computeCurlSyntax(); }}"
                 placeholder="${paramSchema.example || defaultVal || ''}"
                 class="request-param"
                 part="textbox textbox-param"
@@ -419,6 +420,7 @@ export default class ApiRequest extends LitElement {
   resetRequestBodySelection() {
     this.selectedRequestBodyType = '';
     this.selectedRequestBodyExample = '';
+    this.computeCurlSyntax();
     this.clearResponseData();
   }
 
@@ -430,6 +432,7 @@ export default class ApiRequest extends LitElement {
       const exampleTextareaEl = selectEl.closest('.example-panel').querySelector('.request-body-param');
       const userInputExampleTextareaEl = selectEl.closest('.example-panel').querySelector('.request-body-param-user-input');
       userInputExampleTextareaEl.value = exampleTextareaEl.value;
+      this.computeCurlSyntax();
     }, 0, exampleDropdownEl);
   }
 
@@ -443,6 +446,7 @@ export default class ApiRequest extends LitElement {
         const userInputExampleTextareaEl = selectEl.closest('.request-body-container').querySelector('.request-body-param-user-input');
         userInputExampleTextareaEl.value = exampleTextareaEl.value;
       }
+      this.computeCurlSyntax();
     }, 0, mimeDropdownEl);
   }
 
@@ -637,25 +641,31 @@ export default class ApiRequest extends LitElement {
   // }
 
   apiResponseTabTemplate() {
+    const curlSyntax = this.curlSyntax || this.computeCurlSyntax() || '';
+    const hasResponse = this.responseMessage !== '';
     const responseFormat = this.responseHeaders.includes('json') ? 'json' : (this.responseHeaders.includes('html') || this.responseHeaders.includes('xml')) ? 'html' : '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
-      ${this.responseMessage
-        ? html`<div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}
-          ${this.responseElapsedMs ? html`<span><br>Execution Time: ${this.responseElapsedMs}ms</span>` : ''}
-        </div>` : ''
-      }
-      <div style="flex:1"></div>
-        <button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>
+        ${this.responseMessage
+          ? html`<div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}
+            ${this.responseElapsedMs ? html`<span><br>Execution Time: ${this.responseElapsedMs}ms</span>` : ''}
+          </div>` : ''
+        }
+        <div style="flex:1"></div>
+        ${!hasResponse ? '' : html`<button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">CLEAR RESPONSE</button>`}
       </div>
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
         <div id="tab_buttons" class="tab-buttons row" @click="${(e) => {
             if (e.target.classList.contains('tab-btn') === false) { return; }
             this.activeResponseTab = e.target.dataset.tab;
         }}">
-          <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
-          <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
-          <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>CURL</button>
+        <br>
+        <div style="width: 100%">
+          ${!hasResponse ? '' : html`
+            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`}
+            <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>FULL REQUEST</button>
+          </div>
         </div>
         ${this.responseIsBlob
           ? html`
@@ -684,9 +694,9 @@ export default class ApiRequest extends LitElement {
           <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
         </div>
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.curlSyntax, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
+          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(curlSyntax, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
           <pre class="fs-exclude" data-hj-suppress data-sl="mask">
-            <code>${unsafeHTML(Prism.highlight(this.curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code>
+            <code>${unsafeHTML(Prism.highlight(curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code>
           </pre>
         </div>
       </div>`;
@@ -750,13 +760,10 @@ export default class ApiRequest extends LitElement {
 
     const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, operation: { method: this.method, path: this.path }, type: 'RequestCleared' } };
     this.dispatchEvent(new CustomEvent('event', event));
+    this.computeCurlSyntax();
   }
 
-  // onExecuteButtonClicked
-  async onTryClick() {
-    const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
-    let curlData = '';
-    let curlForm = '';
+  recomputeFetchOptions() {
     const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
     const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
     const acceptHeader = respEl?.selectedMimeType;
@@ -909,6 +916,8 @@ export default class ApiRequest extends LitElement {
     const patternPropertyInputEls = rawFormInputEls.filter(el => isPatternProperty(el.dataset.pname));
     const formInputEls = rawFormInputEls.filter(el => !isPatternProperty(el.dataset.pname));
 
+    let curlData = '';
+    let curlForm = '';
     if (requestBodyContainerEl) {
       const requestBodyType = requestBodyContainerEl.dataset.selectedRequestBodyType;
 
@@ -993,15 +1002,40 @@ export default class ApiRequest extends LitElement {
       curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
 
+    if (this.fetchCredentials) {
+      fetchOptions.credentials = this.fetchCredentials;
+    }
+
+    return {
+      fetchOptions,
+      fetchUrl,
+      curlParts: {
+        data: curlData,
+        form: curlForm
+      }
+    };
+  }
+
+  computeCurlSyntax(headerOverride) {
+    const { fetchOptions, fetchUrl, curlParts } = this.recomputeFetchOptions();
+    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
+    const headers = headerOverride ?? fetchOptions.headers;
+    const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
+    this.curlSyntax = `${curl}${curlHeaders}${curlParts.data}${curlParts.form}`;
+    this.requestUpdate();
+  }
+
+  // onExecuteButtonClicked
+  async onTryClick() {
+    const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
+    
+    const { fetchOptions, fetchUrl } = this.recomputeFetchOptions();
+
     this.responseIsBlob = false;
     this.respContentDisposition = '';
     if (this.responseBlobUrl) {
       URL.revokeObjectURL(this.responseBlobUrl);
       this.responseBlobUrl = '';
-    }
-
-    if (this.fetchCredentials) {
-      fetchOptions.credentials = this.fetchCredentials;
     }
 
     // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
@@ -1024,9 +1058,7 @@ export default class ApiRequest extends LitElement {
     };
     const fetchRequestObject = new Request(fetchRequest.url, newFetchOptions);
 
-    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
-    const curlHeaders = [...newFetchOptions.headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
-    this.curlSyntax = `${curl}${curlHeaders}${curlData}${curlForm}`;
+    this.computeCurlSyntax(newFetchOptions.headers);
 
     let fetchResponse;
     try {
@@ -1041,6 +1073,7 @@ export default class ApiRequest extends LitElement {
       this.responseUrl = '';
       this.responseHeaders = '';
       this.responseText = '⌛';
+      this.activeResponseTab = 'response';
 
       this.requestUpdate();
       const awaiter = new Promise(resolve => setTimeout(resolve, 200));
@@ -1177,6 +1210,7 @@ export default class ApiRequest extends LitElement {
     newInputContainerEl.appendChild(newRemoveBtnEl);
     el.insertBefore(newInputContainerEl, e.target);
     // el.appendChild(newInputContainerEl);
+    this.computeCurlSyntax();
   }
 
   downloadResponseBlob() {
