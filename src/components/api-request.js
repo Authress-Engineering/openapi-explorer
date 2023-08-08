@@ -24,6 +24,7 @@ export default class ApiRequest extends LitElement {
 
   constructor() {
     super();
+    this.duplicatedRowsByKey = {};
     this.storedParamValues = {};
     this.responseMessage = '';
     this.responseStatus = '';
@@ -67,6 +68,7 @@ export default class ApiRequest extends LitElement {
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
 
       // properties for internal tracking
+      duplicatedRowsByKey: { type: Object }, // Tracking duplicated rows in form table
       activeResponseTab: { type: String }, // internal tracking of response-tab not exposed as a attribute
       selectedRequestBodyType: { type: String, attribute: 'selected-request-body-type' }, // internal tracking of selected request-body type
       selectedRequestBodyExample: { type: String, attribute: 'selected-request-body-example' }, // internal tracking of selected request-body example
@@ -177,11 +179,6 @@ export default class ApiRequest extends LitElement {
   }
 
   updated(changedProperties) {
-    if (changedProperties.has('elementId')) {
-      this.selectedRequestBodyType = '';
-      this.selectedRequestBodyExample = '';
-    }
-
     // In focused mode after rendering the request component, update the text-areas(which contains examples) using the original values from hidden textareas.
     // This is done coz, user may update the dom by editing the textarea's and once the DOM is updated externally change detection wont happen, therefore update the values manually
     if (this.renderStyle !== 'focused') {
@@ -252,7 +249,7 @@ export default class ApiRequest extends LitElement {
         </td>  
         <td colspan="2" style="min-width:160px; vertical-align: top">
           ${this.allowTry === 'true'
-          ? paramSchema.type === 'array' && html`
+            ? paramSchema.type === 'array' && html`
             <div style=" margin-top: 1rem; margin-bottom: 1rem;">    
               <tag-input class="request-param" 
                 style = "width:100%;" 
@@ -602,7 +599,7 @@ export default class ApiRequest extends LitElement {
     return html`
       <div class='request-body-container' data-selected-request-body-type="${this.selectedRequestBodyType}">
         <div class="table-title top-gap row">
-          REQUEST BODY ${this.request_body.required ? html`<span class="mono-font" style='color:var(--red)'>*</span>` : ''} 
+        ${getI18nText('operations.request-body')} ${this.request_body.required ? html`<span class="mono-font" style='color:var(--red)'>*</span>` : ''} 
           <span style = "font-weight:normal; margin-left:5px"> ${this.selectedRequestBodyType}</span>
           <span style="flex:1"></span>
           ${reqBodyTypeSelectorHtml}
@@ -755,6 +752,7 @@ export default class ApiRequest extends LitElement {
     this.dispatchEvent(new CustomEvent('event', event));
   }
 
+  // onExecuteButtonClicked
   async onTryClick() {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
     let curlData = '';
@@ -901,11 +899,20 @@ export default class ApiRequest extends LitElement {
       });
 
     // Request Body Params
+
+    // url-encoded Form Params (dynamic) - Parse JSON and generate Params
+    const formUrlDynamicTextAreaEl = requestPanelEl.querySelector("[data-ptype='dynamic-form']");
+    // url-encoded Form Params (regular)
+    const rawFormInputEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-input']")];
+
+    const patternPropertyKeyEls = [...requestPanelEl.querySelectorAll("[data-ptype='pattern-property-key']")];
+    const patternPropertyInputEls = rawFormInputEls.filter(el => isPatternProperty(el.dataset.pname));
+    const formInputEls = rawFormInputEls.filter(el => !isPatternProperty(el.dataset.pname));
+
     if (requestBodyContainerEl) {
       const requestBodyType = requestBodyContainerEl.dataset.selectedRequestBodyType;
+
       if (requestBodyType.includes('form-urlencoded')) {
-        // url-encoded Form Params (dynamic) - Parse JSON and generate Params
-        const formUrlDynamicTextAreaEl = requestPanelEl.querySelector("[data-ptype='dynamic-form']");
         if (formUrlDynamicTextAreaEl) {
           const val = formUrlDynamicTextAreaEl.value;
           const formUrlDynParams = new URLSearchParams();
@@ -929,28 +936,26 @@ export default class ApiRequest extends LitElement {
             curlData = ` -d ${formUrlDynParams.toString()}`;
           }
         } else {
-          // url-encoded Form Params (regular)
-          const formUrlEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-urlencode']")];
           const formUrlParams = new URLSearchParams();
-          formUrlEls
-            .filter((v) => (v.type !== 'file'))
-            .forEach((el) => {
-              if (el.dataset.array === 'false') {
-                if (el.value) {
-                  formUrlParams.append(el.dataset.pname, el.value);
-                }
-              } else {
-                const vals = (el.value && Array.isArray(el.value)) ? el.value.join(',') : '';
-                formUrlParams.append(el.dataset.pname, vals);
+          patternPropertyInputEls.concat(formInputEls).forEach((el, counter) => {
+            const keyName = patternPropertyKeyEls[counter]?.value || el.dataset.pname;
+            if (el.type === 'file') { return; }
+            if (el.dataset.array === 'false') {
+              if (el.value) {
+                formUrlParams.append(keyName, el.value);
               }
-            });
+            } else {
+              const vals = (el.value && Array.isArray(el.value)) ? el.value.join(',') : '';
+              formUrlParams.append(keyName, vals);
+            }
+          });
           fetchOptions.body = formUrlParams;
           curlData = ` -d ${formUrlParams.toString()}`;
         }
       } else if (requestBodyType.includes('form-data')) {
         const formDataParams = new FormData();
-        const formDataEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-data']")];
-        formDataEls.forEach((el) => {
+        patternPropertyInputEls.concat(formInputEls).forEach((el, counter) => {
+          const keyName = patternPropertyKeyEls[counter]?.value || el.dataset.pname;
           if (el.dataset.array === 'false') {
             if (el.type === 'file' && el.files[0]) {
               formDataParams.append(el.dataset.pname, el.files[0], el.files[0].name);
@@ -963,7 +968,7 @@ export default class ApiRequest extends LitElement {
             el.value.forEach((v) => {
               curlForm = `${curlForm} -F "${el.dataset.pname}[]=${v}"`;
             });
-            formDataParams.append(el.dataset.pname, el.value.join(','));
+            formDataParams.append(keyName, el.value.join(','));
           }
         });
         fetchOptions.body = formDataParams;
@@ -1135,7 +1140,7 @@ export default class ApiRequest extends LitElement {
     }
   }
 
-  onAddRemoveFileInput(e, pname, ptype) {
+  onAddRemoveFileInput(e, pname) {
     if (e.target.tagName.toLowerCase() !== 'button') {
       return;
     }
@@ -1159,7 +1164,7 @@ export default class ApiRequest extends LitElement {
     newInputEl.type = 'file';
     newInputEl.setAttribute('class', 'file-input');
     newInputEl.setAttribute('data-pname', pname);
-    newInputEl.setAttribute('data-ptype', ptype.includes('form-urlencode') ? 'form-urlencode' : 'form-data');
+    newInputEl.setAttribute('data-ptype', 'form-input');
     newInputEl.setAttribute('data-array', 'false');
     newInputEl.setAttribute('data-file-array', 'true');
 

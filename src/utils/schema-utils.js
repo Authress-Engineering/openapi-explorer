@@ -296,6 +296,9 @@ function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, 
   return [value];
 }
 
+export function isPatternProperty(label) {
+  return label.match(/^<any-key>|<pattern:/);
+}
 /**
  * For changing OpenAPI-Schema to an Object Notation,
  * This Object would further be an input to UI Components to generate an Object-Tree
