@@ -2,6 +2,9 @@
 import { html } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { isPatternProperty } from '../utils/schema-utils';
+import { map } from 'lit/directives/map.js';
+import { range } from 'lit/directives/range.js';
 
 function generateFormRows(data, options, dataType = 'object', key = '', description = '', schemaLevel = 0) {
   const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
@@ -69,29 +72,42 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 
   // For Primitive Data types
   const parsedData = JSON.parse(data);
-  const { type, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = parsedData;
+  return generatePrimitiveRow.call(this, parsedData, { key, keyLabel, keyDescr, description, dataType, isRequired, options });
+}
+
+function generatePrimitiveRow(rowData, parentRecursionOptions) {
+  const { type, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = rowData;
+  const { key, keyLabel, keyDescr, description, dataType, isRequired, options } = parentRecursionOptions;
   if (readOrWriteOnly === '🆁') {
     return undefined;
   }
 
-  return html`
-    <tr>
-      <td style="width:160px; min-width:100px;">
-        <div class="param-name ${deprecated ? 'deprecated' : ''}">
-          ${!deprecated && isRequired
-            ? html`<span class="key-label">${keyLabel}</span><span style='color:var(--red);'>*</span>`
-            : key.startsWith('::OPTION')
-              ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
-              : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
-        }
-        </div>
-        <div class="param-type">
-          ${dataType === 'array' ? html`[<span>${format || type}</span>]` : `${format || type}`}
-        </div>
-      </td>
+  const elementId = this.elementId || `${this.method}-${this.path}`;
+  const duplicateRowGeneratorKey = `${elementId}-${key}`;
+  const rowGenerator = (e) => {
+    if (e.target.dataset?.ptype !== 'pattern-property-key' && !isPatternProperty(e.target.dataset?.pname)) {
+      return;
+    }
+    // If the row key has a value then add another row
+    const patternPropertyKeyEls = [...this.querySelectorAll("[data-ptype='pattern-property-key']")];
+    const patternPropertyInputEls = [...this.querySelectorAll("[data-ptype='form-input']")].filter(el => isPatternProperty(el.dataset.pname));
+    // If there is still some row that either has an empty key or an empty value, then skip adding a new row
+    if (patternPropertyKeyEls.some((keyElement, index) => !keyElement.value || !patternPropertyInputEls[index].value)) {
+      return;
+    }
 
-      ${dataType === 'array' ? getArrayFormField.call(this, keyLabel, example, defaultValue, format, options) : ''}
-      ${dataType !== 'array' ? getPrimitiveFormField.call(this, keyLabel, example, defaultValue, format, options) : ''}
+    if (e.target.value) {
+      this.duplicatedRowsByKey[duplicateRowGeneratorKey] = (this.duplicatedRowsByKey[duplicateRowGeneratorKey] || 1) + 1;
+      this.requestUpdate();
+    }
+  };
+
+  return map(range(this.duplicatedRowsByKey?.[duplicateRowGeneratorKey] || 1), () => html`
+    <tr>
+      ${inputFieldKeyLabel.call(this, key.startsWith('::OPTION'), keyLabel, keyDescr, dataType, deprecated, isRequired, schemaTitle, format || type, rowGenerator)}
+
+      ${dataType === 'array' ? getArrayFormField.call(this, keyLabel, example, defaultValue, format, rowGenerator) : ''}
+      ${dataType !== 'array' ? getPrimitiveFormField.call(this, keyLabel, example, defaultValue, format, options, rowGenerator) : ''}
       <td>
         ${description ? html`<div class="param-description">${unsafeHTML(marked(description))}</div>` : ''}
         ${defaultValue || constraints || allowedValues || pattern
@@ -99,7 +115,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
             <div class="param-constraint">
               ${pattern ? html`<span style="font-weight:bold">Pattern: </span>${pattern}<br/>` : ''}
               ${constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${constraints.join(', ')}<br/>` : ''}
-              ${allowedValues?.split('┃').map((v, i) => html`
+              ${allowedValues?.split('┃').filter(v => v !== '').map((v, i) => html`
                 ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                 ${html`
                   <a part="anchor anchor-param-constraint"
@@ -144,7 +160,44 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
           </span>`
         : ''}
       </td>
-    </tr>` : ''}`;
+    </tr>` : ''}`);
+}
+
+function inputFieldKeyLabel(isOption, keyLabel, keyDescription, dataType, deprecated, isRequired, schemaTitle, format, rowGenerator) {
+  if (isPatternProperty(keyLabel)) {
+    return html`
+    <td style="width:160px; min-width:100px;">
+      <div class="param-name ${deprecated ? 'deprecated' : ''}">
+        <input placeholder="${keyLabel}"
+        @change="${(e) => { rowGenerator(e); }}"
+        .value = "${''}"
+        spellcheck = "false"
+        type = "${format === 'binary' ? 'file' : format === 'password' ? 'password' : 'text'}"
+        part = "textbox textbox-param"
+        style = "width:100%"
+        data-ptype = "pattern-property-key"
+        data-pname = "${keyLabel}"
+        data-default = "${''}"
+        data-array = "false"
+      />
+
+    </td>`;
+  }
+  
+  return html`
+    <td style="width:160px; min-width:100px;">
+      <div class="param-name ${deprecated ? 'deprecated' : ''}">
+        ${!deprecated && isRequired
+          ? html`<span class="key-label">${keyLabel}</span><span style='color:var(--red);'>*</span>`
+          : isOption
+            ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescription}</span>`
+            : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
+      }
+      </div>
+      <div class="param-type">
+        ${dataType === 'array' ? html`[<span>${format}</span>]` : `${format}`}
+      </div>
+    </td>`;
 }
 
 // function getObjectFormField(keyLabel, example, defaultValue, format, options) {
@@ -157,30 +210,31 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 //             part = "textarea textarea-param"
 //             style = "width:100%; border:none; resize:vertical;"
 //             data-array = "false"
-//             data-ptype = "${options.mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
+//             data-ptype = "form-input"
 //             data-pname = "${keyLabel}"
 //             data-default = "${defaultValue || ''}"
 //             spellcheck = "false"
 //             .value="${options.fillRequestWithDefault === 'true' ? defaultValue : ''}"
 //           ></textarea>
 //           <!-- This textarea(hidden) is to store the original example value, in focused mode on navbar change it is used to update the example text -->
-//           <textarea data-pname = "hidden-${keyLabel}" data-ptype = "${options.mimeType.includes('form-urlencode') ? 'hidden-form-urlencode' : 'hidden-form-data'}" class="is-hidden" style="display:none" .value="${defaultValue}"></textarea>
+//           <textarea data-pname = "hidden-${keyLabel}" data-ptype = "hidden-form-input" class="is-hidden" style="display:none" .value="${defaultValue}"></textarea>
 //         </div>
 //       </div>
 //     </td>`;
 // }
 
-function getArrayFormField(keyLabel, example, defaultValue, format, options) {
+function getArrayFormField(keyLabel, example, defaultValue, format, rowGenerator) {
   if (format === 'binary') {
     return html`<td style="min-width:100px;">
-      <div class="file-input-container col" style='align-items:flex-end;' @click="${(e) => this.onAddRemoveFileInput(e, keyLabel, options.mimeType)}">
+      <div class="file-input-container col" style='align-items:flex-end;' @click="${(e) => this.onAddRemoveFileInput(e, keyLabel)}">
         <div class='input-set row'>
           <input 
+            @change="${(e) => { rowGenerator(e); }}"
             type = "file"
             part = "file-input"
             class="file-input"
             data-pname = "${keyLabel}" 
-            data-ptype = "${options.mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
+            data-ptype = "form-input"
             data-array = "false" 
             data-file-array = "true" 
           />
@@ -192,8 +246,9 @@ function getArrayFormField(keyLabel, example, defaultValue, format, options) {
   }
   return html`<td style="min-width:100px;">
     <tag-input
+    @change="${(e) => { rowGenerator(e); }}"
     style = "width:100%;" 
-    data-ptype = "${options.mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
+    data-ptype = "form-input"
     data-pname = "${keyLabel}"
     data-default = "${defaultValue || ''}"
     data-array = "true"
@@ -203,15 +258,16 @@ function getArrayFormField(keyLabel, example, defaultValue, format, options) {
   </td>`;
 }
 
-function getPrimitiveFormField(keyLabel, example, defaultValue, format, options) {
+function getPrimitiveFormField(keyLabel, example, defaultValue, format, options, rowGenerator) {
   return html`<td style="min-width:100px;">
     <input placeholder="${example || defaultValue || ''}"
+      @change="${(e) => { rowGenerator(e); }}"
       .value = "${options.fillRequestWithDefault && defaultValue || ''}"
       spellcheck = "false"
       type = "${format === 'binary' ? 'file' : format === 'password' ? 'password' : 'text'}"
       part = "textbox textbox-param"
       style = "width:100%"
-      data-ptype = "${options.mimeType.includes('form-urlencode') ? 'form-urlencode' : 'form-data'}"
+      data-ptype = "form-input"
       data-pname = "${keyLabel}"
       data-default = "${defaultValue || ''}"
       data-array = "false"
@@ -226,7 +282,7 @@ export default function getRequestFormTable(data, mimeType) {
   };
 
   return html`
-    <table role="presentation" class="request-form-table" style = 'border:1px solid var(--light-border-color); width: 100%'>
+    <table id="request-form-table" role="presentation" class="request-form-table" style = 'border:1px solid var(--light-border-color); width: 100%'>
       ${data ? html`${generateFormRows.call(this, data['::type'] === 'array' ? data['::props'] : data, options, data['::type'])}` : ''}  
     </table>`;
 }
