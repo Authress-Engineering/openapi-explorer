@@ -586,11 +586,19 @@ export default class ApiRequest extends LitElement {
         ${this.responseIsBlob
           ? html`
             <div class="tab-content col" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};">
-              <button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.downloadResponseBlob}" part="btn btn-outline">DOWNLOAD</button>
-              ${this.responseBlobType === 'view'
-                ? html`<button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.viewResponseBlob}" part="btn btn-outline">VIEW (NEW TAB)</button>`
+              ${this.responseBlobType === 'image'
+                ? html`<img style="max-height:var(--resp-area-height, 300px); object-fit:contain;" class="mar-top-8" src="${this.responseBlobUrl}"></img>`
                 : ''
               }
+              <div style="display: flex; justify-content: center">
+                <div> 
+                  <button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.downloadResponseBlob}" part="btn btn-outline">DOWNLOAD</button>
+                  ${this.responseBlobType === 'view' || this.responseBlobType === 'image'
+                    ? html`<button class="m-btn thin-border mar-top-8" style="width:135px" @click="${this.viewResponseBlob}" part="btn btn-outline">VIEW (NEW TAB)</button>`
+                    : ''
+                  }
+                </div>
+              </div>
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
@@ -986,6 +994,9 @@ export default class ApiRequest extends LitElement {
         } else if (textFileRegex.test(contentType)) {
           this.responseIsBlob = true;
           this.responseBlobType = 'download';
+        } else if (contentType.match(/^image/)) {
+          this.responseIsBlob = true;
+          this.responseBlobType = 'image';
         } else if (mediaFileRegex.test(contentType)) {
           this.responseIsBlob = true;
           this.responseBlobType = 'view';
@@ -1001,7 +1012,7 @@ export default class ApiRequest extends LitElement {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
           const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
           const filename = filenameRegex.exec(contentDisposition);
-          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mimeTypeResolver.extension(contentType) || 'file'}`;
+          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mimeTypeResolver(contentType) || 'file'}`;
           respBlob = await fetchResponse.blob();
           this.responseBlobUrl = URL.createObjectURL(respBlob);
         }
@@ -1040,6 +1051,7 @@ export default class ApiRequest extends LitElement {
       document.dispatchEvent(new CustomEvent('after-try', responseEvent));
       document.dispatchEvent(new CustomEvent('response', responseEvent));
     }
+    this.requestUpdate();
   }
 
   onAddRemoveFileInput(e, pname) {
