@@ -70,12 +70,8 @@ export default class TagInput extends LitElement {
   }
 
   emitChanged() {
-    const event = new CustomEvent('change', {
-      detail: {
-        value: this.value
-      }
-    });
-    this.dispatchEvent(event);
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value } }));
+    this.dispatchEvent(new CustomEvent('input', { detail: { value: this.value } }));
   }
 }
 // Register the element with the browser
