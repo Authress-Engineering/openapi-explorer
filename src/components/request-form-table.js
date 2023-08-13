@@ -126,6 +126,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
                       if (inputEl) {
                         inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
                       }
+                      this.computeCurlSyntax();
                     }}"> 
                     ${v} 
                   </a>`
@@ -153,6 +154,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
                 if (inputEl) {
                   inputEl.value = e.target.dataset.exampleType === 'array' ? e.target.dataset.example.split('~|~') : e.target.dataset.example;
                 }
+                this.computeCurlSyntax();
               }}">
               ${type === 'array' ? example.join(', ') : example}
             </a>
@@ -169,7 +171,7 @@ function inputFieldKeyLabel(isOption, keyLabel, keyDescription, dataType, deprec
     <td style="width:160px; min-width:100px;">
       <div class="param-name ${deprecated ? 'deprecated' : ''}">
         <input placeholder="${keyLabel}"
-        @change="${(e) => { rowGenerator(e); }}"
+        @change="${(e) => { rowGenerator(e); this.computeCurlSyntax(); }}"
         .value = "${''}"
         spellcheck = "false"
         type = "${format === 'binary' ? 'file' : format === 'password' ? 'password' : 'text'}"
@@ -229,7 +231,7 @@ function getArrayFormField(keyLabel, example, defaultValue, format, rowGenerator
       <div class="file-input-container col" style='align-items:flex-end;' @click="${(e) => this.onAddRemoveFileInput(e, keyLabel)}">
         <div class='input-set row'>
           <input 
-            @change="${(e) => { rowGenerator(e); }}"
+            @change="${(e) => { rowGenerator(e); this.computeCurlSyntax(); }}"
             type = "file"
             part = "file-input"
             class="file-input"
@@ -246,7 +248,7 @@ function getArrayFormField(keyLabel, example, defaultValue, format, rowGenerator
   }
   return html`<td style="min-width:100px;">
     <tag-input
-    @change="${(e) => { rowGenerator(e); }}"
+    @change="${(e) => { rowGenerator(e); this.computeCurlSyntax(); }}"
     style = "width:100%;" 
     data-ptype = "form-input"
     data-pname = "${keyLabel}"
@@ -261,7 +263,7 @@ function getArrayFormField(keyLabel, example, defaultValue, format, rowGenerator
 function getPrimitiveFormField(keyLabel, example, defaultValue, format, options, rowGenerator) {
   return html`<td style="min-width:100px;">
     <input placeholder="${example || defaultValue || ''}"
-      @change="${(e) => { rowGenerator(e); }}"
+      @change="${(e) => { rowGenerator(e); this.computeCurlSyntax(); }}"
       .value = "${options.fillRequestWithDefault && defaultValue || ''}"
       spellcheck = "false"
       type = "${format === 'binary' ? 'file' : format === 'password' ? 'password' : 'text'}"
