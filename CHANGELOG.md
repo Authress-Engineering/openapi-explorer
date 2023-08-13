@@ -3,6 +3,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 1.1 ##
 * Support dynamic curl creation.
+* Support inline image displays.
 
 ## 1.0 ##
 * By default uses the `info.title` property of the open api specification for the `overview` section name in the navbar. Falls back to the default when not specified.
