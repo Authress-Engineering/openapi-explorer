@@ -490,8 +490,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
     // Array properties are read from the ::props object instead of reading from the keys of this object
-    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema), options, (level + 1));
-    // obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1));
+    // Use type: undefined to prevent schema recursion by passing array from the parent to the next loop. arrayItemsSchema should have had type defined but it doesn't.
+    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, { type: undefined }, arrayItemsSchema), options, (level + 1));
     if (arrayItemsSchema?.items) {
       obj['::array-type'] = arrayItemsSchema.items.type;
     }
