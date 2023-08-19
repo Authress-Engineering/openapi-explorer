@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import merge from 'lodash.merge';
-import { expandN } from 'regex-to-strings';
+import RandExp from 'randexp';
 import xmlFormatter from './xml/xml.js';
 
 // When the type is not known for a property set the displayed type to be this:
@@ -144,7 +144,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
       try {
-        return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+        return new RandExp(examplePattern).gen() || fallbackPropertyName || 'string';
       } catch (error) {
         return fallbackPropertyName || 'string';
       }
