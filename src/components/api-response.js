@@ -285,7 +285,7 @@ export default class ApiResponse extends LitElement {
           <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
             <select aria-label='response body example' @change='${(e) => this.onSelectExample(e)}'>
               ${mimeRespDetails.examples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === mimeRespDetails.selectedExample} > 
-                ${v.exampleSummary.length > 80 || v.exampleSummary.length === 0 ? v.exampleId : v.exampleSummary} 
+                ${!v.exampleSummary || v.exampleSummary.length > 80 ? v.exampleId : v.exampleSummary} 
               </option>`)}
             </select>
             ${mimeRespDetails.examples.map((v) => html`
