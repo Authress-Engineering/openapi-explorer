@@ -14,6 +14,20 @@ export default class JsonTree extends LitElement {
     };
   }
 
+  /**
+   * @param {Map<string, object>} changedProperties Changed Properties
+   */
+  update(changedProperties) {
+    if (changedProperties.has('data')) {
+      this.interactive = false;
+    }
+    super.update(changedProperties);
+  }
+
+  updated() {
+    this.interactive = true; // Note: interactive is not a reactive property
+  }
+
   static finalizeStyles() {
     return [
       FontStyles,
@@ -58,6 +72,9 @@ export default class JsonTree extends LitElement {
 
       .inside-bracket-wrapper {
         overflow: hidden;
+      }
+      .tree:not(.interactive) .inside-bracket-wrapper {
+        animation-duration: 0s !important;
       }
       .open-bracket:not(.collapsed) + .inside-bracket-wrapper {
         animation: linear 0.2s expand-height;
@@ -134,7 +151,7 @@ export default class JsonTree extends LitElement {
   /* eslint-disable indent */
   render() {
     return html`
-      <div class="json-tree tree">
+      <div class="json-tree tree ${this.interactive ? 'interactive' : ''}">
         <div class="toolbar"> 
           <div>&nbsp;</div>
           <div class="toolbar-item">
