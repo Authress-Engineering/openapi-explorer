@@ -37,18 +37,18 @@ jobs:
     - name: Run build
       run: yarn build
     - name: Deploy to NPM
-      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      if: github.repository_owner == 'Rhosys' && github.ref != 'refs/heads/main' && github.event_name == 'push'
       run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
     - name: After build
-      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      if: github.repository_owner == 'Rhosys' && github.ref != 'refs/heads/main' && github.event_name == 'push'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node make.js after_build
     - name: Create Github Release and Tag
-      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && github.event_name == 'push'
+      if: github.repository_owner == 'Rhosys' && github.ref != 'refs/heads/main' && github.event_name == 'push'
       run: |
         git tag ${GITHUB_REF/refs\/heads\/release\//}.$GITHUB_RUN_NUMBER
         git push origin ${GITHUB_REF/refs\/heads\/release\//}.$GITHUB_RUN_NUMBER
