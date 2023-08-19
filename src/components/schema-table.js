@@ -25,6 +25,20 @@ export default class SchemaTable extends LitElement {
     if (!this.schemaHideWriteOnly || !'true false'.includes(this.schemaHideWriteOnly)) { this.schemaHideWriteOnly = 'true'; }
   }
 
+  /**
+   * @param {Map<string, object>} changedProperties Changed Properties
+   */
+  update(changedProperties) {
+    if (changedProperties.has('data')) {
+      this.interactive = false;
+    }
+    super.update(changedProperties);
+  }
+
+  updated() {
+    this.interactive = true; // Note: interactive is not a reactive property
+  }
+
   static finalizeStyles() {
     return [
       FontStyles,
@@ -76,6 +90,9 @@ export default class SchemaTable extends LitElement {
       .tr + .object-body {
         overflow: hidden;
       } 
+      .table:not(.interactive) .object-body {
+        animation-duration: 0s !important;
+      }
       .tr:not(.collapsed) + .object-body {
         animation: linear 0.2s expand-height;
       }
@@ -100,7 +117,7 @@ export default class SchemaTable extends LitElement {
         ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
         : ''
       }
-      <div class="table">
+      <div class="table ${this.interactive ? 'interactive' : ''}">
         <div style = 'border:1px solid var(--light-border-color)'>
           <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
             <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
