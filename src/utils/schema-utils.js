@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import merge from 'lodash.merge';
-import { expandN } from 'regex-to-strings';
+import RandExp from 'randexp';
 import xmlFormatter from './xml/xml.js';
 
 // When the type is not known for a property set the displayed type to be this:
@@ -144,7 +144,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
       try {
-        return expandN(examplePattern, 1)[0] || fallbackPropertyName || 'string';
+        return new RandExp(examplePattern).gen() || fallbackPropertyName || 'string';
       } catch (error) {
         return fallbackPropertyName || 'string';
       }
@@ -490,8 +490,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
     // Array properties are read from the ::props object instead of reading from the keys of this object
-    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema), options, (level + 1));
-    // obj['::props'] = schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1));
+    // Use type: undefined to prevent schema recursion by passing array from the parent to the next loop. arrayItemsSchema should have had type defined but it doesn't.
+    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, { type: undefined }, arrayItemsSchema), options, (level + 1));
     if (arrayItemsSchema?.items) {
       obj['::array-type'] = arrayItemsSchema.items.type;
     }

@@ -60,7 +60,7 @@
     "openapi-data-validator": "^2.0.40",
     "openapi-resolver": "^4.1.35",
     "prismjs": "^1.29.0",
-    "regex-to-strings": "^2.0.3",
+    "randexp": "^0.5.3",
     "xml-but-prettier": "^1.0.1"
   },
   "scripts": {
