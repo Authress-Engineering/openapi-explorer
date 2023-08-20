@@ -26,6 +26,20 @@ export default class SchemaTree extends LitElement {
     if (!this.schemaHideWriteOnly || !'true false'.includes(this.schemaHideWriteOnly)) { this.schemaHideWriteOnly = 'true'; }
   }
 
+  /**
+   * @param {Map<string, object>} changedProperties Changed Properties
+   */
+  update(changedProperties) {
+    if (changedProperties.has('data')) {
+      this.interactive = false;
+    }
+    super.update(changedProperties);
+  }
+
+  updated() {
+    this.interactive = true; // Note: interactive is not a reactive property
+  }
+
   static finalizeStyles() {
     return [
       FontStyles,
@@ -41,7 +55,7 @@ export default class SchemaTree extends LitElement {
         text-align: left;
         line-height:calc(var(--font-size-small) + 6px);
       }
-
+      
       .tree .key {
         max-width: 300px;
       }
@@ -75,6 +89,9 @@ export default class SchemaTree extends LitElement {
       .inside-bracket-wrapper {
         overflow: hidden;
       }
+      .tree:not(.interactive) .inside-bracket-wrapper {
+        animation-duration: 0s !important;
+      }
       .tr:not(.collapsed) + .inside-bracket-wrapper {
         animation: linear 0.2s expand-height;
       }
@@ -96,7 +113,7 @@ export default class SchemaTree extends LitElement {
   /* eslint-disable indent */
   render() {
     return html`
-      <div class="tree">
+      <div class="tree ${this.interactive ? 'interactive' : ''}">
         <div class="toolbar">
           ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
