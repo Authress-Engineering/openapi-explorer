@@ -64,12 +64,21 @@ export default class JsonTree extends LitElement {
       .tree > .open-bracket {
         margin-left: -2px;
       }
+      .open-bracket:not(.collapsed):hover > .key > .open-bracket, 
+      .open-bracket:not(.collapsed):hover + .inside-bracket-wrapper > .close-bracket,
       .open-bracket:hover {
         color:var(--primary-color);
         background-color:var(--hover-color);
         border: 1px solid var(--border-color);
       }
-
+      .open-bracket:not(.collapsed):hover + .inside-bracket-wrapper > .inside-bracket {
+        border-left: 1px solid var(--fg3);
+      }
+      .close-bracket {
+        display:inline-block;
+        border: 1px solid transparent;
+        border-radius:3px;
+      }
       .inside-bracket-wrapper {
         overflow: hidden;
       }

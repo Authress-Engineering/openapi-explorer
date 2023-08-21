@@ -76,13 +76,22 @@ export default class SchemaTree extends LitElement {
       .td.key > .open-bracket:first-child {
         margin-left: -2px;
       }
+      .object:not(.collapsed):hover > .key > .open-bracket, 
+      .object:not(.collapsed):hover + .inside-bracket-wrapper > .close-bracket {
+        color:var(--primary-color);
+      }
       .open-bracket:hover {
         color:var(--primary-color);
         background-color:var(--hover-color);
         border: 1px solid var(--border-color);
       }
+      .object:not(.collapsed):hover + .inside-bracket-wrapper > .inside-bracket {
+        border-left: 1px solid var(--fg3);
+      }
       .close-bracket {
         display:inline-block;
+        border: 1px solid transparent;
+        border-radius:3px;
         font-family: var(--font-mono);
       }
 
@@ -217,8 +226,8 @@ export default class SchemaTree extends LitElement {
       if (flags['🆆'] && this.schemaHideWriteOnly === 'true') {
         return undefined;
       }
-
-      const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
+      const readOrWriteOnly = flags['🆁'] || flags['🆆'];
+      const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
@@ -228,7 +237,7 @@ export default class SchemaTree extends LitElement {
                 ? ''
                 : schemaLevel > 0
                   ? html`<span class="key-label">
-                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span style="color:var(--red)">*</span>` : ''}:
+                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span style="color:var(--red)">*</span>` : ''}${readOrWriteOnly ? ` ${readOrWriteOnly}` : ''}:
                     </span>`
                   : ''
             }
@@ -282,12 +291,12 @@ export default class SchemaTree extends LitElement {
                 ? html`<span class="key-label">${keyLabel}:</span>`
                 : ''
           }
-          <span>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</span>
+          <span><span class="${cssType}">${dataType === 'array' ? '[' : ''}${format || type || 'any'}${dataType === 'array' ? ']' : ''}${readOrWriteOnly && ` ${readOrWriteOnly}` || ''}</span></span>
 
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
+            ${unsafeHTML(marked(`${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraints.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
