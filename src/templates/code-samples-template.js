@@ -29,9 +29,7 @@ export default function codeSamplesTemplate(xCodeSamples) {
       const fullSource = sanitizedSource.join('\n');
       return html`
         <div class="tab-content m-markdown code-sample-wrapper" style= "display:${i === 0 ? 'block' : 'none'}" data-tab = '${v.lang}${i}'>
-          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(v.source, e); }}'>${getI18nText('operations.copy')}</button>
-          <pre><code>${Prism.languages[v.lang?.toLowerCase()] ? unsafeHTML(Prism.highlight(fullSource, Prism.languages[v.lang?.toLowerCase()], v.lang?.toLowerCase())) : fullSource}
-          </code></pre>
+          <syntax-highlighter language="${v.lang}" .content="${fullSource}" copy/>
         </div>`;
     })
     }

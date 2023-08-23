@@ -1,6 +1,4 @@
 import { LitElement, html, css } from 'lit';
-import { copyToClipboard } from '../utils/common-utils';
-import { getI18nText } from '../languages';
 import FontStyles from '../styles/font-styles.js';
 import BorderStyles from '../styles/border-styles';
 import InputStyles from '../styles/input-styles';
@@ -109,7 +107,6 @@ export default class JsonTree extends LitElement {
       }
       .toolbar-item {
         cursor: pointer;
-        margin: 0 1rem !important;
         flex-shrink: 0;
       }
       .tree .toolbar .toolbar-item {
@@ -152,12 +149,6 @@ export default class JsonTree extends LitElement {
   render() {
     return html`
       <div class="json-tree tree ${this.interactive ? 'interactive' : ''}">
-        <div class="toolbar"> 
-          <div>&nbsp;</div>
-          <div class="toolbar-item">
-            <button class="m-btn outline-primary" part="btn btn-fill" @click='${(e) => { copyToClipboard(JSON.stringify(this.data, null, 2), e); }}'>${getI18nText('operations.copy')}</button>
-          </div>
-        </div>
         ${this.generateTree(this.data, true)}
       </div>  
     `;

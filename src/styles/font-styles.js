@@ -72,10 +72,15 @@ export default css`
   }
   
   code,
-  pre {
+  pre,
+  syntax-highlighter {
     margin: 0px;
     font-family: var(--font-mono);
     font-size: calc(var(--font-size-mono) - 1px);
+  }
+
+  .m-markdown syntax-highlighter {
+    display: block;
   }
 
   .m-markdown,
@@ -125,7 +130,8 @@ export default css`
   }
 
   .m-markdown-small code,
-  .m-markdown code {
+  .m-markdown code,
+  .m-markdown syntax-highlighter {
     padding: 1px 6px;
     border-radius: 2px;
     color: var(--inline-code-fg);
@@ -134,12 +140,12 @@ export default css`
     line-height: 1.2;
   }
 
-  .m-markdown-small code {
+  .m-markdown-small code, .m-markdown-small syntax-highlighter {
     font-size: calc(var(--font-size-mono) - 1px);
   }
 
   .m-markdown-small pre,
-  .m-markdown pre {
+  .m-markdown pre, .m-markdown syntax-highlighter {
     white-space: pre-wrap;
     overflow-x: auto;
     line-height: normal;
@@ -147,13 +153,13 @@ export default css`
     border: 1px solid var(--code-border-color);
   }
 
-  .m-markdown pre {
+  .m-markdown pre, .m-markdown syntax-highlighter {
     padding: 8px;
     background-color: var(--bg2);
     color:var(--code-fg);
   }
 
-  .m-markdown-small pre {
+  .m-markdown-small pre, .m-markdown-small syntax-highlighter {
     margin-top: 4px;
     padding: 2px 4px;
     background-color: var(--bg3);
@@ -172,7 +178,8 @@ export default css`
     background-color: transparent;
   }
 
-  .m-markdown-small pre code {
+  .m-markdown-small pre code,
+  .m-markdown-small syntax-highlighter {
     color: var(--fg2);
     background-color: var(--bg3);
   }

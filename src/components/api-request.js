@@ -1,19 +1,17 @@
 import { LitElement, html } from 'lit';
 import { marked } from 'marked';
-import Prism from 'prismjs';
 import mimeTypeResolver from './mime-types';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { keyed } from 'lit/directives/keyed.js';
 import formatXml from 'xml-but-prettier';
 
-import { copyToClipboard } from '../utils/common-utils';
 import { getI18nText } from '../languages';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils';
-import './json-tree';
 import './schema-tree';
 import getRequestFormTable from './request-form-table';
 import './tag-input';
+import './syntax-highlighter';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
@@ -27,6 +25,7 @@ export default class ApiRequest extends LitElement {
     this.storedParamValues = {};
     this.responseMessage = '';
     this.responseStatus = '';
+    this.responseContentType = '';
     this.responseHeaders = '';
     this.responseText = '';
     this.responseUrl = '';
@@ -52,6 +51,7 @@ export default class ApiRequest extends LitElement {
       callback: { type: String },
       responseMessage: { type: String, attribute: false },
       responseText: { type: String, attribute: false },
+      responseContentType: { type: String, attribute: false },
       responseHeaders: { type: String, attribute: false },
       responseStatus: { type: String, attribute: false },
       responseUrl: { type: String, attribute: false },
@@ -561,7 +561,6 @@ export default class ApiRequest extends LitElement {
   apiResponseTabTemplate() {
     const curlSyntax = this.curlSyntax || this.computeCurlSyntax() || '';
     const hasResponse = this.responseMessage !== '';
-    const responseFormat = this.responseHeaders.includes('json') ? 'json' : (this.responseHeaders.includes('html') || this.responseHeaders.includes('xml')) ? 'html' : '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
         ${this.responseMessage
@@ -604,26 +603,14 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              ${this.responseText
-                ? html`<button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseText, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>`
-                : ''
-              }
-              <pre style="min-height: 60px" @copy='${() => { copyToClipboard(window.getSelection().toString()); }}'>${responseFormat
-                ? html`<code>${unsafeHTML(Prism.highlight(this.responseText, Prism.languages[responseFormat], responseFormat))}</code>`
-                : `${this.responseText}`
-              }
-              </pre>
+              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" copy/>
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(this.responseHeaders, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
-          <pre><code>${unsafeHTML(Prism.highlight(this.responseHeaders, Prism.languages.css, 'css'))}</code></pre>
+          <syntax-highlighter language="http" .content="${this.responseHeaders}" copy/>
         </div>
-        <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <button class="m-btn outline-primary toolbar-copy-btn" @click='${(e) => { copyToClipboard(curlSyntax, e); }}' part="btn btn-fill">${getI18nText('operations.copy')}</button>
-          <pre class="fs-exclude" data-hj-suppress data-sl="mask">
-            <code>${unsafeHTML(Prism.highlight(curlSyntax.trim(), Prism.languages.shell, 'shell'))}</code>
-          </pre>
+        <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
+          <syntax-highlighter class="fs-exclude" data-hj-suppress data-sl="mask" language="shell" .content="${curlSyntax.trim()}" copy/>
         </div>
       </div>`;
   }
@@ -968,6 +955,7 @@ export default class ApiRequest extends LitElement {
         headers[hdr.trim()] = hdrVal && hdrVal.trim();
       });
       const contentType = fetchResponse.headers.get('content-type');
+      this.responseContentType = contentType;
       const respEmpty = (await fetchResponse.clone().text()).length === 0;
       if (respEmpty) {
         this.responseText = '';

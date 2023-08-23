@@ -53,21 +53,7 @@ export default css`
   opacity: 0.4;
 }
 
-.toolbar-copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  margin-right: 8px;
-}
-.toolbar-copy-btn + pre {
-  white-space: pre;
-  max-height:400px;
-  overflow: auto;
-  display: flex;
-  padding-right: 70px;
-}
-
-input, textarea, select, button, pre {
+input, textarea, select, button {
   color:var(--fg);
   outline: none;
   background-color: var(--input-bg);
@@ -79,7 +65,6 @@ button {
 }
 
 /* Form Inputs */
-pre,
 select,
 textarea,
 input[type="file"],
