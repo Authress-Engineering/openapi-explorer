@@ -10,8 +10,10 @@ import InputStyles from '../styles/input-styles';
 import TabStyles from '../styles/tab-styles';
 import BorderStyles from '../styles/border-styles';
 import SchemaStyles from '../styles/schema-styles';
+import PrismStyles from '../styles/prism-styles';
 import './schema-tree';
 import './schema-table';
+import './syntax-highlighter';
 
 export default class ApiResponse extends LitElement {
   constructor() {
@@ -47,6 +49,7 @@ export default class ApiResponse extends LitElement {
       TableStyles,
       InputStyles,
       BorderStyles,
+      PrismStyles,
       css`
       .resp-head{
         vertical-align: middle;
@@ -189,7 +192,7 @@ export default class ApiResponse extends LitElement {
           </div>
           ${Object.keys(this.mimeResponsesForEachStatus[status]).length === 0
             ? ''
-            : html`  
+            : html`
               <div class="tab-panel col">
                 <div class="tab-buttons row" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" >
                   <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" data-tab='model'>${getI18nText('operations.model')}</button>
@@ -262,17 +265,7 @@ export default class ApiResponse extends LitElement {
         ? html`
           ${mimeRespDetails.examples[0].exampleSummary && mimeRespDetails.examples[0].exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${mimeRespDetails.examples[0].exampleSummary} </div>` : ''}
           ${mimeRespDetails.examples[0].exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(mimeRespDetails.examples[0].exampleDescription || ''))} </div>` : ''}
-          ${mimeRespDetails.examples[0].exampleFormat === 'json'
-            ? html`
-              <json-tree 
-                render-style = '${this.renderStyle}'
-                .data="${mimeRespDetails.examples[0].exampleValue}"
-                class = 'example-panel pad-top-8'
-              ></json-tree>`
-            : html`
-              <pre class = 'example-panel generic-tree border-top pad-top-8'>${mimeRespDetails.examples[0].exampleValue}</pre>
-            `
-          }`
+          <syntax-highlighter class='example-panel generic-tree border-top pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}" copy/>`
         : html`
           <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
             <select aria-label='response body example' @change='${(e) => this.onSelectExample(e)}'>
@@ -284,20 +277,21 @@ export default class ApiResponse extends LitElement {
               <div class="example" data-example = '${v.exampleId}' style = "display: ${v.exampleId === mimeRespDetails.selectedExample ? 'block' : 'none'}">
                 ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
                 ${v.exampleDescription && v.exampleDescription !== v.exampleSummary ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
-                ${v.exampleFormat === 'json'
-                  ? html`
-                    <json-tree 
-                      render-style = '${this.renderStyle}'
-                      .data = '${v.exampleValue}'
-                    ></json-tree>`
-                  : html`<pre class="generic-tree">${v.exampleValue}</pre>`
-                }
+                <syntax-highlighter mime-type="${v.exampleType}" .content="${v.exampleValue}" copy/>
               </div>  
             `)}
           </span>  
         `
       }
     `;
+  }
+
+  renderExampleTemplate(example) {
+    return html`<syntax-highlighter content-type="${example.exampleType}" content="${example.exampleValue}"/>`;
+  }
+
+  exampleValueTemplate(example) {
+    return html`<syntax-highlighter content-type="${example.exampleType}" content="${example.exampleValue}" copy/>`;
   }
 
   mimeSchemaTemplate(mimeRespDetails) {

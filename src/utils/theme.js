@@ -211,7 +211,9 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     /*Code Syntax Color*/
     --code-fg:${newTheme.codeFg};
     --inline-code-fg:${newTheme.inlineCodeFg};
-    
+    --code-property-color:${newTheme.codePropertyColor};
+    --code-keyword-color:${newTheme.codeKeywordColor};
+    --code-operator-color:${newTheme.codeOperatorColor};
 
     /* Computed Color properties */
     --primary-color: ${theme.primaryColor};
