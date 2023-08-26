@@ -36,6 +36,8 @@ jobs:
       run: node make.js setup
     - name: Run build
       run: yarn build
+    - name: Lint
+      run: yarn lint
     - name: Deploy to NPM
       if: github.repository_owner == 'Rhosys' && github.ref != 'refs/heads/main' && github.event_name == 'push'
       run: npm publish
