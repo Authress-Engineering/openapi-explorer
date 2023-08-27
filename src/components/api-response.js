@@ -265,7 +265,7 @@ export default class ApiResponse extends LitElement {
         ? html`
           ${mimeRespDetails.examples[0].exampleSummary && mimeRespDetails.examples[0].exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${mimeRespDetails.examples[0].exampleSummary} </div>` : ''}
           ${mimeRespDetails.examples[0].exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(mimeRespDetails.examples[0].exampleDescription || ''))} </div>` : ''}
-          <syntax-highlighter class='example-panel generic-tree border-top pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}" copy/>`
+          <syntax-highlighter class='example-panel generic-tree border-top pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}"/>`
         : html`
           <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
             <select aria-label='response body example' @change='${(e) => this.onSelectExample(e)}'>
@@ -277,21 +277,13 @@ export default class ApiResponse extends LitElement {
               <div class="example" data-example = '${v.exampleId}' style = "display: ${v.exampleId === mimeRespDetails.selectedExample ? 'block' : 'none'}">
                 ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
                 ${v.exampleDescription && v.exampleDescription !== v.exampleSummary ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
-                <syntax-highlighter mime-type="${v.exampleType}" .content="${v.exampleValue}" copy/>
+                <syntax-highlighter mime-type="${v.exampleType}" .content="${v.exampleValue}"/>
               </div>  
             `)}
           </span>  
         `
       }
     `;
-  }
-
-  renderExampleTemplate(example) {
-    return html`<syntax-highlighter content-type="${example.exampleType}" content="${example.exampleValue}"/>`;
-  }
-
-  exampleValueTemplate(example) {
-    return html`<syntax-highlighter content-type="${example.exampleType}" content="${example.exampleValue}" copy/>`;
   }
 
   mimeSchemaTemplate(mimeRespDetails) {
