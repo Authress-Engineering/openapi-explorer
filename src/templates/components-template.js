@@ -3,7 +3,6 @@ import { schemaInObjectNotation } from '../utils/schema-utils';
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
-import '../components/json-tree';
 import '../components/schema-tree';
 
 function componentBodyTemplate(sComponent) {

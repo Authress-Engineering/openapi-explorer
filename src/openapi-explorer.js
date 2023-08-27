@@ -1,20 +1,5 @@
 import { LitElement, css } from 'lit';
 
-import { marked } from 'marked';
-import Prism from 'prismjs';
-
-// It's possible none of these imports are actually necessary and should just be removed
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-yaml';
-import 'prismjs/components/prism-go';
-import 'prismjs/components/prism-ruby';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-http';
-import 'prismjs/components/prism-csharp';
-
 // Styles
 import FontStyles from './styles/font-styles.js';
 import InputStyles from './styles/input-styles';
@@ -36,7 +21,7 @@ import ProcessSpec from './utils/spec-parser';
 import mainBodyTemplate from './templates/mainBodyTemplate';
 import apiRequestStyles from './styles/api-request-styles';
 import { checkForAuthToken } from './templates/security-scheme-template';
-
+import './components/syntax-highlighter';
 export default class OpenApiExplorer extends LitElement {
   constructor() {
     super();
@@ -412,15 +397,6 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
-
-    marked.setOptions({
-      highlight(code, lang) {
-        if (Prism.languages[lang]) {
-          return Prism.highlight(code, Prism.languages[lang], lang);
-        }
-        return code;
-      },
-    });
 
     window.addEventListener('hashchange', () => {
       this.scrollTo(getCurrentElement());

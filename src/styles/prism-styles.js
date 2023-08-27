@@ -59,6 +59,7 @@ pre[class*="language-"] {
 }
 
 .token.property,
+.token.tag,
 .token.class-name,
 .token.constant,
 .token.symbol {
@@ -68,6 +69,7 @@ pre[class*="language-"] {
 .token.selector,
 .token.important,
 .token.atrule,
+.token.attr-name,
 .token.keyword,
 .token.builtin {
   color: var(--code-keyword-color);
@@ -107,5 +109,11 @@ pre[class*="language-"] {
 
 .token.inserted {
   color: green;
+}
+
+.token.header {
+  /* conflict with .header */
+  color: unset;
+  background: unset;
 }
 `;
