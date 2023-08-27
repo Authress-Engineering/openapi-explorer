@@ -603,14 +603,14 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" copy/>
+              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}"/>
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <syntax-highlighter language="http" .content="${this.responseHeaders}" copy/>
+          <syntax-highlighter language="http" .content="${this.responseHeaders}"/>
         </div>
         <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <syntax-highlighter class="fs-exclude" data-hj-suppress data-sl="mask" language="shell" .content="${curlSyntax.trim()}" copy/>
+          <syntax-highlighter class="fs-exclude" data-hj-suppress data-sl="mask" language="shell" .content="${curlSyntax.trim()}"/>
         </div>
       </div>`;
   }

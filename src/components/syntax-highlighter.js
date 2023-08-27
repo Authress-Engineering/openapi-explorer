@@ -45,7 +45,6 @@ class SyntaxHighlighter extends LitElement {
       content: { type: Object },
       language: { type: String, attribute: 'language' },
       mimeType: { type: String, attribute: 'mime-type' },
-      copy: { type: Boolean, attribute: 'copy' }
     };
   }
 
@@ -121,17 +120,13 @@ class SyntaxHighlighter extends LitElement {
    * @returns Content
    */
   renderCopyWrapper(content) {
-    if (this.copy) {
-      return html`<div>
+    return html`<div>
                 <button 
                     class="m-btn outline-primary toolbar-copy-btn" 
                     @click='${this.copyToClipboard}' 
                     part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
                     ${content}
             </div>`;
-    }
-
-    return content;
   }
 
   /**

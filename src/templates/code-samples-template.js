@@ -1,8 +1,4 @@
 import { html } from 'lit';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import Prism from 'prismjs';
-import { copyToClipboard } from '../utils/common-utils';
-import { getI18nText } from '../languages';
 
 /* eslint-disable indent */
 export default function codeSamplesTemplate(xCodeSamples) {
@@ -29,7 +25,7 @@ export default function codeSamplesTemplate(xCodeSamples) {
       const fullSource = sanitizedSource.join('\n');
       return html`
         <div class="tab-content m-markdown code-sample-wrapper" style= "display:${i === 0 ? 'block' : 'none'}" data-tab = '${v.lang}${i}'>
-          <syntax-highlighter language="${v.lang}" .content="${fullSource}" copy/>
+          <syntax-highlighter language="${v.lang}" .content="${fullSource}"/>
         </div>`;
     })
     }
