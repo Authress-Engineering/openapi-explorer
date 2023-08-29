@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { marked } from 'marked';
-import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils';
+import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils.js';
 import { getI18nText } from '../languages';
 
 function onExpandCollapse(tagId) {

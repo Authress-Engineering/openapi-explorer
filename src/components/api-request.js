@@ -1,19 +1,19 @@
 import { LitElement, html } from 'lit';
 import { marked } from 'marked';
 import Prism from 'prismjs';
-import mimeTypeResolver from './mime-types';
+import mimeTypeResolver from './mime-types.js';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { keyed } from 'lit/directives/keyed.js';
 import formatXml from 'xml-but-prettier';
 
-import { copyToClipboard } from '../utils/common-utils';
+import { copyToClipboard } from '../utils/common-utils.js';
 import { getI18nText } from '../languages';
-import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils';
-import './json-tree';
-import './schema-tree';
-import getRequestFormTable from './request-form-table';
-import './tag-input';
+import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
+import './json-tree.js';
+import './schema-tree.js';
+import getRequestFormTable from './request-form-table.js';
+import './tag-input.js';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');

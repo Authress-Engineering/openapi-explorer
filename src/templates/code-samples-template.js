@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import Prism from 'prismjs';
-import { copyToClipboard } from '../utils/common-utils';
+import { copyToClipboard } from '../utils/common-utils.js';
 import { getI18nText } from '../languages';
 
 /* eslint-disable indent */

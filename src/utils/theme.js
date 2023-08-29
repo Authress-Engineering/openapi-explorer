@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import color from 'color';
-import ColorUtils from './color-utils';
+import ColorUtils from './color-utils.js';
 
 /* Generates an schema object containing type and constraint info */
 

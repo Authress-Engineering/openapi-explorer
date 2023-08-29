@@ -4,38 +4,38 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 
 // It's possible none of these imports are actually necessary and should just be removed
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-yaml';
-import 'prismjs/components/prism-go';
-import 'prismjs/components/prism-ruby';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-http';
-import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-css.js';
+import 'prismjs/components/prism-yaml.js';
+import 'prismjs/components/prism-go.js';
+import 'prismjs/components/prism-ruby.js';
+import 'prismjs/components/prism-java.js';
+import 'prismjs/components/prism-json.js';
+import 'prismjs/components/prism-bash.js';
+import 'prismjs/components/prism-python.js';
+import 'prismjs/components/prism-http.js';
+import 'prismjs/components/prism-csharp.js';
 
 // Styles
 import FontStyles from './styles/font-styles.js';
-import InputStyles from './styles/input-styles';
-import SchemaStyles from './styles/schema-styles';
-import FlexStyles from './styles/flex-styles';
-import TableStyles from './styles/table-styles';
-import KeyFrameStyles from './styles/key-frame-styles';
-import EndpointStyles from './styles/endpoint-styles';
-import PrismStyles from './styles/prism-styles';
-import TagInputStyles from './styles/tag-input-styles';
-import TabStyles from './styles/tab-styles';
-import NavStyles from './styles/nav-styles';
-import InfoStyles from './styles/info-styles';
-import advancedSearchStyles from './styles/advanced-search-styles';
+import InputStyles from './styles/input-styles.js';
+import SchemaStyles from './styles/schema-styles.js';
+import FlexStyles from './styles/flex-styles.js';
+import TableStyles from './styles/table-styles.js';
+import KeyFrameStyles from './styles/key-frame-styles.js';
+import EndpointStyles from './styles/endpoint-styles.js';
+import PrismStyles from './styles/prism-styles.js';
+import TagInputStyles from './styles/tag-input-styles.js';
+import TabStyles from './styles/tab-styles.js';
+import NavStyles from './styles/nav-styles.js';
+import InfoStyles from './styles/info-styles.js';
+import advancedSearchStyles from './styles/advanced-search-styles.js';
 
-import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils';
+import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils.js';
 import { initI18n } from './languages';
-import ProcessSpec from './utils/spec-parser';
-import mainBodyTemplate from './templates/mainBodyTemplate';
-import apiRequestStyles from './styles/api-request-styles';
-import { checkForAuthToken } from './templates/security-scheme-template';
+import ProcessSpec from './utils/spec-parser.js';
+import mainBodyTemplate from './templates/mainBodyTemplate.js';
+import apiRequestStyles from './styles/api-request-styles.js';
+import { checkForAuthToken } from './templates/security-scheme-template.js';
 
 export default class OpenApiExplorer extends LitElement {
   constructor() {
