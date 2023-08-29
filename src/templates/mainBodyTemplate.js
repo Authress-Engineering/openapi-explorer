@@ -1,15 +1,15 @@
 import { html } from 'lit';
 
 // Templates
-import focusedEndpointTemplate from './focused-endpoint-template';
-import overviewTemplate from './overview-template';
-import endpointTemplate from './endpoint-template';
-import serverTemplate from './server-template';
-import securitySchemeTemplate from './security-scheme-template';
-import navbarTemplate from './navbar-template';
-import advancedSearchTemplate from './advance-search-template';
-import SetTheme from '../utils/theme';
-import ColorUtils from '../utils/color-utils';
+import focusedEndpointTemplate from './focused-endpoint-template.js';
+import overviewTemplate from './overview-template.js';
+import endpointTemplate from './endpoint-template.js';
+import serverTemplate from './server-template.js';
+import securitySchemeTemplate from './security-scheme-template.js';
+import navbarTemplate from './navbar-template.js';
+import advancedSearchTemplate from './advance-search-template.js';
+import SetTheme from '../utils/theme.js';
+import ColorUtils from '../utils/color-utils.js';
 
 export default function mainBodyTemplate() {
   const newTheme = {

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { schemaInObjectNotation } from '../utils/schema-utils';
+import { schemaInObjectNotation } from '../utils/schema-utils.js';
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';

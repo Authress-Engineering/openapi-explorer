@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import en from './en';
-import fr from './fr';
+import en from './en.js';
+import fr from './fr.js';
 
 export async function initI18n() {
   const initLang = window.navigator.language.substring(0, 2);

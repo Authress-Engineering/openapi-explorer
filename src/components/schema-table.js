@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
-import SchemaStyles from '../styles/schema-styles';
+import SchemaStyles from '../styles/schema-styles.js';
 import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 const tablePadding = 16;
