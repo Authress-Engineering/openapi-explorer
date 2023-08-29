@@ -31,7 +31,7 @@ import InfoStyles from './styles/info-styles.js';
 import advancedSearchStyles from './styles/advanced-search-styles.js';
 
 import { advancedSearch, getCurrentElement, replaceState, sleep } from './utils/common-utils.js';
-import { initI18n } from './languages';
+import { initI18n } from './languages/index.js';
 import ProcessSpec from './utils/spec-parser.js';
 import mainBodyTemplate from './templates/mainBodyTemplate.js';
 import apiRequestStyles from './styles/api-request-styles.js';

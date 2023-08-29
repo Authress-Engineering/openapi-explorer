@@ -1,4 +1,4 @@
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 
 /* For Delayed Event Handler Execution */
 export function debounce(fn, delay) {

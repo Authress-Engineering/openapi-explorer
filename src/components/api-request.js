@@ -8,7 +8,7 @@ import { keyed } from 'lit/directives/keyed.js';
 import formatXml from 'xml-but-prettier';
 
 import { copyToClipboard } from '../utils/common-utils.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
 import './json-tree.js';
 import './schema-tree.js';

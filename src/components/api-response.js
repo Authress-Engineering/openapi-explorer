@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample, getTypeInfo } from '../utils/schema-utils.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
 import FlexStyles from '../styles/flex-styles.js';
 import TableStyles from '../styles/table-styles.js';

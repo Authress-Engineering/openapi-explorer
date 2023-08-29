@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { marked } from 'marked';
 import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);

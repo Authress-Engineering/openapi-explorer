@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { copyToClipboard } from '../utils/common-utils.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
 import BorderStyles from '../styles/border-styles.js';
 import InputStyles from '../styles/input-styles.js';

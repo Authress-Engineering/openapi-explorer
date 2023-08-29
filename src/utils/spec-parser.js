@@ -1,7 +1,7 @@
 import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 import cloneDeep from 'lodash.clonedeep';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
