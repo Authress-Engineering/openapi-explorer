@@ -1,6 +1,7 @@
+import { LitElement } from 'lit';
 import { checkForAuthToken } from './templates/security-scheme-template.js';
 
-export default class OpenapiExplorerOauthHandler extends HTMLElement {
+export default class OpenapiExplorerOauthHandler extends LitElement {
   connectedCallback() {
     checkForAuthToken(true);
   }
