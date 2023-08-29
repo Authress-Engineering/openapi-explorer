@@ -1,4 +1,4 @@
-import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
+import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser.js';
 import { marked } from 'marked';
 import { invalidCharsRegEx, getI18nText } from './common-utils';
 import cloneDeep from 'lodash.clonedeep';
