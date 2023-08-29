@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import FontStyles from '../styles/font-styles.js';
-import BorderStyles from '../styles/border-styles';
-import InputStyles from '../styles/input-styles';
+import BorderStyles from '../styles/border-styles.js';
+import InputStyles from '../styles/input-styles.js';
 import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class JsonTree extends LitElement {

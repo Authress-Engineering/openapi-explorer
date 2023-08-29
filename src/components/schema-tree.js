@@ -1,10 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { getI18nText } from '../languages';
+import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
-import SchemaStyles from '../styles/schema-styles';
-import BorderStyles from '../styles/border-styles';
+import SchemaStyles from '../styles/schema-styles.js';
+import BorderStyles from '../styles/border-styles.js';
 import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class SchemaTree extends LitElement {

@@ -2,7 +2,7 @@
 import { html } from 'lit';
 import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { isPatternProperty } from '../utils/schema-utils';
+import { isPatternProperty } from '../utils/schema-utils.js';
 import { map } from 'lit/directives/map.js';
 import { range } from 'lit/directives/range.js';
 

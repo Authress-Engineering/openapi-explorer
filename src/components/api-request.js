@@ -1,17 +1,17 @@
 import { LitElement, html } from 'lit';
 import { marked } from 'marked';
-import mimeTypeResolver from './mime-types';
+import mimeTypeResolver from './mime-types.js';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { keyed } from 'lit/directives/keyed.js';
 import formatXml from 'xml-but-prettier';
 
-import { getI18nText } from '../languages';
-import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils';
-import './schema-tree';
-import getRequestFormTable from './request-form-table';
-import './tag-input';
-import './syntax-highlighter';
+import { getI18nText } from '../languages/index.js';
+import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
+import './schema-tree.js';
+import getRequestFormTable from './request-form-table.js';
+import './tag-input.js';
+import './syntax-highlighter.js';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
@@ -999,7 +999,7 @@ export default class ApiRequest extends LitElement {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
           const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
           const filename = filenameRegex.exec(contentDisposition);
-          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mimeTypeResolver(contentType) || 'file'}`;
+          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${await mimeTypeResolver(contentType) || 'file'}`;
           respBlob = await fetchResponse.blob();
           this.responseBlobUrl = URL.createObjectURL(respBlob);
         }

@@ -3,25 +3,25 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
 
 import Prism from 'prismjs';
-import './json-tree';
+import './json-tree.js';
 
 // It's possible none of these imports are actually necessary and should just be removed
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-yaml';
-import 'prismjs/components/prism-go';
-import 'prismjs/components/prism-ruby';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-http';
-import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-css.js';
+import 'prismjs/components/prism-yaml.js';
+import 'prismjs/components/prism-go.js';
+import 'prismjs/components/prism-ruby.js';
+import 'prismjs/components/prism-java.js';
+import 'prismjs/components/prism-json.js';
+import 'prismjs/components/prism-bash.js';
+import 'prismjs/components/prism-python.js';
+import 'prismjs/components/prism-http.js';
+import 'prismjs/components/prism-csharp.js';
 
-import PrismStyles from '../styles/prism-styles';
-import FontStyle from '../styles/font-styles';
-import InputStyle from '../styles/input-styles';
-import { getI18nText } from '../languages';
-import { copyToClipboard } from '../utils/common-utils';
+import PrismStyles from '../styles/prism-styles.js';
+import FontStyle from '../styles/font-styles.js';
+import InputStyle from '../styles/input-styles.js';
+import { getI18nText } from '../languages/index.js';
+import { copyToClipboard } from '../utils/common-utils.js';
 
 /**
  * Mapping mime-type => prism language

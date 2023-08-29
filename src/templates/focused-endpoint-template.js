@@ -1,11 +1,11 @@
 import { html } from 'lit';
-import { expandedEndpointBodyTemplate, expandedTagTemplate } from './expanded-endpoint-template';
-import '../components/api-request';
-import '../components/api-response';
-import componentsTemplate from './components-template';
-import overviewTemplate from './overview-template';
-import serverTemplate from './server-template';
-import securitySchemeTemplate from './security-scheme-template';
+import { expandedEndpointBodyTemplate, expandedTagTemplate } from './expanded-endpoint-template.js';
+import '../components/api-request.js';
+import '../components/api-response.js';
+import componentsTemplate from './components-template.js';
+import overviewTemplate from './overview-template.js';
+import serverTemplate from './server-template.js';
+import securitySchemeTemplate from './security-scheme-template.js';
 
 function wrapFocusedTemplate(templateToWrap) {
   return html`

@@ -1,11 +1,11 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
-import { pathSecurityTemplate } from './security-scheme-template';
-import codeSamplesTemplate from './code-samples-template';
-import callbackTemplate from './callback-template';
-import '../components/api-request';
-import '../components/api-response';
+import { pathSecurityTemplate } from './security-scheme-template.js';
+import codeSamplesTemplate from './code-samples-template.js';
+import callbackTemplate from './callback-template.js';
+import '../components/api-request.js';
+import '../components/api-response.js';
 
 /* eslint-disable indent */
 export function expandedEndpointBodyTemplate(path, tagName = '') {

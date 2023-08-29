@@ -1,4 +1,4 @@
-import { checkForAuthToken } from './templates/security-scheme-template';
+import { checkForAuthToken } from './templates/security-scheme-template.js';
 
 export default class OpenapiExplorerOauthHandler extends HTMLElement {
   connectedCallback() {
