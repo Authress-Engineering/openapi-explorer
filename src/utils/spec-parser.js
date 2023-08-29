@@ -1,4 +1,4 @@
-import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser';
+import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser.js';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils.js';
 import { getI18nText } from '../languages/index.js';
