@@ -852,5 +852,5 @@ export default class OpenApiExplorer extends LitElement {
 if (!customElements.get('openapi-explorer')) {
   customElements.define('openapi-explorer', OpenApiExplorer);
 }
-import './openapi-explorer-oauth-handler';
+import './openapi-explorer-oauth-handler.js';
 
