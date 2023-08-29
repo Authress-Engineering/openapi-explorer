@@ -1132,7 +1132,7 @@ export default class ApiRequest extends LitElement {
           const contentDisposition = fetchResponse.headers.get('content-disposition');
           const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
           const filename = filenameRegex.exec(contentDisposition);
-          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${mimeTypeResolver(contentType) || 'file'}`;
+          this.respContentDisposition = filename && filename[1] && filename[1].replace(/['"]/g, '') || `download.${await mimeTypeResolver(contentType) || 'file'}`;
           respBlob = await fetchResponse.blob();
           this.responseBlobUrl = URL.createObjectURL(respBlob);
         }
