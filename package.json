@@ -56,7 +56,6 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "marked": "^4.0.16",
-    "mime-db": "^1.52.0",
     "openapi-data-validator": "^2.0.40",
     "openapi-resolver": "^4.1.35",
     "prismjs": "^1.29.0",
