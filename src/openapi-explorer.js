@@ -68,12 +68,11 @@ export default class OpenApiExplorer extends LitElement {
 
       // Hide/Show Sections & Enable Disable actions
       showInfo: { type: String, attribute: 'show-info' },
-      allowAuthentication: { type: String, attribute: 'show-authentication' },
+      hideAuthentication: { type: Boolean, attribute: 'hide-authentication' },
       allowTry: { type: String, attribute: 'enable-console' },
       includeNulls: { type: Boolean, attribute: 'display-nulls' },
-      allowSearch: { type: String, attribute: 'allow-search' },
-      allowAdvancedSearch: { type: String, attribute: 'allow-advanced-search' },
-      allowServerSelection: { type: String, attribute: 'show-server-selection' },
+      hideSearch: { type: Boolean, attribute: 'hide-search' },
+      hideServerSelection: { type: Boolean, attribute: 'hide-server-selection' },
       hideComponents: { type: Boolean, attribute: 'hide-components' },
 
       // Main Colors and Font
@@ -383,16 +382,11 @@ export default class OpenApiExplorer extends LitElement {
       this.responseAreaHeight = '300px';
     }
 
-    if (!this.allowSearch || !'true, false,'.includes(`${this.allowSearch},`)) { this.allowSearch = 'true'; }
-    if (!this.allowAdvancedSearch || !'true, false,'.includes(`${this.allowAdvancedSearch},`)) { this.allowAdvancedSearch = 'true'; }
-
     if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
 
     if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
 
     if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
-    if (!this.allowServerSelection || !'true, false,'.includes(`${this.allowServerSelection},`)) { this.allowServerSelection = 'true'; }
-    if (!this.allowAuthentication || !'true, false,'.includes(`${this.allowAuthentication},`)) { this.allowAuthentication = 'true'; }
 
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
@@ -616,10 +610,10 @@ export default class OpenApiExplorer extends LitElement {
     if (id === 'overview' && this.showInfo) {
       return true;
     }
-    if (id === 'servers' && this.allowServerSelection) {
+    if (id === 'servers' && !this.hideServerSelection) {
       return true;
     }
-    if (id === 'auth' && this.allowAuthentication) {
+    if (id === 'auth' && !this.hideAuthentication) {
       return true;
     }
     if (id.startsWith('tag--')) {

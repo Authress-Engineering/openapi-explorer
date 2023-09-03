@@ -30,7 +30,7 @@ export default function mainBodyTemplate() {
     ${SetTheme.call(this, newTheme)}
     
     <!-- Advanced Search -->
-    ${this.allowAdvancedSearch === 'false' ? '' : advancedSearchTemplate.call(this)}
+    ${this.hideSearch ? '' : advancedSearchTemplate.call(this)}
 
     <div id='the-main-body' class="body">
       <!-- Side Nav -->
@@ -52,8 +52,8 @@ export default function mainBodyTemplate() {
                   ? html`${focusedEndpointTemplate.call(this)}`
                   : html`
                     ${this.showInfo === 'true' ? overviewTemplate.call(this) : ''}
-                    ${this.allowServerSelection === 'true' ? serverTemplate.call(this) : ''}
-                    ${this.allowAuthentication === 'true' ? securitySchemeTemplate.call(this) : ''}
+                    ${!this.hideServerSelection ? serverTemplate.call(this) : ''}
+                    ${!this.hideAuthentication ? securitySchemeTemplate.call(this) : ''}
                     <section id='section'
                       class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
                       <slot name="custom-section"></slot>

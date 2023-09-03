@@ -37,9 +37,9 @@ export default function focusedEndpointTemplate() {
   let i = 0;
   if (focusElId.startsWith('overview') && this.showInfo === 'true') {
     focusedTemplate = overviewTemplate.call(this);
-  } else if (focusElId === 'auth' && this.allowAuthentication === 'true') {
+  } else if (focusElId === 'auth' && !this.hideAuthentication) {
     focusedTemplate = securitySchemeTemplate.call(this);
-  } else if (focusElId === 'servers' && this.allowServerSelection === 'true') {
+  } else if (focusElId === 'servers' && !this.hideServerSelection) {
     focusedTemplate = serverTemplate.call(this);
   } else if (focusElId.startsWith('section')) {
     focusedTemplate = html`

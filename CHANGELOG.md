@@ -1,6 +1,10 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 2.0
+* `show-server-selection` has now be inverted to be `hide-server-selection` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
+* `allow-authentication` has now be inverted to be `hide-authentication` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
+
 ## 1.1 ##
 * Support dynamic curl creation.
 * Support inline image displays.

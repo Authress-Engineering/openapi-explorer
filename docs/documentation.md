@@ -16,8 +16,8 @@
 * `schema-expand-level` - [9999] Expands the display of schemas and models to this depth. Set to `1` to display only the first level properties.
 
 ### Hide/Show Sections
-* `show-authentication` - Show the authentication section
-* `show-server-selection` - Show server selection section
+* `hide-authentication` - Hide the authentication section
+* `hide-server-selection` - Hide server selection section
 * `hide-components` - Hide the OpenAPI specification components from being displayed
 
 ### Custom configuration
