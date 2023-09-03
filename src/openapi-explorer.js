@@ -51,7 +51,12 @@ export default class OpenApiExplorer extends LitElement {
       // UI Layouts
       layout: { type: String },
 
-      collapsed: { type: Boolean, attribute: 'collapse' },
+      collapsed: {
+        type: Boolean, attribute: 'collapse',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
       operationsCollapsed: { type: Boolean },
       componentsCollapsed: { type: Boolean },
 
@@ -60,7 +65,12 @@ export default class OpenApiExplorer extends LitElement {
       fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
 
       // Schema Styles
-      displaySchemaAsTable: { type: Boolean, attribute: 'table' },
+      displaySchemaAsTable: {
+        type: Boolean, attribute: 'table',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
 
       // API Server
@@ -68,12 +78,37 @@ export default class OpenApiExplorer extends LitElement {
 
       // Hide/Show Sections & Enable Disable actions
       showInfo: { type: String, attribute: 'show-info' },
-      hideAuthentication: { type: Boolean, attribute: 'hide-authentication' },
+      hideAuthentication: {
+        type: Boolean, attribute: 'hide-authentication',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
       allowTry: { type: String, attribute: 'enable-console' },
-      includeNulls: { type: Boolean, attribute: 'display-nulls' },
-      hideSearch: { type: Boolean, attribute: 'hide-search' },
-      hideServerSelection: { type: Boolean, attribute: 'hide-server-selection' },
-      hideComponents: { type: Boolean, attribute: 'hide-components' },
+      includeNulls: {
+        type: Boolean, attribute: 'display-nulls',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
+      hideSearch: {
+        type: Boolean, attribute: 'hide-search',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
+      hideServerSelection: {
+        type: Boolean, attribute: 'hide-server-selection',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
+      hideComponents: {
+        type: Boolean, attribute: 'hide-components',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
 
       // Main Colors and Font
       primaryColor: { type: String, attribute: 'primary-color' },
@@ -89,7 +124,12 @@ export default class OpenApiExplorer extends LitElement {
       navHoverBgColor: { type: String, attribute: 'nav-hover-bg-color' },
       navHoverTextColor: { type: String, attribute: 'nav-hover-text-color' },
       navItemSpacing: { type: String, attribute: 'nav-item-spacing' },
-      usePathInNavBar: { type: Boolean, attribute: 'use-path-in-nav-bar' },
+      usePathInNavBar: {
+        type: Boolean, attribute: 'use-path-in-nav-bar',
+        converter(value) {
+          return value === 'false' ? false : value;
+        }
+      },
 
       // Fetch Options
       fetchCredentials: { type: String, attribute: 'fetch-credentials' },
