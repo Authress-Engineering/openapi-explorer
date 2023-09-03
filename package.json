@@ -17,6 +17,8 @@
     "API",
     "REST",
     "REST gui",
+    "api spec",
+    "spec",
     "documentation",
     "Custom Element",
     "Web Component",
@@ -30,7 +32,9 @@
     "openapi themes",
     "swagger themes",
     "rapidoc",
-    "redoc"
+    "redoc",
+    "i18n",
+    "internationalization"
   ],
   "main": "dist/lib/openapi-explorer.js",
   "module": "dist/es/openapi-explorer.js",

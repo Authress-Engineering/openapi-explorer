@@ -46,7 +46,7 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 
 ## Features
 - OpenAPI 3.0
-- Built in automatic Internationalization
+- Built in automatic Internationalization (I18n)
 - Works with any framework
 - View resources, models, and directly make API calls
 - Better Usability, 
