@@ -65,6 +65,7 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 
 
 ## Documentation
+* [Migrating from v1 to v2 of openapi-explorer](./CHANGELOG.md#2.0) - Review the breaking changes
 * [Property and variables documentation](./docs/documentation.md)
 * [Examples (Vue, React, JS, and more)](./docs/examples.md)
 * Generate the open specification document necessary for this library - by using an editor or by following the [Open API Specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md)

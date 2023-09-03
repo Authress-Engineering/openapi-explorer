@@ -33,31 +33,21 @@ export default function navbarTemplate() {
   return html`
   <nav class='nav-bar ${this.renderStyle}' part="section-navbar">
     <slot name="nav-header"></slot>
-    ${(this.allowSearch === 'false' && this.allowAdvancedSearch === 'false')
-      ? ''
+    ${this.hideSearch ? ''
       : html`
-        <div style="display:flex; flex-direction:row; justify-content:center; align-items:center; padding:24px; ${this.allowAdvancedSearch === 'false' ? 'border-bottom: 1px solid var(--nav-hover-bg-color)' : ''}">
-          ${this.allowSearch === 'false'
-            ? ''
-            : html`
-              <div style="display:flex; flex:1; line-height:22px;">
-                <input id="nav-bar-search" 
-                  part = "textbox textbox-nav-filter"
-                  style = "width:100%; padding-right:20px; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
-                  type = "text"
-                  placeholder = "${getI18nText('menu.filter')}"
-                  @input = "${this.onSearchChange}"  
-                  spellcheck = "false">
-              </div>`
-          }
-          ${this.allowAdvancedSearch === 'false'
-            ? ''
-            : html`
-              <button class="m-btn outline-primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
-                ${getI18nText('menu.search')}
-              </button>
-            `
-          }
+        <div style="display:flex; flex-direction:row; justify-content:center; align-items:center; padding:24px;">
+          <div style="display:flex; flex:1; line-height:22px;">
+            <input id="nav-bar-search" 
+              part = "textbox textbox-nav-filter"
+              style = "width:100%; padding-right:20px; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
+              type = "text"
+              placeholder = "${getI18nText('menu.filter')}"
+              @input = "${this.onSearchChange}"  
+              spellcheck = "false">
+          </div>
+          <button class="m-btn outline-primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
+            ${getI18nText('menu.search')}
+          </button>
         </div>
       `
     }
@@ -69,11 +59,11 @@ export default function navbarTemplate() {
         </div>`
       }
     
-      ${this.allowServerSelection === 'false'
+      ${this.hideServerSelection
         ? ''
         : html`<div class='nav-bar-info' id='link-servers' data-content-id='servers' @click = '${(e) => this.scrollToEventTarget(e, false)}'> ${getI18nText('menu.api-servers')} </div>`
       }
-      ${(this.allowAuthentication === 'false' || !this.resolvedSpec.securitySchemes)
+      ${(this.hideAuthentication || !this.resolvedSpec.securitySchemes)
         ? ''
         : html`<div class='nav-bar-info' id='link-auth' data-content-id='auth' @click = '${(e) => this.scrollToEventTarget(e, false)}'> ${getI18nText('menu.authentication')} </div>`
       }
