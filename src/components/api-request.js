@@ -220,7 +220,7 @@ export default class ApiRequest extends LitElement {
                   </div>`
                 : ''
               }
-              ${paramSchema.default || paramSchema.s || paramSchema.allowedValues || paramSchema.pattern
+              ${paramSchema.constraints.length || paramSchema.allowedValues || paramSchema.pattern
                 ? html`
                   <div class="param-constraint" style="margin-top: 1rem;">
                     ${paramSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraints.join(', ')}<br>` : ''}

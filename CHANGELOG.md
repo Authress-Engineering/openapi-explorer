@@ -4,6 +4,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 ## 2.0
 * `show-server-selection` has now be inverted to be `hide-server-selection` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * `allow-authentication` has now be inverted to be `hide-authentication` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
+* Fix `constraints` display for query parameters.
 
 ## 1.1 ##
 * Support dynamic curl creation.
