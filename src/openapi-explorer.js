@@ -61,7 +61,12 @@ export default class OpenApiExplorer extends LitElement {
 
       defaultSchemaTab: { type: String, attribute: 'default-schema-tab' },
       responseAreaHeight: { type: String, attribute: 'response-area-height' },
-      fillRequestWithDefault: { type: String, attribute: 'fill-defaults' },
+      hideDefaults: {
+        type: Boolean, attribute: 'hide-defaults',
+        converter(value) {
+          return value !== 'false' && value !== false;
+        }
+      },
 
       // Schema Styles
       displaySchemaAsTable: {
@@ -76,14 +81,24 @@ export default class OpenApiExplorer extends LitElement {
       serverUrl: { type: String, attribute: 'server-url' },
 
       // Hide/Show Sections & Enable Disable actions
-      showInfo: { type: String, attribute: 'show-info' },
+      hideInfo: {
+        type: Boolean, attribute: 'hide-info',
+        converter(value) {
+          return value !== 'false' && value !== false;
+        }
+      },
       hideAuthentication: {
         type: Boolean, attribute: 'hide-authentication',
         converter(value) {
           return value !== 'false' && value !== false;
         }
       },
-      allowTry: { type: String, attribute: 'enable-console' },
+      hideExecution: {
+        type: Boolean, attribute: 'hide-console',
+        converter(value) {
+          return value !== 'false' && value !== false;
+        }
+      },
       includeNulls: {
         type: Boolean, attribute: 'display-nulls',
         converter(value) {
@@ -391,6 +406,7 @@ export default class OpenApiExplorer extends LitElement {
     window.addEventListener('resize', this.handleResize);
     this.loading = true;
     initI18n();
+
     const parent = this.parentElement;
     if (parent) {
       if (parent.offsetWidth === 0 && parent.style.width === '') {
@@ -416,16 +432,11 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
     this.schemaHideReadOnly = ['post', 'put', 'patch', 'query'].join(',');
     this.schemaHideWriteOnly = true;
-    if (!this.fillRequestWithDefault || !'true, false,'.includes(`${this.fillRequestWithDefault},`)) { this.fillRequestWithDefault = 'true'; }
     if (!this.responseAreaHeight) {
       this.responseAreaHeight = '300px';
     }
 
-    if (!this.allowTry || !'true, false,'.includes(`${this.allowTry},`)) { this.allowTry = 'true'; }
-
     if (!this.navItemSpacing || !'compact, relaxed, default,'.includes(`${this.navItemSpacing},`)) { this.navItemSpacing = 'default'; }
-
-    if (!this.showInfo || !'true, false,'.includes(`${this.showInfo},`)) { this.showInfo = 'true'; }
 
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
@@ -608,7 +619,7 @@ export default class OpenApiExplorer extends LitElement {
     this.intersectionObserver.disconnect();
 
     if (this.renderStyle === 'focused') {
-      const defaultElementId = this.showInfo ? 'overview' : this.resolvedSpec.tags && this.resolvedSpec.tags[0] && this.resolvedSpec.tags[0].paths[0];
+      const defaultElementId = !this.hideInfo ? 'overview' : this.resolvedSpec.tags && this.resolvedSpec.tags[0] && this.resolvedSpec.tags[0].paths[0];
       this.scrollTo(this.explorerLocation || defaultElementId);
     }
 
@@ -646,7 +657,7 @@ export default class OpenApiExplorer extends LitElement {
   }
 
   isValidPathId(id) {
-    if (id === 'overview' && this.showInfo) {
+    if (id === 'overview' && !this.hideInfo) {
       return true;
     }
     if (id === 'servers' && !this.hideServerSelection) {

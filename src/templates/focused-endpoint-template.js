@@ -16,7 +16,7 @@ function wrapFocusedTemplate(templateToWrap) {
 
 function defaultContentTemplate() {
   // In focused mode default content is overview or first path
-  if (this.showInfo === 'true') {
+  if (!this.hideInfo) {
     return overviewTemplate.call(this);
   }
   const selectedTagObj = this.resolvedSpec.tags[0];
@@ -35,7 +35,7 @@ export default function focusedEndpointTemplate() {
   let selectedTagObj = null;
   let focusedTemplate;
   let i = 0;
-  if (focusElId.startsWith('overview') && this.showInfo === 'true') {
+  if (focusElId.startsWith('overview') && !this.hideInfo) {
     focusedTemplate = overviewTemplate.call(this);
   } else if (focusElId === 'auth' && !this.hideAuthentication) {
     focusedTemplate = securitySchemeTemplate.call(this);

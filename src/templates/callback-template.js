@@ -27,7 +27,7 @@ export default function callbackTemplate(callbacks) {
                       path = "${pathObj[0] || ''}" 
                       .parameters = "${method[1] && method[1].parameters || ''}" 
                       .request_body = "${method[1] && method[1].requestBody || ''}"
-                      fill-defaults = "${this.fillRequestWithDefault}"
+                      fill-defaults = "${!this.hideDefaults}"
                       display-nulls="${!!this.includeNulls}"
                       enable-console = "false"
                       render-style="${this.renderStyle}" 
