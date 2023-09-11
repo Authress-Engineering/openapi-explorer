@@ -54,7 +54,7 @@ export default class OpenApiExplorer extends LitElement {
       collapsed: {
         type: Boolean, attribute: 'collapse',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       operationsCollapsed: { type: Boolean },
@@ -68,7 +68,7 @@ export default class OpenApiExplorer extends LitElement {
       displaySchemaAsTable: {
         type: Boolean, attribute: 'table',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
@@ -81,32 +81,32 @@ export default class OpenApiExplorer extends LitElement {
       hideAuthentication: {
         type: Boolean, attribute: 'hide-authentication',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       allowTry: { type: String, attribute: 'enable-console' },
       includeNulls: {
         type: Boolean, attribute: 'display-nulls',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       hideSearch: {
         type: Boolean, attribute: 'hide-search',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       hideServerSelection: {
         type: Boolean, attribute: 'hide-server-selection',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
       hideComponents: {
         type: Boolean, attribute: 'hide-components',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
 
@@ -127,7 +127,7 @@ export default class OpenApiExplorer extends LitElement {
       usePathInNavBar: {
         type: Boolean, attribute: 'use-path-in-nav-bar',
         converter(value) {
-          return value === 'false' ? false : value;
+          return value !== 'false' && value !== false;
         }
       },
 
