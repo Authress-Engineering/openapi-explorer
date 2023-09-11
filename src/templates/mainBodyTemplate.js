@@ -51,7 +51,7 @@ export default function mainBodyTemplate() {
                 ${this.renderStyle === 'focused'
                   ? html`${focusedEndpointTemplate.call(this)}`
                   : html`
-                    ${this.showInfo === 'true' ? overviewTemplate.call(this) : ''}
+                    ${!this.hideInfo ? overviewTemplate.call(this) : ''}
                     ${!this.hideServerSelection ? serverTemplate.call(this) : ''}
                     ${!this.hideAuthentication ? securitySchemeTemplate.call(this) : ''}
                     <section id='section'

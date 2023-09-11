@@ -9,13 +9,13 @@
 
 #### Disable configuration
 * `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
-* `enable-console` - [true] Allow for disabling executing the API from the specification. Removes the `execute button` when disabled.
-* `fill-defaults` - [true] Fills the request data with the default data.
+* `hide-defaults` - [false] Prevents filling the request data with the default data.
 * `collapse` - [false] Set the operations and components collapsed by default
 * `table` - [false] Converts the body displays from object json to a table for schemas
 * `schema-expand-level` - [9999] Expands the display of schemas and models to this depth. Set to `1` to display only the first level properties.
 
 ### Hide/Show Sections
+* `hide-console` - Disable executing the API from the specification. Removes the `execute button` when disabled.
 * `hide-authentication` - Hide the authentication section
 * `hide-server-selection` - Hide server selection section
 * `hide-components` - Hide the OpenAPI specification components from being displayed
