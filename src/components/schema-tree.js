@@ -1,9 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import { marked } from 'marked';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import FontStyles from '../styles/font-styles';
-import SchemaStyles from '../styles/schema-styles';
-import BorderStyles from '../styles/border-styles';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { getI18nText } from '../languages/index.js';
+import FontStyles from '../styles/font-styles.js';
+import SchemaStyles from '../styles/schema-styles.js';
+import BorderStyles from '../styles/border-styles.js';
 import KeyFrameStyles from '../styles/key-frame-styles.js';
 
 export default class SchemaTree extends LitElement {
@@ -116,12 +117,12 @@ export default class SchemaTree extends LitElement {
         <div class="toolbar">
           ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
-            ${this.schemaDescriptionExpanded ? 'Collapse' : 'Expand'}
+            ${this.schemaDescriptionExpanded ? getI18nText('schemas.collapse-desc') : getI18nText('schemas.expand-desc')}
           </div>
         </div>
         ${this.data
           ? html`${this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type'], this.data['::array-type'] || '')}`
-          : html`<span class='mono-font' style='color:var(--red)'> Schema not found </span>`
+          : html`<span class='mono-font' style='color:var(--red)'> ${getI18nText('schemas.schema-missing')} </span>`
         }
       </div>  
     `;

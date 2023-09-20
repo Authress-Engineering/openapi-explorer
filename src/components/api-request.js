@@ -1,20 +1,16 @@
-import { LitElement, html } from 'lit-element';
-import marked from 'marked';
+import { LitElement, html } from 'lit';
+import { marked } from 'marked';
 
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-// import { live } from 'lit-html/directives/live';
-import TableStyles from '@/styles/table-styles';
-import FlexStyles from '@/styles/flex-styles';
-import InputStyles from '@/styles/input-styles';
-import FontStyles from '@/styles/font-styles';
-import BorderStyles from '@/styles/border-styles';
-import TabStyles from '@/styles/tab-styles';
-import {
-  schemaInObjectNotation, getTypeInfo, generateExample, copyToClipboard,
-} from '@/utils/common-utils';
-import '@/components/json-tree';
-import '@/components/schema-tree';
-import '@/components/tag-input';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { keyed } from 'lit/directives/keyed.js';
+import formatXml from 'xml-but-prettier';
+
+import { getI18nText } from '../languages/index.js';
+import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
+import './schema-tree.js';
+import getRequestFormTable from './request-form-table.js';
+import './tag-input.js';
+import './syntax-highlighter.js';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
@@ -78,104 +74,21 @@ export default class ApiRequest extends LitElement {
   }
 
   render() {
-    return html`
-    ${TableStyles}
-    ${InputStyles}
-    ${FontStyles}
-    ${FlexStyles}
-    ${BorderStyles}
-    ${TabStyles}
-    <style>
-      .read-mode{
-        margin-top:24px;
-      }
-      .param-name,
-      .param-type{
-        margin: 1px 0;
-        text-align: right;
-        line-height: 12px;
-      }
-      .param-name{
-        color: var(--fg); 
-        font-family: var(--font-mono);
-      }
-      .param-type{
-        color: var(--light-fg); 
-        font-family: var(--font-regular);
-      }
-      .param-constraint{
-        min-width:100px;
-      }
-      .param-constraint:empty{
-        display:none;
-      }
-      .top-gap{margin-top:24px;}
-
-        .textarea {
-          min-height:220px; 
-          padding:5px;
-          resize:vertical;
-        }
-        .example:first-child {
-          margin-top: -9px;
-        }
-
-        .response-message{
-          font-weight:bold;
-          text-overflow: ellipsis;
-        }
-        .response-message.error {
-          color:var(--red);
-        }
-        .response-message.success {
-          color:var(--blue);
-        }
-
-        .file-input-container {
-          align-items:flex-end;
-        }
-        .file-input-container .input-set:first-child .file-input-remove-btn{
-          visibility:hidden;
-        }
-
-        .file-input-remove-btn{
-          font-size:16px;
-          color:var(--red);
-          outline: none;
-          border: none;
-          background:none;
-          cursor:pointer;
-        }
-
-        .v-tab-btn {
-          font-size: var(--smal-font-size);
-          height:24px; 
-          border:none; 
-          background:none; 
-          opacity: 0.3;
-          cursor: pointer;
-          padding: 4px 8px;
-        }
-        .v-tab-btn.active {
-          font-weight: bold;
-          background: var(--bg);
-          opacity: 1;
-        }
-
-        @media only screen and (min-width: 768px) {
-          .textarea {
-            padding:8px;
-          }
-        }
-      `,
-    ];
-  }
-
-  render() {
-    return html`
-    <div class="api-request col regular-font request-panel ${'read focused'.includes(this.renderStyle) || this.callback === 'true' ? 'read-mode' : 'view-mode'}">
-      <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
-        ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
+    const id = this.elementId || `${this.method}-${this.path}`;
+    return keyed(id, html`
+      <div id="api-request-${id}"
+        class="api-request col regular-font request-panel ${(this.renderStyle === 'focused' || this.callback === 'true') ? 'focused-mode' : 'view-mode'}">
+        <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} "> 
+          ${this.callback === 'true' ? 'CALLBACK REQUEST' : getI18nText('operations.request')}
+        </div>
+        <div>
+          ${this.inputParametersTemplate('path')}
+          ${this.inputParametersTemplate('query')}
+          ${this.requestBodyTemplate()}
+          ${this.inputParametersTemplate('header')}
+          ${this.inputParametersTemplate('cookie')}
+          ${this.allowTry === 'false' ? '' : html`${this.apiCallTemplate()}`}
+        </div>
       </div>
     `);
   }
@@ -714,40 +627,7 @@ export default class ApiRequest extends LitElement {
       }
       <button class="m-btn primary btn-execute thin-border" part="btn btn-fill btn-try" @click="${this.onTryClick}">${getI18nText('operations.execute')}</button>
     </div>
-    ${this.responseMessage === ''
-      ? ''
-      : html`
-        <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
-          <div class="response-message ${this.responseStatus}">Response Status: ${this.responseMessage}</div>
-          <div style="flex:1"></div>
-          <button class="m-btn" style="padding: 6px 0px;width:60px" @click="${this.clearResponseData}">CLEAR</button>
-        </div>
-        <div class="tab-panel col" style="border-width:0 0 1px 0;">
-          <div id="tab_buttons" class="tab-buttons row" @click="${(e) => { this.activeResponseTab = e.target.dataset.tab; }}">
-            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response' > RESPONSE</button>
-            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers' > RESPONSE HEADERS</button>
-            <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>CURL</button>
-          </div>
-          <div class="tab-content col" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};">
-            ${this.responseIsBlob
-              ? html`
-                <div style="margin:10px 2px"> 
-                  <button class="m-btn" @click="${this.downloadResponseBlob}">DOWNLOAD</button>
-                </div>`
-              : html`
-                <pre class="multiline">${this.responseText}</pre>
-              `
-            }
-          </div>
-          <div class="tab-content col" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-            <pre class="multiline">${this.responseHeaders}</pre>
-          </div>
-          <div class="tab-content col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-            <pre class="multiline" style="white-space: normal;">${this.curlSyntax}</pre>
-          </div>
-        </div>`
-      }
-      <slot style="display:block"></slot>
+    ${this.apiResponseTabTemplate()}
     `;
   }
   /* eslint-enable indent */
@@ -865,41 +745,19 @@ export default class ApiRequest extends LitElement {
       fetchOptions.headers.append(v.name, v.finalKeyValue);
     });
 
-    fetchUrl = `${fetchUrl}${urlQueryParam.toString() ? '?' : ''}${urlQueryParam.toString()}`;
-
-    // Final URL for API call
-    fetchUrl = `${this.serverUrl.replace(/\/$/, '')}${fetchUrl}`;
-    if (fetchUrl.startsWith('http') === false) {
-      const url = new URL(fetchUrl, window.location.href);
-      curlUrl = url.href;
-    } else {
-      curlUrl = fetchUrl;
-    }
-    curl = `curl -X ${this.method.toUpperCase()} "${curlUrl}" `;
-
     if (acceptHeader) {
       // Uses the acceptHeader from Response panel
       fetchOptions.headers.append('Accept', acceptHeader);
     } else if (this.accept) {
-      fetchOptions.headers.Accept = this.accept;
-      curlHeaders += ` -H "Accept: ${this.accept}"`;
+      fetchOptions.headers.append('Accept', this.accept);
     }
 
     // Add Header Params
     headerParamEls.map((el) => {
       if (el.value) {
-        fetchOptions.headers[el.dataset.pname] = el.value;
-        curlHeaders += ` -H "${el.dataset.pname}: ${el.value}"`;
+        fetchOptions.headers.append(el.dataset.pname, el.value);
       }
     });
-
-    // Add Authentication Header if provided
-    this.api_keys
-      .filter((v) => (v.in === 'header'))
-      .forEach((v) => {
-        fetchOptions.headers[v.name] = v.finalKeyValue;
-        curlHeaders += ` -H "${v.name}: ${v.finalKeyValue}"`;
-      });
 
     // Request Body Params
 
@@ -938,7 +796,7 @@ export default class ApiRequest extends LitElement {
               formUrlDynParams.append(prop, JSON.stringify(tmpObj[prop]));
             }
             fetchOptions.body = formUrlDynParams;
-            curlData = ` -d ${formUrlDynParams.toString()}`;
+            curlData = ` \\\n  -d ${formUrlDynParams.toString()}`;
           }
         } else {
           const formUrlParams = new URLSearchParams();
@@ -955,7 +813,7 @@ export default class ApiRequest extends LitElement {
             }
           });
           fetchOptions.body = formUrlParams;
-          curlData = ` -d ${formUrlParams.toString()}`;
+          curlData = ` \\\n  -d ${formUrlParams.toString()}`;
         }
       } else if (requestBodyType.includes('form-data')) {
         const formDataParams = new FormData();
@@ -963,15 +821,15 @@ export default class ApiRequest extends LitElement {
           const keyName = patternPropertyKeyEls[counter]?.value || el.dataset.pname;
           if (el.dataset.array === 'false') {
             if (el.type === 'file' && el.files[0]) {
-              formDataParams.append(el.dataset.pname, el.files[0], el.files[0].name);
-              curlForm += ` -F "${el.dataset.pname}=@${el.files[0].name}"`;
+              formDataParams.append(keyName, el.files[0], el.files[0].name);
+              curlForm += ` \\\n  -F "${keyName}=@${el.files[0].name}"`;
             } else if (el.value) {
-              formDataParams.append(el.dataset.pname, el.value);
-              curlForm += ` -F "${el.dataset.pname}=${el.value}"`;
+              formDataParams.append(keyName, el.value);
+              curlForm += ` \\\n  -F "${keyName}=${el.value}"`;
             }
           } else if (el.value && Array.isArray(el.value)) {
             el.value.forEach((v) => {
-              curlForm = `${curlForm} -F "${el.dataset.pname}[]=${v}"`;
+              curlForm += ` \\\n  -F "${keyName}[]=${v}"`;
             });
             formDataParams.append(keyName, el.value.join(','));
           }
@@ -981,13 +839,22 @@ export default class ApiRequest extends LitElement {
         const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
         if (bodyParamFileEl && bodyParamFileEl.files[0]) {
           fetchOptions.body = bodyParamFileEl.files[0];
-          curlData = ` --data-binary @${bodyParamFileEl.files[0].name}`;
+          curlData = ` \\\n  --data-binary @${bodyParamFileEl.files[0].name}`;
         }
       } else if (requestBodyType.includes('json') || requestBodyType.includes('xml') || requestBodyType.includes('text')) {
         const exampleTextAreaEl = requestPanelEl.querySelector('.request-body-param-user-input');
         if (exampleTextAreaEl && exampleTextAreaEl.value) {
           fetchOptions.body = exampleTextAreaEl.value;
-          curlData = ` -d ${JSON.stringify(exampleTextAreaEl.value.replace(/(\r\n|\n|\r)/gm, ''))}`;
+          if (requestBodyType.includes('json')) {
+            try {
+              curlData = ` \\\n  -d '${JSON.stringify(JSON.parse(exampleTextAreaEl.value))}'`;
+            } catch (err) { /* Ignore unparseable JSON */ }
+          }
+
+          if (!curlData) {
+            // Save single quotes wrapped => 'text' => `"'"text"'"`
+            curlData = ` \\\n  -d '${exampleTextAreaEl.value.replace(/'/g, '\'"\'"\'')}'`;
+          }
         }
       }
       // Common for all request-body
@@ -995,7 +862,6 @@ export default class ApiRequest extends LitElement {
         // For multipart/form-data don't set the content-type to allow creation of browser generated part boundaries
         fetchOptions.headers.append('Content-Type', requestBodyType);
       }
-      curlHeaders += ` -H "Content-Type: ${requestBodyType}"`;
     }
 
     if (this.fetchCredentials) {

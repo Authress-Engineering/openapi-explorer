@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
-import { getI18nText } from '../utils/common-utils';
+import { getI18nText } from '../languages/index.js';
 
 /* eslint-disable indent */
 export default function overviewTemplate() {

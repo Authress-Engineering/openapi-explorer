@@ -11,147 +11,90 @@ import ColorUtils from './color-utils.js';
   }
 */
 
-const defaultColors = [
-  '--purple: #6f42c1',
-  '--pink: #e83e8c',
-  '--red: #dc3545',
-  '--orange: #fd7e14',
-  '--yellow: #ffc107',
-  '--green: #28a745',
-  '--white: #fff',
-];
+export default function setTheme(theme = {}) {
+  const bg1 = (theme.bg1 ? theme.bg1 : '#ffffff');
+  const fg1 = (theme.fg1 ? theme.fg1 : '#444444');
+  const bg2 = theme.bg2 ? theme.bg2 : ColorUtils.color.brightness(bg1, -5); // or '#fafafa'
+  const bg3 = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, -15); // or '#f6f6f6'
+  const lightBg = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, -45);
+  const fg2 = theme.fg2 ? theme.fg2 : ColorUtils.color.brightness(fg1, 17); // or '#555'
+  const fg3 = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, 30); // or #666
+  const lightFg = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, 70); // or #999
+  const inlineCodeFg = theme.inlineCodeFg ? theme.inlineCodeFg : 'brown';
 
-export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
-  let newTheme = {};
+  const selectionBg = '#444';
+  const selectionFg = '#eee';
 
-  // Common Theme colors
-  const primaryColor = theme.primaryColor ? theme.primaryColor : baseTheme === 'dark' ? '#f76b39' : '#ff591e';
-  const primaryColorInvert = ColorUtils.color.invert(primaryColor);
-  const primaryColorTrans = ColorUtils.color.opacity(primaryColor, '0.8');
+  const headerColor = theme.headerColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
+  const navBgColor = theme.navBgColor || theme.primaryColor || ColorUtils.color.brightness(bg1, -180);
+  const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
+  const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -25);
+  const navHoverScrollbarColor = ColorUtils.color.brightness(navHoverBgColor, -5);
+  const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
+  const overlayBg = 'rgba(0, 0, 0, 0.4)';
 
-  // Dark and Light Theme colors
-  if (baseTheme === 'dark') {
-    const bg1 = theme.bg1 ? theme.bg1 : '#333';
-    const fg1 = theme.fg1 ? theme.fg1 : '#bbb';
+  const defaultColors = [
+    `--purple: ${getComputedStyle(this).getPropertyValue('--purple').trim() || '#6f42c1'}`,
+    `--red: ${getComputedStyle(this).getPropertyValue('--red').trim() || '#dc3545'}`,
+    `--orange: ${getComputedStyle(this).getPropertyValue('--orange').trim() || '#fd7e14'}`,
+    `--yellow: ${getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107'}`,
+    `--green: ${getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745'}`,
+    `--blue: ${getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9'}`,
+    `--gray: ${getComputedStyle(this).getPropertyValue('--gray').trim() || '#465865'}`,
 
-    const bg2 = theme.bg2 ? theme.bg2 : ColorUtils.color.brightness(bg1, 5); // or #383838;
-    const bg3 = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, 17); // or #444;
-    const lightBg = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, 35);
-    const fg2 = theme.fg2 ? theme.fg2 : ColorUtils.color.brightness(fg1, -15); // or #ababab
-    const fg3 = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, -20); // or #aaa
-    const lightFg = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, -65); // or #777
-    const selectionBg = '#bbb';
-    const selectionFg = '#eee';
+    '--pink: #e83e8c',
+    '--white: #fff',
+    '',
+  ];
 
-    const headerColor = theme.headerColor ? theme.headerColor : ColorUtils.color.brightness(bg1, 10);
+  const lightColors = [
+    `--light-purple: ${color(getComputedStyle(this).getPropertyValue('--purple').trim() || '#6f42c1').lightness(96).hex()}`,
+    `--light-red: ${color(getComputedStyle(this).getPropertyValue('--red').trim() || '#dc3545').lightness(96).hex()}`,
+    `--light-orange: ${color(getComputedStyle(this).getPropertyValue('--orange').trim() || '#fd7e14').lightness(96).hex()}`,
+    `--light-yellow: ${color(getComputedStyle(this).getPropertyValue('--yellow').trim() || '#ffc107').lightness(96).hex()}`,
+    `--light-green: ${color(getComputedStyle(this).getPropertyValue('--green').trim() || '#28a745').lightness(96).hex()}`,
+    `--light-blue: ${color(getComputedStyle(this).getPropertyValue('--blue').trim() || '#38b3f9').lightness(96).hex()}`,
+    `--light-gray: ${color(getComputedStyle(this).getPropertyValue('--gray').trim() || '#465865').lightness(96).hex()}`,
+    '',
+  ];
 
-    const navBgColor = theme.navBgColor ? theme.navBgColor : ColorUtils.color.brightness(bg1, 10);
-    const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
-    const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);
-    const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
-    const navAccentColor = theme.navAccentColor ? theme.navAccentColor : ColorUtils.color.brightness(primaryColor, 25);
-    const overlayBg = 'rgba(80, 80, 80, 0.4)';
+  const newTheme = {
+    bg1,
+    bg2,
+    bg3,
+    lightBg,
+    fg1,
+    fg2,
+    fg3,
+    lightFg,
+    inlineCodeFg,
+    selectionBg,
+    selectionFg,
+    overlayBg,
+    navBgColor,
+    navTextColor,
+    navHoverBgColor,
+    navHoverTextColor,
 
-    newTheme = {
-      bg1,
-      bg2,
-      bg3,
-      lightBg,
-      fg1,
-      fg2,
-      fg3,
-      lightFg,
-      primaryColor,
-      primaryColorTrans,
-      primaryColorInvert,
-      selectionBg,
-      selectionFg,
-      overlayBg,
-      navBgColor,
-      navTextColor,
-      navHoverBgColor,
-      navHoverTextColor,
-      navAccentColor,
+    headerColor,
+    headerColorInvert: ColorUtils.color.invert(headerColor),
+    headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
+    headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
 
-      headerColor,
-      headerColorInvert: ColorUtils.color.invert(headerColor),
-      headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
-      headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
+    borderColor: theme.bg2 || ColorUtils.color.brightness(bg1, -38),
+    lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, -23),
+    codeBorderColor: theme.codeBorderColor || 'transparent',
 
-      borderColor: theme.borderColor || ColorUtils.color.brightness(bg1, 20), // #555
-      lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, 15), // #444
-      codeBorderColor: theme.codeBorderColor || ColorUtils.color.brightness(bg1, 30),
+    inputBg: theme.inputBg || ColorUtils.color.brightness(bg1, 10), // #fff
+    placeHolder: theme.placeHolder || ColorUtils.color.brightness(lightFg, 20), // #dedede
+    hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -5), // # f1f1f1
 
-      inputBg: theme.inputBg || ColorUtils.color.brightness(bg1, -5), // #2f2f2f
-      placeHolder: theme.placeHolder || ColorUtils.color.opacity(fg1, '0.3'),
-      hoverColor: theme.hoverColor || ColorUtils.color.brightness(bg1, -10), // #2a2a2a
+    codeFg: theme.codeFg || '#666',
+    codePropertyColor: theme.codePropertyColor || '#905',
+    codeKeywordColor: theme.codeKeywordColor || '#07a',
+    codeOperatorColor: theme.codeOperatorColor || '#9a6e3a',
+  };
 
-      codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
-      codeFg: theme.codeFg || '#aaa',
-      codePropertyColor: theme.codePropertyColor || '#f8c555',
-      codeKeywordColor: theme.codeKeywordColor || '#cc99cd',
-      codeOperatorColor: theme.codeOperatorColor || '#67cdcc',
-    };
-  } else {
-    const bg1 = (theme.bg1 ? theme.bg1 : '#ffffff');
-    const fg1 = (theme.fg1 ? theme.fg1 : '#444444');
-    const bg2 = theme.bg2 ? theme.bg2 : ColorUtils.color.brightness(bg1, -5); // or '#fafafa'
-    const bg3 = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, -15); // or '#f6f6f6'
-    const lightBg = theme.bg3 ? theme.bg3 : ColorUtils.color.brightness(bg1, -45);
-    const fg2 = theme.fg2 ? theme.fg2 : ColorUtils.color.brightness(fg1, 17); // or '#555'
-    const fg3 = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, 30); // or #666
-    const lightFg = theme.fg3 ? theme.fg3 : ColorUtils.color.brightness(fg1, 70); // or #999
-    const selectionBg = '#444';
-    const selectionFg = '#eee';
-
-    const headerColor = theme.headerColor ? theme.headerColor : ColorUtils.color.brightness(bg1, -180);
-    const navBgColor = theme.navBgColor ? theme.navBgColor : ColorUtils.color.brightness(bg1, -180);
-    const navTextColor = theme.navTextColor ? theme.navTextColor : ColorUtils.color.opacity(ColorUtils.color.invert(navBgColor), '0.65');
-    const navHoverBgColor = theme.navHoverBgColor ? theme.navHoverBgColor : ColorUtils.color.brightness(navBgColor, -15);
-    const navHoverTextColor = theme.navHoverTextColor ? theme.navHoverTextColor : ColorUtils.color.invert(navBgColor);
-    const navAccentColor = theme.navAccentColor ? theme.navAccentColor : ColorUtils.color.brightness(primaryColor, 25);
-    const overlayBg = 'rgba(0, 0, 0, 0.4)';
-
-    newTheme = {
-      bg1,
-      bg2,
-      bg3,
-      lightBg,
-      fg1,
-      fg2,
-      fg3,
-      lightFg,
-      primaryColor,
-      primaryColorTrans,
-      primaryColorInvert,
-      selectionBg,
-      selectionFg,
-      overlayBg,
-      navBgColor,
-      navTextColor,
-      navHoverBgColor,
-      navHoverTextColor,
-      navAccentColor,
-
-      headerColor,
-      headerColorInvert: ColorUtils.color.invert(headerColor),
-      headerColorDarker: ColorUtils.color.brightness(headerColor, -20),
-      headerColorBorder: ColorUtils.color.brightness(headerColor, 10),
-
-      borderColor: theme.borderColor || ColorUtils.color.brightness(bg1, -38),
-      lightBorderColor: theme.lightBorderColor || ColorUtils.color.brightness(bg1, -23),
-      codeBorderColor: theme.codeBorderColor || 'transparent',
-
-      codeBg: theme.codeBg ? theme.codeBg : '#454545',
-      codeFg: theme.codeFg ? theme.codeFg : '#ccc',
-
-      codeBg: theme.codeBg || ColorUtils.color.opacity(ColorUtils.color.brightness(bg1, -15), 0.7),
-      codeFg: theme.codeFg || '#666',
-      codePropertyColor: theme.codePropertyColor || '#905',
-      codeKeywordColor: theme.codeKeywordColor || '#07a',
-      codeOperatorColor: theme.codeOperatorColor || '#9a6e3a',
-    };
-  }
   return html`
   <style>
   *, *:before, *:after { box-sizing: border-box; }
@@ -185,8 +128,6 @@ export default function setTheme(baseTheme, theme = {}, disableDefaultColors) {
     --light-border-color:${newTheme.lightBorderColor};
     --code-border-color:${newTheme.codeBorderColor};
 
-    --code-bg:${newTheme.codeBg};
-    --code-fg:${newTheme.codeFg};
     --input-bg:${newTheme.inputBg};
     --placeholder-color:${newTheme.placeHolder};
     --hover-color:${newTheme.hoverColor};

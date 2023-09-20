@@ -1,10 +1,12 @@
-import { html } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import marked from 'marked';
-import '@/components/api-request';
-import '@/components/api-response';
-import { pathIsInSearch } from '@/utils/common-utils';
-import { callbackTemplate } from '@/templates/expanded-endpoint-template';
+import { html } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { marked } from 'marked';
+import '../components/api-request.js';
+import '../components/api-response.js';
+import codeSamplesTemplate from './code-samples-template.js';
+import callbackTemplate from './callback-template.js';
+import { pathSecurityTemplate } from './security-scheme-template.js';
+import { getCurrentElement, pathIsInSearch, replaceState } from '../utils/common-utils.js';
 
 function toggleExpand(path) {
   if (path.expanded) {
@@ -74,6 +76,10 @@ function endpointBodyTemplate(path) {
           </div>`
       }
       ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
+      <slot name="${path.elementId}"></slot>
+      <slot name="path-details" data-method="${path.method}" data-path="${path.path}"></slot>
+      ${pathSecurityTemplate.call(this, path.security)}
+      ${codeSampleTabPanel}
     </div>  
     <div class='req-resp-container'> 
       <div style="display:flex; flex-direction:column" class="request">

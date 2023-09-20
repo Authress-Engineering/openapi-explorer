@@ -134,7 +134,7 @@ export default css`
   .m-markdown syntax-highlighter {
     padding: 1px 6px;
     border-radius: 2px;
-    color: var(--red);
+    color: var(--inline-code-fg);
     background-color: var(--bg3);
     font-size: calc(var(--font-size-mono));
     line-height: 1.2;
