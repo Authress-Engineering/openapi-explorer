@@ -44,7 +44,7 @@ export default function focusedEndpointTemplate() {
   } else if (focusElId.startsWith('section')) {
     focusedTemplate = html`
       <section id='section' class='observe-me'>
-        <slot name="custom-section"></slot>
+        <slot class="conditional-custom-section custom-section" name="custom-section"></slot>
       </section>`;
   } else if (focusElId.startsWith('cmp--') && !this.hideComponents) {
     focusedTemplate = componentsTemplate.call(this);

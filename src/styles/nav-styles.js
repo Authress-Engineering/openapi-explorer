@@ -149,4 +149,11 @@ export default css`
   color:var(--nav-hover-text-color);
   background-color:var(--nav-hover-bg-color);
 }
+
+.conditional-custom-section.custom-section::slotted(*) {
+  display: none;
+}
+.conditional-custom-section.custom-section::slotted(*.active) {
+  display: unset !important;
+}
 `;

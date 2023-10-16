@@ -747,7 +747,11 @@ export default class OpenApiExplorer extends LitElement {
       return node === event.target || node.children && [...node.children].some(c => hasChildNode(c));
     };
 
-    const repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => hasChildNode(slot));
+    let repeatedElementIndex = assignedNodes && [].findIndex.call(assignedNodes, (slot) => hasChildNode(slot));
+    if (repeatedElementIndex === -1 && navEl.dataset.contentId.match(/^section--\d+/)) {
+      repeatedElementIndex = Number(navEl.dataset.contentId.split('--')[1]) - 1;
+    }
+
     this.isIntersectionObserverActive = false;
     this.scrollTo(navEl.dataset.contentId, scrollNavItemToView, repeatedElementIndex);
     setTimeout(() => {
@@ -766,7 +770,7 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
-  async scrollToUnsafe(elementId, scrollNavItemToView = true, repeatedElementIndex) {
+  async scrollToUnsafe(elementId, scrollNavItemToView = true, forcedRepeatedElementIndex) {
     if (!this.resolvedSpec) {
       return;
     }
@@ -794,10 +798,44 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     // For focused APIs, always scroll to the top of the component
-    if (!elementId.match('cmp--') && !elementId.match('tag--')) {
+    let newNavEl;
+    const elementIndex = forcedRepeatedElementIndex || forcedRepeatedElementIndex === 0 ? forcedRepeatedElementIndex : (Number(elementId.split('--')[1]) - 1);
+    if (elementId.match(/^section/)) {
+      const customSections = this.shadowRoot.querySelector('slot.custom-section');
+      const assignedNodesToCustomSections = customSections?.assignedNodes();
+      if (assignedNodesToCustomSections) {
+        try {
+          assignedNodesToCustomSections.map(customSection => {
+            customSection.classList.remove('active');
+          });
+          const newActiveCustomSection = assignedNodesToCustomSections[(elementIndex)];
+          if (newActiveCustomSection && !newActiveCustomSection.classList.contains('active')) {
+            newActiveCustomSection.classList.add('active');
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to switch between custom sections, usually happens because the DOM is not ready and has not loaded these sections yet.', error);
+        }
+      }
+
+      const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
+      const assignedNodes = navSectionSlot?.assignedNodes();
+      newNavEl = assignedNodes?.[elementIndex];
+
+      // Update Location Hash
+      replaceState(`section--${elementIndex + 1}`);
+    } else if (!elementId.match('cmp--') && !elementId.match('tag--')) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
+
+      // Update Location Hash
+      replaceState(elementId);
+      newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     } else {
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+
+      // Update Location Hash
+      replaceState(elementId);
+      newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     }
 
     // for focused style it is important to reset request-body-selection and response selection which maintains the state for in case of multiple req-body or multiple response mime-type
@@ -811,20 +849,6 @@ export default class OpenApiExplorer extends LitElement {
     }
 
     // Update NavBar View and Styles
-    let newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
-    if (elementId?.startsWith('section')) {
-      const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
-      const assignedNodes = navSectionSlot?.assignedNodes();
-      const customSectionRepeatedElementIndex = (elementId.replace('section--', '') || 1) - 1;
-      newNavEl = assignedNodes?.[customSectionRepeatedElementIndex || repeatedElementIndex || 0];
-
-      // Update Location Hash
-      replaceState(`section--${repeatedElementIndex + 1 || 1}`);
-    } else {
-      // Update Location Hash
-      replaceState(elementId);
-    }
-
     if (!newNavEl) {
       return;
     }
@@ -839,7 +863,7 @@ export default class OpenApiExplorer extends LitElement {
     }
     const navSectionSlot = this.shadowRoot.querySelector('slot.custom-nav-section');
     const assignedNodes = navSectionSlot?.assignedNodes();
-    (assignedNodes || []).filter((n, nodeIndex) => nodeIndex !== repeatedElementIndex).forEach((node) => {
+    (assignedNodes || []).filter((n, nodeIndex) => isNaN(elementIndex) || nodeIndex !== elementIndex).forEach((node) => {
       node.classList.remove('active');
     });
 
