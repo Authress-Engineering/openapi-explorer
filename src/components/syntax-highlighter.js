@@ -104,14 +104,16 @@ class SyntaxHighlighter extends LitElement {
   renderHighlight() {
     const lang = this.detectLanguage();
     const grammar = Prism.languages[lang];
-    
-    if (lang === 'json' && typeof this.content !== 'string') {
+
+    if (typeof this.content !== 'string') {
       return html`<json-tree .data="${this.content}"/>`;
     }
 
+    const stringContent = this.content?.toString() || '';
+    const increasedSpaceContent = lang !== 'python' && lang !== 'yaml' && lang !== 'toml' ? stringContent.split('\n').map(line => line.replace(/^\s{2}/g, '    ')).join('\n') : stringContent;
     return grammar
-      ? html`<pre><code>${unsafeHTML(Prism.highlight(this.content?.toString(), grammar, lang))}</code></pre>`
-      : html`<pre>${this.content?.toString()}</pre>`;
+      ? html`<pre><code>${unsafeHTML(Prism.highlight(increasedSpaceContent, grammar, lang))}</code></pre>`
+      : html`<pre>${increasedSpaceContent}</pre>`;
   }
 
   /**
@@ -121,12 +123,12 @@ class SyntaxHighlighter extends LitElement {
    */
   renderCopyWrapper(content) {
     return html`<div>
-                <button 
-                    class="m-btn outline-primary toolbar-copy-btn" 
-                    @click='${this.copyToClipboard}' 
-                    part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
-                    ${content}
-            </div>`;
+      <button 
+        class="m-btn outline-primary toolbar-copy-btn" 
+        @click='${this.copyToClipboard}' 
+        part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
+        ${content}
+    </div>`;
   }
 
   /**

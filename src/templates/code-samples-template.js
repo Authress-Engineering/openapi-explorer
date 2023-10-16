@@ -20,7 +20,8 @@ export default function codeSamplesTemplate(xCodeSamples) {
       ${xCodeSamples.map((v, i) => html`<button class="tab-btn ${i === 0 ? 'active' : ''}" data-tab = '${v.lang}${i}'> ${v.label || v.lang} </button>`)}
     </div>
     ${xCodeSamples.map((v, i) => {
-      const paddingToRemove = Math.min(...v.source.split('\n').slice(1).map(l => l.match(/^(\s+).*$/)?.[1].length).filter(l => typeof l !== 'undefined'));
+      // We skip the first line because it could be there is no padding there, but padding on the next lines which needs to be removed
+      const paddingToRemove = Math.min(...v.source.split('\n').slice(1).map(l => l.match(/^(\s*).*$/m)?.[1].length).filter(l => typeof l !== 'undefined'));
       const sanitizedSource = v.source.split('\n').map(s => s.substring(0, paddingToRemove).match(/^\s+$/) ? s.substring(paddingToRemove) : s);
       const fullSource = sanitizedSource.join('\n');
       return html`
