@@ -20,7 +20,7 @@ This is an open source project managed by the [Authress Engineering team](https:
 ## Beautiful and responsive API explorer and console
 
 <p>
-  <a href="https://rhosys.github.io/openapi-explorer/#?route=get-/v1/users/-userId-/resources/-resourceUri-/permissions/-permission-" target="_blank">
+  <a href="https://authress-engineering.github.io/openapi-explorer/#?route=get-/v1/users/-userId-/resources/-resourceUri-/permissions/-permission-" target="_blank">
     <img src="./docs/desktop-view.png" alt="Desktop demo image" width="800px">
   </a>
 </p>
