@@ -4,8 +4,8 @@ Web Component Custom Element for Open-API spec viewing, with automatic integrati
 This is an open source project managed by the [Authress Engineering team](https://authress.io).
 
 <p align="center">
-    <a href="https://authress.io" alt="Authress Engineering - DynamoDB-Armor">
-      <img src="https://img.shields.io/static/v1?label=Authress+Engineering&message=DynamoDB-Armor&color=%23FBAF0B&logo=androidauto&logoColor=%23FBAF0B"></a>
+    <a href="https://authress.io" alt="Authress Engineering">
+      <img src="https://img.shields.io/static/v1?label=Authress+Engineering&message=OpenAPI%20Explorer&color=%23FBAF0B&logo=androidauto&logoColor=%23FBAF0B"></a>
     <a href="./LICENSE" alt="apache 2.0 license">
       <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg"></a>
     <a href="https://badge.fury.io/js/openapi-explorer" alt="npm version">
