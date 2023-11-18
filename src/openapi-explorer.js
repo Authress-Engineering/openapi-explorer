@@ -302,9 +302,14 @@ export default class OpenApiExplorer extends LitElement {
         height: 36px;
         animation: spin 2s linear infinite;
       }
-      .expanded-endpoint-body{ 
+      .expanded-endpoint-body, .expanded-endpoint-component {
         position: relative;
         padding: 6px 0px; 
+      }
+      .expanded-endpoint-component > h2:hover {
+        cursor: pointer;
+        text-decoration: underline;
+
       }
       .divider { 
         border-top: 2px solid var(--border-color);
