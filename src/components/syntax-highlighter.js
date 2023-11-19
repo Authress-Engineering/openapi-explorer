@@ -5,7 +5,7 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import './json-tree.js';
 
-// It's possible none of these imports are actually necessary and should just be removed
+import 'prismjs/components/prism-markup-templating.js';
 import 'prismjs/components/prism-css.js';
 import 'prismjs/components/prism-yaml.js';
 import 'prismjs/components/prism-go.js';
@@ -16,6 +16,8 @@ import 'prismjs/components/prism-bash.js';
 import 'prismjs/components/prism-python.js';
 import 'prismjs/components/prism-http.js';
 import 'prismjs/components/prism-csharp.js';
+import 'prismjs/components/prism-rust.js';
+import 'prismjs/components/prism-php.js';
 
 import PrismStyles from '../styles/prism-styles.js';
 import FontStyle from '../styles/font-styles.js';
