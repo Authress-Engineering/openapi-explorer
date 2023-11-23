@@ -12,7 +12,7 @@
 
 For development:
 ```shell
-git clone https://github.com/Rhosys/openapi-explorer.git
+git clone https://github.com/Authress-Engineering/openapi-explorer.git
 yarn
 yarn start
 # open http://localhost:8080

@@ -39,8 +39,8 @@ if (process.env.NODE_ENV === 'production') {
 * @preserve
 * OpenAPI Explorer ${version.replace()} - WebComponent to View OpenAPI docs
 * License: Apache-2.0
-* Repo   : https://github.com/Rhosys/openapi-explorer
-* Author : Rhosys Developers
+* Repo   : https://github.com/Authress-Engineering/openapi-explorer
+* Author : Authress Developers
 *`;
   commonPlugins.push(new webpack.BannerPlugin({
     raw: true, banner,
@@ -61,7 +61,7 @@ export default {
       new TerserPlugin({
         extractComments: {
           condition: /^\**!|@preserve|@license|@cc_on/i,
-          banner: (licenseFile) => `OpenAPI Explorer ${version} | Author - Rhosys Developers | License information can be found in ${licenseFile} `,
+          banner: (licenseFile) => `OpenAPI Explorer ${version} | Author - Authress Developers | License information can be found in ${licenseFile} `,
         },
       })
     ],
