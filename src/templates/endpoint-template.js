@@ -35,6 +35,11 @@ export function expandCollapseAll(currentElement, expand) {
   this.requestUpdate();
 }
 
+export function expandCollapseComponent(component) {
+  component.expanded = !component.expanded;
+  this.requestUpdate();
+}
+
 /* eslint-disable indent */
 function endpointHeadTemplate(path) {
   return html`

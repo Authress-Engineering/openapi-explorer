@@ -4,13 +4,12 @@ import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { marked } from 'marked';
 import '../components/schema-tree.js';
-import { replaceState } from '../utils/common-utils.js';
 
 function componentBodyTemplate(sComponent) {
   const formdataPartSchema = schemaInObjectNotation(sComponent.component, { includeNulls: this.includeNulls });
 
   return html`
-  <div class='expanded-endpoint-component observe-me ${sComponent.name}' id='cmp--${sComponent.id}' @click='${() => replaceState(`cmp--${sComponent.id}`)}'>
+  <div class='expanded-endpoint-component observe-me ${sComponent.name}' id='cmp--${sComponent.id}' @click='${() => this.scrollTo(`cmp--${sComponent.id}`)}'>
     <h2>${sComponent.name}</h2>
     <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
     ${this.displaySchemaAsTable

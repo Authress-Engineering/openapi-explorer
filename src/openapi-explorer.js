@@ -767,7 +767,7 @@ export default class OpenApiExplorer extends LitElement {
   // Public Method (scrolls to a given path and highlights the left-nav selection)
   async scrollTo(elementId, scrollNavItemToView = true, repeatedElementIndex) {
     try {
-      await this.scrollToUnsafe(elementId, scrollNavItemToView, repeatedElementIndex);
+      await this.scrollToOrThrowException(elementId, scrollNavItemToView, repeatedElementIndex);
     } catch (error) {
       // There's an issue for lit elements for some browsers which are causing this issue we'll log here and still throw
       console.error('Failed to scroll to target', elementId, scrollNavItemToView, repeatedElementIndex, error); // eslint-disable-line no-console
@@ -775,7 +775,7 @@ export default class OpenApiExplorer extends LitElement {
     }
   }
 
-  async scrollToUnsafe(elementId, scrollNavItemToView = true, forcedRepeatedElementIndex) {
+  async scrollToOrThrowException(elementId, scrollNavItemToView = true, forcedRepeatedElementIndex) {
     if (!this.resolvedSpec) {
       return;
     }
@@ -804,6 +804,7 @@ export default class OpenApiExplorer extends LitElement {
 
     // For focused APIs, always scroll to the top of the component
     let newNavEl;
+    let waitForComponentToExpand = false;
     const elementIndex = forcedRepeatedElementIndex || forcedRepeatedElementIndex === 0 ? forcedRepeatedElementIndex : (Number(elementId.split('--')[1]) - 1);
     if (elementId.match(/^section/)) {
       const customSections = this.shadowRoot.querySelector('slot.custom-section');
@@ -829,6 +830,17 @@ export default class OpenApiExplorer extends LitElement {
 
       // Update Location Hash
       replaceState(`section--${elementIndex + 1}`);
+    } else if (elementId.match('cmp--')) {
+      const component = this.resolvedSpec.components.find(c => c.subComponents.find(sub => elementId.includes(sub.id)));
+      if (component && !component.expanded) {
+        waitForComponentToExpand = true;
+        component.expanded = true;
+      }
+      contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+
+      // Update Location Hash
+      replaceState(elementId);
+      newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     } else if (!elementId.match('cmp--') && !elementId.match('tag--')) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
 
@@ -860,7 +872,12 @@ export default class OpenApiExplorer extends LitElement {
 
     if (scrollNavItemToView) {
       newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+      // Also force it into view again if for some reason it isn't there
+      if (waitForComponentToExpand) {
+        setTimeout(() => newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' }), 600);
+      }
     }
+
     await sleep(0);
     const oldNavEl = this.shadowRoot.querySelector('.nav-bar-tag.active, .nav-bar-path.active, .nav-bar-info.active, .nav-bar-h1.active, .nav-bar-h2.active');
     if (oldNavEl) {

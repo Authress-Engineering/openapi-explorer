@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { marked } from 'marked';
 import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
+import { expandCollapseComponent } from './endpoint-template.js';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
@@ -144,18 +145,11 @@ export default function navbarTemplate() {
       <!-- COMPONENTS -->
       ${this.resolvedSpec.components?.length && !this.hideComponents
         ? html`
-          <div class="sticky-scroll-element ${this.componentsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAllComponents.call(this); }}">
+          <div class="sticky-scroll-element"">
             <div id='link-components' class='nav-bar-section'>
               <slot name="components-header">
                 <div class='nav-bar-section-title'>${getI18nText('menu.components')}</div>
               </slot>
-              
-              ${this.resolvedSpec.components.some((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s)))
-                ? html`
-                  <div style="" part="navbar-components-header-collapse">
-                    <div class="toggle">▾</div>`
-                : ''}
-              </div>
             </div>
           </div>
 
@@ -164,8 +158,17 @@ export default function navbarTemplate() {
               <div class='nav-bar-tag'
                 data-content-id='cmp--${component.name.toLowerCase()}' 
                 id='link-cmp--${component.name.toLowerCase()}' 
-                @click='${(e) => this.scrollToEventTarget(e, false)}'>
-                ${component.name}
+                @click="${(e) => {
+                  expandCollapseComponent.call(this, component);
+                  this.scrollToEventTarget(e, false);
+                }}">
+                <div>
+                  ${component.name}
+                </div>
+
+                <div style="" part="navbar-components-header-collapse">
+                  <div class="toggle">▾</div>
+                </div>
               </div>
 
               <div class="nav-bar-section-wrapper">
