@@ -100,9 +100,9 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
   return info;
 }
 
-export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleStrings) {
+export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleIds) {
   const example = Array.isArray(schemaObj.examples) ? schemaObj.examples[0] : Object.values(schemaObj.examples || {})[0]?.value ?? schemaObj.example;
-  if (skipExampleStrings && typeof example === 'string') { return ''; }
+  if (skipExampleIds && typeof example === 'string' && fallbackPropertyName.match(/id$/i)) { return ''; }
   if (typeof example !== 'undefined') { return example; }
 
   if (schemaObj.default) { return schemaObj.default; }
@@ -139,7 +139,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   }
   if (typeValue.match(/^boolean/g)) { return false; }
   if (typeValue.match(/^null/g)) { return null; }
-  if (skipExampleStrings && typeValue.match(/^string/g)) { return ''; }
+  if (skipExampleIds && typeValue.match(/^string/g) && fallbackPropertyName.match(/id$/i)) { return ''; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
@@ -292,7 +292,7 @@ function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, 
     return config.xml ? [xmlTagProperties] : objectExamples;
   }
 
-  const value = getSampleValueByType(schema, config.propertyName, config.skipExampleStrings);
+  const value = getSampleValueByType(schema, config.propertyName, config.skipExampleIds);
   return [value];
 }
 
@@ -503,7 +503,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
 }
 
 /* Create Example object */
-export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType, skipExampleStrings = false) {
+export function generateExample(examples, example, schema, rawMimeType, includeReadOnly = true, includeWriteOnly = true, outputType, skipExampleIds = false) {
   const mimeType = rawMimeType || 'application/json';
   const finalExamples = [];
 
@@ -595,7 +595,7 @@ export function generateExample(examples, example, schema, rawMimeType, includeR
   const config = {
     includeReadOnly,
     includeWriteOnly,
-    skipExampleStrings,
+    skipExampleIds,
     xml: mimeType.toLowerCase().includes('xml'),
   };
 
