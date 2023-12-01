@@ -322,7 +322,9 @@ export default function securitySchemeTemplate() {
   <section id='auth' part="section-auth" class = 'observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
     <slot name="authentication">
       <div class="section-padding">
-        <div class='sub-title regular-font'>${getI18nText('headers.authentication')}</div>
+        <slot name="authentication-header">
+          <div class='sub-title regular-font'>${getI18nText('headers.authentication')}</div>
+        </slot>
         <div class="small-font-size" style="display:flex; align-items: center; min-height:30px">
           ${providedApiKeys.length > 0
             ? html`
@@ -417,6 +419,7 @@ export default function securitySchemeTemplate() {
             </table>`
           : ''
         }
+        <slot name="authentication-footer"></slot>
       </div>
     </slot>
   </section>

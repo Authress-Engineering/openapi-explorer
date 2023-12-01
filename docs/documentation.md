@@ -136,6 +136,10 @@ onEvent(event) {
   <div>Replaces the authentication section</div>
 </div>
 
+<div slot="authentication-footer">
+  <span>Add content below the rendered authentication section.</span>
+</div>
+
 <div slot="servers">
   <h1>Servers</h1>
   <div>Replaces the servers section</div>
