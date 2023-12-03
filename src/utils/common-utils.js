@@ -65,8 +65,10 @@ export function pathIsInSearch(searchVal, path) {
   if (!searchVal) {
     return true;
   }
-  const stringToSearch = `${path.method} ${path.path} ${path.summary || path.description || ''} ${path.operationId || ''}`.toLowerCase();
-  return stringToSearch.includes(searchVal.toLowerCase());
+  const stringToSearch = `${path.method} ${path.path} ${path.summary || ''} ${path.description || ''} ${path.operationId || ''}`;
+  return stringToSearch.includes(searchVal) || stringToSearch.toLowerCase().includes(searchVal)
+    || stringToSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(searchVal)
+    || stringToSearch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(searchVal);
 }
 
 export function schemaKeys(schemaProps, result = new Set()) {
