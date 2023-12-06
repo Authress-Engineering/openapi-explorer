@@ -4,11 +4,18 @@
 This is a javascript react example, for typescript, one additional declaration is necessary to make typescript work out of the box. See [Troubleshooting with React + Typescript](./troubleshooting.md#typescript).
 
 ```jsx
-import React, { Component } from 'react';
+import React, { useEffect, Component } from 'react';
 import 'openapi-explorer';
+import { reactEventListener } from '../../../../openapi-explorer/dist/es/react.js'
 
 export class MyApi extends Component {
   render() {
+    const onRequestFunction = (data) => {
+      console.log('Request:', data);
+    };
+
+    // Necessary because react by default does not know how to listen to HTML5 events
+    reactEventListener({ useEffect }, 'request', onRequestFunction);
     return <openapi-explorer
       spec-url = "https://petstore.swagger.io/v2/swagger.json">
     </openapi-explorer>
@@ -20,7 +27,7 @@ export class MyApi extends Component {
 ```vue
 <template>
   <openapi-explorer
-    spec-url = "https://petstore.swagger.io/v2/swagger.json">
+    spec-url="https://petstore.swagger.io/v2/swagger.json">
   </openapi-explorer>
 </template>
 
