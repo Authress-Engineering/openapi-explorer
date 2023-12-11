@@ -11,6 +11,7 @@ import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
 import './syntax-highlighter.js';
+import json5 from 'json5';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
@@ -846,14 +847,15 @@ export default class ApiRequest extends LitElement {
         if (exampleTextAreaEl && exampleTextAreaEl.value) {
           fetchOptions.body = exampleTextAreaEl.value;
           if (requestBodyType.includes('json')) {
+            fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value));
             try {
-              curlData = ` \\\n  -d '${JSON.stringify(JSON.parse(exampleTextAreaEl.value))}'`;
+              curlData = ` \\\n  -d '${fetchOptions.body}'`;
             } catch (err) { /* Ignore unparseable JSON */ }
           }
 
           if (!curlData) {
             // Save single quotes wrapped => 'text' => `"'"text"'"`
-            curlData = ` \\\n  -d '${exampleTextAreaEl.value.replace(/'/g, '\'"\'"\'')}'`;
+            curlData = ` \\\n  -d '${fetchOptions.body.replace(/'/g, '\'"\'"\'')}'`;
           }
         }
       }
