@@ -61,6 +61,12 @@ export default class SchemaTable extends LitElement {
       .table .key {
         width: 240px;
       }
+
+      .requiredStar::after {
+        content: '*';
+        color: var(--red);
+        font-size: larger;
+      }
       .key.deprecated .key-label {
         text-decoration: line-through;
       }
@@ -193,7 +199,7 @@ export default class SchemaTable extends LitElement {
                   ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
                     ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
                     : keyLabel.endsWith('*')
-                      ? html`<span class="key-label" style="display:inline-block; margin-left:-6px;"> ${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
+                      ? html`<span class="key-label requiredStar" style="display:inline-block; margin-left:-6px;" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`
                       : html`<span class="key-label" style="display:inline-block; margin-left:-6px;">${keyLabel === '::props' ? '' : keyLabel}</span>`
                   }
                 </div>
@@ -242,7 +248,7 @@ export default class SchemaTable extends LitElement {
       <div class = "tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px'>
           ${keyLabel?.endsWith('*')
-            ? html`<span class="key-label">${keyLabel.substring(0, keyLabel.length - 1)}</span><span style='color:var(--red);'>*</span>`
+            ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>`
             : key.startsWith('::OPTION')
               ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
               : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`

@@ -48,7 +48,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
                   ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
                     ? html`<span class="xxx-of-key">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
                     : isRequired
-                      ? html`<span class="key-label" style="display:inline-block;">${keyLabel}</span><span style='color:var(--red);'>*</span>`
+                      ? html`<span class="key-label requiredStar" style="display:inline-block;" title="Required">${keyLabel}</span>`
                       : html`<span class="key-label" style="display:inline-block;">${keyLabel === '::props' ? '' : keyLabel}</span>`
                   }
             </div>
