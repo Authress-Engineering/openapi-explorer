@@ -2,8 +2,8 @@ import i18next from 'i18next';
 import en from './en.js';
 import fr from './fr.js';
 
-export async function initI18n() {
-  const initLang = window.navigator.language.substring(0, 2);
+export async function initI18n(resolvedSpecLanguage) {
+  const initLang = (resolvedSpecLanguage || window.navigator.language).substring(0, 2);
   await i18next.init({
     lng: initLang,
     fallbackLng: 'en',
