@@ -411,7 +411,6 @@ export default class OpenApiExplorer extends LitElement {
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
     this.loading = true;
-    initI18n();
 
     const parent = this.parentElement;
     if (parent) {
@@ -563,6 +562,7 @@ export default class OpenApiExplorer extends LitElement {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
         return;
       }
+      initI18n(spec.info?.['x-locale']);
       if (!this.serverUrl) {
         this.serverUrl = spec.servers[0]?.computedUrl || spec.servers[0]?.url;
       }
