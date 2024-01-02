@@ -658,7 +658,9 @@ export default class ApiRequest extends LitElement {
     let pathUrl = `${this.serverUrl.replace(/\/$/, '')}${this.path.replaceAll(' ', '')}`;
 
     // Generate URL using Path Params
+    const pathParameterMap = {};
     pathParamEls.map((el) => {
+      pathParameterMap[el.dataset.pname] = el.value;
       pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
     });
 
@@ -676,15 +678,18 @@ export default class ApiRequest extends LitElement {
     };
 
     // Query Params
+    const queryParameterMap = {};
     queryParamEls.forEach((el) => {
       if (!el.dataset.array || el.dataset.array === 'false') {
         if (el.value !== '') {
+          queryParameterMap[el.dataset.pname] = el.value;
           fetchUrl.searchParams.append(el.dataset.pname, el.value);
         }
       } else {
         const paramSerializeStyle = el.dataset.paramSerializeStyle;
         const paramSerializeExplode = el.dataset.paramSerializeExplode;
         const values = Array.isArray(el.value) ? el.value.filter((v) => v !== '') : [];
+        queryParameterMap[el.dataset.pname] = values;
 
         if (values.length > 0) {
           if (paramSerializeStyle === 'spaceDelimited') {
@@ -873,6 +878,8 @@ export default class ApiRequest extends LitElement {
     return {
       fetchOptions,
       fetchUrl,
+      path: pathParameterMap,
+      query: queryParameterMap,
       curlParts: {
         data: curlData,
         form: curlForm
@@ -893,7 +900,7 @@ export default class ApiRequest extends LitElement {
   async onTryClick() {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
     
-    const { fetchOptions, fetchUrl } = this.recomputeFetchOptions();
+    const { fetchOptions, fetchUrl, path, query } = this.recomputeFetchOptions();
 
     this.responseIsBlob = false;
     this.respContentDisposition = '';
@@ -903,7 +910,13 @@ export default class ApiRequest extends LitElement {
     }
 
     // Options is legacy usage, documentation has been updated to reference properties of the fetch option directly, but older usages may still be using options
-    const fetchRequest = { explorerLocation: this.elementId, url: fetchUrl.toString(), options: fetchOptions, ...fetchOptions };
+    const fetchRequest = {
+      explorerLocation: this.elementId,
+      url: fetchUrl.toString(),
+      path, query,
+      options: fetchOptions,
+      ...fetchOptions
+    };
     const event = {
       bubbles: true,
       composed: true,

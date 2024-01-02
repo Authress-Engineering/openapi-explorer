@@ -8,6 +8,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * `enable-console` has now be inverted to be `hide-console` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * Fix `constraints` display for query parameters.
 * Add `x-locale` vendor extension to specify the locale of the spec.
+* Add `path` and `query` parameters into request interceptor.
 
 ## 1.1 ##
 * Support dynamic curl creation.
