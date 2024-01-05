@@ -1,15 +1,17 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 2.1
+* Add `x-locale` vendor extension to specify the locale of the spec.
+* Add `path` and `query` parameters into request interceptor.
+* Fix display text for the basic auth type.
+
 ## 2.0
 * `show-server-selection` has now be inverted to be `hide-server-selection` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * `allow-authentication` has now be inverted to be `hide-authentication` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * `fill-defaults` has now be inverted to be `hide-defaults` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * `enable-console` has now be inverted to be `hide-console` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
 * Fix `constraints` display for query parameters.
-* Add `x-locale` vendor extension to specify the locale of the spec.
-* Add `path` and `query` parameters into request interceptor.
-* Fix display text for the basic auth type.
 
 ## 1.1 ##
 * Support dynamic curl creation.
