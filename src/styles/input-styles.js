@@ -208,9 +208,13 @@ input[type="checkbox"]:checked:after {
   transition: border .25s, left .15s .25s, right .25s .175s;
 }
 
-input.oauth-client-id {
+.oauth-client-input {
+  display: flex;
+  align-items: center;
   flex-grow: 1;
+  width: 300px;
   max-width: 300px;
+  margin-top: 1rem;
 }
 input.oauth-client-secret {
   flex-grow: 1;

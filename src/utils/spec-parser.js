@@ -49,19 +49,6 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
     });
   }
 
-  // Updated Security Type Display Text based on Type
-  securitySchemes.forEach((v) => {
-    if (v.type === 'http') {
-      v.typeDisplay = v.scheme === 'basic' ? getI18nText('authentication.http-basic') : 'HTTP Bearer';
-    } else if (v.type === 'apiKey') {
-      v.typeDisplay = `API Key (${v.name})`;
-    } else if (v.type === 'oauth2') {
-      v.typeDisplay = 'OAuth2.0';
-    } else {
-      v.typeDisplay = v.type;
-    }
-  });
-
   // Servers
   let servers = [];
   if (Array.isArray(jsonParsedSpec.servers) && jsonParsedSpec.servers.length) {
