@@ -471,10 +471,12 @@ function getTypeDisplayHeader(securityScheme) {
   return securityScheme.type;
 }
 
-export function pathSecurityTemplate(pathSecurity) {
-  if (this.resolvedSpec.securitySchemes && pathSecurity) {
+export function pathSecurityTemplate(pathSecurityOptions) {
+  const requiredSecurityOptions = pathSecurityOptions?.filter(o => o && Object.keys(o).length) || [];
+  if (this.resolvedSpec.securitySchemes && requiredSecurityOptions.length) {
     const orSecurityKeys1 = [];
-    pathSecurity.forEach((pSecurity) => {
+
+    requiredSecurityOptions.forEach((pSecurity) => {
       const andSecurityKeys1 = [];
       const andKeyTypes = [];
       Object.keys(pSecurity).forEach((pathSecurityKey) => {
