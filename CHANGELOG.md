@@ -5,6 +5,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add `x-locale` vendor extension to specify the locale of the spec.
 * Add `path` and `query` parameters into request interceptor.
 * Fix display text for the basic auth type.
+* Hide security options display for endpoint when none is required.
 
 ## 2.0
 * `show-server-selection` has now be inverted to be `hide-server-selection` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
