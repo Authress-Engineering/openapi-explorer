@@ -184,10 +184,17 @@
                 "type": "http",
                 "scheme": "basic"
             },
+            "apikey": {
+                "type": "apikey"
+            },
             "oauth": {
                 "type": "oauth2",
                 "flows": {
                     "authorizationCode": {
+                        "authorizationUrl": "https://example.com/api/oauth/dialog",
+                        "tokenUrl": "https://example.com/api/oauth/dialog"
+                    },
+                    "clientCredentials": {
                         "authorizationUrl": "https://example.com/api/oauth/dialog",
                         "tokenUrl": "https://example.com/api/oauth/dialog"
                     }

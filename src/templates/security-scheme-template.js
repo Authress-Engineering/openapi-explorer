@@ -180,9 +180,9 @@ export async function checkForAuthToken(redirectToApiLocation) {
 
 async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
   const authFlowDivEl = e.target.closest('.oauth-flow');
-  const clientId = authFlowDivEl.querySelector('.oauth-client-id') ? authFlowDivEl.querySelector('.oauth-client-id').value.trim() : '';
-  const clientSecret = authFlowDivEl.querySelector('.oauth-client-secret') ? authFlowDivEl.querySelector('.oauth-client-secret').value.trim() : '';
-  const sendClientSecretIn = authFlowDivEl.querySelector('.oauth-send-client-secret-in') ? authFlowDivEl.querySelector('.oauth-send-client-secret-in').value.trim() : 'header';
+  const clientId = authFlowDivEl.querySelector('#oauth-client-id') ? authFlowDivEl.querySelector('#oauth-client-id').value.trim() : '';
+  const clientSecret = authFlowDivEl.querySelector('#oauth-client-secret') ? authFlowDivEl.querySelector('#oauth-client-secret').value.trim() : '';
+  const sendClientSecretIn = authFlowDivEl.querySelector('#oauth-send-client-secret-in') ? authFlowDivEl.querySelector('#oauth-send-client-secret-in').value.trim() : 'header';
 
   const checkedScopeEls = [...authFlowDivEl.querySelectorAll('input[type="checkbox"]:checked')];
   const securityObj = this.resolvedSpec.securitySchemes.find(v => v.apiKeyId === apiKeyId);
@@ -252,7 +252,7 @@ function oAuthFlowTemplate(flowName, securityObj, authFlow) {
     flowNameDisplay = flowName;
   }
   return html`
-    <div class="oauth-flow" style="padding: 10px 0; margin-bottom:10px;"> 
+    <div class="oauth-flow" style="padding: 10px 0; margin-bottom: 10px;"> 
       <div class="tiny-title upper" style="margin-bottom:5px;">${flowNameDisplay}</div> 
       ${authorizationUrl
         ? html`<div><span style="width:75px; display: inline-block;">Auth URL</span> <span class="mono-font"> ${authorizationUrl} </span></div>`
@@ -286,21 +286,25 @@ function oAuthFlowTemplate(flowName, securityObj, authFlow) {
             : ''
           }
           <div style="display:flex;">
-            <input type="text" part="textbox textbox-auth-client-id" value="${securityObj.clientId || ''}" placeholder="Client ID" spellcheck="false" class="oauth-client-id">
-            ${flowName === 'clientCredentials'
-              ? html`
-                <input type="password" part="textbox textbox-auth-client-secret" value = "" placeholder="Client Secret" spellcheck="false" class="oauth-client-secret" style = "margin:0 5px;">
-                <select aria-label='oauth client secret location' style="margin-right:5px;" class="oauth-send-client-secret-in">
-                  <option value = 'header' selected> Authorization Header </option> 
-                  <option value = 'request-body'> Request Body </option> 
-                </select>`
-              : html`<div style='width:5px'></div>`
-            }
+            <div>
+              <input id="oauth-client-id" type="text" part="textbox textbox-auth-client-id" value="${securityObj.clientId || ''}" placeholder="Client ID" spellcheck="false" class="oauth-client-input">
+              ${flowName === 'clientCredentials'
+                ? html`
+                  <input id="oauth-client-secret" type="password" part="textbox textbox-auth-client-secret" value="" placeholder="Client Secret" spellcheck="false" class="oauth-client-input">
+                    <select id="oauth-send-client-secret-in" aria-label='oauth client secret location' style="margin-right:5px;" class="oauth-client-input">
+                      <option value = 'header' selected> Authorization Header </option> 
+                      <option value = 'request-body'> Request Body </option> 
+                    </select>
+                  </div>`
+                : html`<div style='width:5px'></div>`
+              }
+            </div>
             ${flowName === 'authorizationCode' || flowName === 'clientCredentials' || flowName === 'implicit'
               ? html`
-                <button class="m-btn thin-border" part="btn btn-outline"
-                  @click="${(e) => { onInvokeOAuthFlow.call(this, apiKeyId, flowName, authorizationUrl, tokenUrl, e); }}"
-                >GET TOKEN</button>`
+                <div class="oauth-client-input" style="margin-left: 1rem;">
+                  <button class="m-btn thin-border" part="btn btn-outline"
+                    @click="${(e) => { onInvokeOAuthFlow.call(this, apiKeyId, flowName, authorizationUrl, tokenUrl, e); }}">GET TOKEN</button>
+                </div>`
               : ''
             }
           </div>  
@@ -310,6 +314,75 @@ function oAuthFlowTemplate(flowName, securityObj, authFlow) {
       }
     </div>  
   `;
+}
+
+function renderSecurityScheme(v) {
+  if (!v.type) {
+    return '';
+  }
+
+  if (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer') {
+    return html`
+      <div style="padding-top: 1rem">
+        ${v.type.toLowerCase() === 'apikey'
+          ? html`Send <code>${v.name || 'API key'}</code> in <code>${v.in || 'the request'}</code> with the given value:`
+          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and then the ${v.bearerFormat ?? 'Token String'}.`
+        }
+      </div>
+      <form style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
+        ${v.in === 'cookie'
+          ? html`
+          <div style="display: block">
+            <input type="text" value="${getCookieValue(v.apiKeyId)}" disabled class="api-key-input" placeholder="IygRVGf54B59e0GAkKmigGfuiVlp/uhFfk2ifA+jMMJzau2F1jPldc09gPTfnMw13BFBxqUZIFDm55DPfwkb0A==" spellcheck = "false" style="resize: horizontal; width: 100%">
+            <br>
+            <small>
+              <strong>Cookies</strong>&nbsp;are set and configured by the remote service, therefore it is not possible to configure them from the browser.
+            </small>
+          </div>`
+          : !v.finalKeyValue ? html`
+              <input type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
+                spellcheck="false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
+              <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
+                part = "btn btn-outline"
+                @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
+                ${getI18nText('authentication.set')}
+              </button>`
+            : html`<span class="blue-text" style="margin-right: 1rem">Key Applied</span>
+              <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>`
+        }
+      </form>`;
+  }
+
+  if (v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic') {
+    if (v.finalKeyValue) {
+      return html`
+        <div style="padding-top: 1rem">${getI18nText('authentication.http-basic-desc')}</div>
+        <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
+          <span class="blue-text" style="margin-right: 1rem">Key Applied</span>
+          <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>
+        </div>`;
+    }
+    return html`
+      <div style="padding-top: 1rem">${getI18nText('authentication.http-basic-desc')}</div>
+      <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
+        <form style="display:flex;">
+          <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
+          <input class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
+            type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" style = "width:100px; margin:0 5px;">
+          <button type="submit" class="m-btn thin-border"
+            @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
+            part = "btn btn-outline"
+          > 
+            ${v.finalKeyValue ? 'UPDATE' : getI18nText('authentication.set')}
+          </button>
+        </form>
+      </div>`;
+  }
+
+  if (v.type.toLowerCase() === 'oauth2' && Object.keys(v.flows).length) {
+    return html`${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(this, f, v, v.flows[f]))}`;
+  }
+  return '';
 }
 
 export default function securitySchemeTemplate() {
@@ -325,7 +398,7 @@ export default function securitySchemeTemplate() {
         <slot name="authentication-header">
           <div class='sub-title regular-font'>${getI18nText('headers.authentication')}</div>
         </slot>
-        <div class="small-font-size" style="display:flex; align-items: center; min-height:30px">
+        <div class="small-font-size" style="display:flex; align-items: center; min-height:40px">
           ${providedApiKeys.length > 0
             ? html`
               <div class="blue-text"> ${providedApiKeys.length} API key applied </div>
@@ -340,15 +413,10 @@ export default function securitySchemeTemplate() {
               ${schemes.map((v) => html`
                 <tr>  
                   <td colspan="1" style="max-width:500px; overflow-wrap: break-word;">
-                    <div style="min-height:24px"> 
-                      <span style="font-weight:bold">${v.typeDisplay}</span> 
-                      ${v.finalKeyValue
-                        ? html`
-                          <span class='blue-text'>  ${v.finalKeyValue ? 'Key Applied' : ''} </span> 
-                          <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>
-                          `
-                        : ''
-                      }
+                    <div style="min-height:24px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                      <div style="display: flex; justify-content: center;">
+                        <span style="font-weight:bold">${getTypeDisplayHeader(v)}</span> 
+                      </div>
                     </div>
                     ${v.description
                       ? html`
@@ -358,64 +426,9 @@ export default function securitySchemeTemplate() {
                       : ''
                     }
                   </td>
-                  <td colspan="3">
-                    ${v.type && (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer')
-                      ? html`
-                        ${v.type.toLowerCase() === 'apikey'
-                          ? html`Send <code>${v.name}</code> in <code>${v.in}</code> with the given value:`
-                          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and then the ${v.bearerFormat ?? 'Token String'}.`
-                        }
-                        <form style="display:flex;">
-                          ${v.in === 'cookie'
-                            ? html`
-                            <div style="display: block">
-                              <input type="text" value="${getCookieValue(v.apiKeyId)}" disabled class="api-key-input" placeholder="IygRVGf54B59e0GAkKmigGfuiVlp/uhFfk2ifA+jMMJzau2F1jPldc09gPTfnMw13BFBxqUZIFDm55DPfwkb0A==" spellcheck = "false" style="resize: horizontal; width: 100%">
-                              <br>
-                              <small>
-                                <strong>Cookies</strong>&nbsp;are set and configured by the remote service, therefore it is not possible to configure them from the browser.
-                              </small>
-                            </div>`
-                            : html`
-                              <input type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
-                                spellcheck="false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
-                              <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
-                                part = "btn btn-outline"
-                                @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"> 
-                                ${v.finalKeyValue ? 'UPDATE' : 'SET'}
-                              </button>`
-                          }
-                        </form>`
-                      : ''
-                    }
-                    ${v.type && v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic'
-                      ? html`
-                      ${getI18nText('authentication.http-basic-desc')}
-                        <form style="display:flex;">
-                          <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
-                          <input class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
-                            type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" style = "width:100px; margin:0 5px;">
-                          <button type="submit" class="m-btn thin-border"
-                            @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
-                            part = "btn btn-outline"
-                          > 
-                            ${v.finalKeyValue ? 'UPDATE' : getI18nText('authentication.set')}
-                          </button>
-                        </form>`
-                      : ''
-                    }
-                  </td>
-                </tr>
-                ${v.type.toLowerCase() === 'oauth2'
-                  ? html`
-                    <tr>
-                      <td colspan="2" style="border:none; padding-left:48px">
-                        ${Object.keys(v.flows).map((f) => oAuthFlowTemplate.call(this, f, v, v.flows[f]))}
-                      </td>
-                    </tr>    
-                    `
-                  : ''
-                }    
-              `)}
+                  <td colspan="3">${renderSecurityScheme.call(this, v)}</td>
+                </tr>`
+              )}
             </table>`
           : ''
         }
@@ -442,6 +455,22 @@ function getOauthScopeTemplate(rawScopes) {
     </div>`;
 }
 
+function getTypeDisplayHeader(securityScheme) {
+  if (securityScheme.type === 'apiKey') {
+    return `API Key (${securityScheme.name})`;
+  }
+
+  if (securityScheme.type === 'oauth2') {
+    return 'OAuth2.0';
+  }
+
+  if (securityScheme.type === 'http') {
+    return securityScheme.scheme === 'basic' ? getI18nText('authentication.http-basic') : 'HTTP Bearer';
+  }
+
+  return securityScheme.type;
+}
+
 export function pathSecurityTemplate(pathSecurity) {
   if (this.resolvedSpec.securitySchemes && pathSecurity) {
     const orSecurityKeys1 = [];
@@ -451,7 +480,7 @@ export function pathSecurityTemplate(pathSecurity) {
       Object.keys(pSecurity).forEach((pathSecurityKey) => {
         const s = this.resolvedSpec.securitySchemes.find((ss) => ss.apiKeyId === pathSecurityKey);
         if (s) {
-          andKeyTypes.push(s.typeDisplay);
+          andKeyTypes.push(getTypeDisplayHeader(s));
           andSecurityKeys1.push({ ...s, scopes: pSecurity[pathSecurityKey] });
         }
       });

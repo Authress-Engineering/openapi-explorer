@@ -9,6 +9,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix `constraints` display for query parameters.
 * Add `x-locale` vendor extension to specify the locale of the spec.
 * Add `path` and `query` parameters into request interceptor.
+* Fix display text for the basic auth type.
 
 ## 1.1 ##
 * Support dynamic curl creation.
