@@ -121,15 +121,21 @@ onEvent(event) {
   <div>Adds a section above the search filter to the navbar</div>
 </div>
 
+<div slot="overview-header"><h1>Before the Overview Section</h1></div>
+
 <div slot="overview">
   <h1>Overview</h1>
   <div>Replaces the overview section</div>
 </div>
 
+<div slot="overview-body"><h1>Between the Overview and Description Section</h1></div>
+
 <div slot="overview-api-description">
   <h1>API Description in Overview</h1>
   <div>Replaces the api description section</div>
 </div>
+
+<div slot="overview-footer"><h1>After the Description</h1></div>
 
 <div slot="authentication">
   <h1>Authentication</h1>

@@ -10,6 +10,7 @@ export default function overviewTemplate() {
       class="observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}">
       ${this.resolvedSpec && this.resolvedSpec.info
         ? html`
+          <slot name="overview-header"></slot>
           <slot name="overview">
             <div id="api-title" part="label-overview-title" style="font-size:32px;" class="section-padding">
               ${this.resolvedSpec.info.title}
@@ -44,12 +45,14 @@ export default function overviewTemplate() {
               }
             </div>
           </slot>
+          <slot name="overview-body"></slot>
           <slot name="overview-api-description">
             ${this.resolvedSpec.info.description
               ? html`${unsafeHTML(`<div class="m-markdown regular-font section-padding">${marked(this.resolvedSpec.info.description)}</div>`)}`
               : ''
             }
           </slot>
+          <slot name="overview-footer"></slot>
         `
         : ''
       }
