@@ -106,4 +106,9 @@ export default css`
     display: flex;
   }
 }
+
+.expanded-endpoint-component > h2:hover, .schema-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 `;

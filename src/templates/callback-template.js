@@ -36,6 +36,7 @@ export default function callbackTemplate(callbacks) {
                       schema-expand-level = "${this.schemaExpandLevel}"
                       schema-hide-read-only = "${this.schemaHideReadOnly}"
                       fetch-credentials = "${this.fetchCredentials}"
+                      @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
                       exportparts="btn btn-fill btn-outline btn-try">
                     </api-request>
 
@@ -47,6 +48,7 @@ export default function callbackTemplate(callbacks) {
                       schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
+                      @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
                       exportparts = "btn--resp btn-fill--resp btn-outline--resp"
                     > </api-response>
                   </div>

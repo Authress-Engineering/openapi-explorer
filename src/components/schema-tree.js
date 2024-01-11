@@ -117,10 +117,11 @@ export default class SchemaTree extends LitElement {
 
   /* eslint-disable indent */
   render() {
+    const displayLine = [this.data?.['::title'], this.data?.['::description']].filter(d => d).join(' - ');
     return html`
       <div class="tree ${this.interactive ? 'interactive' : ''}">
         <div class="toolbar">
-          ${this.data && this.data['::description'] ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>` : html`<div>&nbsp;</div>`}
+          ${displayLine ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(displayLine))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
             ${this.schemaDescriptionExpanded ? getI18nText('schemas.collapse-desc') : getI18nText('schemas.expand-desc')}
           </div>
@@ -142,12 +143,9 @@ export default class SchemaTree extends LitElement {
     if (!data) {
       return html`<div class="null" style="display:inline;">
         <span class="key-label xxx-of-key"> ${key.replace('::OPTION~', '')}</span>
-        ${
-          dataType === 'array'
-            ? html`<span class='mono-font'> [ ] </span>`
-            : dataType === 'object'
-              ? html`<span class='mono-font'> { } </span>`
-              : html`<span class='mono-font'> schema undefined </span>`
+        ${dataType === 'array' && html`<span class='mono-font'> [ ] </span>`
+          || dataType === 'object' && html`<span class='mono-font'> { } </span>`
+          || html`<span class='mono-font'> ${dataType} </span>`
         }
       </div>`;
     }
@@ -173,23 +171,7 @@ export default class SchemaTree extends LitElement {
     let closeBracket = '';
     const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
     const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' ? indentLevel : (indentLevel + 1);
-    if (data['::type'] === 'object') {
-      if (dataType === 'array') {
-        if (schemaLevel < this.schemaExpandLevel) {
-          openBracket = html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{</span>`;
-        } else {
-          openBracket = html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{...}]</span>`;
-        }
-        closeBracket = '}]';
-      } else {
-        if (schemaLevel < this.schemaExpandLevel) {
-          openBracket = html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{</span>`;
-        } else {
-          openBracket = html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{...}</span>`;
-        }
-        closeBracket = '}';
-      }
-    } else if (data['::type'] === 'array') {
+    if (data['::type'] === 'array') {
       if (dataType === 'array') {
         const arrType = arrayType !== 'object' ? arrayType : '';
         if (schemaLevel < this.schemaExpandLevel) {
@@ -213,6 +195,22 @@ export default class SchemaTree extends LitElement {
         openBracket = html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[...]</span>`;
       }
       closeBracket = ']';
+    } else if (data['::type']) {
+      if (dataType === 'array') {
+        if (schemaLevel < this.schemaExpandLevel) {
+          openBracket = html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{</span>`;
+        } else {
+          openBracket = html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{...}]</span>`;
+        }
+        closeBracket = '}]';
+      } else {
+        if (schemaLevel < this.schemaExpandLevel) {
+          openBracket = html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{</span>`;
+        } else {
+          openBracket = html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{...}</span>`;
+        }
+        closeBracket = '}';
+      }
     }
 
     if (typeof data === 'object') {
@@ -252,8 +250,8 @@ export default class SchemaTree extends LitElement {
             ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
               : html`
                 ${Object.keys(data).map((dataKey) =>
-                  !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                  || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
+                  !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                  || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of')
                   ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                         data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
                   : ''
