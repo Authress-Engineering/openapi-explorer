@@ -108,6 +108,7 @@ function endpointBodyTemplate(path) {
           schema-expand-level = "${this.schemaExpandLevel}"
           schema-hide-read-only = "${this.schemaHideReadOnly}"
           fetch-credentials = "${this.fetchCredentials}"
+          @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
           exportparts="btn btn-fill btn-outline btn-try">
         </api-request>
       </div>
@@ -122,6 +123,7 @@ function endpointBodyTemplate(path) {
         schema-expand-level = "${this.schemaExpandLevel}"
         schema-hide-write-only = "${this.schemaHideWriteOnly}"
         selected-status = "${Object.keys(path.responses || {})[0] || ''}"
+        @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
         exportparts = "btn--resp btn-fill--resp btn-outline--resp"
       > </api-response>
     </div>

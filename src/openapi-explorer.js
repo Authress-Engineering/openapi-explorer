@@ -306,11 +306,7 @@ export default class OpenApiExplorer extends LitElement {
         position: relative;
         padding: 6px 0px; 
       }
-      .expanded-endpoint-component > h2:hover {
-        cursor: pointer;
-        text-decoration: underline;
 
-      }
       .divider { 
         border-top: 2px solid var(--border-color);
         margin: 24px 0;
@@ -762,6 +758,14 @@ export default class OpenApiExplorer extends LitElement {
     setTimeout(() => {
       this.isIntersectionObserverActive = true;
     }, 300);
+  }
+
+  async scrollToSchemaComponentByName(schemaComponentNameEvent) {
+    const schemaComponentName = schemaComponentNameEvent.detail;
+    const schemaComponent = this.resolvedSpec?.components?.find(c => c.componentKeyId === 'schemas')?.subComponents?.find(s => s.name === schemaComponentName);
+    if (schemaComponent) {
+      await this.scrollTo(`cmp--${schemaComponent.id}`, true);
+    }
   }
 
   // Public Method (scrolls to a given path and highlights the left-nav selection)

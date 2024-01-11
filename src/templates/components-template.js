@@ -10,12 +10,13 @@ function componentBodyTemplate(sComponent) {
   const formdataPartSchema = schemaInObjectNotation(sComponent.component, { includeNulls: this.includeNulls });
 
   return html`
-  <div class='expanded-endpoint-component observe-me ${sComponent.name}' id='cmp--${sComponent.id}' @click='${() => this.scrollTo(`cmp--${sComponent.id}`)}'>
-    <h2>${sComponent.name}</h2>
+  <div class='expanded-endpoint-component observe-me ${sComponent.name}' id='cmp--${sComponent.id}'>
+    <h2 @click='${() => this.scrollTo(`cmp--${sComponent.id}`)}'>${sComponent.name}</h2>
     <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
     ${this.displaySchemaAsTable
     ? html`<schema-table
       .data = '${formdataPartSchema}'
+      @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
       schema-expand-level = "${this.schemaExpandLevel}"
       schema-hide-read-only=false
       schema-hide-write-only=false> </schema-table>`

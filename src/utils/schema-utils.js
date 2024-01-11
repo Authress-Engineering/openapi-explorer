@@ -374,7 +374,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     if (Object.keys(objWithAnyOfProps).length) {
       resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
     }
-    resultObj['::type'] = 'object';
+
+    resultObj['::link'] = schema.title;
+    resultObj['::type'] = schema.title || 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
     resultObj['::description'] = schema.description || '';
@@ -410,6 +412,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       }
     }
     if (complexTypes.length > 0) {
+      obj['::link'] = schema.title;
       obj['::type'] = 'object';
       const multiTypeOptions = {
         '::type': 'xxx-of-option',
@@ -429,7 +432,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::title': schema.title || '',
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
-            '::type': 'object',
+            '::link': schema.title,
+            '::type': schema.title || 'object',
             '::deprecated': schema.deprecated || false,
             '::metadata': metadata
           };
@@ -446,6 +450,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::title': schema.title || '',
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
+            '::link': arrayItemsSchema.title || schema.title,
             '::type': 'array',
             // Array properties are read from the ::props object instead of reading from the keys of this object
             // '::props': schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1)),
@@ -464,7 +469,8 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
-    obj['::type'] = 'object';
+    obj['::link'] = schema.title;
+    obj['::type'] = schema.title || 'object';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
     for (const key in schemaProperties) {
@@ -486,6 +492,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || (arrayItemsSchema?.description ? `array&lt;${arrayItemsSchema.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
+    obj['::link'] = arrayItemsSchema.title || schema.title;
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;

@@ -118,9 +118,10 @@ export default class SchemaTable extends LitElement {
 
   /* eslint-disable indent */
   render() {
+    const displayLine = [this.data?.['::title'], this.data?.['::description']].filter(d => d).join(' - ');
     return html`
-      ${this.data && this.data['::description']
-        ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(this.data['::description'] || ''))}</span>`
+      ${displayLine
+        ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(displayLine))}</span>`
         : ''
       }
       <div class="table ${this.interactive ? 'interactive' : ''}">
@@ -134,6 +135,10 @@ export default class SchemaTable extends LitElement {
         </div>
       </div>  
     `;
+  }
+
+  scrollToSchemaComponentByName(componentName) {
+    this.dispatchEvent(new CustomEvent('scrollToSchemaComponentByName', { bubbles: true, composed: true, detail: componentName }));
   }
 
   generateTree(data, dataType = 'object', key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
@@ -163,19 +168,21 @@ export default class SchemaTable extends LitElement {
     }
 
     let detailObjType = '';
+    let displaySchemaLink = false;
     if ((data['::type'] || '').includes('xxx-of')) {
       detailObjType = '';
-    } else if (data['::type'] === 'object') {
-      if (dataType === 'array') {
-        detailObjType = `[${keyLabel.replace(/(s|Collection|List)[*]?$/i, '')}]`; // Array of Object
-      } else {
-        detailObjType = 'object'; // Object
-      }
     } else if (data['::type'] === 'array') {
       if (dataType === 'array') {
         detailObjType = 'array of array'; // Array of array
       } else {
         detailObjType = 'array';
+      }
+    } else if (data['::type']) {
+      displaySchemaLink = data['::link'];
+      if (dataType === 'array') {
+        detailObjType = `[${data['::link']}]`; // Array of Object
+      } else {
+        detailObjType = data['::link'] || data['::type'];
       }
     }
 
@@ -205,7 +212,10 @@ export default class SchemaTable extends LitElement {
                 </div>
               </div>
               <div class='td key-type'>
-                <div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>
+                ${displaySchemaLink
+                  ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>${detailObjType}</div>`
+                  : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>`
+                }
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
               <div class='td key-descr'>
