@@ -225,8 +225,8 @@ export default class SchemaTable extends LitElement {
         ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
             : html`
               ${Object.keys(data).map((dataKey) =>
-                !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
+                !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+                || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of')
                 ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
                       data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
                 : ''

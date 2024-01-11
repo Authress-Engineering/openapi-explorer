@@ -1,7 +1,6 @@
 import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser.js';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils.js';
-import { getI18nText } from '../languages/index.js';
 import cloneDeep from 'lodash.clonedeep';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
@@ -105,67 +104,25 @@ function getComponents(openApiSpec) {
   if (!openApiSpec.components) {
     return [];
   }
+
   const components = [];
-  for (const component in openApiSpec.components) {
-    const subComponents = Object.keys(openApiSpec.components[component]).map(sComponent => ({
+  for (const componentKeyId in openApiSpec.components) {
+    const subComponents = Object.keys(openApiSpec.components[componentKeyId]).map(sComponent => ({
       expanded: true,
-      id: `${component.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
+      id: `${componentKeyId.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
       name: sComponent,
-      component: openApiSpec.components[component][sComponent],
+      component: openApiSpec.components[componentKeyId][sComponent],
     })).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-    let cmpDescription;
-    let cmpName;
-
-    switch (component) {
-      case 'schemas':
-        cmpName = getI18nText('menu.schemas');
-        cmpDescription = '';
-        break;
-      case 'responses':
-        cmpName = 'Responses';
-        cmpDescription = 'Describes responses from an API Operation, including design-time, static links to operations based on the response.';
-        break;
-      case 'parameters':
-        cmpName = 'Parameters';
-        cmpDescription = 'Describes operation parameters. A unique parameter is defined by a combination of a name and location.';
-        break;
-      case 'examples':
-        cmpName = 'Examples';
-        cmpDescription = 'List of Examples for operations, can be requests, responses and objects examples.';
-        break;
-      case 'requestBodies':
-        break;
-      case 'headers':
-        cmpName = 'Headers';
-        cmpDescription = 'Headers follows the structure of the Parameters but they are explicitly in "header"';
-        break;
-      case 'securitySchemes':
-      case 'securitySchemas':
-        break;
-      case 'links':
-        cmpName = 'Links';
-        cmpDescription = 'Links represent a possible design-time link for a response. The presence of a link does not guarantee the caller\'s ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between responses and other operations.';
-        break;
-      case 'callbacks':
-        cmpName = 'Callbacks';
-        // eslint-disable-next-line max-len
-        cmpDescription = 'A map of possible out-of band callbacks related to the parent operation. Each value in the map is a Path Item Object that describes a set of requests that may be initiated by the API provider and the expected responses. The key value used to identify the path item object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.';
-        break;
-      default:
-        cmpName = component;
-        cmpDescription = component;
-        break;
+    if (componentKeyId === 'requestBodies' || componentKeyId === 'securitySchemes' || componentKeyId === 'securitySchemas') {
+      continue;
     }
 
-    if (cmpName) {
-      components.push({
-        expanded: true,
-        name: cmpName,
-        description: cmpDescription,
-        subComponents,
-      });
-    }
+    components.push({
+      expanded: true,
+      componentKeyId,
+      subComponents,
+    });
   }
 
   return components;

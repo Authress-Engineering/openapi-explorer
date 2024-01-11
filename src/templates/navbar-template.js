@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import { componentIsInSearch, pathIsInSearch } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
 import { expandCollapseComponent } from './endpoint-template.js';
+import { getComponentInfo } from './components-template.js';
 
 function onExpandCollapse(tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
@@ -153,35 +154,37 @@ export default function navbarTemplate() {
             </div>
           </div>
 
-          ${this.resolvedSpec.components.filter((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s))).map((component) => html`
-            <div class="nav-bar-tag-and-paths ${component.expanded ? '' : 'collapsed'}">
-              <div class='nav-bar-tag'
-                data-content-id='cmp--${component.name.toLowerCase()}' 
-                id='link-cmp--${component.name.toLowerCase()}' 
-                @click="${(e) => {
-                  expandCollapseComponent.call(this, component);
-                  this.scrollToEventTarget(e, false);
-                }}">
-                <div>
-                  ${component.name}
+          ${this.resolvedSpec.components.filter((c) => c.subComponents.some(s => componentIsInSearch(this.matchPaths, s))).map((component) => {
+            const componentInfo = getComponentInfo(component.componentKeyId);
+            return html`
+              <div class="nav-bar-tag-and-paths ${component.expanded ? '' : 'collapsed'}">
+                <div class='nav-bar-tag'
+                  data-content-id='cmp--${componentInfo.name.toLowerCase()}' 
+                  id='link-cmp--${componentInfo.name.toLowerCase()}' 
+                  @click="${(e) => {
+                    expandCollapseComponent.call(this, component);
+                    this.scrollToEventTarget(e, false);
+                  }}">
+                  <div>
+                    ${componentInfo.name}
+                  </div>
+
+                  <div style="" part="navbar-components-header-collapse">
+                    <div class="toggle">▾</div>
+                  </div>
                 </div>
 
-                <div style="" part="navbar-components-header-collapse">
-                  <div class="toggle">▾</div>
+                <div class="nav-bar-section-wrapper">
+                  <div class="nav-bar-paths-under-tag">
+                    ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
+                      <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                        <span> ${p.name} </span>
+                      </div>`
+                    )}
+                  </div>
                 </div>
-              </div>
-
-              <div class="nav-bar-section-wrapper">
-                <div class="nav-bar-paths-under-tag">
-                  ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
-                    <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
-                      <span> ${p.name} </span>
-                    </div>`
-                  )}
-                </div>
-              </div>
-            </div>`
-          )}`
+              </div>`;
+          })}`
         : ''
       }
     </nav>`

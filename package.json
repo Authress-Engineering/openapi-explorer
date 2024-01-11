@@ -62,7 +62,7 @@
     "lodash.merge": "^4.6.2",
     "marked": "^4.0.16",
     "openapi-data-validator": "^2.0.40",
-    "openapi-resolver": "^4.1.35",
+    "openapi-resolver": "^4.1.49",
     "prismjs": "^1.29.0",
     "randexp": "^0.5.3",
     "xml-but-prettier": "^1.0.1"

@@ -62,8 +62,8 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
       }
       ${Array.isArray(data) && data[0] ? html`${generateFormRows.call(this, data[0], options, 'xxx-of-option', '::ARRAY~OF', '', newSchemaLevel)}`
         : html`${Object.keys(data).map((dataKey) =>
-          !['::metadata', '::title', '::description', '::type', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                    || data[dataKey]['::type'] === 'array' && data[dataKey]['::type'] === 'object'
+          !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+            || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of')
             ? html`${generateFormRows.call(this, data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
               options, data[dataKey]['::type'], dataKey, data[dataKey]['::description'], newSchemaLevel)}`
             : '')}`
