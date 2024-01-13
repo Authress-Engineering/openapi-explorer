@@ -134,7 +134,7 @@ export default class ApiRequest extends LitElement {
       if (!param.schema) {
         continue;
       }
-      const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
+      const paramSchema = getTypeInfo(param, { includeNulls: this.includeNulls, enableExampleGeneration: true });
       if (!paramSchema) {
         continue;
       }
@@ -309,7 +309,7 @@ export default class ApiRequest extends LitElement {
 
   exampleListTemplate(param, paramType) {
     const paramName = param.name;
-    const paramSchema = getTypeInfo(param.schema, { includeNulls: this.includeNulls });
+    const paramSchema = getTypeInfo(param, { includeNulls: this.includeNulls });
 
     const examples = generateExample(
       param.examples || param.example && { Example: { value: param.example } } || paramSchema.examples || paramSchema.example && { Example: { value: paramSchema.example } },
@@ -434,7 +434,7 @@ export default class ApiRequest extends LitElement {
       }
       const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample) || reqBodyExamples[0];
       reqBodyDefaultHtml = html`
-        <div class = 'example-panel border-top pad-top-8'>
+        <div class = 'example-panel pad-top-8'>
           ${reqBodyExamples.length === 1
             ? ''
             : html`

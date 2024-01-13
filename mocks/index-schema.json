@@ -60,6 +60,18 @@
                 },
                 "parameters": [
                     {
+                        "name": "If-Unmodified-Since",
+                        "in": "header",
+                        "description": "The expected last time the record was modified.",
+                        "required": false,
+                        "schema": {
+                          "type": "string",
+                          "format": "date-time",
+                          "minLength": 1,
+                          "maxLength": 32
+                        }
+                      },
+                    {
                         "name": "uri_test",
                         "in": "path",
                         "required": true,

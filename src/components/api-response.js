@@ -224,7 +224,7 @@ export default class ApiResponse extends LitElement {
       <table role="presentation" style="border-collapse: collapse; margin-bottom:16px; border:1px solid var(--border-color); border-radius: var(--border-radius)"
         class="small-font-size mono-font">
         ${respHeaders.map((v) => {
-          const typeData = getTypeInfo(v.schema);
+          const typeData = getTypeInfo(v, { enableExampleGeneration: true });
           return html`
             <tr>
               <td style="padding:8px; vertical-align: baseline; min-width:160px; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
@@ -238,7 +238,7 @@ export default class ApiResponse extends LitElement {
                 <div class="m-markdown-small regular-font" >${unsafeHTML(marked(v.description || ''))}</div>
               </td>
               <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-                ${typeData?.example || ''}
+                ${typeData?.example || typeData?.default || ''}
               </td>
             </tr>
           `;
@@ -273,7 +273,7 @@ export default class ApiResponse extends LitElement {
         ? html`
           ${mimeRespDetails.examples[0].exampleSummary && mimeRespDetails.examples[0].exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${mimeRespDetails.examples[0].exampleSummary} </div>` : ''}
           ${mimeRespDetails.examples[0].exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(mimeRespDetails.examples[0].exampleDescription || ''))} </div>` : ''}
-          <syntax-highlighter class='example-panel generic-tree border-top pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}"/>`
+          <syntax-highlighter class='example-panel generic-tree pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}"/>`
         : html`
           <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
             <select aria-label='response body example' @change='${(e) => this.onSelectExample(e)}'>

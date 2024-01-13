@@ -8,10 +8,12 @@ const IS_MISSING_TYPE_INFO_TYPE = '';
 const EXAMPLE_VALUE_FOR_MISSING_TYPE = '';
 
 /* Generates an schema object containing type and constraint info */
-export function getTypeInfo(schema, options = { includeNulls: false }) {
-  if (!schema) {
+export function getTypeInfo(parameter, options = { includeNulls: false, enableExampleGeneration: false }) {
+  if (!parameter) {
     return undefined;
   }
+
+  const schema = Object.assign({}, parameter, parameter.schema);
 
   let dataType = IS_MISSING_TYPE_INFO_TYPE;
   let format = schema.format || schema.items?.format || '';
@@ -32,6 +34,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     }
   }
 
+  const examples = schema.examples || schema.example || options?.enableExampleGeneration && getSampleValueByType(schema, null) || '';
   const info = {
     type: dataType,
     format,
@@ -39,7 +42,7 @@ export function getTypeInfo(schema, options = { includeNulls: false }) {
     pattern: (schema.pattern && !schema.enum) ? schema.pattern.replace(/(^\^)|(\$$)/g, '') : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
-    example: Array.isArray(schema.example) ? schema.example : (typeof schema.example !== 'undefined' ? `${schema.example}` : ''),
+    example: examples || '',
     default: schema.default || '',
     title: schema.title || '',
     description: schema.description || '',
