@@ -180,7 +180,7 @@ export default class SchemaTable extends LitElement {
     } else if (data['::type']) {
       displaySchemaLink = data['::link'];
       if (dataType === 'array') {
-        detailObjType = `[${data['::link']}]`; // Array of Object
+        detailObjType = data['::link'] || keyLabel.replace(/(s|Collection|List)[*]?$/i, ''); // Array of Object
       } else {
         detailObjType = data['::link'] || data['::type'];
       }
@@ -213,7 +213,9 @@ export default class SchemaTable extends LitElement {
               </div>
               <div class='td key-type'>
                 ${displaySchemaLink
-                  ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>${detailObjType}</div>`
+                  ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
+                    ${dataType === 'array' ? '[' : ''}<span style="color: var(--primary)">${detailObjType}</span>${dataType === 'array' ? ']' : ''}
+                  </div>`
                   : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>`
                 }
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
