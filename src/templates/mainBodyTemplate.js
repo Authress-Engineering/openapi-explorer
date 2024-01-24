@@ -34,39 +34,35 @@ export default function mainBodyTemplate() {
 
     <div id='the-main-body' class="body">
       <!-- Side Nav -->
-      ${(this.renderStyle === 'focused' && this.resolvedSpec) ? navbarTemplate.call(this) : ''
-      }
+      ${(this.renderStyle === 'focused' && this.resolvedSpec) ? navbarTemplate.call(this) : ''}
 
       <!-- Main Content -->
       ${this.loading === true
         ? html`<slot name="loader"><div class="loader"></div></slot>`
         : html`
         <main class="main-content regular-font" part="section-main-content">
-          <slot></slot>
           <div id="operations-root" class="main-content-inner">
             ${this.loadFailed === true
               ? html`<div style="text-align: center;margin: 16px;">Unable to load the Spec${this.specUrl ? ': ' : ''}<strong>${this.specUrl}</strong></div>`
               : html`
                 <div class="operations-root" @click="${(e) => { this.handleHref(e); }}">
-                ${this.renderStyle === 'focused'
-                  ? html`${focusedEndpointTemplate.call(this)}`
-                  : html`
-                    ${!this.hideInfo ? overviewTemplate.call(this) : ''}
-                    ${!this.hideServerSelection ? serverTemplate.call(this) : ''}
-                    ${!this.hideAuthentication ? securitySchemeTemplate.call(this) : ''}
-                    <section id='section'
-                      class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
-                      <slot name="custom-section"></slot>
-                    </section>
-                    ${endpointTemplate.call(this)}`
-                }
-                </div>
-              `
-            }`
-          }
-        </div>
-        <slot name="footer"></slot>
-      </main>
+                  ${this.renderStyle === 'focused'
+                    ? html`${focusedEndpointTemplate.call(this)}`
+                    : html`
+                      ${!this.hideInfo ? overviewTemplate.call(this) : ''}
+                      ${!this.hideServerSelection ? serverTemplate.call(this) : ''}
+                      ${!this.hideAuthentication ? securitySchemeTemplate.call(this) : ''}
+                      <section id='section'
+                        class='observe-me ${this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap'}'>
+                        <slot name="custom-section"></slot>
+                      </section>
+                      ${endpointTemplate.call(this)}`
+                  }
+                </div>`
+            }
+          </div>
+        </main>`
+      }
     </div>  
   `;
 }
