@@ -330,7 +330,7 @@ export default class OpenApiExplorer extends LitElement {
     try {
       this.resolvedSpec = null;
       this.loading = true;
-      this.loadFailed = false;
+      this.loadingFailedError = null;
       const spec = await ProcessSpec(specUrlOrObject, this.serverUrl);
       this.loading = false;
       if (spec === undefined || spec === null) {
@@ -345,7 +345,7 @@ export default class OpenApiExplorer extends LitElement {
       this.afterSpecParsedAndValidated(spec);
     } catch (err) {
       this.loading = false;
-      this.loadFailed = true;
+      this.loadingFailedError = err.message;
       this.resolvedSpec = null;
       console.error('OpenAPI Explorer: Unable to resolve the API spec..', err); // eslint-disable-line no-console
     }

@@ -1,3 +1,4 @@
+// To inline test changes to the OpenAPiResolver, it must be copied into the node_modules directory. The builder for this package will not work across repositories.
 import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser.js';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils.js';
@@ -12,7 +13,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error parsing specification', error);
-    throw Error('SpecificationNotFound');
+    throw Error(`Failed to resolve the spec: ${error.message}`);
   }
 
   if (!jsonParsedSpec) {
