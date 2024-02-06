@@ -64,7 +64,7 @@ There are many available `::part` selectors and many ways of styling based on pa
 Explorer location   | CSS ::part selector
 --------------------|--------------------
 Sections            | `section-navbar` `section-header` `section-main-content` `section-logo` `section-overview` `section-auth` `section-auth-scopes` `section-servers` `section-tag` `section-operations-in-tag` `section-operation`
-Navbar              | `navbar-scroll` `navbar-operations-header`
+Navbar              | `navbar-scroll` `navbar-section-header`
 Labels              | `label-header-title` `label-overview-title` `label-selected-server` `label-tag-title` `label-operations-method` `label-operation-path`
 Buttons             | `btn` `btn-fill` `btn-outline` `btn-search`
 Checkboxes/ Toggles | `checkbox` `checkbox-auth-scope`

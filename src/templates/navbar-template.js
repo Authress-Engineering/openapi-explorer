@@ -74,7 +74,7 @@ export default function navbarTemplate() {
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToCustomNavSectionTarget(e, false)}'></slot>
 
       <div class="sticky-scroll-element ${this.operationsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAll.call(this); }}">
-        <div class='nav-bar-section' part="navbar-operations-header">
+        <div class='nav-bar-section' part="navbar-section-header navbar-operations-header">
           <slot name="operations-header">
             <div class='nav-bar-section-title'>${getI18nText('menu.operations')}</div>  
           </slot>
@@ -147,7 +147,7 @@ export default function navbarTemplate() {
       ${this.resolvedSpec.components?.length && !this.hideComponents
         ? html`
           <div class="sticky-scroll-element"">
-            <div id='link-components' class='nav-bar-section'>
+            <div id='link-components' class='nav-bar-section' part="navbar-section-header">
               <slot name="components-header">
                 <div class='nav-bar-section-title'>${getI18nText('menu.components')}</div>
               </slot>

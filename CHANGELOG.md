@@ -8,6 +8,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Hide security options display for endpoint when none is required.
 * Correctly display the schema title in the schema-tree.
 * Add links to component schema when clicked in bodies of objects.
+* Deprecate `navbar-operations-header` in favor of `navbar-section-header`. Will be removed in a future version.
 
 ## 2.0
 * `show-server-selection` has now be inverted to be `hide-server-selection` this brings it in line with how html boolean attributes are supposed to work. If you set this value to false previously, now you can hide the section using the new property.
