@@ -109,7 +109,7 @@ function endpointBodyTemplate(path) {
           schema-hide-read-only = "${this.schemaHideReadOnly}"
           fetch-credentials = "${this.fetchCredentials}"
           @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
-          exportparts="btn btn-fill btn-outline btn-try">
+          exportparts="btn, btn-fill, btn-outline, btn-try">
         </api-request>
       </div>
       ${path.callbacks ? callbackTemplate.call(this, path.callbacks) : ''}
@@ -124,7 +124,7 @@ function endpointBodyTemplate(path) {
         schema-hide-write-only = "${this.schemaHideWriteOnly}"
         selected-status = "${Object.keys(path.responses || {})[0] || ''}"
         @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
-        exportparts = "btn--resp btn-fill--resp btn-outline--resp"
+        exportparts = "btn--resp, btn-fill--resp, btn-outline--resp"
       > </api-response>
     </div>
   </div>`;
