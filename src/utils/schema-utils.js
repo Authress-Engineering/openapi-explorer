@@ -495,7 +495,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || (arrayItemsSchema?.description ? `array&lt;${arrayItemsSchema.description}&gt;` : '');
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
-    obj['::link'] = arrayItemsSchema.title || schema.title || '';
+    obj['::link'] = arrayItemsSchema?.title || schema.title || '';
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
