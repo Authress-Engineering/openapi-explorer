@@ -59,7 +59,7 @@ CSS provides parts, these are special attributes, but that isn't really importan
 </html>
 ```
 
-There are many available `::part` selectors and many ways of styling based on parts. Here is a list of all the parts in the app, andy of them are styleable:
+There are many available `::part` selectors and many ways of styling based on parts. Here is a list of all the parts in the app, all of them are styleable:
 
 Explorer location   | CSS ::part selector
 --------------------|--------------------
@@ -69,3 +69,4 @@ Labels              | `label-header-title` `label-overview-title` `label-selecte
 Buttons             | `btn` `btn-fill` `btn-outline` `btn-search`
 Checkboxes/ Toggles | `checkbox` `checkbox-auth-scope`
 Anchors             | `anchor` `anchor-overview`
+Schema Table/Tree   | `schema-key` `schema-type` `schema-description` `schema-table-header`
