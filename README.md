@@ -28,10 +28,10 @@ This is an open source project managed by the [Authress Engineering team](https:
 ## Check out the Demo
 [OpenAPI Explorer Demo](https://authress-engineering.github.io/openapi-explorer/#?route=get-/v1/users/-userId-/resources/-resourceUri-/permissions/-permission-)
 
-(Curious about the exact styling of this: [here's the exact example](./docs/authress-example.vue))
+(Curious about the [exact styling of the demo](./docs/authress-example.vue))
 
 ## Get started now
-`npm i openapi-explorer`
+`npm install openapi-explorer`
 
 ### Quick start example
 * `import 'openapi-explorer';`
@@ -45,7 +45,7 @@ This is an open source project managed by the [Authress Engineering team](https:
 ```
 
 ## Features
-- OpenAPI 3.0
+- OpenAPI 3.X
 - Built in automatic Internationalization (I18n)
 - Works with any framework
 - View resources, models, and directly make API calls
@@ -94,7 +94,7 @@ import 'openapi-explorer';
 
 
 ## Copyright
-Copyright 2023 Rhosys AG
+Copyright 2023-2024 Rhosys AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this repository source except in compliance with the License.
