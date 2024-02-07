@@ -58,9 +58,6 @@ export default class SchemaTable extends LitElement {
       .table .td {
         padding: 4px 0;
       }
-      .table .key {
-        width: 240px;
-      }
 
       .requiredStar::after {
         content: '*';
@@ -73,7 +70,6 @@ export default class SchemaTable extends LitElement {
 
       .table .key-type {
         white-space: normal;
-        width: 150px;
       }
 
       .key-type {
@@ -119,19 +115,31 @@ export default class SchemaTable extends LitElement {
   /* eslint-disable indent */
   render() {
     const displayLine = [this.data?.['::title'], this.data?.['::description']].filter(d => d).join(' - ');
+    
+    const { result, keyLabelMaxCharacterLength, typeMaxCharacterLength } = this.data ? this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type']) : {};
     return html`
       ${displayLine
         ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(displayLine))}</span>`
         : ''
       }
+      <style>
+        .table .key {
+          width: ${Math.max(240, (keyLabelMaxCharacterLength || 0) * 6) + 8}px;
+          max-width: Min(400px, 75%);
+        }
+        .table .key-type {
+          width: ${Math.max(150, (typeMaxCharacterLength || 0) * 6) + 8}px;
+          max-width: 25%;
+        }
+      </style>
       <div class="table ${this.interactive ? 'interactive' : ''}">
         <div style = 'border:1px solid var(--light-border-color)'>
           <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
-            <div class='key' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
-            <div class='key-type' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
-            <div class='key-descr' style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
+            <div class='key' part="schema-key schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
+            <div class='key-type' part="schema-type schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
+            <div class='key-descr' part="schema-description schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
           </div>
-          ${this.data ? html`${this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type'])}` : ''}  
+          ${result || ''}
         </div>
       </div>  
     `;
@@ -148,10 +156,10 @@ export default class SchemaTable extends LitElement {
     const leftPadding = Math.max(firstColumnInitialPadding, tablePadding * newIndentLevel);
 
     if (!data) {
-      return html`<div class="null" style="display:inline;">null</div>`;
+      return { result: html`<div class="null" style="display:inline;">null</div>`, keyLabelMaxCharacterLength: newIndentLevel };
     }
     if (Object.keys(data).length === 0) {
-      return html`<span class="td key object" style='padding-left:${leftPadding}px'>${key}</span>`;
+      return { result: html`<span class="td key object" style='padding-left:${leftPadding}px'>${key}</span>`, keyLabelMaxCharacterLength: newIndentLevel };
     }
     let keyLabel = '';
     let keyDescr = '';
@@ -189,18 +197,40 @@ export default class SchemaTable extends LitElement {
     if (typeof data === 'object') {
       const flags = data['::flags'] || {};
       if (flags['🆁'] && this.schemaHideReadOnly === 'true') {
-        return undefined;
+        return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
       }
       if (flags['🆆'] && this.schemaHideWriteOnly === 'true') {
-        return undefined;
+        return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
+      }
+
+      let recursiveResult;
+      let innerMaxIndentationLevel = newIndentLevel;
+      let innerTypeMaxCharacterLength = 0;
+      if (Array.isArray(data) && data[0]) {
+        ({ result: recursiveResult, keyLabelMaxCharacterLength: innerMaxIndentationLevel, typeMaxCharacterLength: innerTypeMaxCharacterLength }
+          = this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel));
+      } else {
+        recursiveResult = Object.keys(data).filter(dataKey =>
+          !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+          || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of'))
+          .map((dataKey) => {
+            const { result: innerResult, keyLabelMaxCharacterLength: innerObjectLevelIndentTationLevel, typeMaxCharacterLength: innerObjectLevelTypeMaxCharacterLength }
+              = this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
+                data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel) || {};
+
+            innerMaxIndentationLevel = Math.max(innerMaxIndentationLevel, innerObjectLevelIndentTationLevel);
+            innerTypeMaxCharacterLength = Math.max(innerTypeMaxCharacterLength, innerObjectLevelTypeMaxCharacterLength);
+            return innerResult;
+          });
       }
       
       const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
-      return html`
+      const outerResult = html`
         ${newSchemaLevel >= 0 && key
           ? html`
             <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
-              <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
+              <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" part="schema-key"
+                style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
                 <div style="display: flex; align-items: center">
                   ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
                   ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
@@ -211,7 +241,7 @@ export default class SchemaTable extends LitElement {
                   }
                 </div>
               </div>
-              <div class='td key-type'>
+              <div class='td key-type' part="schema-type">
                 ${displaySchemaLink
                   ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
                     ${dataType === 'array' ? '[' : ''}<span style="color: var(--primary)">${detailObjType}</span>${dataType === 'array' ? ']' : ''}
@@ -220,7 +250,7 @@ export default class SchemaTable extends LitElement {
                 }
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
-              <div class='td key-descr'>
+              <div class='td key-descr' part="schema-description">
                 <span class=" m-markdown-small">${unsafeHTML(marked(displayLine))}</span>
                 ${data['::metadata']?.constraints?.length
                     ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
@@ -234,31 +264,28 @@ export default class SchemaTable extends LitElement {
           `
         }
         <div class='object-body'>
-        ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
-            : html`
-              ${Object.keys(data).map((dataKey) =>
-                !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of')
-                ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                      data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
-                : ''
-              )}`
-          }
+        ${recursiveResult}
         <div>
       `;
+
+      return {
+        result: outerResult,
+        keyLabelMaxCharacterLength: Math.max(innerMaxIndentationLevel, (keyLabel || keyDescr).length),
+        typeMaxCharacterLength: Math.max(innerTypeMaxCharacterLength, detailObjType.length) };
     }
 
     // For Primitive Data types
     const { type, cssType, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
-      return undefined;
+      return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
     }
     if (readOrWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
-      return undefined;
+      return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
     }
-    return html`
+    
+    const result = html`
       <div class = "tr">
-        <div class="td key ${deprecated ? 'deprecated' : ''}" style='padding-left:${leftPadding}px'>
+        <div class="td key ${deprecated ? 'deprecated' : ''}" part="schema-key" style='padding-left:${leftPadding}px'>
           ${keyLabel?.endsWith('*')
             ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>`
             : key.startsWith('::OPTION')
@@ -266,11 +293,11 @@ export default class SchemaTable extends LitElement {
               : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
           }
         </div>
-        <div class='td key-type'>
+        <div class='td key-type' part="schema-type">
           <div>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
           <div class="attributes ${cssType}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
-        <div class='td key-descr'>
+        <div class='td key-descr' part="schema-description">
           <span class="m-markdown-small" style="vertical-align: middle;">
             ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
@@ -282,6 +309,7 @@ export default class SchemaTable extends LitElement {
         </div>
       </div>
     `;
+    return { result, keyLabelMaxCharacterLength: keyLabel.length + newIndentLevel, typeMaxCharacterLength: (format || type).length };
   }
   /* eslint-enable indent */
 

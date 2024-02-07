@@ -37,7 +37,7 @@ export default function callbackTemplate(callbacks) {
                       schema-hide-read-only = "${this.schemaHideReadOnly}"
                       fetch-credentials = "${this.fetchCredentials}"
                       @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
-                      exportparts="btn, btn-fill, btn-outline, btn-try">
+                      exportparts="btn, btn-fill, btn-outline, btn-try, schema-key, schema-type, schema-description, schema-table-header">
                     </api-request>
 
                     <api-response
@@ -49,7 +49,7 @@ export default function callbackTemplate(callbacks) {
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
                       @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
-                      exportparts = "btn--resp, btn-fill--resp, btn-outline--resp"
+                      exportparts = "btn--resp, btn-fill--resp, btn-outline--resp, schema-key, schema-type, schema-description, schema-table-header"
                     > </api-response>
                   </div>
                 </div>  

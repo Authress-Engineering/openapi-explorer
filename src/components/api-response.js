@@ -310,6 +310,7 @@ export default class ApiResponse extends LitElement {
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
+            exportparts="schema-key, schema-type, schema-description, schema-table-header"
           > </schema-table> `
         : html`
           <schema-tree
@@ -319,6 +320,7 @@ export default class ApiResponse extends LitElement {
             schema-expand-level = "${this.schemaExpandLevel}"
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
+            exportparts="schema-key, schema-type, schema-description"
           > </schema-tree>`
       }`;
   }
