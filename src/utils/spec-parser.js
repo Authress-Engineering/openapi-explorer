@@ -157,7 +157,7 @@ function groupByTags(openApiSpec) {
     const commonPathPropServers = pathsAndWebhooks[pathOrHookName].servers || [];
     const isWebhook = pathsAndWebhooks[pathOrHookName]._type === 'webhook'; // eslint-disable-line no-underscore-dangle
     supportedMethods.forEach((methodName) => {
-      const commonParams = cloneDeep(pathsAndWebhooks[pathOrHookName].parameters);
+      const commonParams = cloneDeep(pathsAndWebhooks[pathOrHookName].parameters || []);
       if (pathsAndWebhooks[pathOrHookName][methodName]) {
         const pathOrHookObj = openApiSpec.paths[pathOrHookName][methodName];
         // If path.methods are tagged, else generate it from path
@@ -193,20 +193,22 @@ function groupByTags(openApiSpec) {
             shortSummary = shortSummary.split(/[.|!|?]\s|[\r?\n]/)[0]; // take the first line (period or carriage return)
           }
           // Merge Common Parameters with This methods parameters
-          let finalParameters = [];
-          if (commonParams) {
-            if (pathOrHookObj.parameters) {
-              finalParameters = commonParams.filter((commonParam) => {
-                if (!pathOrHookObj.parameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))) {
-                  return commonParam;
-                }
-                return undefined;
-              }).concat(pathOrHookObj.parameters);
-            } else {
-              finalParameters = commonParams.slice(0);
-            }
-          } else {
-            finalParameters = pathOrHookObj.parameters ? pathOrHookObj.parameters.slice(0) : [];
+          const finalParameters = pathOrHookObj.parameters?.slice(0) || [];
+          finalParameters.push(...commonParams.filter((commonParam) => !finalParameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))));
+
+          const responseContentTypes = Object.values(pathOrHookObj.responses || {}).map(response => Object.keys(response.content || {})).flat(1);
+          if (!finalParameters.some(p => p.in === 'header' && p.name.match(/^accept$/i)) && responseContentTypes.length > 1) {
+            finalParameters.push({
+              in: 'header',
+              name: 'Accept',
+              description: 'Select the response body Content-Type. By default, the service will return a Content-Type that matches best the requested type.',
+              schema: {
+                type: 'string',
+                enum: responseContentTypes
+              },
+              default: responseContentTypes[0],
+              example: responseContentTypes[0]
+            });
           }
 
           // Remove bad callbacks

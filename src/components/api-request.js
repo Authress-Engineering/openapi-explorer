@@ -47,7 +47,6 @@ export default class ApiRequest extends LitElement {
       request_body: { type: Object },
       api_keys: { type: Array },
       parser: { type: Object },
-      accept: { type: String },
       callback: { type: String },
       responseMessage: { type: String, attribute: false },
       responseText: { type: String, attribute: false },
@@ -85,9 +84,9 @@ export default class ApiRequest extends LitElement {
         <div>
           ${this.inputParametersTemplate('path')}
           ${this.inputParametersTemplate('query')}
-          ${this.requestBodyTemplate()}
           ${this.inputParametersTemplate('header')}
           ${this.inputParametersTemplate('cookie')}
+          ${this.requestBodyTemplate()}
           ${this.allowTry === 'false' ? '' : html`${this.apiCallTemplate()}`}
         </div>
       </div>
@@ -150,6 +149,7 @@ export default class ApiRequest extends LitElement {
         }
       }
 
+      const displayAllowedValuesHints = (paramSchema.type === 'object' || paramSchema.type === 'array') && paramSchema.allowedValues;
       tableRows.push(html`
       <tr> 
         <td colspan="1" style="width:160px; min-width:50px; vertical-align: top">
@@ -194,6 +194,18 @@ export default class ApiRequest extends LitElement {
                 placeholder="${paramSchema.example || defaultVal || ''}"
                 style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                 .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
+            || paramSchema.allowedValues && html`
+              <select aria-label="mime type" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                data-ptype="${paramLocation}"
+                data-pname="${param.name}"
+                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; this.computeCurlSyntax(); }}">
+                ${paramSchema.allowedValues.map((allowedValue) => html`
+                  <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[param.name]}'>
+                    ${allowedValue}
+                  </option>`
+                )}
+              </select>`
             || html`
               <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                 @input="${() => { this.computeCurlSyntax(); }}"
@@ -221,7 +233,7 @@ export default class ApiRequest extends LitElement {
                   </div>`
                 : ''
               }
-              ${paramSchema.constraints.length || paramSchema.allowedValues || paramSchema.pattern
+              ${paramSchema.constraints.length || displayAllowedValuesHints || paramSchema.pattern
                 ? html`
                   <div class="param-constraint" style="margin-top: 1rem;">
                     ${paramSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraints.join(', ')}<br>` : ''}
@@ -233,7 +245,7 @@ export default class ApiRequest extends LitElement {
                       <div class="tooltip-text" style="position: absolute; display:block;">${paramSchema.pattern}</div>
                     </div>
                     ` : ''}
-                    ${paramSchema.allowedValues && paramSchema.allowedValues.split('┃').map((v, i) => html`
+                    ${paramSchema.allowedValues?.map((v, i) => html`
                       ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                       ${html`
                         <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
@@ -646,9 +658,6 @@ export default class ApiRequest extends LitElement {
   }
 
   recomputeFetchOptions() {
-    const closestRespContainer = this.closest('.expanded-req-resp-container, .req-resp-container');
-    const respEl = closestRespContainer && closestRespContainer.getElementsByTagName('api-response')[0];
-    const acceptHeader = respEl?.selectedMimeType;
     const requestPanelEl = this.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
@@ -752,13 +761,6 @@ export default class ApiRequest extends LitElement {
       // Otherwise put it in the header
       fetchOptions.headers.append(v.name, v.finalKeyValue);
     });
-
-    if (acceptHeader) {
-      // Uses the acceptHeader from Response panel
-      fetchOptions.headers.append('Accept', acceptHeader);
-    } else if (this.accept) {
-      fetchOptions.headers.append('Accept', this.accept);
-    }
 
     // Add Header Params
     headerParamEls.map((el) => {

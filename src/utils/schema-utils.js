@@ -47,7 +47,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     title: schema.title || '',
     description: schema.description || '',
     constraints: [],
-    allowedValues: schema.const ?? (Array.isArray(schema.enum) ? schema.enum.join('┃') : ''),
+    allowedValues: typeof schema.const !== 'undefined' && [schema.const] || schema.enum || null,
     arrayType: ''
   };
 
@@ -57,7 +57,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
 
     info.arrayType = `${schema.type} of ${Array.isArray(arrayItemType) ? arrayItemType.join('') : arrayItemType}`;
     info.default = arrayItemDefault;
-    info.allowedValues = schema.const ?? (Array.isArray(schema.items.enum) ? schema.items.enum.join('┃') : '');
+    info.allowedValues = typeof schema.const !== 'undefined' && [schema.const] || schema.items.enum || null;
   }
 
   if (schema.uniqueItems) {
