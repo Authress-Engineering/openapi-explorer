@@ -70,8 +70,7 @@ export function getComponentInfo(componentKeyId) {
 }
 
 export default function componentsTemplate() {
-  return html`
-  ${this.resolvedSpec.components.map((component) => {
+  return this.resolvedSpec.components.map((component) => {
     const componentInfo = getComponentInfo(component.componentKeyId);
     return html`
       <div id="cmp--${componentInfo.name.toLowerCase()}" class='regular-font section-gap--focused-mode observe-me' style="padding-bottom: 0">
@@ -84,8 +83,6 @@ export default function componentsTemplate() {
         ${component.subComponents.filter(c => c.expanded).map((sComponent) => componentBodyTemplate.call(this, sComponent))}
       </div>
     `;
-  })};
-}
-`;
+  });
 }
 /* eslint-enable indent */

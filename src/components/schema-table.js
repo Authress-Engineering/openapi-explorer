@@ -114,7 +114,8 @@ export default class SchemaTable extends LitElement {
 
   /* eslint-disable indent */
   render() {
-    const displayLine = [this.data?.['::title'], this.data?.['::description']].filter(d => d).join(' - ');
+    const title = this.data?.['::title'] || this.data?.['::type'] === 'array' && this.data?.['::props']?.['::title'] && `[${this.data?.['::props']?.['::title']}]`;
+    const displayLine = [title, this.data?.['::description']].filter(d => d).join(' - ');
     
     const { result, keyLabelMaxCharacterLength, typeMaxCharacterLength } = this.data ? this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type']) : {};
     return html`
