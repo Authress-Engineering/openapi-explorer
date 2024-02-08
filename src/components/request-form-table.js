@@ -115,7 +115,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
             <div class="param-constraint">
               ${pattern ? html`<span style="font-weight:bold">Pattern: </span>${pattern}<br/>` : ''}
               ${constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${constraints.join(', ')}<br/>` : ''}
-              ${allowedValues?.split('┃').filter(v => v !== '').map((v, i) => html`
+              ${allowedValues?.filter(v => v !== '').map((v, i) => html`
                 ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                 ${html`
                   <a part="anchor anchor-param-constraint"

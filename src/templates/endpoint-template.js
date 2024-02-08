@@ -57,13 +57,6 @@ function endpointHeadTemplate(path) {
 }
 
 function endpointBodyTemplate(path) {
-  const acceptContentTypes = new Set();
-  for (const respStatus in path.responses) {
-    for (const acceptContentType in path.responses[respStatus]?.content) {
-      acceptContentTypes.add(acceptContentType.trim());
-    }
-  }
-  const accept = [...acceptContentTypes].join(', ');
   // Filter API Keys that are non-empty and are applicable to the the path
   const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security?.some((ps) => ps[v.apiKeyId]))) || [];
 
@@ -102,7 +95,6 @@ function endpointBodyTemplate(path) {
           fill-defaults = "${!this.hideDefaults}"
           display-nulls="${!!this.includeNulls}"
           enable-console = "${!this.hideExecution}"
-          accept = "${accept}"
           render-style="${this.renderStyle}" 
           schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
           schema-expand-level = "${this.schemaExpandLevel}"
