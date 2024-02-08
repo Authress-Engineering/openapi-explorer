@@ -117,7 +117,9 @@ export default class SchemaTree extends LitElement {
 
   /* eslint-disable indent */
   render() {
-    const displayLine = [this.data?.['::title'], this.data?.['::description']].filter(d => d).join(' - ');
+    const title = this.data?.['::title'] || this.data?.['::type'] === 'array' && this.data?.['::props']?.['::title'] && `[${this.data?.['::props']?.['::title']}]`;
+    const displayLine = [title, this.data?.['::description']].filter(d => d).join(' - ');
+
     return html`
       <div class="tree ${this.interactive ? 'interactive' : ''}">
         <div class="toolbar">
