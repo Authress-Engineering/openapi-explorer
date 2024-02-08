@@ -201,7 +201,7 @@ function groupByTags(openApiSpec) {
             finalParameters.push({
               in: 'header',
               name: 'Accept',
-              description: 'Select the response body Content-Type. By default, the service will return a Content-Type that matches best the requested type.',
+              description: 'Select the response body Content-Type. By default, the service will return a Content-Type that best matches the requested type.',
               schema: {
                 type: 'string',
                 enum: responseContentTypes
