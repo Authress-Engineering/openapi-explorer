@@ -247,7 +247,7 @@ export default class SchemaTable extends LitElement {
                   ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
                     ${dataType === 'array' ? '[' : ''}<span style="color: var(--primary)">${detailObjType}</span>${dataType === 'array' ? ']' : ''}
                   </div>`
-                  : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : detailObjType}</div>`
+                  : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : `${dataType === 'array' ? '[' : ''}${detailObjType}${dataType === 'array' ? ']' : ''}`}</div>`
                 }
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
