@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semvar, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 2.2
+* The `table` view is now the default as the `tree` view becomes deprecated. To display the `tree` view, use the `tree` attribute on the openapi-explorer html element.
+
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
 * Add `path` and `query` parameters into request interceptor.

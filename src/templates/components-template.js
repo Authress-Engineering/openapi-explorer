@@ -13,7 +13,7 @@ function componentBodyTemplate(sComponent) {
   <div class='expanded-endpoint-component observe-me ${sComponent.name}' id='cmp--${sComponent.id}'>
     <h2 @click='${() => this.scrollTo(`cmp--${sComponent.id}`)}'>${sComponent.name}</h2>
     <div class='mono-font regular-font-size' style='padding: 8px 0; color:var(--fg2)'> 
-    ${this.displaySchemaAsTable
+    ${!this.displaySchemaAsTree
     ? html`<schema-table
       .data = '${formdataPartSchema}'
       @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}

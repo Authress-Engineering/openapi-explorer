@@ -71,8 +71,8 @@ export default class OpenApiExplorer extends LitElement {
       },
 
       // Schema Styles
-      displaySchemaAsTable: {
-        type: Boolean, attribute: 'table',
+      displaySchemaAsTree: {
+        type: Boolean, attribute: 'tree',
         converter(value) {
           return value !== 'false' && value !== false;
         }

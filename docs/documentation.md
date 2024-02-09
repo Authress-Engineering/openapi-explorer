@@ -11,7 +11,7 @@
 * `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
 * `hide-defaults` - [false] Prevents filling the request data with the default data.
 * `collapse` - [false] Set the operations and components collapsed by default
-* `table` - [false] Converts the body displays from object json to a table for schemas
+* `tree` - [false] Converts the body displays from schema tables to object jsons.
 * `schema-expand-level` - [9999] Expands the display of schemas and models to this depth. Set to `1` to display only the first level properties.
 
 ### Hide/Show Sections

@@ -31,7 +31,7 @@ export default function callbackTemplate(callbacks) {
                       display-nulls="${!!this.includeNulls}"
                       enable-console = "false"
                       render-style="${this.renderStyle}" 
-                      schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
+                      schema-style="${this.displaySchemaAsTree ? 'tree' : 'table'}"
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
                       schema-hide-read-only = "${this.schemaHideReadOnly}"
@@ -45,7 +45,7 @@ export default function callbackTemplate(callbacks) {
                       .responses="${method[1] && method[1].responses}"
                       display-nulls="${!!this.includeNulls}"
                       render-style="${this.renderStyle}"
-                      schema-style="${this.displaySchemaAsTable ? 'table' : 'tree'}"
+                      schema-style="${this.displaySchemaAsTree ? 'tree' : 'table'}"
                       active-schema-tab = "${this.defaultSchemaTab}"
                       schema-expand-level = "${this.schemaExpandLevel}"
                       @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
