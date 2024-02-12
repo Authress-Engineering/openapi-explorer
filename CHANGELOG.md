@@ -3,6 +3,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 
 ## 2.2
 * The `table` view is now the default as the `tree` view becomes deprecated. To display the `tree` view, use the `tree` attribute on the openapi-explorer html element.
+* Handle invalid JSON parsing in request bodies
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.

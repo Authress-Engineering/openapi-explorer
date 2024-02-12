@@ -856,10 +856,12 @@ export default class ApiRequest extends LitElement {
         if (exampleTextAreaEl && exampleTextAreaEl.value) {
           fetchOptions.body = exampleTextAreaEl.value;
           if (requestBodyType.includes('json')) {
-            fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value));
             try {
+              fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value));
               curlData = ` \\\n  -d '${fetchOptions.body}'`;
-            } catch (err) { /* Ignore unparseable JSON */ }
+            } catch (err) {
+              /* Ignore unparseable JSON, falls back automatically to the original value, which is better than nothing */
+            }
           }
 
           if (!curlData) {
