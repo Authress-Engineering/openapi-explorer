@@ -70,6 +70,7 @@ export default class ApiRequest extends LitElement {
       activeResponseTab: { type: String }, // internal tracking of response-tab not exposed as a attribute
       selectedRequestBodyType: { type: String, attribute: 'selected-request-body-type' }, // internal tracking of selected request-body type
       selectedRequestBodyExample: { type: String, attribute: 'selected-request-body-example' }, // internal tracking of selected request-body example
+      curlSyntax: { type: String }
     };
   }
 
@@ -444,6 +445,7 @@ export default class ApiRequest extends LitElement {
       if (!this.selectedRequestBodyExample) {
         this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
       }
+
       const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample) || reqBodyExamples[0];
       reqBodyDefaultHtml = html`
         <div class = 'example-panel pad-top-8'>
@@ -532,6 +534,14 @@ export default class ApiRequest extends LitElement {
       }
     }
 
+    // When the content type and the element stay the same, then don't change the updated body.
+    if (this.cachedBodyData?.contentType === this.selectedRequestBodyType && this.elementId === this.cachedBodyData.elementId) {
+      reqBodyDefaultHtml = this.cachedBodyData.body;
+    } else {
+      // Otherwise use the recalculated body and cache that
+      this.cachedBodyData = { body: reqBodyDefaultHtml, contentType: this.selectedRequestBodyType, elementId: this.elementId };
+    }
+
     return html`
       <div class='request-body-container' data-selected-request-body-type="${this.selectedRequestBodyType}">
         <div class="table-title top-gap row">
@@ -592,10 +602,11 @@ export default class ApiRequest extends LitElement {
         }}">
         <br>
         <div style="width: 100%">
+        <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>FULL REQUEST</button>
           ${!hasResponse ? '' : html`
             <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
-            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`}
-            <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>FULL REQUEST</button>
+            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`
+          }
           </div>
         </div>
         ${this.responseIsBlob
@@ -857,7 +868,7 @@ export default class ApiRequest extends LitElement {
           fetchOptions.body = exampleTextAreaEl.value;
           if (requestBodyType.includes('json')) {
             try {
-              fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value));
+              fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value), null, 4);
               curlData = ` \\\n  -d '${fetchOptions.body}'`;
             } catch (err) {
               /* Ignore unparseable JSON, falls back automatically to the original value, which is better than nothing */
@@ -899,7 +910,8 @@ export default class ApiRequest extends LitElement {
     const headers = headerOverride ?? fetchOptions.headers;
     const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
     this.curlSyntax = `${curl}${curlHeaders}${curlParts.data}${curlParts.form}`;
-    this.requestUpdate();
+    // We don't need to request and update because we are watch the curlSyntax property in this lit element
+    // this.requestUpdate();
   }
 
   // onExecuteButtonClicked
