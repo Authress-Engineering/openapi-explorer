@@ -196,8 +196,10 @@ function groupByTags(openApiSpec) {
           const finalParameters = pathOrHookObj.parameters?.slice(0) || [];
           finalParameters.push(...commonParams.filter((commonParam) => !finalParameters.some((param) => (commonParam.name === param.name && commonParam.in === param.in))));
 
-          const responseContentTypes = Object.values(pathOrHookObj.responses || {}).map(response => Object.keys(response.content || {})).flat(1);
-          if (!finalParameters.some(p => p.in === 'header' && p.name.match(/^accept$/i)) && responseContentTypes.length > 1) {
+          const successResponseKeys = Object.keys(pathOrHookObj.responses || {}).filter(r => !r.match(/^\d{3}$/i) || r.match(/^[23]\d{2}$/i));
+          const responseContentTypesMap = successResponseKeys.map(key => pathOrHookObj.responses[key]).reduce((acc, response) => Object.assign({}, acc, response.content || {}), {});
+          const responseContentTypes = Object.keys(responseContentTypesMap).sort((a, b) => a.localeCompare(b));
+          if (!finalParameters.some(p => p.in === 'header' && p.name.match(/^accept$/i)) && Object.keys(responseContentTypesMap).length > 1) {
             finalParameters.push({
               in: 'header',
               name: 'Accept',
