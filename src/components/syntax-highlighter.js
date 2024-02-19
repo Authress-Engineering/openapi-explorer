@@ -124,7 +124,7 @@ class SyntaxHighlighter extends LitElement {
    * @returns Content
    */
   renderCopyWrapper(content) {
-    return html`<div>
+    return html`<div class="fs-exclude" data-hj-suppress data-sl="mask" style="min-height: 2rem;">
       <button 
         class="m-btn outline-primary toolbar-copy-btn" 
         @click='${this.copyToClipboard}' 

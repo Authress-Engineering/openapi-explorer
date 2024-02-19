@@ -635,7 +635,7 @@ export default class ApiRequest extends LitElement {
           <syntax-highlighter language="http" .content="${this.responseHeaders}"/>
         </div>
         <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <syntax-highlighter class="fs-exclude" data-hj-suppress data-sl="mask" language="shell" .content="${curlSyntax.trim()}"/>
+          <syntax-highlighter language="shell" .content="${curlSyntax.trim()}"/>
         </div>
       </div>`;
   }
