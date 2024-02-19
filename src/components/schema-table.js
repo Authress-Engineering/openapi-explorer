@@ -189,9 +189,9 @@ export default class SchemaTable extends LitElement {
     } else if (data['::type']) {
       displaySchemaLink = data['::link'];
       if (dataType === 'array') {
-        detailObjType = data['::link'] || keyLabel.replace(/(s|Collection|List)[*]?$/i, ''); // Array of Object
+        detailObjType = data['::link'] || keyLabel.replace(/(s|Collection|List)[*]?$/i, '').replace(/[*]$/, ''); // Array of Object
       } else {
-        detailObjType = data['::link'] || data['::type'];
+        detailObjType = (data['::link'] || data['::type']).replace(/[*]$/, '');
       }
     }
 

@@ -269,7 +269,7 @@ function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, 
     let objectExamples = [{}];
 
     Object.keys(schema.properties || {}).forEach((propertyName) => {
-      const innerSchema = schema.properties[propertyName];
+      const innerSchema = schema.properties[propertyName] || {};
       if (innerSchema.deprecated) { return; }
       if (innerSchema.readOnly && !config.includeReadOnly) { return; }
       if (innerSchema.writeOnly && !config.includeWriteOnly) { return; }
@@ -311,10 +311,7 @@ export function isPatternProperty(label) {
  * @param {string} suffix - used for suffixing property names to avoid duplicate props during object composition
  */
 export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '') {
-  if (!rawSchema) {
-    return undefined;
-  }
-  const { allOf, oneOf, anyOf, items: arrayItemsSchema, properties: schemaProperties, patternProperties: schemaPatternProperties, ...schema } = rawSchema;
+  const { allOf, oneOf, anyOf, items: arrayItemsSchema, properties: schemaProperties, patternProperties: schemaPatternProperties, ...schema } = (rawSchema || {});
   const propertyType = schema.type;
   const metadata = { constraints: [] };
   if (schema.uniqueItems) { metadata.constraints.push('Requires unique items'); }
@@ -342,7 +339,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
 
     const obj = schemaInObjectNotation(schema, options, 0);
     return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
-  } else if (anyOf || oneOf) {
+  }
+  
+  if (anyOf || oneOf) {
     const objWithAnyOfProps = {};
     let writeOnly = true;
     let readOnly = true;
@@ -385,7 +384,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     resultObj['::description'] = schema.description || '';
     resultObj['::metadata'] = metadata;
     return resultObj;
-  } else if (Array.isArray(propertyType)) {
+  }
+  
+  if (Array.isArray(propertyType)) {
     const obj = { '::type': '' };
     // When a property has multiple types, then check further if any of the types are array or object, if yes then modify the schema using one-of
     // Clone the schema - as it will be modified to replace multi-data-types with one-of;
@@ -467,7 +468,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       obj['::ONE~OF'] = multiTypeOptions;
     }
     return obj;
-  } else if (propertyType === 'object' || schemaProperties) {
+  }
+  
+  if (propertyType === 'object' || schemaProperties) {
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
@@ -477,7 +480,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
     for (const key in schemaProperties) {
-      if (!schema.deprecated && !schemaProperties[key].deprecated && schema.required?.includes(key)) {
+      if (!schema.deprecated && !schemaProperties[key]?.deprecated && schema.required?.includes(key)) {
         obj[`${key}*`] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
       } else {
         obj[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
@@ -490,7 +493,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
       obj['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
     }
     return obj;
-  } else if (propertyType === 'array' || arrayItemsSchema) { // If Array
+  }
+  
+  if (propertyType === 'array' || arrayItemsSchema) { // If Array
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || (arrayItemsSchema?.description ? `array&lt;${arrayItemsSchema.description}&gt;` : '');

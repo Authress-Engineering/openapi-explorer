@@ -71,7 +71,7 @@ export function pathIsInSearch(searchVal, path) {
     || stringToSearch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(searchVal);
 }
 
-export function schemaKeys(schemaProps, result = new Set()) {
+function schemaKeys(schemaProps, result = new Set()) {
   if (!schemaProps) {
     return result;
   }
