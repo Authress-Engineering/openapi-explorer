@@ -481,10 +481,8 @@ export function pathSecurityTemplate(pathSecurityOptions) {
       const andKeyTypes = [];
       Object.keys(pSecurity).forEach((pathSecurityKey) => {
         const s = this.resolvedSpec.securitySchemes.find((ss) => ss.apiKeyId === pathSecurityKey);
-        if (s) {
-          andKeyTypes.push(getTypeDisplayHeader(s));
-          andSecurityKeys1.push({ ...s, scopes: pSecurity[pathSecurityKey] });
-        }
+        andKeyTypes.push(s ? getTypeDisplayHeader(s) : pathSecurityKey);
+        andSecurityKeys1.push({ ...s, scopes: pSecurity[pathSecurityKey] });
       });
       orSecurityKeys1.push({
         securityTypes: andKeyTypes.length > 1 ? `${andKeyTypes[0]} + ${andKeyTypes.length - 1} more` : andKeyTypes[0],
