@@ -25,7 +25,7 @@ export default {
     'authentication': {
       'no-api-key-applied': 'No API key applied',
       'http-basic': 'HTTP Basic',
-      'http-basic-desc': 'Send the Authorization header containing the type Basic followed by a space and a base64 encoded string of username:password',
+      'http-basic-desc': 'Sends the <code>Authorization header</code> containing the token type <code>Basic</code> followed by the base64 encoded <code>username:password</code> string.',
       'username': 'username',
       'password': 'password',
       'requires': 'Requires',

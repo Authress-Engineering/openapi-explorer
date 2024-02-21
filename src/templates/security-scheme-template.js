@@ -323,10 +323,13 @@ function renderSecurityScheme(v) {
 
   if (v.type.toLowerCase() === 'apikey' || v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'bearer') {
     return html`
+      <style>
+        code { font-weight: bold; }
+      </style>
       <div style="padding-top: 1rem">
         ${v.type.toLowerCase() === 'apikey'
-          ? html`Send <code>${v.name || 'API key'}</code> in <code>${v.in || 'the request'}</code> with the given value:`
-          : html`Send <code>Authorization</code> in <code>header</code> containing the word <code>Bearer</code> followed by a space and then the ${v.bearerFormat ?? 'Token String'}.`
+          ? html`Sends <code>${v.name || 'API key'}</code> in <code>${v.in || 'the request'}</code> with the given value:`
+          : html`Sends the <code>Authorization header</code> containing the token type <code style="text-transform: capitalize;">${v.scheme || 'bearer'}</code> followed by the <code>${v.bearerFormat ?? 'Token'}</code> string.`
         }
       </div>
       <form style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
@@ -356,14 +359,20 @@ function renderSecurityScheme(v) {
   if (v.type.toLowerCase() === 'http' && v.scheme && v.scheme.toLowerCase() === 'basic') {
     if (v.finalKeyValue) {
       return html`
-        <div style="padding-top: 1rem">${getI18nText('authentication.http-basic-desc')}</div>
+        <style>
+          code { font-weight: bold; }
+        </style>
+        <div style="padding-top: 1rem">${unsafeHTML(getI18nText('authentication.http-basic-desc'))}</div>
         <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
           <span class="blue-text" style="margin-right: 1rem">Key Applied</span>
           <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>REMOVE</button>
         </div>`;
     }
     return html`
-      <div style="padding-top: 1rem">${getI18nText('authentication.http-basic-desc')}</div>
+      <style>
+        code { font-weight: bold; }
+      </style>
+      <div style="padding-top: 1rem">${unsafeHTML(getI18nText('authentication.http-basic-desc'))}</div>
       <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
         <form style="display:flex;">
           <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">

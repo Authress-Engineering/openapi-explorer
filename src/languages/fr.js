@@ -25,7 +25,7 @@ export default {
     'authentication': {
       'no-api-key-applied': "Aucune clé d'API appliquée",
       'http-basic': 'HTTP Basique',
-      'http-basic-desc': "Envoyez l'en-tête Authorization contenant le type Basic suivi d'un espace et d'une chaîne encodée en base64 de nom d'utilisateur:mot de passe",
+      'http-basic-desc': "Envoyez l'en-tête <code>Authorization contenant</code> le type <code>Basic</code> suivi d'un espace et d'une chaîne encodée en base64 de nom <code>d'utilisateur:mot</code> de passe",
       'username': "nom d'utilisateur",
       'password': 'mot de passe',
       'requires': 'Nécessite',
