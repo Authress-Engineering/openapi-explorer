@@ -72,7 +72,9 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 
   // For Primitive Data types
   const parsedData = JSON.parse(data);
-  return generatePrimitiveRow.call(this, parsedData, { key, keyLabel, keyDescr, description, dataType, isRequired, options });
+  return Array.from(
+    generatePrimitiveRow.call(this, parsedData, { key, keyLabel, keyDescr, description, dataType, isRequired, options })
+  );
 }
 
 function generatePrimitiveRow(rowData, parentRecursionOptions) {
