@@ -343,29 +343,23 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
   
   if (anyOf || oneOf) {
     const objWithAnyOfProps = {};
+    objWithAnyOfProps['::type'] = 'xxx-of-option';
     let writeOnly = true;
     let readOnly = true;
+
     (anyOf || oneOf || []).forEach((v, index) => {
-      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
+      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf || v.type === 'array' || v.items) {
         const partialObj = schemaInObjectNotation(v, options);
         if (partialObj) {
           objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
-          objWithAnyOfProps['::type'] = 'xxx-of-option';
           readOnly = readOnly && partialObj['::flags']?.['🆁'];
           writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
         }
-      } else if (v.type === 'array' || v.items) {
-        const partialObj = schemaInObjectNotation(v, options);
-        objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
-        objWithAnyOfProps['::type'] = 'xxx-of-array';
-        readOnly = readOnly && partialObj['::flags']?.['🆁'];
-        writeOnly = writeOnly && partialObj['::flags']?.['🆆'];
       } else {
         const typeInfo = getTypeInfo(v, options);
         if (typeInfo?.type) {
           const prop = `::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`;
           objWithAnyOfProps[prop] = `${typeInfo.html}`;
-          objWithAnyOfProps['::type'] = 'xxx-of-option';
           readOnly = readOnly && objWithAnyOfProps['::flags']?.['🆁'];
           writeOnly = writeOnly && objWithAnyOfProps['::flags']?.['🆆'];
         }
