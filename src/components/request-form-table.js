@@ -45,7 +45,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
             <tr class='complex-object-display ${data['::type']}' data-obj='${keyLabel}'>
               <td class="key ${data['::deprecated'] ? 'deprecated' : ''}">
                 <div style="display: flex; align-items: center">
-                  ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
+                  ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
                     ? html`<span class="xxx-of-key">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
                     : isRequired
                       ? html`<span class="key-label requiredStar" style="display:inline-block;" title="Required">${keyLabel}</span>`

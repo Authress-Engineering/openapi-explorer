@@ -152,7 +152,7 @@ export default class SchemaTable extends LitElement {
 
   generateTree(data, dataType = 'object', key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
     const newSchemaLevel = data['::type'] && data['::type'].startsWith('xxx-of') ? schemaLevel : (schemaLevel + 1);
-    const newIndentLevel = dataType === 'xxx-of-option' || data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
+    const newIndentLevel = key.startsWith('::OPTION') ? indentLevel : (indentLevel + 1);
     // 16px space indentation at each level, start the first one at 32px to align with the field hr key row object
     const leftPadding = Math.max(firstColumnInitialPadding, tablePadding * newIndentLevel);
 
@@ -189,7 +189,7 @@ export default class SchemaTable extends LitElement {
     } else if (data['::type']) {
       displaySchemaLink = data['::link'];
       if (dataType === 'array') {
-        detailObjType = data['::link'] || keyLabel.replace(/(s|Collection|List)[*]?$/i, '').replace(/[*]$/, ''); // Array of Object
+        detailObjType = data['::link'] || !key.startsWith('::') && keyLabel.replace(/(s|Collection|List)[*]?$/i, '').replace(/[*]$/, '') || 'object'; // Array of Object
       } else {
         detailObjType = (data['::link'] || data['::type']).replace(/[*]$/, '');
       }
@@ -234,7 +234,7 @@ export default class SchemaTable extends LitElement {
                 style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
                 <div style="display: flex; align-items: center">
                   ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
-                  ${data['::type'] === 'xxx-of-option' || data['::type'] === 'xxx-of-array' || key.startsWith('::OPTION')
+                  ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
                     ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
                     : keyLabel.endsWith('*')
                       ? html`<span class="key-label requiredStar" style="display:inline-block; margin-left:-6px;" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`

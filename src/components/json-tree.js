@@ -82,7 +82,7 @@ export default class JsonTree extends LitElement {
         max-height: 0;
       }
       .inside-bracket {
-        padding-left:16px;
+        padding-left: 16px;
         border-left:1px dotted var(--border-color);
       }
 
