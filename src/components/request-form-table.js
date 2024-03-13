@@ -72,9 +72,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 
   // For Primitive Data types
   const parsedData = JSON.parse(data);
-  return Array.from(
-    generatePrimitiveRow.call(this, parsedData, { key, keyLabel, keyDescr, description, dataType, isRequired, options })
-  );
+  return generatePrimitiveRow.call(this, parsedData, { key, keyLabel, keyDescr, description, dataType, isRequired, options });
 }
 
 function generatePrimitiveRow(rowData, parentRecursionOptions) {
@@ -104,7 +102,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
     }
   };
 
-  return map(range(this.duplicatedRowsByKey?.[duplicateRowGeneratorKey] || 1), () => html`
+  const arrayIterator = map(range(this.duplicatedRowsByKey?.[duplicateRowGeneratorKey] || 1), () => html`
     <tr>
       ${inputFieldKeyLabel.call(this, key.startsWith('::OPTION'), keyLabel, keyDescr, dataType, deprecated, isRequired, schemaTitle, format || type, rowGenerator)}
 
@@ -165,6 +163,8 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
         : ''}
       </td>
     </tr>` : ''}`);
+
+  return Array.from(arrayIterator);
 }
 
 function inputFieldKeyLabel(isOption, keyLabel, keyDescription, dataType, deprecated, isRequired, schemaTitle, format, rowGenerator) {
