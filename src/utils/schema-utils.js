@@ -43,7 +43,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
     example: examples || '',
-    default: schema.default || '',
+    default: schema.default ?? '',
     title: schema.title || '',
     description: schema.description || '',
     constraints: [],

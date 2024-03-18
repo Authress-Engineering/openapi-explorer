@@ -120,7 +120,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
                 ${html`
                   <a part="anchor anchor-param-constraint"
                     data-type="${type === 'array' ? type : 'string'}"
-                    data-enum="${v.trim()}"
+                    data-enum="${v?.trim()}"
                     @click="${(e) => {
                       const inputEl = e.target.closest('table').querySelector(`[data-pname="${keyLabel}"]`);
                       if (inputEl) {
@@ -128,7 +128,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
                       }
                       this.computeCurlSyntax();
                     }}"> 
-                    ${v} 
+                    ${v === null ? '-' : v} 
                   </a>`
                 }`)
               }
