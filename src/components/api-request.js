@@ -203,7 +203,7 @@ export default class ApiRequest extends LitElement {
                 @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; this.computeCurlSyntax(); }}">
                 ${paramSchema.allowedValues.map((allowedValue) => html`
                   <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[param.name]}'>
-                    ${allowedValue}
+                    ${allowedValue === null ? '-' : allowedValue}
                   </option>`
                 )}
               </select>`
@@ -251,7 +251,7 @@ export default class ApiRequest extends LitElement {
                       ${html`
                         <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                           data-type="${paramSchema.type === 'array' ? 'array' : 'string'}"
-                          data-enum="${v.trim()}"
+                          data-enum="${v?.trim()}"
                           @click="${(e) => {
                             const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
                             if (inputEl) {
@@ -259,7 +259,7 @@ export default class ApiRequest extends LitElement {
                             }
                           }}"
                         >
-                          ${v} 
+                          ${v === null ? '-' : v} 
                         </a>`
                       }`)}
                   </div>`
