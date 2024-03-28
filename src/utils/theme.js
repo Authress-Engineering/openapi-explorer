@@ -103,7 +103,7 @@ export default function setTheme(theme = {}) {
     /* Common Styles - irrespective of themes */  
     --border-radius: 2px;
     --layout: ${this.layout || 'column'};
-    --nav-item-padding: ${this.navItemSpacing === 'relaxed' ? '10px' : (this.navItemSpacing === 'compact' ? '5px 10px' : '7px 10px')};
+    --nav-path-padding: 7px 0 7px 1.5rem;
     --resp-area-height: ${this.responseAreaHeight};
     --font-size-small: 13px;
     --font-size-mono:  13px;

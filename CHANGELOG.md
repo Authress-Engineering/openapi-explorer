@@ -7,6 +7,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix the request body that keeps changing preventing editing of it.
 * Set min height on syntax rendering to be 2rem, so that the copy button always fully shows correctly.
 * Fix default display when the value is falsy.
+* Remove deprecated property `nav-item-spacing` in favor of css variable `--nav-path-padding`.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
