@@ -686,6 +686,13 @@ export default class ApiRequest extends LitElement {
       pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
     });
 
+    const missingPathParameterValue = pathParamEls.find(el => !el.value);
+    if (missingPathParameterValue) {
+      const error = Error(`All path parameters are required and a valid value was not found for the parameter: '${missingPathParameterValue.dataset.pname}'.`);
+      error.code = 'MissingPathParameter';
+      throw error;
+    }
+
     // Handle relative serverUrls
     if (!pathUrl.startsWith('http')) {
       const newUrl = new URL(pathUrl, window.location.href);
@@ -905,11 +912,15 @@ export default class ApiRequest extends LitElement {
   }
 
   computeCurlSyntax(headerOverride) {
-    const { fetchOptions, fetchUrl, curlParts } = this.recomputeFetchOptions();
-    const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
-    const headers = headerOverride ?? fetchOptions.headers;
-    const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
-    this.curlSyntax = `${curl}${curlHeaders}${curlParts.data}${curlParts.form}`;
+    try {
+      const { fetchOptions, fetchUrl, curlParts } = this.recomputeFetchOptions();
+      const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
+      const headers = headerOverride ?? fetchOptions.headers;
+      const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
+      this.curlSyntax = `${curl}${curlHeaders}${curlParts.data}${curlParts.form}`;
+    } catch (error) {
+      /* There was an explicit issue and likely it was because the fetch options threw. */
+    }
     // We don't need to request and update because we are watch the curlSyntax property in this lit element
     // this.requestUpdate();
   }
@@ -918,7 +929,21 @@ export default class ApiRequest extends LitElement {
   async onTryClick() {
     const tryBtnEl = this.querySelectorAll('.btn-execute')[0];
     
-    const { fetchOptions, fetchUrl, path, query } = this.recomputeFetchOptions();
+    let fetchOptions;
+    let fetchUrl;
+    let path;
+    let query;
+    try {
+      ({ fetchOptions, fetchUrl, path, query } = this.recomputeFetchOptions());
+    } catch (error) {
+      this.responseMessage = error.message;
+      this.responseStatus = 'error';
+      this.responseUrl = '';
+      this.responseHeaders = '';
+      this.responseText = error.message;
+      this.activeResponseTab = 'response';
+      return;
+    }
 
     this.responseIsBlob = false;
     this.respContentDisposition = '';
