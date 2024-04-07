@@ -1,3 +1,5 @@
+import { marked } from 'marked';
+
 import { getI18nText } from '../languages/index.js';
 
 /* For Delayed Event Handler Execution */
@@ -148,4 +150,41 @@ export function replaceState(rawElementId) {
   query.delete('route');
   const newQuery = query.toString().length > 1 ? `${query.toString()}&route=${elementId}` : `route=${elementId}`;
   window.history.replaceState(null, null, `#${currentNavigationHashPart}?${newQuery}`);
+}
+
+export function toMarkdown(markdownStringRaw) {
+  const sanitizedMarkdownString = (markdownStringRaw || '')
+    // Convert scripts tags to correct markdown format
+    .replace(/[<]script[^>]*>/gi, '<div>```')
+    .replace(/[<][/]script/gi, '```</div')
+    // Remove unnecessary attributes from img tag
+    .replace(/onerror=/ig, 'attribute');
+  const markdownResult = marked(sanitizedMarkdownString || '');
+  return markdownResult;
+}
+
+export function getSanitizedUrl(urlString) {
+  if (!urlString) {
+    return '';
+  }
+  try {
+    // eslint-disable-next-line no-new
+    const url = new URL(urlString);
+    return url.protocol === 'http' || url.protocol === 'https' ? url : '';
+  } catch (error) {
+    return '';
+  }
+}
+
+export function getSanitizedEmail(emailRaw) {
+  if (!emailRaw) {
+    return '';
+  }
+
+  // eslint-disable-next-line max-len, no-control-regex
+  if (emailRaw.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)) {
+    return emailRaw;
+  }
+
+  return '';
 }

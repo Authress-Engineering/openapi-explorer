@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
+import { getSanitizedEmail, getSanitizedUrl, toMarkdown } from '../utils/common-utils';
 import { getI18nText } from '../languages/index.js';
 
 /* eslint-disable indent */
@@ -23,24 +23,24 @@ export default function overviewTemplate() {
             <div id="api-info" style="font-size:calc(var(--font-size-regular) - 1px); margin-top:8px;" class="section-padding">
               ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.email
                 ? html`<span>${this.resolvedSpec.info.contact.name || getI18nText('overview.email')}: 
-                  <a href="mailto:${this.resolvedSpec.info.contact.email}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
+                  <a href="mailto:${getSanitizedEmail(this.resolvedSpec.info.contact.email)}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.email}</a>
                 </span>`
                 : ''
               }
               ${this.resolvedSpec.info.contact && this.resolvedSpec.info.contact.url
-                ? html`<span>URL: <a href="${this.resolvedSpec.info.contact.url}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.url}</a></span>`
+                ? html`<span>URL: <a href="${getSanitizedUrl(this.resolvedSpec.info.contact.url)}" part="anchor anchor-overview">${this.resolvedSpec.info.contact.url}</a></span>`
                 : ''
               }
               ${this.resolvedSpec.info.license
                 ? html`<span>License: 
                   ${this.resolvedSpec.info.license.url
-                  ? html`<a href="${this.resolvedSpec.info.license.url}" part="anchor anchor-overview">${this.resolvedSpec.info.license.name}</a>`
+                  ? html`<a href="${getSanitizedUrl(this.resolvedSpec.info.license.url)}" part="anchor anchor-overview">${this.resolvedSpec.info.license.name}</a>`
                   : this.resolvedSpec.info.license.name
                 } </span>`
                 : ''
               }
               ${this.resolvedSpec.info.termsOfService
-                ? html`<span><a href="${this.resolvedSpec.info.termsOfService}" part="anchor anchor-overview">${getI18nText('overview.terms-of-service')}</a></span>`
+                ? html`<span><a href="${getSanitizedUrl(this.resolvedSpec.info.termsOfService)}" part="anchor anchor-overview">${getI18nText('overview.terms-of-service')}</a></span>`
                 : ''
               }
             </div>
@@ -48,7 +48,7 @@ export default function overviewTemplate() {
           <slot name="overview-body"></slot>
           <slot name="overview-api-description">
             ${this.resolvedSpec.info.description
-              ? html`${unsafeHTML(`<div class="m-markdown regular-font section-padding">${marked(this.resolvedSpec.info.description)}</div>`)}`
+              ? html`${unsafeHTML(`<div class="m-markdown regular-font section-padding">${toMarkdown(this.resolvedSpec.info.description)}</div>`)}`
               : ''
             }
           </slot>

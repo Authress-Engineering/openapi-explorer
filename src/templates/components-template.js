@@ -2,7 +2,7 @@
 import { schemaInObjectNotation } from '../utils/schema-utils.js';
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import '../components/schema-tree.js';
 import { getI18nText } from '../languages/index.js';
 
@@ -76,7 +76,7 @@ export default function componentsTemplate() {
       <div id="cmp--${componentInfo.name.toLowerCase()}" class='regular-font section-gap--focused-mode observe-me' style="padding-bottom: 0">
         <div class="title tag">${componentInfo.name}</div>
         <div class="regular-font-size">
-          ${unsafeHTML(`<div class='m-markdown regular-font'>${marked(componentInfo.description ? componentInfo.description : '')}</div>`)}
+          ${unsafeHTML(`<div class='m-markdown regular-font'>${toMarkdown(componentInfo.description ? componentInfo.description : '')}</div>`)}
         </div>
       </div>
       <div class='regular-font section-gap--focused-mode' style="padding-top: 0">

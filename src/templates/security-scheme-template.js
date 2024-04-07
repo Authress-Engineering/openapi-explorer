@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import base64url from 'base64url';
 import { getI18nText } from '../languages/index.js';
 
@@ -430,7 +430,7 @@ export default function securitySchemeTemplate() {
                     ${v.description
                       ? html`
                         <div class="m-markdown"> 
-                          ${unsafeHTML(marked(v.description || ''))}
+                          ${unsafeHTML(toMarkdown(v.description || ''))}
                         </div>`
                       : ''
                     }

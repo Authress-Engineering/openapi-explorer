@@ -1,5 +1,4 @@
 import { LitElement, html } from 'lit';
-import { marked } from 'marked';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -7,6 +6,7 @@ import formatXml from 'xml-but-prettier';
 
 import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
+import { toMarkdown } from '../utils/common-utils';
 import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
@@ -230,7 +230,7 @@ export default class ApiRequest extends LitElement {
               ${param.description
                 ? html`
                   <div class="param-description" style="margin-top: 1rem;">
-                      ${unsafeHTML(marked(param.description))}
+                      ${unsafeHTML(toMarkdown(param.description))}
                   </div>`
                 : ''
               }
@@ -312,7 +312,7 @@ export default class ApiRequest extends LitElement {
             <li>
               ${this.renderExample(example, paramType, paramName)}
               ${example.exampleSummary?.length > 0 ? html`<span>&lpar;${example.exampleSummary}&rpar;</span>` : ''}
-              ${example.exampleDescription?.length > 0 ? html`<p>${unsafeHTML(marked(example.exampleDescription))}</p>` : ''}
+              ${example.exampleDescription?.length > 0 ? html`<p>${unsafeHTML(toMarkdown(example.exampleDescription))}</p>` : ''}
             </li>`
         )}
       </ul>`;
@@ -461,7 +461,7 @@ export default class ApiRequest extends LitElement {
           ${displayedBodyExample ? html`
             <div class="example" data-default = '${displayedBodyExample.exampleId}'>
               ${displayedBodyExample.exampleSummary && displayedBodyExample.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${displayedBodyExample.exampleSummary} </div>` : ''}
-              ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
+              ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(toMarkdown(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
                 <!-- this textarea is for user to edit the example -->
               <slot name="${this.elementId}--request-body">
                 <textarea
@@ -550,7 +550,7 @@ export default class ApiRequest extends LitElement {
           <span style="flex:1"></span>
           ${reqBodyTypeSelectorHtml}
         </div>
-        ${this.request_body.description ? html`<div class="m-markdown" style="margin-bottom:12px">${unsafeHTML(marked(this.request_body.description))}</div>` : ''}
+        ${this.request_body.description ? html`<div class="m-markdown" style="margin-bottom:12px">${unsafeHTML(toMarkdown(this.request_body.description))}</div>` : ''}
         
         ${reqBodySchemaHtml || reqBodyDefaultHtml
           ? html`
@@ -578,7 +578,7 @@ export default class ApiRequest extends LitElement {
   //       data-ptype="${mimeType}"
   //       style="width:100%"
   //     >${exampleValue}</textarea>
-  //     ${schema.description ? html`<span class="m-markdown-small">${unsafeHTML(marked(schema.description))}</span>` : ''}
+  //     ${schema.description ? html`<span class="m-markdown-small">${unsafeHTML(toMarkdown(schema.description))}</span>` : ''}
   //   `;
   // }
 

@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
-import { marked } from 'marked';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample, getTypeInfo } from '../utils/schema-utils.js';
+import { toMarkdown } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
 import FlexStyles from '../styles/flex-styles.js';
@@ -184,7 +184,7 @@ export default class ApiResponse extends LitElement {
       ${Object.keys(this.responses).map((status) => html`
         <div style = 'display: ${status === this.selectedStatus ? 'block' : 'none'}' >
           <div class="top-gap">
-            <span class="resp-descr m-markdown ">${unsafeHTML(marked(this.responses[status] && this.responses[status].description || ''))}</span>
+            <span class="resp-descr m-markdown ">${unsafeHTML(toMarkdown(this.responses[status] && this.responses[status].description || ''))}</span>
             ${(this.headersForEachRespStatus[status] && this.headersForEachRespStatus[status].length > 0)
               ? html`${this.responseHeaderListTemplate(this.headersForEachRespStatus[status])}`
               : ''
@@ -235,7 +235,7 @@ export default class ApiResponse extends LitElement {
                 ${typeData?.format || typeData?.type || ''}
               </td> 
               <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color);text-overflow: ellipsis;">
-                <div class="m-markdown-small regular-font" >${unsafeHTML(marked(v.description || ''))}</div>
+                <div class="m-markdown-small regular-font" >${unsafeHTML(toMarkdown(v.description || ''))}</div>
               </td>
               <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
                 ${typeData?.example ?? typeData?.default ?? ''}
@@ -272,7 +272,7 @@ export default class ApiResponse extends LitElement {
       ${mimeRespDetails.examples.length === 1
         ? html`
           ${mimeRespDetails.examples[0].exampleSummary && mimeRespDetails.examples[0].exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${mimeRespDetails.examples[0].exampleSummary} </div>` : ''}
-          ${mimeRespDetails.examples[0].exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(mimeRespDetails.examples[0].exampleDescription || ''))} </div>` : ''}
+          ${mimeRespDetails.examples[0].exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(toMarkdown(mimeRespDetails.examples[0].exampleDescription || ''))} </div>` : ''}
           <syntax-highlighter class='example-panel generic-tree pad-top-8' mime-type="${mimeRespDetails.examples[0].exampleType}" .content="${mimeRespDetails.examples[0].exampleValue}"/>`
         : html`
           <span class = 'example-panel generic-tree ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'>
@@ -284,7 +284,7 @@ export default class ApiResponse extends LitElement {
             ${mimeRespDetails.examples.map((v) => html`
               <div class="example" data-example = '${v.exampleId}' style = "display: ${v.exampleId === mimeRespDetails.selectedExample ? 'block' : 'none'}">
                 ${v.exampleSummary && v.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${v.exampleSummary} </div>` : ''}
-                ${v.exampleDescription && v.exampleDescription !== v.exampleSummary ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(marked(v.exampleDescription || ''))} </div>` : ''}
+                ${v.exampleDescription && v.exampleDescription !== v.exampleSummary ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(toMarkdown(v.exampleDescription || ''))} </div>` : ''}
                 <syntax-highlighter mime-type="${v.exampleType}" .content="${v.exampleValue}"/>
               </div>  
             `)}

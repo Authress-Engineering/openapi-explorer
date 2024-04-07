@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages/index.js';
 
@@ -63,7 +63,7 @@ function serverVarsTemplate() {
           </td>
         </tr>
         ${kv[1].description
-          ? html`<tr><td colspan="2" style="border:none"><span class="m-markdown-small"> ${unsafeHTML(marked(kv[1].description))} </span></td></tr>`
+          ? html`<tr><td colspan="2" style="border:none"><span class="m-markdown-small"> ${unsafeHTML(toMarkdown(kv[1].description))} </span></td></tr>`
           : ''
         }
       `)}

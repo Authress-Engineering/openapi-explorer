@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles.js';
@@ -120,7 +120,7 @@ export default class SchemaTable extends LitElement {
     const { result, keyLabelMaxCharacterLength, typeMaxCharacterLength } = this.data ? this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type']) : {};
     return html`
       ${displayLine
-        ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(marked(displayLine))}</span>`
+        ? html`<span class='m-markdown' style="padding-bottom: 8px;"> ${unsafeHTML(toMarkdown(displayLine))}</span>`
         : ''
       }
       <style>
@@ -252,7 +252,7 @@ export default class SchemaTable extends LitElement {
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
               <div class='td key-descr' part="schema-description">
-                <span class=" m-markdown-small">${unsafeHTML(marked(displayLine))}</span>
+                <span class=" m-markdown-small">${unsafeHTML(toMarkdown(displayLine))}</span>
                 ${data['::metadata']?.constraints?.length
                     ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
               </div>
@@ -300,7 +300,7 @@ export default class SchemaTable extends LitElement {
         </div>
         <div class='td key-descr' part="schema-description">
           <span class="m-markdown-small" style="vertical-align: middle;">
-            ${unsafeHTML(marked(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(toMarkdown(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
           ${constraints.length ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
           ${defaultValue !== '' ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}

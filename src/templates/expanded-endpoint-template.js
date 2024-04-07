@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
+import { getSanitizedUrl, toMarkdown } from '../utils/common-utils';
 import { pathSecurityTemplate } from './security-scheme-template.js';
 import codeSamplesTemplate from './code-samples-template.js';
 import callbackTemplate from './callback-template.js';
@@ -29,12 +29,12 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
         </div>
         ${path.externalDocs
           ? html`<div class="m-markdown" style="margin-top: 2rem; margin-bottom: 0.5rem; max-width: 300px">
-              ${unsafeHTML(marked(path.externalDocs.description || ''))}
-              <a href="${path.externalDocs.url}">Navigate to documentation ↗</a>
+              ${unsafeHTML(toMarkdown(path.externalDocs.description || ''))}
+              <a href="${getSanitizedUrl(path.externalDocs.url)}">Navigate to documentation ↗</a>
             </div>`
           : ''}
       </div>
-      <div class="m-markdown" style="margin-right: 2rem;"> ${unsafeHTML(marked(path.description || ''))}</div>
+      <div class="m-markdown" style="margin-right: 2rem;"> ${unsafeHTML(toMarkdown(path.description || ''))}</div>
       <slot name="${path.elementId}"></slot>
       <slot name="path-details" data-method="${path.method}" data-path="${path.path}"></slot>
       ${pathSecurityTemplate.call(this, path.security)}
@@ -93,7 +93,7 @@ export function expandedTagTemplate(tagId, subsectionFullId) {
         ${
           unsafeHTML(`
             <div class="m-markdown regular-font">
-            ${marked(tag.description || '')}
+            ${toMarkdown(tag.description || '')}
           </div>`)
         }
         </div>

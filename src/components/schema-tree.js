@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
@@ -123,7 +123,7 @@ export default class SchemaTree extends LitElement {
     return html`
       <div class="tree ${this.interactive ? 'interactive' : ''}">
         <div class="toolbar">
-          ${displayLine ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(marked(displayLine))}</span>` : html`<div>&nbsp;</div>`}
+          ${displayLine ? html`<span class='m-markdown' style="margin-block-start: 0"> ${unsafeHTML(toMarkdown(displayLine))}</span>` : html`<div>&nbsp;</div>`}
           <div class="toolbar-item" @click='${() => this.toggleSchemaDescription()}'> 
             ${this.schemaDescriptionExpanded ? getI18nText('schemas.collapse-desc') : getI18nText('schemas.expand-desc')}
           </div>
@@ -243,7 +243,7 @@ export default class SchemaTree extends LitElement {
           </div>
           <div class="td key-descr">
             <span class="m-markdown-small" style="vertical-align: middle;" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">
-              ${unsafeHTML(marked(displayLine))}
+              ${unsafeHTML(toMarkdown(displayLine))}
             </span>
             ${this.schemaDescriptionExpanded ? html`
               ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
@@ -294,7 +294,7 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="td key-descr">
           <span class="m-markdown-small" style="vertical-align: middle;" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">
-            ${unsafeHTML(marked(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
+            ${unsafeHTML(toMarkdown(`${readOrWriteOnly && `${readOrWriteOnly} ` || ''}${`${(titleString) ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraints.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}

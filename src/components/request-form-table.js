@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { html } from 'lit';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { isPatternProperty } from '../utils/schema-utils.js';
 import { map } from 'lit/directives/map.js';
@@ -56,7 +56,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
           <td>
           <!-- Leave empty, there are no objects that make sense in the form data -->
           </td>
-          <td class='key-descr m-markdown-small'>${unsafeHTML(marked(displayLine))}</td>
+          <td class='key-descr m-markdown-small'>${unsafeHTML(toMarkdown(displayLine))}</td>
         </tr>`
         : html`${data['::type'] === 'array' && dataType === 'array' ? html`<tr><td> ${dataType} </td> </tr>` : ''}`
       }
@@ -109,7 +109,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
       ${dataType === 'array' ? getArrayFormField.call(this, keyLabel, example, defaultValue, format, rowGenerator) : ''}
       ${dataType !== 'array' ? getPrimitiveFormField.call(this, keyLabel, example, defaultValue, format, options, rowGenerator) : ''}
       <td>
-        ${description ? html`<div class="param-description">${unsafeHTML(marked(description))}</div>` : ''}
+        ${description ? html`<div class="param-description">${unsafeHTML(toMarkdown(description))}</div>` : ''}
         ${defaultValue || constraints || allowedValues || pattern
           ? html`
             <div class="param-constraint">
@@ -141,7 +141,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
     ${schemaDescription || example ? html`<tr class="form-parameter-description">
       <td> </td>
       <td colspan="2" style="margin-top:0; padding:0 5px 8px 5px;"> 
-        <span class="m-markdown-small">${unsafeHTML(marked(schemaDescription || ''))}</span>
+        <span class="m-markdown-small">${unsafeHTML(toMarkdown(schemaDescription || ''))}</span>
         ${example
           ? html`<span>
             <span style="font-weight:bold"> Example: </span>

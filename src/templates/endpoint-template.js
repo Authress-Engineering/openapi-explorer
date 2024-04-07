@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
+import { toMarkdown } from '../utils/common-utils';
 import '../components/api-request.js';
 import '../components/api-response.js';
 import codeSamplesTemplate from './code-samples-template.js';
@@ -73,7 +73,7 @@ function endpointBodyTemplate(path) {
             <span style="display: flex; flex-wrap: wrap;" part="label-operation-path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</span>
           </div>`
       }
-      ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(marked(path.description))}</div>` : ''}
+      ${path.description ? html`<div class="m-markdown"> ${unsafeHTML(toMarkdown(path.description))}</div>` : ''}
       <slot name="${path.elementId}"></slot>
       <slot name="path-details" data-method="${path.method}" data-path="${path.path}"></slot>
       ${pathSecurityTemplate.call(this, path.security)}
@@ -140,7 +140,7 @@ export default function endpointTemplate() {
         ${tag.description
           ? html`
           <div class="regular-font regular-font-size m-markdown description" style="padding-bottom:12px">
-            ${unsafeHTML(marked(tag.description || ''))}
+            ${unsafeHTML(toMarkdown(tag.description || ''))}
           </div>`
         : ''
         }
