@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { getSanitizedUrl, toMarkdown } from '../utils/common-utils';
+import { getSanitizedUrl, toMarkdown } from '../utils/common-utils.js';
 import { pathSecurityTemplate } from './security-scheme-template.js';
 import codeSamplesTemplate from './code-samples-template.js';
 import callbackTemplate from './callback-template.js';

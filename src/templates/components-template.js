@@ -2,7 +2,7 @@
 import { schemaInObjectNotation } from '../utils/schema-utils.js';
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { toMarkdown } from '../utils/common-utils';
+import { toMarkdown } from '../utils/common-utils.js';
 import '../components/schema-tree.js';
 import { getI18nText } from '../languages/index.js';
 

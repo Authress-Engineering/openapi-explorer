@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { toMarkdown } from '../utils/common-utils';
+import { toMarkdown } from '../utils/common-utils.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
 import SchemaStyles from '../styles/schema-styles.js';

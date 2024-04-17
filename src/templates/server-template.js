@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { toMarkdown } from '../utils/common-utils';
+import { toMarkdown } from '../utils/common-utils.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages/index.js';
 
