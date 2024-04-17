@@ -1,12 +1,11 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { toMarkdown } from '../utils/common-utils';
 import '../components/api-request.js';
 import '../components/api-response.js';
 import codeSamplesTemplate from './code-samples-template.js';
 import callbackTemplate from './callback-template.js';
 import { pathSecurityTemplate } from './security-scheme-template.js';
-import { getCurrentElement, pathIsInSearch, replaceState } from '../utils/common-utils.js';
+import { getCurrentElement, pathIsInSearch, replaceState, toMarkdown } from '../utils/common-utils.js';
 
 function toggleExpand(path) {
   if (path.expanded) {

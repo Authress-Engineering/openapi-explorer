@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { toMarkdown } from '../utils/common-utils';
+import { toMarkdown } from '../utils/common-utils.js';
 import base64url from 'base64url';
 import { getI18nText } from '../languages/index.js';
 

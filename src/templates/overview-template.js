@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { getSanitizedEmail, getSanitizedUrl, toMarkdown } from '../utils/common-utils';
+import { getSanitizedEmail, getSanitizedUrl, toMarkdown } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
 
 /* eslint-disable indent */
