@@ -8,15 +8,23 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/) || typeof specUrlOrObject === 'object' && typeof specUrlOrObject.href === 'string';
 
   let jsonParsedSpec;
-  try {
-    jsonParsedSpec = await OpenApiResolver(specUrlOrObject);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error parsing specification', error);
-    throw Error(`Failed to resolve the spec: ${error.message}`);
+  let errorToDisplay;
+  for (let iteration = 0; iteration < 7; iteration++) {
+    try {
+      jsonParsedSpec = await OpenApiResolver(specUrlOrObject);
+      break;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error parsing specification', error);
+      errorToDisplay = error.message;
+      await new Promise(resolve => setTimeout(resolve, 100 * 2 ** iteration));
+    }
   }
 
   if (!jsonParsedSpec) {
+    if (errorToDisplay) {
+      throw Error(`Failed to resolve the spec: ${errorToDisplay}`);
+    }
     throw Error('SpecificationNotFound');
   }
 

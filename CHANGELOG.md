@@ -9,6 +9,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Fix default display when the value is falsy.
 * Remove deprecated property `nav-item-spacing` in favor of css variable `--nav-path-padding`.
 * Prevent making requests when required path parameters are not specified.
+* Automatically retry fetching the spec if it doesn't work for any reason.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
