@@ -446,13 +446,12 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         } else if (v === 'array') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
             '::title': schema.title || '',
-            '::description': schema.description || '',
+            '::description': schema.description || arrayItemsSchema?.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': arrayItemsSchema.title || schema.title || '',
             '::type': 'array',
             // Array properties are read from the ::props object instead of reading from the keys of this object
-            // '::props': schemaInObjectNotation(Object.assign({ deprecated: schema.deprecated, readOnly: schema.readOnly, writeOnly: schema.writeOnly }, arrayItemsSchema), options, (level + 1)),
-            '::props': schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema), options, (level + 1)),
+            '::props': schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema, { description: schema.description || arrayItemsSchema?.description }), options, (level + 1)),
             '::deprecated': schema.deprecated || false,
             '::metadata': metadata
           };
@@ -492,7 +491,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
   if (propertyType === 'array' || arrayItemsSchema) { // If Array
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
-    obj['::description'] = schema.description || (arrayItemsSchema?.description ? `array&lt;${arrayItemsSchema.description}&gt;` : '');
+    obj['::description'] = schema.description || arrayItemsSchema?.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::link'] = arrayItemsSchema?.title || schema.title || '';
     obj['::type'] = 'array';
@@ -500,7 +499,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::metadata'] = metadata;
     // Array properties are read from the ::props object instead of reading from the keys of this object
     // Use type: undefined to prevent schema recursion by passing array from the parent to the next loop. arrayItemsSchema should have had type defined but it doesn't.
-    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, { type: undefined }, arrayItemsSchema), options, (level + 1));
+    obj['::props'] = schemaInObjectNotation(Object.assign({}, schema, { type: undefined }, arrayItemsSchema, { description: obj['::description'] }), options, (level + 1));
     if (arrayItemsSchema?.items) {
       obj['::array-type'] = arrayItemsSchema.items.type;
     }
