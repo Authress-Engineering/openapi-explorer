@@ -10,6 +10,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Remove deprecated property `nav-item-spacing` in favor of css variable `--nav-path-padding`.
 * Prevent making requests when required path parameters are not specified.
 * Automatically retry fetching the spec if it doesn't work for any reason.
+* Fix array description display preference to be first--The Array description, and then only second--The array item schema description, so that the "more specific" description wins, even though the "items" description is more deeply nested. This aligns to the expected behavior of preference in the json schema.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
