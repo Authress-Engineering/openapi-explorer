@@ -367,8 +367,6 @@ export default class OpenApiExplorer extends LitElement {
       authorizationToken = `Basic ${btoa(authorizationToken)}`;
     } else if (authorizationToken && securityObj.scheme && securityObj.scheme.toLowerCase() === 'bearer') {
       authorizationToken = `Bearer ${authorizationToken}`;
-    } else {
-      authorizationToken = null;
     }
 
     securityObj.clientId = clientId && clientId.trim();
@@ -409,7 +407,7 @@ export default class OpenApiExplorer extends LitElement {
   expandAndGotoOperation(elementId) {
     // Expand full operation and tag
     let isExpandingNeeded = false;
-    
+
     const tag = this.resolvedSpec.tags.find(t => t.paths && t.paths.find(p => p.elementId === elementId));
     const path = tag?.paths?.find((p) => p.elementId === elementId);
     if (path && (!path.expanded || !tag.expanded)) {
