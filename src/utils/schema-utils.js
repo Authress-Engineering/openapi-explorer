@@ -23,7 +23,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     const arraySchema = Array.isArray(schema.type) ? schema.type : (typeof schema.type === 'string' ? schema.type.split('┃') : schema.type);
     dataType = Array.isArray(arraySchema) ? arraySchema.filter((s) => s !== 'null' || options.includeNulls).join('┃') : schema.type;
     ['string', 'number'].forEach(type => {
-      dataType = dataType.replace(type, typeof schema.const !== 'undefined' && 'const' || schema.enum && `${type} enum` || schema.format || type);
+      dataType = dataType.replace(type, typeof schema.const !== 'undefined' && 'const' || schema.enum && `${type} enum` || type);
     });
 
     if (schema.nullable && options.includeNulls) {
@@ -319,35 +319,13 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     metadata.constraints.push(`Length: [${schema.minItems || 0}${schema.maxItems ? ', ' : '+'}${schema.maxItems || ''}]`);
   }
 
-  if (allOf) {
-    // If allOf is an array of multiple elements, then all the keys makes a single object
-    const objWithAllProps = {};
-    allOf.map((v, i) => {
-      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
-        const propSuffix = (v.anyOf || v.oneOf) && i > 0 ? i : '';
-        const partialObj = schemaInObjectNotation(v, options, (level + 1), propSuffix);
-        Object.assign(objWithAllProps, partialObj);
-      } else if (v.type === 'array' || v.items) {
-        const partialObj = schemaInObjectNotation(v, options, (level + 1));
-        Object.assign(objWithAllProps, partialObj);
-      } else if (v.type) {
-        const prop = `prop${Object.keys(objWithAllProps).length}`;
-        const typeObj = getTypeInfo(v, options);
-        objWithAllProps[prop] = `${typeObj.html}`;
-      }
-    });
-
-    const obj = schemaInObjectNotation(schema, options, 0);
-    return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
-  }
-  
-  if (anyOf || oneOf) {
+  if (anyOf || oneOf || allOf) {
     const objWithAnyOfProps = {};
     objWithAnyOfProps['::type'] = 'xxx-of-option';
     let writeOnly = true;
     let readOnly = true;
 
-    (anyOf || oneOf || []).forEach((v, index) => {
+    (anyOf || oneOf || allOf || []).forEach((v, index) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf || v.type === 'array' || v.items) {
         const partialObj = schemaInObjectNotation(v, options);
         if (partialObj) {
@@ -368,11 +346,14 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     const obj = schemaInObjectNotation(schema, options, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
     if (Object.keys(objWithAnyOfProps).length) {
-      resultObj[(anyOf ? `::ANY~OF ${suffix}` : `::ONE~OF ${suffix}`)] = objWithAnyOfProps;
+      let label = (anyOf && `::ANY~OF ${suffix}`)
+        || (oneOf && `::ONE~OF ${suffix}`)
+        || (allOf && `::ALL~OF ${suffix}`);
+      resultObj[label] = objWithAnyOfProps;
     }
 
     resultObj['::link'] = schema.title || '';
-    resultObj['::type'] = schema.title || 'object';
+    resultObj['::type'] = schema.title || '';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
     resultObj['::description'] = schema.description || '';

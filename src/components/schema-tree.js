@@ -141,6 +141,10 @@ export default class SchemaTree extends LitElement {
     this.requestUpdate();
   }
 
+  scrollToSchemaComponentByName(componentName) {
+    this.dispatchEvent(new CustomEvent('scrollToSchemaComponentByName', { bubbles: true, composed: true, detail: componentName }));
+  }
+
   generateTree(data, dataType = 'object', arrayType = '', flags = {}, key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
     if (!data) {
       return html`<div class="null" style="display:inline;">
@@ -156,7 +160,7 @@ export default class SchemaTree extends LitElement {
     }
     let keyLabel = '';
     let keyDescr = '';
-    if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF')) {
+    if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF') || key.startsWith('::ALL~OF')) {
       keyLabel = key.replace('::', '').replace('~', ' ');
     } else if (key.startsWith('::OPTION')) {
       const parts = key.split('~');
@@ -278,18 +282,24 @@ export default class SchemaTree extends LitElement {
 
     const titleString = schemaTitle || title;
     const descriptionString = schemaDescription || description;
+    const typeWithFormat = format ? `${type} (${format})` : type;
+
+    const renderKeyDescription = (title) => {
+      return title ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(title)}">${title}</span>` : '';
+    };
+
     return html`
       <div class="tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
           ${keyLabel.endsWith('*')
             ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>:`
             : key.startsWith('::OPTION')
-              ? html`<span class='key-label xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
+              ? html`<span class='key-label xxx-of-key'>${keyLabel}</span>${renderKeyDescription(keyDescr)}`
               : schemaLevel > 0
                 ? html`<span class="key-label">${keyLabel}:</span>`
                 : ''
           }
-          <span>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</span>
+          <span>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${typeWithFormat}</span>${dataType === 'array' ? ']' : ''}</span>
 
         </div>
         <div class="td key-descr">

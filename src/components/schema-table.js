@@ -165,7 +165,7 @@ export default class SchemaTable extends LitElement {
     let keyLabel = '';
     let keyDescr = '';
     let isOneOfLabel = false;
-    if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF')) {
+    if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF') || key.startsWith('::ALL~OF')) {
       keyLabel = key.replace('::', '').replace('~', ' ');
       isOneOfLabel = true;
     } else if (key.startsWith('::OPTION')) {
@@ -284,23 +284,35 @@ export default class SchemaTable extends LitElement {
       return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
     }
     
+
+    const titleString = schemaTitle || title;
+    const descriptionString = schemaDescription || description;
+    const typeWithFormat = format ? `${type} (${format})` : type;
+
+    const renderKeyDescription = (title) => {
+      return title ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(title)}">${title}</span>` : '';
+    };
+
     const result = html`
       <div class = "tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" part="schema-key" style='padding-left:${leftPadding}px'>
           ${keyLabel?.endsWith('*')
             ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>`
             : key.startsWith('::OPTION')
-              ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
-              : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
+              ? html`<span class='xxx-of-key'>${keyLabel}</span>${renderKeyDescription(keyDescr)}`
+              : html`${keyLabel
+                  ? html`<span class="key-label"> ${keyLabel}</span>`
+                  : renderKeyDescription(schemaTitle)
+                }`
           }
         </div>
         <div class='td key-type' part="schema-type">
-          <div>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
+          <div>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${typeWithFormat}</span>${dataType === 'array' ? ']' : ''}</div>
           <div class="attributes ${cssType}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
         <div class='td key-descr' part="schema-description">
           <span class="m-markdown-small" style="vertical-align: middle;">
-            ${unsafeHTML(toMarkdown(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
+            ${unsafeHTML(toMarkdown(`${`${titleString ? `**${titleString}${descriptionString ? ':' : ''}**` : ''} ${descriptionString}` || ''}`))}
           </span>
           ${constraints.length ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
           ${defaultValue !== '' ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
@@ -310,7 +322,7 @@ export default class SchemaTable extends LitElement {
         </div>
       </div>
     `;
-    return { result, keyLabelMaxCharacterLength: keyLabel.length + newIndentLevel, typeMaxCharacterLength: (format || type).length };
+    return { result, keyLabelMaxCharacterLength: keyLabel.length + newIndentLevel, typeMaxCharacterLength: typeWithFormat.length };
   }
   /* eslint-enable indent */
 

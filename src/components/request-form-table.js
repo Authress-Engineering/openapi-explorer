@@ -18,7 +18,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
   let rawKeyLabel = '';
   let keyDescr = '';
   let isOneOfLabel = false;
-  if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF')) {
+  if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF') || key.startsWith('::ALL~OF')) {
     rawKeyLabel = key.replace('::', '').replace('~', ' ');
     isOneOfLabel = true;
   } else if (key.startsWith('::OPTION')) {
