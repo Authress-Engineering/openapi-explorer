@@ -19,7 +19,7 @@ export default function searchByPropertiesModalTemplate() {
   return html`
   ${this.showAdvancedSearchDialog
     ? html`
-      <div class="dialog-box-overlay">
+      <div class="dialog-box-overlay" part="advanced-search-dialog">
         <div class="dialog-box">
           <header class="dialog-box-header">
             <span class="dialog-box-title">Advanced Search</span>
@@ -54,20 +54,20 @@ export default function searchByPropertiesModalTemplate() {
                 </div>
               </div>
             </span>
-            
+
             <div class="advanced-search-results">
               ${this.advancedSearchMatches && this.advancedSearchMatches.map((path) => html`
                 <div
                   class="mono-font small-font-size hover-bg" tabindex = '0'
-                  style='padding: 5px; cursor: pointer; border-bottom: 1px solid var(--light-border-color); ${path.deprecated ? 'filter:opacity(0.5);' : ''}' 
+                  style='padding: 5px; cursor: pointer; border-bottom: 1px solid var(--light-border-color); ${path.deprecated ? 'filter:opacity(0.5);' : ''}'
                   data-content-id='${path.elementId}'
                   @click="${(e) => {
                     this.matchPaths = ''; // clear quick filter if applied
                     closeAdvancedSearchDialog(); // Hide Search Dialog
                     this.requestUpdate();
                     this.scrollToEventTarget(e, true);
-                  }}"> 
-                  <span class="upper bold-text method-fg ${path.method}">${path.method}</span> 
+                  }}">
+                  <span class="upper bold-text method-fg ${path.method}">${path.method}</span>
                   <span>${path.path}</span> - <span class="regular-font gray-text">${path.summary}</span>
                 </div>
               `)}
