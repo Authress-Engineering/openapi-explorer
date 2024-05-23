@@ -180,7 +180,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
           return '4e0ba220-9575-11eb-a8b3-0242ac130003';
         case 'byte':
           // Byte type is actually a base64 encoded string: https://spec.openapis.org/oas/v3.0.0#data-types
-          return Buffer.from('example').toString('base64');
+          return btoa('example');
         default:
           return schemaObj.format;
       }
@@ -346,7 +346,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     const obj = schemaInObjectNotation(schema, options, 0);
     const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
     if (Object.keys(objWithAnyOfProps).length) {
-      let label = (anyOf && `::ANY~OF ${suffix}`)
+      const label = (anyOf && `::ANY~OF ${suffix}`)
         || (oneOf && `::ONE~OF ${suffix}`)
         || (allOf && `::ALL~OF ${suffix}`);
       resultObj[label] = objWithAnyOfProps;

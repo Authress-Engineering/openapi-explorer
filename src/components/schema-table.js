@@ -14,6 +14,13 @@ export default class SchemaTable extends LitElement {
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
+      schemaCompactXxxOf: { type: String, attribute: 'schema-hide-write-only' },
+      schemaCompactSingleXxxOfOption: {
+        type: Boolean, attribute: 'schema-compact-single-x-of-option',
+        converter(value) {
+          return value !== 'false' && value !== false;
+        }
+      },
       data: { type: Object },
     };
   }
@@ -91,7 +98,7 @@ export default class SchemaTable extends LitElement {
       }
       .tr + .object-body {
         overflow: hidden;
-      } 
+      }
       .table:not(.interactive) .object-body {
         animation-duration: 0s !important;
       }
@@ -116,7 +123,7 @@ export default class SchemaTable extends LitElement {
   render() {
     const title = this.data?.['::title'] || this.data?.['::type'] === 'array' && this.data?.['::props']?.['::title'] && `[${this.data?.['::props']?.['::title']}]`;
     const displayLine = [title, this.data?.['::description']].filter(d => d).join(' - ');
-    
+
     const { result, keyLabelMaxCharacterLength, typeMaxCharacterLength } = this.data ? this.generateTree(this.data['::type'] === 'array' ? this.data['::props'] : this.data, this.data['::type']) : {};
     return html`
       ${displayLine
@@ -142,7 +149,7 @@ export default class SchemaTable extends LitElement {
           </div>
           ${result || ''}
         </div>
-      </div>  
+      </div>
     `;
   }
 
@@ -165,8 +172,18 @@ export default class SchemaTable extends LitElement {
     let keyLabel = '';
     let keyDescr = '';
     let isOneOfLabel = false;
+    let singleOneOfKey = null;
     if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF') || key.startsWith('::ALL~OF')) {
-      keyLabel = key.replace('::', '').replace('~', ' ');
+      const oneOfOptions = Object.keys(data).reduce(
+        (acc, subKey) => subKey.startsWith('::OPTION') ? acc.add(subKey) : acc,
+        new Set()
+      );
+
+      if (oneOfOptions.size === 1) {
+        singleOneOfKey = oneOfOptions.values().next().value;
+      }
+
+      keyLabel = key.replace('::', '').replace('~', ' ').trim();
       isOneOfLabel = true;
     } else if (key.startsWith('::OPTION')) {
       const parts = key.split('~');
@@ -207,67 +224,83 @@ export default class SchemaTable extends LitElement {
       let recursiveResult;
       let innerMaxIndentationLevel = newIndentLevel;
       let innerTypeMaxCharacterLength = 0;
+
+      const renderRecursive = (dataParam) => Object.keys(dataParam).filter(dataKey =>
+        !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+        || dataParam[dataKey]?.['::type'] && !dataParam[dataKey]['::type'].includes('xxx-of'))
+        .map((dataKey) => {
+          const { result: innerResult, keyLabelMaxCharacterLength: innerObjectLevelIndentTationLevel, typeMaxCharacterLength: innerObjectLevelTypeMaxCharacterLength }
+            = this.generateTree(dataParam[dataKey]['::type'] === 'array' ? dataParam[dataKey]['::props'] : dataParam[dataKey],
+              dataParam[dataKey]['::type'], dataKey, dataParam[dataKey]['::title'], dataParam[dataKey]['::description'], newSchemaLevel, newIndentLevel) || {};
+
+          innerMaxIndentationLevel = Math.max(innerMaxIndentationLevel, innerObjectLevelIndentTationLevel);
+          innerTypeMaxCharacterLength = Math.max(innerTypeMaxCharacterLength, innerObjectLevelTypeMaxCharacterLength);
+          return innerResult;
+        }
+      );
+
+      let outerResult = null;
       if (Array.isArray(data) && data[0]) {
         ({ result: recursiveResult, keyLabelMaxCharacterLength: innerMaxIndentationLevel, typeMaxCharacterLength: innerTypeMaxCharacterLength }
           = this.generateTree(data[0], 'xxx-of-option', '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel));
-      } else {
-        recursiveResult = Object.keys(data).filter(dataKey =>
-          !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-          || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of'))
-          .map((dataKey) => {
-            const { result: innerResult, keyLabelMaxCharacterLength: innerObjectLevelIndentTationLevel, typeMaxCharacterLength: innerObjectLevelTypeMaxCharacterLength }
-              = this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                data[dataKey]['::type'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel) || {};
+      } else if (singleOneOfKey && this.schemaCompactSingleXxxOfOption) {
+        // There's only one option, so we can replace the enumerated view of options by the single option with xxx-of label instead.
+        const subKeyDescr = singleOneOfKey.split('~')[2];
+        const newKey = `::OPTION~${keyLabel}${subKeyDescr ? `~${subKeyDescr}` : ''}`;
+        const dataCopy = Object.assign({}, data);
+        dataCopy[newKey] = dataCopy[singleOneOfKey];
+        delete dataCopy[singleOneOfKey];
 
-            innerMaxIndentationLevel = Math.max(innerMaxIndentationLevel, innerObjectLevelIndentTationLevel);
-            innerTypeMaxCharacterLength = Math.max(innerTypeMaxCharacterLength, innerObjectLevelTypeMaxCharacterLength);
-            return innerResult;
-          });
+        outerResult = renderRecursive(dataCopy);
+      } else {
+        recursiveResult = renderRecursive(data);
       }
-      
-      const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
-      const outerResult = html`
-        ${newSchemaLevel >= 0 && key
-          ? html`
-            <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
-              <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" part="schema-key"
-                style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
-                <div style="display: flex; align-items: center">
-                  ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
-                  ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
-                    ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
-                    : keyLabel.endsWith('*')
-                      ? html`<span class="key-label requiredStar" style="display:inline-block; margin-left:-6px;" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`
-                      : html`<span class="key-label" style="display:inline-block; margin-left:-6px;">${keyLabel === '::props' ? '' : keyLabel}</span>`
-                  }
+
+      if (outerResult === null) {
+        const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
+        outerResult = html`
+          ${newSchemaLevel >= 0 && key
+            ? html`
+              <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::type']}' data-obj='${keyLabel}'>
+                <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" part="schema-key"
+                  style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e, keyLabel)}>
+                  <div style="display: flex; align-items: center">
+                    ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
+                    ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
+                      ? html`<span class="xxx-of-key" style="margin-left:-6px">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
+                      : keyLabel.endsWith('*')
+                        ? html`<span class="key-label requiredStar" style="display:inline-block; margin-left:-6px;" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`
+                        : html`<span class="key-label" style="display:inline-block; margin-left:-6px;">${keyLabel === '::props' ? '' : keyLabel}</span>`
+                    }
+                  </div>
                 </div>
-              </div>
-              <div class='td key-type' part="schema-type">
-                ${displaySchemaLink
-                  ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
-                    ${dataType === 'array' ? '[' : ''}<span style="color: var(--secondary-color)">${detailObjType}</span>${dataType === 'array' ? ']' : ''}
-                  </div>`
-                  : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : `${dataType === 'array' ? '[' : ''}${detailObjType}${dataType === 'array' ? ']' : ''}`}</div>`
+                <div class='td key-type' part="schema-type">
+                  ${displaySchemaLink
+                    ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
+                      ${dataType === 'array' ? '[' : ''}<span style="color: var(--secondary-color); white-space: nowrap" >${detailObjType}</span>${dataType === 'array' ? ']' : ''}
+                    </div>`
+                    : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : `${dataType === 'array' ? '[' : ''}${detailObjType}${dataType === 'array' ? ']' : ''}`}</div>`
+                  }
+                  <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
+                </div>
+                <div class='td key-descr' part="schema-description">
+                  <span class=" m-markdown-small">${unsafeHTML(toMarkdown(displayLine))}</span>
+                  ${data['::metadata']?.constraints?.length
+                      ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
+                </div>
+              </div>`
+            : html`
+                ${data['::type'] === 'array' && dataType === 'array'
+                  ? html`<div class='tr'> <div class='td'> ${dataType} </div> </div>`
+                  : ''
                 }
-                <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
-              </div>
-              <div class='td key-descr' part="schema-description">
-                <span class=" m-markdown-small">${unsafeHTML(toMarkdown(displayLine))}</span>
-                ${data['::metadata']?.constraints?.length
-                    ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
-              </div>
-            </div>`
-          : html`
-              ${data['::type'] === 'array' && dataType === 'array'
-                ? html`<div class='tr'> <div class='td'> ${dataType} </div> </div>`
-                : ''
-              }
-          `
-        }
-        <div class='object-body'>
-        ${recursiveResult}
-        <div>
-      `;
+            `
+          }
+          <div class='object-body'>
+          ${recursiveResult}
+          <div>
+        `;
+      }
 
       return {
         result: outerResult,
@@ -283,14 +316,13 @@ export default class SchemaTable extends LitElement {
     if (readOrWriteOnly === '🆆' && this.schemaHideWriteOnly === 'true') {
       return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
     }
-    
 
     const titleString = schemaTitle || title;
     const descriptionString = schemaDescription || description;
     const typeWithFormat = format ? `${type} (${format})` : type;
 
-    const renderKeyDescription = (title) => {
-      return title ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(title)}">${title}</span>` : '';
+    const renderKeyDescription = (keyTitle) => {
+      return keyTitle ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(keyTitle)}">${keyTitle}</span>` : '';
     };
 
     const result = html`

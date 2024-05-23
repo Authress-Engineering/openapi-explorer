@@ -78,6 +78,12 @@ export default class OpenApiExplorer extends LitElement {
         }
       },
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
+      schemaCompactSingleXxxOfOption: {
+        type: Boolean, attribute: 'schema-compact-single-x-of-option',
+        converter(value) {
+          return value !== 'false' && value !== false;
+        }
+      },
 
       // API Server
       serverUrl: { type: String, attribute: 'server-url' },
@@ -209,6 +215,7 @@ export default class OpenApiExplorer extends LitElement {
 
     if (!this.defaultSchemaTab || !'body, model, form,'.includes(`${this.defaultSchemaTab},`)) { this.defaultSchemaTab = 'model'; }
     if (!this.schemaExpandLevel || this.schemaExpandLevel < 1) { this.schemaExpandLevel = 99999; }
+    if (typeof this.schemaCompactSingleXxxOfOption === 'undefined') { this.schemaCompactSingleXxxOfOption = false; }
     this.schemaHideReadOnly = ['post', 'put', 'patch', 'query'].join(',');
     this.schemaHideWriteOnly = true;
     if (!this.responseAreaHeight) {

@@ -308,6 +308,7 @@ export default class ApiResponse extends LitElement {
             .data = '${mimeRespDetails.schemaTree}'
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'border-top pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
+            schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
             exportparts="schema-key, schema-type, schema-description, schema-table-header"
@@ -318,6 +319,7 @@ export default class ApiResponse extends LitElement {
             .data = '${mimeRespDetails.schemaTree}'
             class = 'example-panel ${this.renderStyle === 'read' ? 'border pad-8-16' : 'pad-top-8'}'
             schema-expand-level = "${this.schemaExpandLevel}"
+            schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
             schema-hide-read-only = false
             schema-hide-write-only = ${this.schemaHideWriteOnly}
             exportparts="schema-key, schema-type, schema-description"

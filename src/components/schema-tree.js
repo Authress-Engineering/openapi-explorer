@@ -160,8 +160,18 @@ export default class SchemaTree extends LitElement {
     }
     let keyLabel = '';
     let keyDescr = '';
+    let singleOneOfKey = null;
     if (key.startsWith('::ONE~OF') || key.startsWith('::ANY~OF') || key.startsWith('::ALL~OF')) {
       keyLabel = key.replace('::', '').replace('~', ' ');
+
+      const oneOfOptions = Object.keys(data).reduce(
+        (acc, subKey) => subKey.startsWith('::OPTION') ? acc.add(subKey) : acc,
+        new Set()
+      );
+
+      if (oneOfOptions.size === 1) {
+        singleOneOfKey = oneOfOptions.values().next().value;
+      }
     } else if (key.startsWith('::OPTION')) {
       const parts = key.split('~');
       keyLabel = parts[1];
@@ -221,6 +231,10 @@ export default class SchemaTree extends LitElement {
       }
     }
 
+    const renderKeyDescription = (keyTitle) => {
+      return keyTitle ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(keyTitle)}">${keyTitle}</span>` : '';
+    };
+
     if (typeof data === 'object') {
       if (flags['🆁'] && this.schemaHideReadOnly === 'true') {
         return undefined;
@@ -229,12 +243,31 @@ export default class SchemaTree extends LitElement {
         return undefined;
       }
 
+      const renderRecursive = (dataParam) => Object.keys(dataParam).map((dataKey) =>
+        !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
+        || dataParam[dataKey]?.['::type'] && !dataParam[dataKey]['::type'].includes('xxx-of')
+        ? html`${this.generateTree(dataParam[dataKey]['::type'] === 'array' ? dataParam[dataKey]['::props'] : dataParam[dataKey],
+              dataParam[dataKey]['::type'], dataParam[dataKey]['::array-type'] || '', dataParam[dataKey]['::flags'], dataKey, dataParam[dataKey]['::title'], dataParam[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
+        : ''
+      );
+
+      if (singleOneOfKey && this.schemaCompactSingleXxxOfOption) {
+        // There's only one option, so we can replace the enumerated view of options by the single option with xxx-of label instead.
+        const subKeyDescr = singleOneOfKey.split('~')[2];
+        const newKey = `::OPTION~${keyLabel}${subKeyDescr ? `~${subKeyDescr}` : ''}`;
+        const dataCopy = Object.assign({}, data);
+        dataCopy[newKey] = data[singleOneOfKey];
+        delete dataCopy[singleOneOfKey];
+
+        return renderRecursive(dataCopy);
+      }
+
       const displayLine = [flags['🆁'] || flags['🆆'], title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       return html`
         <div class="tr ${schemaLevel < this.schemaExpandLevel || data['::type'] && data['::type'].startsWith('xxx-of') ? '' : 'collapsed'} ${data['::type'] || 'no-type-info'}">
           <div class="td key ${data['::deprecated'] ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
             ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
-              ? html`<span class='key-label xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
+              ? html`<span class='key-label xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${renderKeyDescription(keyDescr)}</span>`
               : keyLabel === '::props' || keyLabel === '::ARRAY~OF'
                 ? ''
                 : schemaLevel > 0
@@ -243,6 +276,7 @@ export default class SchemaTree extends LitElement {
                     </span>`
                   : ''
             }
+            ${renderKeyDescription(title)}
             ${openBracket}
           </div>
           <div class="td key-descr">
@@ -255,18 +289,13 @@ export default class SchemaTree extends LitElement {
         </div>
         <div class="inside-bracket-wrapper">
           <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' ? 0 : leftPadding}px;'>
-            ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
-              : html`
-                ${Object.keys(data).map((dataKey) =>
-                  !['::metadata', '::title', '::description', '::type', '::link', '::props', '::deprecated', '::array-type', '::dataTypeLabel', '::flags'].includes(dataKey)
-                  || data[dataKey]?.['::type'] && !data[dataKey]['::type'].includes('xxx-of')
-                  ? html`${this.generateTree(data[dataKey]['::type'] === 'array' ? data[dataKey]['::props'] : data[dataKey],
-                        data[dataKey]['::type'], data[dataKey]['::array-type'] || '', data[dataKey]['::flags'], dataKey, data[dataKey]['::title'], data[dataKey]['::description'], newSchemaLevel, newIndentLevel)}`
-                  : ''
-                )}`
+            ${Array.isArray(data) && data[0]
+              ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
+              : html`${renderRecursive(data)}`
             }
           </div>
-          ${data['::type'] && data['::type'].includes('xxx-of') ? '' : html`<div class='close-bracket'> ${closeBracket} </div>`}
+          ${(data['::type'] && data['::type'].includes('xxx-of')) || !closeBracket
+            ? '' : html`<div class='close-bracket'> ${closeBracket} </div>`}
         </div>
       `;
     }
@@ -283,10 +312,6 @@ export default class SchemaTree extends LitElement {
     const titleString = schemaTitle || title;
     const descriptionString = schemaDescription || description;
     const typeWithFormat = format ? `${type} (${format})` : type;
-
-    const renderKeyDescription = (title) => {
-      return title ? html`<span class="xxx-of-descr schema-link" style="color:var(--secondary-color)" @click="${() => this.scrollToSchemaComponentByName(title)}">${title}</span>` : '';
-    };
 
     return html`
       <div class="tr">

@@ -513,6 +513,7 @@ export default class ApiRequest extends LitElement {
             style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
             .data = '${schemaAsObj}'
             schema-expand-level = "${this.schemaExpandLevel}"
+            schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
             schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
             schema-hide-write-only = false
             exportparts="schema-key, schema-type, schema-description, schema-table-header"
@@ -526,6 +527,7 @@ export default class ApiRequest extends LitElement {
             style = 'display: ${this.selectedRequestBodyType === reqBody.mimeType ? 'block' : 'none'};'
             .data = '${schemaAsObj}'
             schema-expand-level = "${this.schemaExpandLevel}"
+            schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
             schema-hide-read-only = "${this.schemaHideReadOnly.includes(this.method)}"
             schema-hide-write-only = false
             exportparts="schema-key, schema-type, schema-description"

@@ -18,13 +18,16 @@ function componentBodyTemplate(sComponent) {
       .data = '${formdataPartSchema}'
       @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
       schema-expand-level = "${this.schemaExpandLevel}"
+      schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
       schema-hide-read-only=false
       schema-hide-write-only=false
       exportparts="schema-key, schema-type, schema-description, schema-table-header"> </schema-table>`
-        
+
     : html`<schema-tree
         .data = '${formdataPartSchema}'
+        @scrollToSchemaComponentByName=${v => this.scrollToSchemaComponentByName(v)}
         schema-expand-level = "${this.schemaExpandLevel}"
+        schema-compact-single-x-of-option = ${this.schemaCompactSingleXxxOfOption}
         schema-hide-read-only=false
         schema-hide-write-only=false
         exportparts="schema-key, schema-type, schema-description"> </schema-tree>`
