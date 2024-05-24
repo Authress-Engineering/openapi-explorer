@@ -107,6 +107,33 @@ export default css`
   }
 }
 
+.bg {
+  background-color: var(--bg);
+}
+
+.secondary {
+  color: var(--secondary-color);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ellipsis:hover {
+  overflow: visible;
+  z-index: 100;
+}
+
+.inline-border {
+  padding: 0.2rem;
+  margin: -0.2rem;
+}
+
 .expanded-endpoint-component > h2:hover, .schema-link:hover {
   cursor: pointer;
   text-decoration: underline;

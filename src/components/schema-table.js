@@ -276,8 +276,10 @@ export default class SchemaTable extends LitElement {
                 </div>
                 <div class='td key-type' part="schema-type">
                   ${displaySchemaLink
-                    ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
-                      ${dataType === 'array' ? '[' : ''}<span style="color: var(--secondary-color); white-space: nowrap" >${detailObjType}</span>${dataType === 'array' ? ']' : ''}
+                    ? html`<div class="ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
+                        <span class="schema-link nowrap bg inline-border">
+                          ${dataType === 'array' ? '[' : ''}<span class="secondary" >${detailObjType}</span>${dataType === 'array' ? ']' : ''}
+                        </span>
                     </div>`
                     : html`<div>${(data['::type'] || '').includes('xxx-of') ? '' : `${dataType === 'array' ? '[' : ''}${detailObjType}${dataType === 'array' ? ']' : ''}`}</div>`
                   }
