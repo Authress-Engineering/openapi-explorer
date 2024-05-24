@@ -11,6 +11,15 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Prevent making requests when required path parameters are not specified.
 * Automatically retry fetching the spec if it doesn't work for any reason.
 * Fix array description display preference to be first--The Array description, and then only second--The array item schema description, so that the "more specific" description wins, even though the "items" description is more deeply nested. This aligns to the expected behavior of preference in the json schema.
+* Treat `allOf` the same way as `oneOf` and `anyOf` instead of trying to merge them as a single object,
+  despite the not even necessarily being objects.
+* Added an `schema-compact-single-x-of-option` option to display `oneOf`, `allOf` and `anyOf` in more compact
+  way when they contain only one item.
+* `oneOf`, `allOf` and `anyOf` items now contain a link to schema component if referenced.
+* More consistent display of links to components with long schema names.
+* Added `advanced-search-dialog` part so it can by styled separately.
+* Type is now displayed together with format in parentheses instead of displaying format directly.
+* Fixed sample value for `byte` that was crashing on undefined `Buffer`.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.

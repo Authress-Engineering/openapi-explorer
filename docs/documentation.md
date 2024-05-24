@@ -7,12 +7,14 @@
 * `spec-url` - OpenAPI specification document url
 * `server-url` - Set the server url, when not specified defaults to the first listed server in the spec.
 
-#### Disable configuration
+#### Schema configuration
 * `display-nulls` - [false] Force rendering of null types in the models. By default the models will assume `null` is equivalent to `not-required`.
 * `hide-defaults` - [false] Prevents filling the request data with the default data.
 * `collapse` - [false] Set the operations and components collapsed by default
 * `tree` - [false] Converts the body displays from schema tables to object jsons.
 * `schema-expand-level` - [9999] Expands the display of schemas and models to this depth. Set to `1` to display only the first level properties.
+* `schema-compact-single-x-of-option` - [false] Display item immediately without enumeration when `allOf`, `oneOf`
+  or `anyOf` contains only one item.
 
 ### Hide/Show Sections
 * `hide-console` - Disable executing the API from the specification. Removes the `execute button` when disabled.

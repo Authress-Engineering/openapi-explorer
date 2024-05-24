@@ -71,3 +71,4 @@ Buttons             | `btn` `btn-fill` `btn-outline` `btn-search`
 Checkboxes/ Toggles | `checkbox` `checkbox-auth-scope`
 Anchors             | `anchor` `anchor-overview`
 Schema Table/Tree   | `schema-key` `schema-type` `schema-description` `schema-table-header`
+Search dialog       | `advanced-search-dialog`

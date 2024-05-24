@@ -1,6 +1,6 @@
 {
   "name": "openapi-explorer",
-  "version": "2.2.711",
+  "version": "0.0.0",
   "description": "OpenAPI Explorer - API viewer with dynamically generated components, documentation, and interaction console",
   "author": "Authress Developers <developers@authress.io>",
   "type": "module",
