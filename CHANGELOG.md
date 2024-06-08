@@ -11,6 +11,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Prevent making requests when required path parameters are not specified.
 * Automatically retry fetching the spec if it doesn't work for any reason.
 * Fix array description display preference to be first--The Array description, and then only second--The array item schema description, so that the "more specific" description wins, even though the "items" description is more deeply nested. This aligns to the expected behavior of preference in the json schema.
+* Fix selecte drop down menu update trigger.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
@@ -111,7 +112,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * [Bug] - Fix `explorer-location` tracking for updates triggered outside of component
 
 ## 0.7 ##
-* Introduce `setAuthenticationConfiguration` to set any all configuration related to token management, including clientIds and explicit tokens.
+* Introduce `setAuthenticationConfiguration` to set any/all configuration related to token management, including clientIds and explicit tokens.
 * Display component titles in bold next to description
 * Enable component scrolling.
 

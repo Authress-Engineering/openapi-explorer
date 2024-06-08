@@ -200,7 +200,7 @@ export default class ApiRequest extends LitElement {
                 data-ptype="${paramLocation}"
                 data-pname="${param.name}"
                 .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; this.computeCurlSyntax(); }}">
+                @change="${(e) => { this.storedParamValues[param.name] = e; this.computeCurlSyntax(); }}">
                 ${paramSchema.allowedValues.map((allowedValue) => html`
                   <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[param.name]}'>
                     ${allowedValue === null ? '-' : allowedValue}
