@@ -111,4 +111,9 @@ export default css`
   cursor: pointer;
   text-decoration: underline;
 }
+
+.tag-link {
+  margin-top: 0;
+  font-weight: bold;
+}
 `;

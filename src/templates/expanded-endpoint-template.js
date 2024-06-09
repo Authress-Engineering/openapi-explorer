@@ -17,7 +17,7 @@ export function expandedEndpointBodyTemplate(path, tag) {
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
       ${(this.renderStyle === 'focused' && tag && tag.name !== 'General ⦂')
-        ? html`<h2 class="tag-link upper" style="margin-top: 0; font-weight:bold" data-content-id="${tag.elementId}" @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} </h2>`
+        ? html`<div class="title tag-link" data-content-id="${tag.elementId}" @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} </h2>`
         : ''}
       <slot name="${tag.elementId}"></slot>
 

@@ -5,7 +5,7 @@ import { getI18nText } from '../languages/index.js';
 import { expandCollapseComponent } from './endpoint-template.js';
 import { getComponentInfo } from './components-template.js';
 
-function onExpandCollapse(tagId) {
+function onExpandCollapseTag(event, tagId) {
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
   if (!tag) {
     return;
@@ -14,6 +14,7 @@ function onExpandCollapse(tagId) {
   if (tag.expanded && this.operationsCollapsed) {
     this.resolvedSpec.tags.filter(t => t.elementId !== tagId).forEach(t => t.expanded = false);
   }
+  this.scrollToEventTarget(event, false);
   this.requestUpdate();
 }
 
@@ -98,7 +99,7 @@ export default function navbarTemplate() {
                 ? html``
                 : html`
                   <div class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}'
-                    @click='${() => { onExpandCollapse.call(this, tag.elementId); }}'>
+                    @click='${e => { onExpandCollapseTag.call(this, e, tag.elementId); }}'>
 
                     <div style="display: flex; justify-content: space-between; width: 100%;">
                       <div style="margin-right: .5rem">${tag.name}</div>

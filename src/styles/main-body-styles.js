@@ -96,8 +96,8 @@ export default css`
         padding:0 8px;
       }
       .tag.title {
-        text-transform: uppercase;
-        margin-bottom: 16px;
+        margin-bottom: 1rem;
+        font-weight: bold;
       }
       .header{
         background-color:var(--header-bg);
@@ -130,7 +130,6 @@ export default css`
       }
       .expanded-endpoint-body, .expanded-endpoint-component {
         position: relative;
-        padding: 6px 0px; 
       }
 
       .divider { 
