@@ -97,6 +97,7 @@ export default css`
       }
       .tag.title {
         text-transform: uppercase;
+        margin-bottom: 16px;
       }
       .header{
         background-color:var(--header-bg);

@@ -107,7 +107,7 @@ export default css`
   }
 }
 
-.expanded-endpoint-component > h2:hover, .schema-link:hover {
+.expanded-endpoint-component > h2:hover, .schema-link:hover, .expanded-endpoint-body > .tag-link:hover {
   cursor: pointer;
   text-decoration: underline;
 }

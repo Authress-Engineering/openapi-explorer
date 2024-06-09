@@ -154,6 +154,14 @@ onEvent(event) {
   <div>Methods</div>
   <hr>
 </div>
+
+<!-- On Endpoint dipslay area -->
+<div slot="${tag}"></div>
+<div slot="${path}"></div>
+
+<!-- On Tag display page -->
+<div slot="${tag}--body"></div>
+<div slot="${tag}--footer"></div>
 ```
 
 #### Custom Navigation section
