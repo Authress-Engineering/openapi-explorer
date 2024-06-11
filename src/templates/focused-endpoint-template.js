@@ -22,7 +22,7 @@ function defaultContentTemplate() {
   const selectedTagObj = this.resolvedSpec.tags[0];
   const selectedPathObj = selectedTagObj?.paths[0];
   return (selectedPathObj)
-    ? wrapFocusedTemplate(expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name))
+    ? wrapFocusedTemplate(expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj))
     : wrapFocusedTemplate('');
 }
 
@@ -65,7 +65,7 @@ export default function focusedEndpointTemplate() {
       }
     }
     if (selectedPathObj) {
-      focusedTemplate = wrapFocusedTemplate.call(this, expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj.name));
+      focusedTemplate = wrapFocusedTemplate.call(this, expandedEndpointBodyTemplate.call(this, selectedPathObj, selectedTagObj));
     } else {
       // if explorerLocation is not found then show the default content (overview or first-path)
       focusedTemplate = defaultContentTemplate.call(this);

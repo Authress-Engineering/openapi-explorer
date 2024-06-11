@@ -15,7 +15,7 @@ export default css`
     font-family:var(--font-mono); 
   }
   .title { 
-    font-size: calc(var(--font-size-small) + 18px);
+    font-size: calc(var(--font-size-small) + 1rem);
     font-weight: normal 
   }
   .sub-title{ font-size: 20px;}

@@ -8,7 +8,7 @@ import '../components/api-request.js';
 import '../components/api-response.js';
 
 /* eslint-disable indent */
-export function expandedEndpointBodyTemplate(path, tagName = '') {
+export function expandedEndpointBodyTemplate(path, tag) {
   // Filter API Keys that are non-empty and are applicable to the the path
   const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => ps[v.apiKeyId]))) || [];
 
@@ -16,11 +16,17 @@ export function expandedEndpointBodyTemplate(path, tagName = '') {
   return html`
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
-      ${(this.renderStyle === 'focused' && tagName && tagName !== 'General ⦂') ? html`<h3 class="upper" style="font-weight:bold"> ${tagName} </h3>` : ''}
-      ${path.deprecated ? html`<div class="bold-text red-text"> DEPRECATED </div>` : ''}
+      ${(this.renderStyle === 'focused' && tag && tag.name !== 'General ⦂')
+        ? html`<div class="title tag-link" data-content-id="${tag.elementId}" @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} </h2>`
+        : ''}
+      <slot name="${tag.elementId}"></slot>
+
       <div style="display: flex; justify-content: space-between">
         <div style="flex-grow: 1">
-          <h2>${path.shortSummary || `${path.method.toUpperCase()} ${path.path}`}</h2>
+          <h2 style="display: flex; align-items: center;">
+            <div>${path.shortSummary || `${path.method.toUpperCase()} ${path.path}`}</div>
+            <div>${path.deprecated ? html`<div>&nbsp;-<span class="bold-text red-text" style="font-size: var(--font-size-regular)"> DEPRECATED</small></div>` : ''}</div>
+          </h2>
           <div class='mono-font part="section-operation-url" regular-font-size' style='padding: 8px 0; color:var(--fg3)'> 
             ${path.isWebhook ? html`<span style="color:var(--primary-color)"> WEBHOOK </span>` : ''}
             <span part="label-operation-method" class='regular-font upper method-fg bold-text ${path.method}'>${path.method}</span> 
@@ -87,7 +93,6 @@ export function expandedTagTemplate(tagId, subsectionFullId) {
   return html`
     <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="">
       <div class="title tag" part="label-tag-title">${tag.name}</div>
-      <slot name="${tag.elementId}"></slot>
       <slot name="${tag.elementId}--subsection--${subsectionId}">
         <div class="regular-font-size">
         ${
@@ -98,6 +103,29 @@ export function expandedTagTemplate(tagId, subsectionFullId) {
         }
         </div>
       </slot>
+      <slot name="${tag.elementId}--body"></slot>
+
+      <br>
+      <strong>Operations</strong>
+
+      <div class='nav-bar-paths-under-tag' style="max-width: 300px">
+        ${tag.paths.map((p) => html`
+        <div class='nav-bar-path ${this.usePathInNavBar ? 'small-font' : ''}'
+          data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}'>
+          <span style="${p.deprecated ? 'filter:opacity(0.5)' : ''}">
+            ${this.usePathInNavBar
+              ? html`<div class='mono-font' style="display: flex; align-items: center;">
+                  <div class="method ${p.method}"><span style="line-height: 1;">${p.method}</span></div> 
+                  <div style="display: flex; flex-wrap: wrap;">${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>
+                </div>`
+              : p.summary || p.shortSummary
+            }
+            ${p.isWebhook ? '(Webhook)' : ''}
+          </span>
+        </div>`)}
+      </div>
+
+      <slot name="${tag.elementId}--footer"></slot>
     </section>`;
 }
 /* eslint-enable indent */
