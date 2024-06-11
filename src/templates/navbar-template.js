@@ -14,7 +14,11 @@ function onExpandCollapseTag(event, tagId) {
   if (tag.expanded && this.operationsCollapsed) {
     this.resolvedSpec.tags.filter(t => t.elementId !== tagId).forEach(t => t.expanded = false);
   }
-  this.scrollToEventTarget(event, false);
+
+  // Only display the dedicated tag page if the tag has a description, otherwise, it will be an ugly page with nothing on it.
+  if (tag.description) {
+    this.scrollToEventTarget(event, false);
+  }
   this.requestUpdate();
 }
 
