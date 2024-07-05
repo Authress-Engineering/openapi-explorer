@@ -338,7 +338,11 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     });
 
     const obj = schemaInObjectNotation(schema, options, 0);
-    return Object.assign({}, objWithAllProps, typeof obj === 'object' && !Array.isArray(obj) ? obj : {});
+    const resultObj = typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
+    // These are the only valuable properties from allOf, everything else isn't going to be available, otherwise fallback to whatever was there from the children objects
+    resultObj['::title'] = schema.title || resultObj['::title'];
+    resultObj['::description'] = schema.description || resultObj['::description'];
+    return Object.assign({}, objWithAllProps, resultObj);
   }
   
   if (anyOf || oneOf) {
