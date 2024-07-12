@@ -105,7 +105,8 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleIds) {
   const example = Array.isArray(schemaObj.examples) ? schemaObj.examples[0] : Object.values(schemaObj.examples || {})[0]?.value ?? schemaObj.example;
-  if (skipExampleIds && typeof example === 'string' && fallbackPropertyName.match(/id$/i)) { return ''; }
+  const propertyName = fallbackPropertyName || 'string';
+  if (skipExampleIds && typeof example === 'string' && propertyName.match(/id$/i)) { return ''; }
   if (typeof example !== 'undefined') { return example; }
 
   if (schemaObj.default) { return schemaObj.default; }
@@ -142,14 +143,14 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
   }
   if (typeValue.match(/^boolean/g)) { return false; }
   if (typeValue.match(/^null/g)) { return null; }
-  if (skipExampleIds && typeValue.match(/^string/g) && fallbackPropertyName.match(/id$/i)) { return ''; }
+  if (skipExampleIds && typeValue.match(/^string/g) && propertyName.match(/id$/i)) { return ''; }
   if (typeValue.match(/^string/g)) {
     if (schemaObj.pattern) {
       const examplePattern = schemaObj.pattern.replace(/[+*](?![^\][]*[\]])/g, '{8}').replace(/\{\d*,(\d+)?\}/g, '{8}');
       try {
-        return new RandExp(examplePattern).gen() || fallbackPropertyName || 'string';
+        return new RandExp(examplePattern).gen() || propertyName;
       } catch (error) {
-        return fallbackPropertyName || 'string';
+        return propertyName;
       }
     }
     if (schemaObj.format) {
@@ -185,7 +186,7 @@ export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampl
           return schemaObj.format;
       }
     } else {
-      return fallbackPropertyName || 'string';
+      return propertyName;
     }
   }
   // If type cannot be determined
