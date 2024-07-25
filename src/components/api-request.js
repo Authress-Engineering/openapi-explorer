@@ -169,6 +169,8 @@ export default class ApiRequest extends LitElement {
             ? paramSchema.type === 'array' && html`
             <div style=" margin-top: 1rem; margin-bottom: 1rem;">    
               <tag-input class="request-param" 
+                autocomplete="on"
+                id = "request-param-${param.name}"
                 style = "width:100%;" 
                 data-ptype = "${paramLocation}"
                 data-pname = "${param.name}"
@@ -182,6 +184,8 @@ export default class ApiRequest extends LitElement {
             </div>`
             || paramSchema.type === 'object' && html`
               <textarea
+                autocomplete="on"
+                id = "request-param-${param.name}"
                 @input="${() => { this.computeCurlSyntax(); }}"
                 class = "textarea small request-param"
                 part = "textarea small textarea-param"
@@ -209,6 +213,8 @@ export default class ApiRequest extends LitElement {
               </select>`
             || html`
               <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                autocomplete="on"
+                id="request-param-${param.name}"
                 @input="${() => { this.computeCurlSyntax(); }}"
                 placeholder="${paramSchema.example || defaultVal || ''}"
                 class="request-param"
@@ -497,7 +503,9 @@ export default class ApiRequest extends LitElement {
     } else if (mediaFileRegex.test(this.selectedRequestBodyType) || textFileRegex.test(this.selectedRequestBodyType)) {
       reqBodyFileInputHtml = html`
         <div class = "small-font-size bold-text row">
-          <input type="file" part="file-input" style="max-width:100%" class="request-body-param-file" data-ptype="${reqBody.mimeType}" spellcheck="false" />
+          <input type="file"
+            name="request-body-file"
+            part="file-input" style="max-width:100%" class="request-body-param-file" data-ptype="${reqBody.mimeType}" spellcheck="false" />
         </div>  
       `;
     }

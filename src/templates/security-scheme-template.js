@@ -343,7 +343,7 @@ function renderSecurityScheme(v) {
             </small>
           </div>`
           : !v.finalKeyValue ? html`
-              <input type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
+              <input autocomplete="on" name="api-key" type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
                 spellcheck="false" class="api-key-input fs-exclude" data-hj-suppress data-sl="mask">
               <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                 part = "btn btn-outline"
@@ -375,8 +375,8 @@ function renderSecurityScheme(v) {
       <div style="padding-top: 1rem">${unsafeHTML(getI18nText('authentication.http-basic-desc'))}</div>
       <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
         <form style="display:flex;">
-          <input type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
-          <input class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
+          <input autocomplete="on" name="api-key-user" type="text" value = "${v.user}" placeholder="${getI18nText('authentication.username')}" spellcheck="false" class="api-key-user" style="width:100px">
+          <input autocomplete="on" name="api-key-password" class="api-key-password fs-exclude" data-hj-suppress data-sl="mask"
             type="password" value = "${v.password}" placeholder="${getI18nText('authentication.password')}" spellcheck="false" style = "width:100px; margin:0 5px;">
           <button type="submit" class="m-btn thin-border"
             @click="${(e) => { onApiKeyChange.call(this, v.apiKeyId, e); }}"
