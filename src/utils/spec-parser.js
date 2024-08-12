@@ -23,7 +23,11 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
 
   if (!jsonParsedSpec) {
     if (errorToDisplay) {
-      throw Error(`Failed to resolve the spec: ${errorToDisplay}`);
+      if (inputSpecIsAUrl && specUrlOrObject.toString().match('localhost')) {
+        throw Error(`Cannot connect to your localhost running spec because your webserver is blocking requests. To the load the spec from ${specUrlOrObject.toString()}, return the following CORS header \`"Access-Control-Allow-Private-Network": "true"\`.`);
+      }
+      const message = `Failed to resolve the spec: ${errorToDisplay}`;
+      throw Error(message);
     }
     throw Error('SpecificationNotFound');
   }

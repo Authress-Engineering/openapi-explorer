@@ -15,6 +15,7 @@ This package follows standard semvar, `<major>.<minor>.<build>`. No breaking cha
 * Add missing link to Tag display page.
 * Replace `replaceState` with `pushState` so forwards and backwards navigation actually work.
 * Add id and name for autocomplete options.
+* Improve error on Access-Control-Allow-Private-Network.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
