@@ -694,8 +694,6 @@ export default class ApiRequest extends LitElement {
     const requestPanelEl = this.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
     const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
-
-    const queryParamObjTypeEls = [...requestPanelEl.querySelectorAll("[data-ptype='query-object']")];
     const headerParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='header']")];
     const requestBodyContainerEl = requestPanelEl.querySelector('.request-body-container');
 
@@ -755,39 +753,6 @@ export default class ApiRequest extends LitElement {
             }
           }
         }
-      }
-    });
-
-    // Query Params (Dynamic - create from JSON)
-    queryParamObjTypeEls.map((el) => {
-      try {
-        let queryParamObj = {};
-        const paramSerializeStyle = el.dataset.paramSerializeStyle;
-        const paramSerializeExplode = el.dataset.paramSerializeExplode;
-        queryParamObj = Object.assign(queryParamObj, JSON.parse(el.value.replace(/\s+/g, ' ')));
-        for (const key in queryParamObj) {
-          if (typeof queryParamObj[key] === 'object') {
-            if (Array.isArray(queryParamObj[key])) {
-              if (paramSerializeStyle === 'spaceDelimited') {
-                fetchUrl.searchParams.append(key, queryParamObj[key].join(' '));
-              } else if (paramSerializeStyle === 'pipeDelimited') {
-                fetchUrl.searchParams.append(key, queryParamObj[key].join('|'));
-              } else {
-                if (paramSerializeExplode === 'true' || paramSerializeExplode === true) { // eslint-disable-line no-lonely-if
-                  queryParamObj[key].forEach((v) => {
-                    fetchUrl.searchParams.append(key, v);
-                  });
-                } else {
-                  fetchUrl.searchParams.append(key, queryParamObj[key]);
-                }
-              }
-            }
-          } else {
-            fetchUrl.searchParams.append(key, queryParamObj[key]);
-          }
-        }
-      } catch (err) {
-        console.log('OpenAPI Explorer: unable to parse %s into object', el.value); // eslint-disable-line no-console
       }
     });
 
@@ -938,7 +903,7 @@ export default class ApiRequest extends LitElement {
       const { fetchOptions, fetchUrl, curlParts } = this.recomputeFetchOptions();
       const curl = `curl -X ${this.method.toUpperCase()} "${fetchUrl.toString()}"`;
       const headers = headerOverride ?? fetchOptions.headers;
-      const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value}"`, '');
+      const curlHeaders = [...headers.entries()].reduce((acc, [key, value]) => `${acc} \\\n  -H "${key}: ${value.replace(/"/g, '\\"')}"`, '');
       this.curlSyntax = `${curl}${curlHeaders}${curlParts.data}${curlParts.form}`;
     } catch (error) {
       /* There was an explicit issue and likely it was because the fetch options threw. */
