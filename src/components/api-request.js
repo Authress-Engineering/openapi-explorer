@@ -139,143 +139,157 @@ export default class ApiRequest extends LitElement {
         continue;
       }
       const defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
-      let paramStyle = 'form';
-      let paramExplode = true;
-      if (paramLocation === 'query') {
-        if (param.style && 'form spaceDelimited pipeDelimited'.includes(param.style)) {
-          paramStyle = param.style;
-        }
-        if (typeof param.explode === 'boolean') {
-          paramExplode = param.explode;
-        }
-      }
+      // Set the default style: https://spec.openapis.org/oas/v3.1.0.html#fixed-fields-9
+      const paramStyle = param.style ?? {
+        query: 'form',
+        path: 'simple',
+        header: 'simple',
+        cookie: 'form'
+      }[paramLocation];
 
-      const displayAllowedValuesHints = (paramSchema.type === 'object' || paramSchema.type === 'array') && paramSchema.allowedValues;
-      tableRows.push(html`
-      <tr> 
-        <td colspan="1" style="width:160px; min-width:50px; vertical-align: top">
-          <div class="param-name ${paramSchema.deprecated ? 'deprecated' : ''}" style="margin-top: 1rem;">
-            ${param.name}${!paramSchema.deprecated && param.required ? html`<span style='color:var(--red);'>*</span>` : ''}
-          </div>
-          <div class="param-type" style="margin-bottom: 1rem;">
-            ${paramSchema.type === 'array'
-              ? `${paramSchema.arrayType}`
-              : `${paramSchema.format ? paramSchema.format : paramSchema.type}`
-            }${!paramSchema.deprecated && param.required ? html`<span style='opacity: 0;'>*</span>` : ''}
-          </div>
-        </td>  
-        <td colspan="2" style="min-width:160px; vertical-align: top">
-          ${this.allowTry === 'true'
-            ? paramSchema.type === 'array' && html`
-            <div style=" margin-top: 1rem; margin-bottom: 1rem;">    
-              <tag-input class="request-param" 
-                autocomplete="on"
-                id = "request-param-${param.name}"
-                style = "width:100%;" 
-                data-ptype = "${paramLocation}"
-                data-pname = "${param.name}"
-                data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                data-param-serialize-style = "${paramStyle}"
-                data-param-serialize-explode = "${paramExplode}"
-                data-array = "true"
-                placeholder="add-multiple ↩"
-                @change="${(e) => { this.storedParamValues[param.name] = e.detail.value; this.computeCurlSyntax(); }}"
-                .value = "${this.storedParamValues[param.name] ?? (this.fillRequestWithDefault === 'true' && Array.isArray(defaultVal) ? defaultVal : defaultVal.split(','))}"></tag-input>
-            </div>`
-            || paramSchema.type === 'object' && html`
-              <textarea
-                autocomplete="on"
-                id = "request-param-${param.name}"
-                @input="${() => { this.computeCurlSyntax(); }}"
-                class = "textarea small request-param"
-                part = "textarea small textarea-param"
-                rows = 3
-                data-ptype = "${paramLocation}"
-                data-pname = "${param.name}"
-                data-default = "${defaultVal}"
-                data-param-serialize-style = "${paramStyle}"
-                data-param-serialize-explode = "${paramExplode}"
-                spellcheck = "false"
-                placeholder="${paramSchema.example || defaultVal || ''}"
-                style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
-                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
-            || paramSchema.allowedValues && html`
-              <select aria-label="mime type" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
-                data-ptype="${paramLocation}"
-                data-pname="${param.name}"
-                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-                @change="${(e) => { this.storedParamValues[param.name] = e; this.computeCurlSyntax(); }}">
-                ${paramSchema.allowedValues.map((allowedValue) => html`
-                  <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[param.name]}'>
-                    ${allowedValue === null ? '-' : allowedValue}
-                  </option>`
-                )}
-              </select>`
-            || html`
-              <input type="${paramSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
-                autocomplete="on"
-                id="request-param-${param.name}"
-                @input="${() => { this.computeCurlSyntax(); }}"
-                placeholder="${paramSchema.example || defaultVal || ''}"
-                class="request-param"
-                part="textbox textbox-param"
-                data-ptype="${paramLocation}"
-                data-pname="${param.name}" 
-                data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
-                data-array="false"
-                @keyup="${this.requestParamFunction}"
-                .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
-              />`
-          : ''}
+      const paramExplode = param.explode ?? param.style === 'form';
 
-          ${this.exampleListTemplate.call(this, param, paramSchema.type)}
-        </td>
-        ${this.renderStyle === 'focused'
-          ? html`
-            <td colspan="2" style="vertical-align: top">
-              ${param.description
-                ? html`
-                  <div class="param-description" style="margin-top: 1rem;">
-                      ${unsafeHTML(toMarkdown(param.description))}
-                  </div>`
-                : ''
-              }
-              ${paramSchema.constraints.length || displayAllowedValuesHints || paramSchema.pattern
-                ? html`
-                  <div class="param-constraint" style="margin-top: 1rem;">
-                    ${paramSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${paramSchema.constraints.join(', ')}<br>` : ''}
-                    ${paramSchema.pattern ? html`
-                    <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
-                      <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
-                      <div style="white-space:nowrap; text-overflow:ellipsis; max-width:100%; overflow:hidden;">${paramSchema.pattern}</div>
-                      <br>
-                      <div class="tooltip-text" style="position: absolute; display:block;">${paramSchema.pattern}</div>
-                    </div>
-                    ` : ''}
-                    ${paramSchema.allowedValues?.map((v, i) => html`
-                      ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
-                      ${html`
-                        <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
-                          data-type="${paramSchema.type === 'array' ? 'array' : 'string'}"
-                          data-enum="${v?.trim()}"
-                          @click="${(e) => {
-                            const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
-                            if (inputEl) {
-                              inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
-                            }
-                          }}"
-                        >
-                          ${v === null ? '-' : v} 
-                        </a>`
-                      }`)}
-                  </div>`
-                : ''
-              }
+      const rowGenerator = ({ name: paramName, description: paramDescription, required: paramRequired }, generatedParamSchema) => {
+        const displayAllowedValuesHints = (generatedParamSchema.type === 'object' || generatedParamSchema.type === 'array') && generatedParamSchema.allowedValues;
+        return html`
+          <tr> 
+            <td colspan="1" style="width:160px; min-width:50px; vertical-align: top">
+              <div class="param-name ${generatedParamSchema.deprecated ? 'deprecated' : ''}" style="margin-top: 1rem;">
+                ${paramName}${!generatedParamSchema.deprecated && paramRequired ? html`<span style='color:var(--red);'>*</span>` : ''}
+              </div>
+              <div class="param-type" style="margin-bottom: 1rem;">
+                ${generatedParamSchema.type === 'array'
+                  ? `${generatedParamSchema.arrayType}`
+                  : `${generatedParamSchema.format ? generatedParamSchema.format : generatedParamSchema.type}`
+                }${!generatedParamSchema.deprecated && paramRequired ? html`<span style='opacity: 0;'>*</span>` : ''}
+              </div>
             </td>  
-          </tr>`
-        : ''
+            <td colspan="2" style="min-width:160px; vertical-align: top">
+              ${this.allowTry === 'true'
+                ? generatedParamSchema.type === 'array' && html`
+                <div style=" margin-top: 1rem; margin-bottom: 1rem;">    
+                  <tag-input class="request-param" 
+                    autocomplete="on"
+                    id = "request-param-${paramName}"
+                    style = "width:100%;" 
+                    data-ptype = "${paramLocation}"
+                    data-pname = "${paramName}"
+                    data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                    data-param-serialize-style = "${paramStyle}"
+                    data-param-serialize-explode = "${paramExplode}"
+                    data-array = "true"
+                    placeholder="add-multiple ↩"
+                    @change="${(e) => { this.storedParamValues[paramName] = e.detail.value; this.computeCurlSyntax(); }}"
+                    .value = "${this.storedParamValues[paramName] ?? (this.fillRequestWithDefault === 'true' && Array.isArray(defaultVal) ? defaultVal : defaultVal.split(','))}"></tag-input>
+                </div>`
+                || generatedParamSchema.type === 'object' && html`
+                  <textarea
+                    autocomplete="on"
+                    id = "request-param-${paramName}"
+                    @input="${() => { this.computeCurlSyntax(); }}"
+                    class = "textarea small request-param"
+                    part = "textarea small textarea-param"
+                    rows = 3
+                    data-ptype = "${paramLocation}"
+                    data-pname = "${paramName}"
+                    data-default = "${defaultVal}"
+                    data-param-serialize-style = "${paramStyle}"
+                    data-param-serialize-explode = "${paramExplode}"
+                    spellcheck = "false"
+                    placeholder="${generatedParamSchema.example || defaultVal || ''}"
+                    style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
+                || generatedParamSchema.allowedValues && html`
+                  <select aria-label="mime type" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                    data-ptype="${paramLocation}"
+                    data-pname="${paramName}"
+                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                    @change="${(e) => { this.storedParamValues[paramName] = e; this.computeCurlSyntax(); }}">
+                    ${generatedParamSchema.allowedValues.map((allowedValue) => html`
+                      <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[paramName]}'>
+                        ${allowedValue === null ? '-' : allowedValue}
+                      </option>`
+                    )}
+                  </select>`
+                || html`
+                  <input type="${generatedParamSchema.format === 'password' ? 'password' : 'text'}" spellcheck="false" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
+                    autocomplete="on"
+                    id="request-param-${paramName}"
+                    @input="${() => { this.computeCurlSyntax(); }}"
+                    placeholder="${generatedParamSchema.example || defaultVal || ''}"
+                    class="request-param"
+                    part="textbox textbox-param"
+                    data-ptype="${paramLocation}"
+                    data-pname="${paramName}" 
+                    data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                    data-array="false"
+                    @keyup="${this.requestParamFunction}"
+                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                  />`
+              : ''}
+
+              ${this.exampleListTemplate.call(this, param, generatedParamSchema.type)}
+            </td>
+            ${this.renderStyle === 'focused'
+              ? html`
+                <td colspan="2" style="vertical-align: top">
+                  ${paramDescription
+                    ? html`
+                      <div class="param-description" style="margin-top: 1rem;">
+                          ${unsafeHTML(toMarkdown(paramDescription))}
+                      </div>`
+                    : ''
+                  }
+                  ${generatedParamSchema.constraints.length || displayAllowedValuesHints || generatedParamSchema.pattern
+                    ? html`
+                      <div class="param-constraint" style="margin-top: 1rem;">
+                        ${generatedParamSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${generatedParamSchema.constraints.join(', ')}<br>` : ''}
+                        ${generatedParamSchema.pattern ? html`
+                        <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
+                          <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
+                          <div style="white-space:nowrap; text-overflow:ellipsis; max-width:100%; overflow:hidden;">${generatedParamSchema.pattern}</div>
+                          <br>
+                          <div class="tooltip-text" style="position: absolute; display:block;">${generatedParamSchema.pattern}</div>
+                        </div>
+                        ` : ''}
+                        ${generatedParamSchema.allowedValues?.map((v, i) => html`
+                          ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
+                          ${html`
+                            <a part="anchor anchor-param-constraint" class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
+                              data-type="${generatedParamSchema.type === 'array' ? 'array' : 'string'}"
+                              data-enum="${v?.trim()}"
+                              @click="${(e) => {
+                                const inputEl = e.target.closest('table').querySelector(`[data-pname="${paramName}"]`);
+                                if (inputEl) {
+                                  inputEl.value = e.target.dataset.type === 'array' ? [e.target.dataset.enum] : e.target.dataset.enum;
+                                }
+                              }}"
+                            >
+                              ${v === null ? '-' : v} 
+                            </a>`
+                          }`)}
+                      </div>`
+                    : ''
+                  }
+                </td>  
+              </tr>`
+            : ''
+          }
+        `;
+      };
+
+      let newRows = [];
+      if (paramStyle === 'form' && paramExplode) {
+        newRows = Object.keys(param.schema.properties).map(explodedParamKey => {
+          const explodedParam = param.schema.properties[explodedParamKey];
+          const explodedParamSchema = getTypeInfo(explodedParam, { includeNulls: this.includeNulls, enableExampleGeneration: true });
+          return rowGenerator({ name: explodedParamKey, description: explodedParam.description, required: param.schema?.required?.includes(explodedParamKey) }, explodedParamSchema);
+        });
+      } else {
+        newRows = rowGenerator(param, paramSchema);
       }
-    `);
+
+      tableRows.push(newRows);
     }
 
     return html`
@@ -734,7 +748,7 @@ export default class ApiRequest extends LitElement {
           } else if (paramSerializeStyle === 'pipeDelimited') {
             fetchUrl.searchParams.append(el.dataset.pname, values.join('|').replace(/^\||\|$/g, ''));
           } else {
-            if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
+            if (paramSerializeExplode === 'true' || paramSerializeExplode === true) { // eslint-disable-line no-lonely-if
               values.forEach((v) => { fetchUrl.searchParams.append(el.dataset.pname, v); });
             } else {
               fetchUrl.searchParams.append(el.dataset.pname, values.join(',').replace(/^,|,$/g, ''));
@@ -759,7 +773,7 @@ export default class ApiRequest extends LitElement {
               } else if (paramSerializeStyle === 'pipeDelimited') {
                 fetchUrl.searchParams.append(key, queryParamObj[key].join('|'));
               } else {
-                if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
+                if (paramSerializeExplode === 'true' || paramSerializeExplode === true) { // eslint-disable-line no-lonely-if
                   queryParamObj[key].forEach((v) => {
                     fetchUrl.searchParams.append(key, v);
                   });

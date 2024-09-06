@@ -17,6 +17,7 @@ This package follows standard semver, `<major>.<minor>.<build>`. No breaking cha
 * Add id and name for autocomplete options.
 * Improve error on Access-Control-Allow-Private-Network.
 * Add `ph-no-capture` to all sensitive locations.
+* [Fix] Param explode for parameters when using `explode: true` and `style: form`, also aligns default behavior to match open api 3.1 specification.
 
 ## 2.1
 * Add `x-locale` vendor extension to specify the locale of the spec.
