@@ -95,13 +95,17 @@ export default class ApiRequest extends LitElement {
   }
 
   updated(changedProperties) {
+    // When the operation is changed, reset the display view properties
+    if (changedProperties.get('elementId')) {
+      this.activeResponseTab = 'curl';
+    }
     // In focused mode after rendering the request component, update the text-areas(which contains examples) using the original values from hidden textareas.
     // This is done coz, user may update the dom by editing the textarea's and once the DOM is updated externally change detection wont happen, therefore update the values manually
     if (this.renderStyle !== 'focused') {
       return;
     }
 
-    // dont update example as only tabs is switched
+    // don't update example as only tabs is switched
     if (changedProperties.size === 1 && changedProperties.has('activeSchemaTab')) {
       return;
     }
@@ -624,7 +628,7 @@ export default class ApiRequest extends LitElement {
         }}">
         <br>
         <div style="width: 100%">
-        <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>FULL REQUEST</button>
+        <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>REQUEST</button>
           ${!hasResponse ? '' : html`
             <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
             <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`
@@ -654,10 +658,10 @@ export default class ApiRequest extends LitElement {
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <syntax-highlighter language="http" .content="${this.responseHeaders}"/>
+          <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}"/>
         </div>
         <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <syntax-highlighter language="shell" .content="${curlSyntax.trim()}"/>
+          <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}"/>
         </div>
       </div>`;
   }
@@ -690,6 +694,17 @@ export default class ApiRequest extends LitElement {
     this.computeCurlSyntax();
   }
 
+  validateAllRequestParameters() {
+    const requestPanelEl = this.closest('.request-panel');
+    const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
+    const missingPathParameterValue = pathParamEls.find(el => !el.value);
+    if (missingPathParameterValue) {
+      const error = Error(`All path parameters are required and a valid value was not found for the parameter: '${missingPathParameterValue.dataset.pname}'.`);
+      error.code = 'MissingPathParameter';
+      throw error;
+    }
+  }
+
   recomputeFetchOptions() {
     const requestPanelEl = this.closest('.request-panel');
     const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
@@ -705,13 +720,6 @@ export default class ApiRequest extends LitElement {
       pathParameterMap[el.dataset.pname] = el.value;
       pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
     });
-
-    const missingPathParameterValue = pathParamEls.find(el => !el.value);
-    if (missingPathParameterValue) {
-      const error = Error(`All path parameters are required and a valid value was not found for the parameter: '${missingPathParameterValue.dataset.pname}'.`);
-      error.code = 'MissingPathParameter';
-      throw error;
-    }
 
     // Handle relative serverUrls
     if (!pathUrl.startsWith('http')) {
@@ -920,6 +928,7 @@ export default class ApiRequest extends LitElement {
     let fetchUrl;
     let path;
     let query;
+
     try {
       ({ fetchOptions, fetchUrl, path, query } = this.recomputeFetchOptions());
     } catch (error) {
@@ -929,6 +938,17 @@ export default class ApiRequest extends LitElement {
       this.responseHeaders = '';
       this.responseText = error.message;
       this.activeResponseTab = 'response';
+      return;
+    }
+
+    try {
+      this.validateAllRequestParameters();
+    } catch (error) {
+      this.responseMessage = error.message;
+      this.responseStatus = 'error';
+      this.responseUrl = '';
+      this.responseHeaders = '';
+      this.responseText = '';
       return;
     }
 
