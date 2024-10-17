@@ -104,10 +104,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
 }
 
 export function getSampleValueByType(schemaObj, fallbackPropertyName, skipExampleIds) {
-  const example = Array.isArray(schemaObj.examples) ? schemaObj.examples[0] : Object.values(schemaObj.examples || {})[0]?.value ?? schemaObj.example;
   const propertyName = fallbackPropertyName || 'string';
-  if (skipExampleIds && typeof example === 'string' && propertyName.match(/id$/i)) { return ''; }
-  if (typeof example !== 'undefined') { return example; }
 
   if (schemaObj.default) { return schemaObj.default; }
 
@@ -251,6 +248,13 @@ function getExampleValuesFromSchemaRecursive(rawSchema, config = {}) {
 }
 
 function getSimpleValueResult(schema, config, namespace, prefix, xmlAttributes, xmlTagProperties, overridePropertyName) {
+  const examples = Array.isArray(schema.examples) && schema.examples
+    || schema.examples && typeof schema.examples === 'object' && Object.values(schema.examples).map(e => e.value).filter(v => v)
+    || schema.example && [schema.example]
+    || [];
+  if (config.skipExampleIds && config.propertyName && config.propertyName.match(/id$/i)) { return ['']; }
+  if (examples.length) { return examples; }
+
   if (schema.type === 'array' || schema.items) {
     if (!config.xml) {
       return [getExampleValuesFromSchemaRecursive(schema.items || {}, config)];
