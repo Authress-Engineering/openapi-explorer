@@ -30,6 +30,7 @@ function onApiKeyChange(apiKeyId, e) {
   }
 
   securityObj.finalKeyValue = apiKeyValue;
+  localStorage.setItem('openapi-explorer', JSON.stringify({ finalKeyValue: apiKeyValue }));
   this.requestUpdate();
 }
 
@@ -40,6 +41,7 @@ function onClearAllApiKeys() {
     v.value = '';
     v.finalKeyValue = '';
   });
+  localStorage.removeItem('openapi-explorer');
   this.requestUpdate();
 }
 

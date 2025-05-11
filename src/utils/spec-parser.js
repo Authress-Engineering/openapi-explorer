@@ -47,7 +47,7 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
     Object.entries(jsonParsedSpec.components.securitySchemes).forEach((kv) => {
       const securityObj = { apiKeyId: kv[0], ...kv[1] };
       securityObj.value = '';
-      securityObj.finalKeyValue = '';
+      securityObj.finalKeyValue = localStorage.getItem('openapi-explorer') ? JSON.parse(localStorage.getItem('openapi-explorer')).finalKeyValue : '';
       if (kv[1].type === 'apiKey' || kv[1].type === 'http') {
         securityObj.name = kv[1].name || 'Authorization';
         securityObj.user = '';
