@@ -50,7 +50,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     title: schema.title || '',
     description: schema.description || '',
     constraints: [],
-    allowedValues: typeof schema.const !== 'undefined' && [schema.const] || schema.enum || null,
+    allowedValues: typeof schema.const !== 'undefined' && [schema.const] || schema.enum && [].concat(schema.nullable || !schema.required ? null : []).concat(schema.enum) || null,
     arrayType: ''
   };
 
