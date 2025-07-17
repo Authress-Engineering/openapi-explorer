@@ -864,12 +864,6 @@ export default class ApiRequest extends LitElement {
           }
         });
         fetchOptions.body = formDataParams;
-      } else if (mediaFileRegex.test(requestBodyType) || textFileRegex.test(requestBodyType)) {
-        const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
-        if (bodyParamFileEl && bodyParamFileEl.files[0]) {
-          fetchOptions.body = bodyParamFileEl.files[0];
-          curlData = ` \\\n  --data-binary @${bodyParamFileEl.files[0].name}`;
-        }
       } else if (requestBodyType.includes('json') || requestBodyType.includes('xml') || requestBodyType.includes('text')) {
         const exampleTextAreaEl = requestPanelEl.querySelector('.request-body-param-user-input');
         if (exampleTextAreaEl && exampleTextAreaEl.value) {
@@ -887,6 +881,12 @@ export default class ApiRequest extends LitElement {
             // Save single quotes wrapped => 'text' => `"'"text"'"`
             curlData = ` \\\n  -d '${fetchOptions.body.replace(/'/g, '\'"\'"\'')}'`;
           }
+        }
+      } else if (mediaFileRegex.test(requestBodyType) || textFileRegex.test(requestBodyType)) {
+        const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
+        if (bodyParamFileEl && bodyParamFileEl.files[0]) {
+          fetchOptions.body = bodyParamFileEl.files[0];
+          curlData = ` \\\n  --data-binary @${bodyParamFileEl.files[0].name}`;
         }
       }
       // Common for all request-body
