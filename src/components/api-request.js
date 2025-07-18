@@ -143,6 +143,12 @@ export default class ApiRequest extends LitElement {
         continue;
       }
       const defaultVal = Array.isArray(paramSchema.default) ? paramSchema.default : `${paramSchema.default}`;
+      let initialVal = '';
+      if (paramSchema.required) {
+        initialVal = defaultVal || (paramSchema.allowedValues && paramSchema.allowedValues[0]) || '';
+      } else if (this.fillRequestWithDefault === 'true') {
+        initialVal = defaultVal;
+      }
       // Set the default style: https://spec.openapis.org/oas/v3.1.0.html#fixed-fields-9
       const paramStyle = param.style ?? {
         query: 'form',
@@ -199,20 +205,21 @@ export default class ApiRequest extends LitElement {
                     data-ptype = "${paramLocation}"
                     data-pname = "${paramName}"
                     data-default = "${defaultVal}"
+                    data-initial = "${initialVal}"
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     spellcheck = "false"
                     placeholder="${generatedParamSchema.example || defaultVal || ''}"
                     style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
-                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
+                    .value="${initialVal}"></textarea>`
                 || generatedParamSchema.allowedValues && html`
                   <select aria-label="mime type" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                     data-ptype="${paramLocation}"
                     data-pname="${paramName}"
-                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                    data-initial="${initialVal}"
                     @change="${(e) => { this.storedParamValues[paramName] = e; this.computeCurlSyntax(); }}">
                     ${generatedParamSchema.allowedValues.map((allowedValue) => html`
-                      <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[paramName]}'>
+                      <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[paramName] || allowedValue === initialVal}'>
                         ${allowedValue === null ? '-' : allowedValue}
                       </option>`
                     )}
@@ -229,9 +236,10 @@ export default class ApiRequest extends LitElement {
                     data-ptype="${paramLocation}"
                     data-pname="${paramName}" 
                     data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                    data-initial="${initialVal}"
                     data-array="false"
                     @keyup="${this.requestParamFunction}"
-                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                    .value="${initialVal}"
                   />`
               : ''}
 
@@ -693,7 +701,7 @@ export default class ApiRequest extends LitElement {
   onClearRequestData(e) {
     const requestPanelEl = e.target.closest('.request-panel');
     const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, select, tag-input, textarea:not(.is-hidden)')];
-    requestPanelInputEls.forEach((el) => { el.value = ''; });
+    requestPanelInputEls.forEach((el) => { el.value = el.dataset.initial || ''; });
 
     const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, operation: { method: this.method, path: this.path }, type: 'RequestCleared' } };
     this.dispatchEvent(new CustomEvent('event', event));

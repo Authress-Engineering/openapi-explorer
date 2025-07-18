@@ -47,6 +47,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     deprecated: !!schema.deprecated,
     example: examples || '',
     default: schema.default ?? '',
+    required: !!schema.required,
     title: schema.title || '',
     description: schema.description || '',
     constraints: [],
