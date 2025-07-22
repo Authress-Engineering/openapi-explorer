@@ -155,6 +155,14 @@ export default class ApiRequest extends LitElement {
 
       const rowGenerator = ({ name: paramName, description: paramDescription, required: paramRequired }, generatedParamSchema) => {
         const displayAllowedValuesHints = (generatedParamSchema.type === 'object' || generatedParamSchema.type === 'array') && generatedParamSchema.allowedValues;
+        let description = paramDescription ?? '';
+        if (generatedParamSchema.description?.length > 0 && generatedParamSchema.description !== paramDescription) {
+          if (description.length > 0) {
+            description += '<br>';
+          }
+          description += generatedParamSchema.description;
+        }
+
         return html`
           <tr> 
             <td colspan="1" style="width:160px; min-width:50px; vertical-align: top">
@@ -240,10 +248,10 @@ export default class ApiRequest extends LitElement {
             ${this.renderStyle === 'focused'
               ? html`
                 <td colspan="2" style="vertical-align: top">
-                  ${paramDescription
+                  ${description
                     ? html`
                       <div class="param-description" style="margin-top: 1rem;">
-                          ${unsafeHTML(toMarkdown(paramDescription))}
+                          ${unsafeHTML(toMarkdown(description))}
                       </div>`
                     : ''
                   }
