@@ -216,7 +216,6 @@ function inputFieldKeyLabel(isOption, keyLabel, keyDescription, dataType, deprec
 //             data-array = "false"
 //             data-ptype = "form-input"
 //             data-pname = "${keyLabel}"
-//             data-default = "${defaultValue || ''}"
 //             spellcheck = "false"
 //             .value="${options.fillRequestWithDefault === 'true' ? defaultValue : ''}"
 //           ></textarea>
@@ -254,7 +253,6 @@ function getArrayFormField(keyLabel, example, defaultValue, format, rowGenerator
     style = "width:100%;" 
     data-ptype = "form-input"
     data-pname = "${keyLabel}"
-    data-default = "${defaultValue || ''}"
     data-array = "true"
     placeholder="${(Array.isArray(example) ? example[0] : example) || defaultValue || 'add-multiple ↩'}"
     .value = "${defaultValue || ''}"
@@ -273,7 +271,6 @@ function getPrimitiveFormField(keyLabel, example, defaultValue, format, options,
       style = "width:100%"
       data-ptype = "form-input"
       data-pname = "${keyLabel}"
-      data-default = "${defaultValue || ''}"
       data-array = "false"
     />
   </td>`;
