@@ -179,7 +179,7 @@ export default class ApiRequest extends LitElement {
                     style = "width:100%;" 
                     data-ptype = "${paramLocation}"
                     data-pname = "${paramName}"
-                    data-default = "${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                    data-required="${paramRequired}"
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
@@ -198,7 +198,7 @@ export default class ApiRequest extends LitElement {
                     rows = 3
                     data-ptype = "${paramLocation}"
                     data-pname = "${paramName}"
-                    data-default = "${defaultVal}"
+                    data-required="${paramRequired}"
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     spellcheck = "false"
@@ -209,7 +209,8 @@ export default class ApiRequest extends LitElement {
                   <select aria-label="mime type" style="width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                     data-ptype="${paramLocation}"
                     data-pname="${paramName}"
-                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
+                    data-required="${paramRequired}"
+                    .value="${this.fillRequestWithDefault === 'true' ? defaultVal : (!generatedParamSchema.allowedValues.length || generatedParamSchema.allowedValues.some(v => v === null) ? null : generatedParamSchema.allowedValues[0])}"
                     @change="${(e) => { this.storedParamValues[paramName] = e; this.computeCurlSyntax(); }}">
                     ${generatedParamSchema.allowedValues.map((allowedValue) => html`
                       <option value="${allowedValue}" ?selected = '${allowedValue === this.storedParamValues[paramName]}'>
@@ -228,7 +229,7 @@ export default class ApiRequest extends LitElement {
                     part="textbox textbox-param"
                     data-ptype="${paramLocation}"
                     data-pname="${paramName}" 
-                    data-default="${Array.isArray(defaultVal) ? defaultVal.join('~|~') : defaultVal}"
+                    data-required="${paramRequired}"
                     data-array="false"
                     @keyup="${this.requestParamFunction}"
                     .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"
@@ -487,7 +488,7 @@ export default class ApiRequest extends LitElement {
               </select>`
           }
           ${displayedBodyExample ? html`
-            <div class="example" data-default = '${displayedBodyExample.exampleId}'>
+            <div class="example">
               ${displayedBodyExample.exampleSummary && displayedBodyExample.exampleSummary.length > 80 ? html`<div style="padding: 4px 0"> ${displayedBodyExample.exampleSummary} </div>` : ''}
               ${displayedBodyExample.exampleDescription ? html`<div class="m-markdown-small" style="padding: 4px 0"> ${unsafeHTML(toMarkdown(displayedBodyExample.exampleDescription || ''))} </div>` : ''}
                 <!-- this textarea is for user to edit the example -->
@@ -499,8 +500,6 @@ export default class ApiRequest extends LitElement {
                   aria-label = "${getI18nText('operations.request-body')}"
                   spellcheck = "false"
                   data-ptype = "${reqBody.mimeType}" 
-                  data-default = "${displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)}"
-                  data-default-format = "${displayedBodyExample.exampleFormat}"
                   style="width:100%; resize:vertical;"
                   .value="${this.fillRequestWithDefault === 'true' ? (displayedBodyExample.exampleFormat === 'text' ? displayedBodyExample.exampleValue : JSON.stringify(displayedBodyExample.exampleValue, null, 8)) : ''}"
                 ></textarea>
@@ -692,7 +691,7 @@ export default class ApiRequest extends LitElement {
 
   onClearRequestData(e) {
     const requestPanelEl = e.target.closest('.request-panel');
-    const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, tag-input, textarea:not(.is-hidden)')];
+    const requestPanelInputEls = [...requestPanelEl.querySelectorAll('input, select, tag-input, textarea:not(.is-hidden)')];
     requestPanelInputEls.forEach((el) => { el.value = ''; });
 
     const event = { bubbles: true, composed: true, detail: { explorerLocation: this.elementId, operation: { method: this.method, path: this.path }, type: 'RequestCleared' } };
@@ -707,6 +706,14 @@ export default class ApiRequest extends LitElement {
     if (missingPathParameterValue) {
       const error = Error(`All path parameters are required and a valid value was not found for the parameter: '${missingPathParameterValue.dataset.pname}'.`);
       error.code = 'MissingPathParameter';
+      throw error;
+    }
+
+    const requiredPanelEl = [...requestPanelEl.querySelectorAll("[data-required='true']")];
+    const missingRequiredParameterValue = requiredPanelEl.find(el => !el.value);
+    if (missingRequiredParameterValue) {
+      const error = Error(`Required parameter found, but no valid value was set for the parameter: '${missingRequiredParameterValue.dataset.pname}'.`);
+      error.code = 'MissingRequiredParameter';
       throw error;
     }
   }
