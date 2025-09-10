@@ -95,8 +95,11 @@ export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   }
 
   const parsedSpec = {
-    info: jsonParsedSpec.info,
-    infoDescriptionHeaders,
+    info: {
+      ...jsonParsedSpec.info,
+      expanded: true,
+      headers: infoDescriptionHeaders
+    },
     tags,
     components,
     // pathGroups,

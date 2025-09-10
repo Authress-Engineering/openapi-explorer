@@ -6,6 +6,12 @@ import { expandCollapseComponent } from './endpoint-template.js';
 import { getComponentInfo } from './components-template.js';
 
 function onExpandCollapseTag(event, tagId) {
+  if (tagId === 'link-overview') {
+    this.resolvedSpec.info.expanded = !this.resolvedSpec.info.expanded;
+    this.scrollToEventTarget(event, false);
+    return;
+  }
+
   const tag = this.resolvedSpec.tags.find(t => t.elementId === tagId);
   if (!tag) {
     return;
@@ -13,6 +19,7 @@ function onExpandCollapseTag(event, tagId) {
   tag.expanded = !tag.expanded;
   if (tag.expanded && this.operationsCollapsed) {
     this.resolvedSpec.tags.filter(t => t.elementId !== tagId).forEach(t => t.expanded = false);
+    this.resolvedSpec.info.expanded = false;
   }
 
   // Only display the dedicated tag page if the tag has a description, otherwise, it will be an ugly page with nothing on it.
@@ -62,10 +69,32 @@ export default function navbarTemplate() {
     ${html`<nav class='nav-scroll' part="navbar-scroll">
       ${(this.hideInfo || !this.resolvedSpec.info)
         ? ''
-        : html`<div class='nav-bar-info' id='link-overview' data-content-id='overview' @click = '${(e) => this.scrollToEventTarget(e, false)}' role="link" tabindex="0" @keydown = '${(e) => { if (e.key === 'Enter') { e.target.click(); }}}';
-      }>
-          ${this.resolvedSpec.info.title || getI18nText('menu.overview')}
-        </div>`
+        : html`
+        <div class='nav-bar-tag-and-paths ${this.resolvedSpec.info.expanded ? '' : 'collapsed'}'>
+            <div class='nav-bar-info' id='link-overview' data-content-id='overview'
+              @click = '${(e) => { onExpandCollapseTag.call(this, e, 'link-overview'); }}'
+              role="link" tabindex="0"
+              @keydown = '${(e) => { if (e.key === 'Enter') { e.target.click(); }}}';
+            }>
+            ${this.resolvedSpec.info.title || getI18nText('menu.overview')}
+          </div>
+
+          <div class="nav-bar-section-wrapper">
+            <div>
+              ${this.resolvedSpec.info.headers?.map((header) => html`
+                <div 
+                  class='nav-bar-h${header.depth}' 
+                  id="link-overview--${new marked.Slugger().slug(header.text)}"  
+                  data-content-id='overview--${new marked.Slugger().slug(header.text)}' 
+                  @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                  ${header.text}
+                </div>`
+              ) || ''}
+            </div>
+          </div>
+        </div>
+        
+        `
       }
     
       ${this.hideServerSelection
