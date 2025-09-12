@@ -567,10 +567,11 @@ export default class OpenApiExplorer extends LitElement {
 
     // explorerLocation will get validated in the focused-endpoint-template
     this.explorerLocation = elementId;
-    const tag = this.resolvedSpec.tags.find(t => t.paths.some(p => p.elementId === elementId));
-    if (tag) {
-      tag.expanded = true;
+    const tagFoundByPath = this.resolvedSpec.tags.find(t => t.paths.some(p => p.elementId === elementId));
+    if (tagFoundByPath) {
+      tagFoundByPath.expanded = true;
     }
+
     // Convert to Async and to the background, so that we can be sure that the operation has been expanded and put into view before trying to directly scroll to it (or it won't be found in the next line and even if it is, it might not be able to be scrolled into view)
     await sleep(0);
 
@@ -619,7 +620,7 @@ export default class OpenApiExplorer extends LitElement {
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
-    } else if (!elementId.match('cmp--') && !elementId.match('tag--')) {
+    } else if (!elementId.match('cmp--') && !elementId.match('tag--') && !elementId.match(/--h[12]$/)) {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
 
       // Update Location Hash
