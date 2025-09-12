@@ -33,7 +33,7 @@ export default class ApiRequest extends LitElement {
     this.curlSyntax = '';
     this.activeResponseTab = 'curl'; // allowed values: response, headers, curl
     this.selectedRequestBodyType = '';
-    this.selectedRequestBodyExample = '';
+    this.selectedRequestBodyExampleId = '';
   }
 
   static get properties() {
@@ -68,8 +68,8 @@ export default class ApiRequest extends LitElement {
       // properties for internal tracking
       duplicatedRowsByKey: { type: Object }, // Tracking duplicated rows in form table
       activeResponseTab: { type: String }, // internal tracking of response-tab not exposed as a attribute
-      selectedRequestBodyType: { type: String, attribute: 'selected-request-body-type' }, // internal tracking of selected request-body type
-      selectedRequestBodyExample: { type: String, attribute: 'selected-request-body-example' }, // internal tracking of selected request-body example
+      selectedRequestBodyType: { type: String }, // internal tracking of selected request-body type
+      selectedRequestBodyExampleId: { type: String }, // internal tracking of selected request-body example
       curlSyntax: { type: String }
     };
   }
@@ -378,17 +378,17 @@ export default class ApiRequest extends LitElement {
 
   resetRequestBodySelection() {
     this.selectedRequestBodyType = '';
-    this.selectedRequestBodyExample = '';
+    this.selectedRequestBodyExampleId = '';
     this.computeCurlSyntax();
     this.clearResponseData();
   }
 
   // Request-Body Event Handlers
   onSelectExample(e) {
-    this.selectedRequestBodyExample = e.target.value;
+    this.selectedRequestBodyExampleId = e.target.value;
     const exampleDropdownEl = e.target;
     window.setTimeout((selectEl) => {
-      const exampleTextareaEl = selectEl.closest('.example-panel').querySelector(`.request-body-param[data-example="${this.selectedRequestBodyExample}"`);
+      const exampleTextareaEl = selectEl.closest('.example-panel').querySelector(`.request-body-param[data-example="${this.selectedRequestBodyExampleId}"`);
       const userInputExampleTextareaEl = selectEl.closest('.example-panel').querySelector('.request-body-param-user-input');
       userInputExampleTextareaEl.value = exampleTextareaEl.value;
       this.computeCurlSyntax();
@@ -398,7 +398,7 @@ export default class ApiRequest extends LitElement {
   onMimeTypeChange(e) {
     this.selectedRequestBodyType = e.target.value;
     const mimeDropdownEl = e.target;
-    this.selectedRequestBodyExample = '';
+    this.selectedRequestBodyExampleId = '';
     window.setTimeout((selectEl) => {
       const exampleTextareaEl = selectEl.closest('.request-body-container').querySelector('.request-body-param');
       if (exampleTextareaEl) {
@@ -471,18 +471,18 @@ export default class ApiRequest extends LitElement {
         true
       );
 
-      if (!this.selectedRequestBodyExample) {
-        this.selectedRequestBodyExample = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
+      if (!this.selectedRequestBodyExampleId) {
+        this.selectedRequestBodyExampleId = (reqBodyExamples.length > 0 ? reqBodyExamples[0].exampleId : '');
       }
 
-      const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExample) || reqBodyExamples[0];
+      const displayedBodyExample = reqBodyExamples.find(v => v.exampleId === this.selectedRequestBodyExampleId) || reqBodyExamples[0];
       reqBodyDefaultHtml = html`
         <div class = 'example-panel pad-top-8'>
           ${reqBodyExamples.length === 1
             ? ''
             : html`
               <select aria-label='request body example' style="min-width:100px; max-width:100%;  margin-bottom:-1px;" @change='${(e) => this.onSelectExample(e)}'>
-                ${reqBodyExamples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === this.selectedRequestBodyExample}> 
+                ${reqBodyExamples.map((v) => html`<option value="${v.exampleId}" ?selected=${v.exampleId === this.selectedRequestBodyExampleId}> 
                   ${v.exampleSummary.length > 80 ? v.exampleId : v.exampleSummary ? v.exampleSummary : v.exampleId} 
                 </option>`)}
               </select>`
@@ -566,11 +566,11 @@ export default class ApiRequest extends LitElement {
     }
 
     // When the content type and the element stay the same, then don't change the updated body.
-    if (this.cachedBodyData?.contentType === this.selectedRequestBodyType && this.elementId === this.cachedBodyData.elementId) {
+    if (this.cachedBodyData?.contentType === this.selectedRequestBodyType && this.elementId === this.cachedBodyData.elementId && this.selectedRequestBodyExampleId === this.cachedBodyData.exampleId) {
       reqBodyDefaultHtml = this.cachedBodyData.body;
     } else {
       // Otherwise use the recalculated body and cache that
-      this.cachedBodyData = { body: reqBodyDefaultHtml, contentType: this.selectedRequestBodyType, elementId: this.elementId };
+      this.cachedBodyData = { body: reqBodyDefaultHtml, contentType: this.selectedRequestBodyType, elementId: this.elementId, exampleId: this.selectedRequestBodyExampleId };
     }
 
     return html`
@@ -614,7 +614,7 @@ export default class ApiRequest extends LitElement {
   // }
 
   apiResponseTabTemplate() {
-    const curlSyntax = this.curlSyntax || this.computeCurlSyntax() || '';
+    const curlSyntax = this.curlSyntax || '';
     const hasResponse = this.responseMessage !== '';
     return html`
       <div class="row" style="font-size:var(--font-size-small); margin:5px 0">
