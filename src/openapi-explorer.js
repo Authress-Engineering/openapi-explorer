@@ -428,26 +428,6 @@ export default class OpenApiExplorer extends LitElement {
     }, isExpandingNeeded ? 150 : 0);
   }
 
-  isValidTopId(id) {
-    return (id.startsWith('overview') || id === 'servers' || id === 'auth');
-  }
-
-  isValidPathId(id) {
-    if (id === 'overview' && !this.hideInfo) {
-      return true;
-    }
-    if (id === 'servers' && !this.hideServerSelection) {
-      return true;
-    }
-    if (id === 'auth' && !this.hideAuthentication) {
-      return true;
-    }
-    if (id.startsWith('tag--')) {
-      return this.resolvedSpec.tags && this.resolvedSpec.tags.find((tag) => tag.elementId === id);
-    }
-    return this.resolvedSpec.tags && this.resolvedSpec.tags.find((tag) => tag.paths.find((path) => path.elementId === id));
-  }
-
   onIntersect(entries) {
     if (this.isIntersectionObserverActive === false) {
       return;
@@ -576,7 +556,14 @@ export default class OpenApiExplorer extends LitElement {
     await sleep(0);
 
     // In the case of section scrolling, these are hard swaps, so just load "section". In the case of `tags` the headers have the element html Id in the last `--id`, so split that off and check for it
-    const contentEl = this.shadowRoot.getElementById(elementId?.startsWith('section') ? 'section' : elementId) || this.shadowRoot.getElementById(elementId.split('--').slice(-1)[0]);
+    // NOTE: Really this whole nonsense is because Marked, inserts -- between the prefix and the type and we cannot control it at all. When upgrading to Node 20, marked 16+, we will have to change this and we might even be able to make it work correctly. The biggest problem is that both the separator `--` and invalid character replacement `-`, can stack up.
+    const contentEl = this.shadowRoot.getElementById(elementId?.startsWith('section') ? 'section' : elementId)
+      // Remove the prefix of the section as headers in sub sections are not prefixed with the type.
+      || elementId.split('--').length > 1 && this.shadowRoot.getElementById(elementId.split('--').slice(1).join('--'))
+      // Remove the prefix of the operation (tag--) and the tag name (tag--NAME--) from header, as headers in sub sections are not prefixed with the type.
+      || elementId.split('--').length > 2 && this.shadowRoot.getElementById(elementId.split('--').slice(2).join('--'))
+      || this.shadowRoot.getElementById(elementId.split('--').slice(-1)[0]);
+
     if (!contentEl) {
       return;
     }
@@ -620,14 +607,14 @@ export default class OpenApiExplorer extends LitElement {
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
-    } else if (!elementId.match('cmp--') && !elementId.match('tag--') && !elementId.match(/--h[12]$/)) {
-      this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
+    } else if (elementId.match('cmp--') || elementId.match('tag--') || elementId.match('overview--') || elementId.match('auth--') || elementId.match('servers--')) {
+      contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
 
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     } else {
-      contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+      this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
 
       // Update Location Hash
       replaceState(elementId);

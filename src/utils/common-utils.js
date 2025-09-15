@@ -14,7 +14,7 @@ export function debounce(fn, delay) {
   };
 }
 
-export const invalidCharsRegEx = new RegExp(/[\s#:?&={}]/, 'g'); // used for generating valid html element ids by replacing the invalid chars with hyphen (-)
+export const invalidCharsRegEx = new RegExp(/[\s#:?&={}-]+/, 'g'); // used for generating valid html element ids by replacing the invalid chars with hyphen (-)
 
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
