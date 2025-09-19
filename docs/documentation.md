@@ -247,7 +247,7 @@ The spec includes the ability to specify additional custom properties directly i
 The specification itself can have its locale set so that the OpenAPI Explorer can automatically render in the correct language. Set the `x-locale` option into the `info` property, and if the OpenApi Specification has been translated into that language it will be converted.
 ```json
 {
-    "openapi": "3.1.0",
+    "openapi": "3.2.0",
     "info": {
         "title": "Test API",
         "version": "1.0.0",
