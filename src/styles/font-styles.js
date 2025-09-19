@@ -46,6 +46,7 @@ export default css`
   .method-fg.head, .method-fg.get { color: var(--blue); }
   .method-fg.delete { color: var(--red); }
   .method-fg.query { color: var(--purple); }
+  .method-fg.trace { color: var(--purple); }
   .method-fg.options { color: var(--gray); }
   .method-fg.patch { color: var(--yellow); }
 

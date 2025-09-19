@@ -53,7 +53,6 @@ export default css`
   border-color:var(--red); 
   background-color: var(--light-red);
 }
-
 .m-endpoint > .endpoint-head.patch:hover,
 .m-endpoint > .endpoint-head.patch.expanded {
   border-color :var(--yellow); 
@@ -61,6 +60,11 @@ export default css`
 }
 .m-endpoint > .endpoint-head.query:hover,
 .m-endpoint > .endpoint-head.query.expanded {
+  border-color: var(--purple);
+  background-color: var(--light-purple);
+}
+.m-endpoint > .endpoint-head.trace:hover,
+.m-endpoint > .endpoint-head.trace.expanded {
   border-color: var(--purple);
   background-color: var(--light-purple);
 }
@@ -84,6 +88,7 @@ export default css`
 .m-endpoint .endpoint-body.get, .m-endpoint .endpoint-body.head { border-color:var(--blue); }
 .m-endpoint .endpoint-body.patch { border-color:var(--yellow); }
 .m-endpoint .endpoint-body.query { border-color: var(--purple); }
+.m-endpoint .endpoint-body.trace { border-color: var(--purple); }
 .m-endpoint .endpoint-body.options { border-color: var(--gray); }
 
 .summary{
@@ -117,6 +122,7 @@ export default css`
 .method.head, .method.get { border: 1px solid var(--blue); }
 .method.patch { border: 1px solid var(--yellow); }
 .method.query { border: 1px solid var(--purple); }
+.method.trace { border: 1px solid var(--purple); }
 .method.options { border: 1px solid var(--gray); }
 
 .req-resp-container{
@@ -155,6 +161,10 @@ export default css`
   border-top: 1px dashed var(--purple);
   border-color: var(--purple);
 }
+.trace .request { 
+  border-top: 1px dashed var(--purple);
+  border-color: var(--purple);
+}
 .options .request { 
   border-top: 1px dashed var(--gray);
   border-color: var(--gray);
@@ -167,6 +177,7 @@ export default css`
   border-top: 1px dashed var(--green);
   border-color:var(--green); 
 }
+
 .head .request,
 .get .request{ 
   border-top: 1px dashed var(--blue);
