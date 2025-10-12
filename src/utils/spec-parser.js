@@ -123,11 +123,11 @@ function getComponents(openApiSpec) {
 
   const components = [];
   for (const componentKeyId in openApiSpec.components) {
-    const subComponents = Object.keys(openApiSpec.components[componentKeyId]).map(sComponent => ({
+    const subComponents = Object.keys(openApiSpec.components[componentKeyId]).map(sComponentId => ({
       expanded: true,
-      id: `${componentKeyId.toLowerCase()}-${sComponent.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
-      name: sComponent,
-      component: openApiSpec.components[componentKeyId][sComponent],
+      id: `${componentKeyId.toLowerCase()}-${sComponentId.toLowerCase()}`.replace(invalidCharsRegEx, '-'),
+      name: openApiSpec.components[componentKeyId][sComponentId].title || sComponentId,
+      component: openApiSpec.components[componentKeyId][sComponentId],
     })).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
     if (componentKeyId === 'requestBodies' || componentKeyId === 'securitySchemes' || componentKeyId === 'securitySchemas') {

@@ -17,9 +17,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
 
   let dataType = IS_MISSING_TYPE_INFO_TYPE;
   let format = schema.format || schema.items?.format || '';
-  if (schema.circularReference) {
-    dataType = `{recursive: ${schema.circularReference.name}} `;
-  } else if (schema.type || schema.const) {
+  if (schema.type || schema.const) {
     if (!schema.type && schema.const) {
       schema.type = 'const';
     }
@@ -384,6 +382,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
 
     resultObj['::link'] = schema.title || '';
+    resultObj['::circular'] = !!schema.circularReference;
     resultObj['::type'] = schema.title || 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
@@ -423,6 +422,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     }
     if (complexTypes.length > 0) {
       obj['::link'] = schema.title || '';
+      obj['::circular'] = !!schema.circularReference;
       obj['::type'] = 'object';
       const multiTypeOptions = {
         '::type': 'xxx-of-option',
@@ -443,6 +443,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': schema.title || '',
+            '::circular': !!schema.circularReference,
             '::type': schema.title || 'object',
             '::deprecated': schema.deprecated || false,
             '::metadata': metadata
@@ -461,6 +462,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::description': schema.description || arrayItemsSchema?.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': arrayItemsSchema.title || schema.title || '',
+            '::circular': !!schema.circularReference,
             '::type': 'array',
             // Array properties are read from the ::props object instead of reading from the keys of this object
             '::props': schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema, { description: schema.description || arrayItemsSchema?.description }), options, (level + 1)),
@@ -475,12 +477,13 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     return obj;
   }
   
-  if (propertyType === 'object' || schemaProperties) {
+  if (propertyType === 'object' || schemaProperties || schema.circularReference) {
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::link'] = schema.title || '';
+    obj['::circular'] = !!schema.circularReference;
     obj['::type'] = schema.title || 'object';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
@@ -506,6 +509,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::description'] = schema.description || arrayItemsSchema?.description || '';
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::link'] = arrayItemsSchema?.title || schema.title || '';
+    obj['::circular'] = !!schema.circularReference;
     obj['::type'] = 'array';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;

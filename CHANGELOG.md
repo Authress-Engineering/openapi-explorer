@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semver, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 2.3
+* Schema types will now utilize the title property for displaying, rather than the type ID, when defined.
+
 ## 2.2
 * The `table` view is now the default as the `tree` view becomes deprecated. To display the `tree` view, use the `tree` attribute on the openapi-explorer html element.
 * Handle invalid JSON parsing in request bodies

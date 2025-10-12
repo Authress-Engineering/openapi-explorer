@@ -14,6 +14,7 @@ export default class SchemaTree extends LitElement {
       schemaExpandLevel: { type: Number, attribute: 'schema-expand-level' },
       schemaDescriptionExpanded: { type: Boolean },
       schemaHideReadOnly: { type: String, attribute: 'schema-hide-read-only' },
+      hideComponentTitle: { type: Boolean, attribute: 'hide-component-title' },
       schemaHideWriteOnly: { type: String, attribute: 'schema-hide-write-only' },
     };
   }
@@ -118,7 +119,7 @@ export default class SchemaTree extends LitElement {
   /* eslint-disable indent */
   render() {
     const title = this.data?.['::title'] || this.data?.['::type'] === 'array' && this.data?.['::props']?.['::title'] && `[${this.data?.['::props']?.['::title']}]`;
-    const displayLine = [title, this.data?.['::description']].filter(d => d).join(' - ');
+    const displayLine = [!this.hideComponentTitle && title, this.data?.['::description']].filter(d => d).join(' - ');
 
     return html`
       <div class="tree ${this.interactive ? 'interactive' : ''}">

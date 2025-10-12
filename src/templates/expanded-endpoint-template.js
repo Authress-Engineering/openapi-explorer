@@ -114,7 +114,7 @@ export function expandedTagTemplate(tagId, subsectionFullId) {
         <div class='nav-bar-path ${this.usePathInNavBar ? 'small-font' : ''}' role="link" tabindex="0"
           data-content-id='${p.elementId}' id='link-${p.elementId}' @click = '${(e) => { this.scrollToEventTarget(e, false); }}' @keydown = '${(e) => { if (e.key === 'Enter') { e.target.click(); }}}'>
           <span style="${p.deprecated ? 'filter:opacity(0.5)' : ''}">
-            ${this.usePathInNavBar
+          ${this.usePathInNavBar
               ? html`<div class='mono-font' style="display: flex; align-items: center;">
                   <div class="method ${p.method}"><span style="line-height: 1;">${p.method}</span></div> 
                   <div style="display: flex; flex-wrap: wrap;">${p.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>
