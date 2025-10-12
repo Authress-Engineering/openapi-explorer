@@ -3,6 +3,7 @@ This package follows standard semver, `<major>.<minor>.<build>`. No breaking cha
 
 ## 2.3
 * Schema types will now utilize the title property for displaying, rather than the type ID, when defined.
+* Increase font sizes by 1px to set a more accessible default display.
 
 ## 2.2
 * The `table` view is now the default as the `tree` view becomes deprecated. To display the `tree` view, use the `tree` attribute on the openapi-explorer html element.

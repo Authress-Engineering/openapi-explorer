@@ -105,9 +105,9 @@ export default function setTheme(theme = {}) {
     --layout: ${this.layout || 'column'};
     --nav-path-padding: 7px 0 7px 1.5rem;
     --resp-area-height: ${this.responseAreaHeight};
-    --font-size-small: 13px;
-    --font-size-mono:  13px;
-    --font-size-regular: 16px;
+    --font-size-small: 16px;
+    --font-size-mono:  15px;
+    --font-size-regular: 18px;
     --dialog-z-index: 1000;
 
     /* Theme specific styles */  

@@ -77,7 +77,7 @@ export default css`
   syntax-highlighter {
     margin: 0px;
     font-family: var(--font-mono);
-    font-size: calc(var(--font-size-mono) - 1px);
+    font-size: var(--font-size-mono);
   }
 
   .m-markdown syntax-highlighter {
@@ -142,7 +142,7 @@ export default css`
   }
 
   .m-markdown-small code, .m-markdown-small syntax-highlighter {
-    font-size: calc(var(--font-size-mono) - 1px);
+    font-size: var(--font-size-mono);
   }
 
   .m-markdown-small pre,
@@ -256,11 +256,11 @@ export default css`
   }
 
   .m-markdown-small table code {
-    font-size: calc(var(--font-size-mono) - 2px);
+    font-size: calc(var(--font-size-mono) - 1px);
   }
 
   .m-markdown table code {
-    font-size: calc(var(--font-size-mono) - 1px);
+    font-size: var(--font-size-mono);
   }
 
   .m-markdown blockquote,
