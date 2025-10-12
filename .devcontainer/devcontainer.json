@@ -1,0 +1,51 @@
+
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+{
+	"name": "Node.js",
+	// https://github.com/devcontainers/templates/tree/main/src/javascript-node
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:16-bookworm",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				// This is the key setting for VS Code to forward the host's SSH agent
+				"terminal.integrated.inheritEnv": true,
+				"dev.containers.copyGitConfig": true
+
+			},
+			"extensions": [
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	},
+
+	// Use 'portsAttributes' to set default properties for specific forwarded ports. 
+	// More info: https://containers.dev/implementors/json_reference/#port-attributes
+	"portsAttributes": {
+		"3000": {
+			"label": "site",
+			"onAutoForward": "openBrowser"
+		}
+	},
+
+	"mounts": [
+		// Is currently in string format because consistency option is not yet supported in object format
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached"
+	],	
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "yarn",
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+
+	// SSH/Git commit signing
+	"forwardPorts": [8080, 5432],
+	"forward-ssh-agent": true
+}
