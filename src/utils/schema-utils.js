@@ -383,7 +383,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
 
     resultObj['::link'] = schema.title || '';
     resultObj['::circular'] = !!schema.circularReference;
-    resultObj['::type'] = schema.title || 'object';
+    resultObj['::type'] = 'object';
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
     resultObj['::description'] = schema.description || '';
@@ -444,7 +444,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': schema.title || '',
             '::circular': !!schema.circularReference,
-            '::type': schema.title || 'object',
+            '::type': 'object',
             '::deprecated': schema.deprecated || false,
             '::metadata': metadata
           };
@@ -484,7 +484,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     obj['::flags'] = { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' };
     obj['::link'] = schema.title || '';
     obj['::circular'] = !!schema.circularReference;
-    obj['::type'] = schema.title || 'object';
+    obj['::type'] = 'object';
     obj['::deprecated'] = schema.deprecated || false;
     obj['::metadata'] = metadata;
     for (const key in schemaProperties) {

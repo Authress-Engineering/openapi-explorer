@@ -110,11 +110,11 @@ export default class SchemaTable extends LitElement {
         transform: rotate(-90deg);
       }
 
-      .tr.circular-object .obj-toggle {
+      .tr.object.circular-object .obj-toggle {
         display: none;
       }
 
-      .tr.object .key-label {
+      .tr.object:not(.circular-object) .key-label {
         margin-left: -6px
       }
       `,
@@ -135,11 +135,11 @@ export default class SchemaTable extends LitElement {
       }
       <style>
         .table .key {
-          width: ${Math.max(240, (keyLabelMaxCharacterLength || 0) * 8) + 16}px;
+          width: calc(var(--font-size-small) * ${Math.max(16, keyLabelMaxCharacterLength || 0)});
           max-width: Min(400px, 75%);
         }
         .table .key-type {
-          width: ${Math.max(150, (typeMaxCharacterLength || 0) * 8) + 16}px;
+          width: calc(var(--font-size-small) * ${Math.max(16, typeMaxCharacterLength || 0)});
           max-width: 25%;
         }
       </style>
@@ -235,7 +235,7 @@ export default class SchemaTable extends LitElement {
           });
       }
       
-      const displayLine = [title && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
+      const displayLine = [title && !data['::link'] && `**${title}${description ? ':' : ''}**`, description].filter(v => v).join(' ');
       const detailObjTypeDisplay = data['::circular'] ? `{ Recursive: ${detailObjType} }` : detailObjType;
       const outerResult = html`
         ${newSchemaLevel >= 0 && key
