@@ -1,6 +1,9 @@
 # Changelog #
 This package follows standard semver, `<major>.<minor>.<build>`. No breaking changes will be introduced to existing `<minor>` versions.
 
+## 2.4
+* Add support for [OpenAPI Spec 3.2](https://www.openapis.org/blog/2025/09/23/announcing-openapi-v3-2).
+
 ## 2.3
 * Schema types will now utilize the title property for displaying, rather than the type ID, when defined.
 * Increase font sizes by 1px to set a more accessible default display.

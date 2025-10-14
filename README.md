@@ -45,7 +45,7 @@ This is an open source project managed by the [Authress Engineering team](https:
 ```
 
 ## Features
-- OpenAPI 3.X
+- OpenAPI 3.2+
 - Built in automatic Internationalization (I18n)
 - Works with any framework
 - View resources, models, and directly make API calls

@@ -12,7 +12,8 @@
         "randombytes",
         "rapidoc",
         "redoc",
-        "sublicensees"
+        "sublicensees",
+        "toposort"
     ],
     "files.exclude": {
     }

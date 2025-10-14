@@ -3,6 +3,7 @@ import OpenApiResolver from 'openapi-resolver/dist/openapi-resolver.browser.js';
 import { marked } from 'marked';
 import { invalidCharsRegEx } from './common-utils.js';
 import cloneDeep from 'lodash.clonedeep';
+import toposort from 'toposort';
 
 export default async function ProcessSpec(specUrlOrObject, serverUrl = '') {
   const inputSpecIsAUrl = typeof specUrlOrObject === 'string' && specUrlOrObject.match(/^http/) || typeof specUrlOrObject === 'object' && typeof specUrlOrObject.href === 'string';
@@ -146,19 +147,27 @@ function getComponents(openApiSpec) {
 
 function groupByTags(openApiSpec) {
   const supportedMethods = ['get', 'query', 'put', 'post', 'patch', 'delete', 'head', 'options']; // this is also used for ordering endpoints by methods
-  const tags = openApiSpec.tags && Array.isArray(openApiSpec.tags)
-    ? openApiSpec.tags.map((t) => {
+  const rawTags = openApiSpec.tags && Array.isArray(openApiSpec.tags) ? openApiSpec.tags : [];
+  const unsortedTags = rawTags
+    // Only support nav tags in grouping, because these tags will be used for navigation.
+    .filter(t => !t.kind || t.kind === 'nav')
+    .map((t) => {
       const name = typeof t === 'string' ? t : t.name;
       return {
         elementId: `tag--${name.replace(invalidCharsRegEx, '-')}`,
         name: name,
+        summary: t.summary,
         description: t.description || '',
         headers: t.description ? getHeadersFromMarkdown(t.description) : [],
         paths: [],
         expanded: true
       };
-    })
-    : [];
+    });
+
+  const tagMap = unsortedTags.reduce((acc, t) => ({ ...acc, [t.name]: t }), {});
+
+  const tagDependencies = rawTags.map(t => t.parent && [t.parent, t.name] || [t.name, 'null']);
+  const tags = toposort(tagDependencies).map(tagName => tagMap[tagName]).filter(t => t);
 
   const pathsAndWebhooks = openApiSpec.paths || {};
   if (openApiSpec.webhooks) {

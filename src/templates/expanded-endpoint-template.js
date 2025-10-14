@@ -14,11 +14,14 @@ export function expandedEndpointBodyTemplate(path, tag) {
   const nonEmptyApiKeys = this.resolvedSpec.securitySchemes.filter((v) => (v.finalKeyValue && path.security && path.security.some((ps) => ps[v.apiKeyId]))) || [];
 
   const codeSampleTabPanel = path.xCodeSamples ? codeSamplesTemplate.call(this, path.xCodeSamples) : '';
+
+  const tagSummary = tag?.summary ? html`<small style="font-weight: 400">- ${tag?.summary}</small>` : '';
   return html`
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
       ${(this.renderStyle === 'focused' && tag && tag.name !== 'General ⦂')
-        ? html`<div class="title tag-link" role="heading" aria-level="1" data-content-id="${tag.elementId}" @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} </div>`
+        ? html`<h1 style="display: inline; align-self: center" class="title tag-link" role="heading" aria-level="1" data-content-id="${tag.elementId}"
+          @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} ${tagSummary}</h1>`
         : ''}
       <slot name="${tag.elementId}"></slot>
 
@@ -91,9 +94,11 @@ export function expandedEndpointBodyTemplate(path, tag) {
 export function expandedTagTemplate(tagId, subsectionFullId) {
   const tag = (this.resolvedSpec.tags || []).find(t => t.elementId === tagId);
   const subsectionId = subsectionFullId.replace(`${tagId}--`, '');
+  const tagSummary = tag.summary ? html`<h2 style="font-weight: 400">${tag.summary}</h2>` : '';
   return html`
     <section id="${tag.elementId}" part="section-tag" class="regular-font section-gap--read-mode observe-me" style="">
-      <div class="title tag" part="label-tag-title" role="heading" aria-level="1">${tag.name}</div>
+      <h1 class="title tag" part="label-tag-title" role="heading" aria-level="1">${tag.name}</h1>
+      ${tagSummary}
       <slot name="${tag.elementId}--subsection--${subsectionId}">
         <div class="regular-font-size">
         ${
