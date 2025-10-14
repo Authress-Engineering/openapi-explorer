@@ -27,7 +27,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         registry-url: 'https://registry.npmjs.org'
 
     - name: Install packages
@@ -40,9 +40,9 @@ jobs:
       run: yarn lint
     - name: Deploy to NPM
       if: github.repository_owner == 'Authress-Engineering' && github.ref != 'refs/heads/main' && github.event_name == 'push'
-      run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      run: |
+        npm install -g npm@latest
+        npm publish
 
     - name: After build
       if: github.repository_owner == 'Authress-Engineering' && github.ref != 'refs/heads/main' && github.event_name == 'push'
