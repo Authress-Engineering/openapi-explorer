@@ -149,7 +149,10 @@ export function replaceState(rawElementId) {
   const query = new URLSearchParams(currentQuery);
   query.delete('route');
   const newQuery = query.toString().length > 1 ? `${query.toString()}&route=${elementId}` : `route=${elementId}`;
-  window.history.pushState(null, null, `#${currentNavigationHashPart}?${newQuery}`);
+
+  const fragment = `#${currentNavigationHashPart}?${newQuery}`;
+  const url = new URL(fragment, window.location.href);
+  window.history.pushState(null, null, url.href);
 }
 
 export function toMarkdown(markdownStringRaw) {
