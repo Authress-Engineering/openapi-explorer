@@ -151,8 +151,11 @@ export function replaceState(rawElementId) {
   const newQuery = query.toString().length > 1 ? `${query.toString()}&route=${elementId}` : `route=${elementId}`;
 
   const fragment = `#${currentNavigationHashPart}?${newQuery}`;
-  const url = new URL(fragment, window.location.href);
-  window.history.pushState(null, null, url.href);
+  const currentHref = window.location.href;
+  const url = new URL(fragment, currentHref);
+  if (url.href !== currentHref) {
+    window.history.pushState(null, null, url.href);
+  }
 }
 
 export function toMarkdown(markdownStringRaw) {
