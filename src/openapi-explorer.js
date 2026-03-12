@@ -155,7 +155,8 @@ export default class OpenApiExplorer extends LitElement {
       // Internal Properties
       loading: { type: Boolean }, // indicates spec is being loaded
       showAdvancedSearchDialog: { type: Boolean },
-      advancedSearchMatches: { type: Object }
+      advancedSearchMatches: { type: Object },
+      loadTimeout: { type: Number, attribute: 'load-timeout' }
     };
   }
 
@@ -218,6 +219,7 @@ export default class OpenApiExplorer extends LitElement {
     if (!this.fetchCredentials || !'omit, same-origin, include,'.includes(`${this.fetchCredentials},`)) { this.fetchCredentials = ''; }
 
     if (!this.showAdvancedSearchDialog) { this.showAdvancedSearchDialog = false; }
+    if (!this.loadTimeout) { this.loadTimeout = 5000; }
 
     window.addEventListener('hashchange', () => {
       this.scrollTo(getCurrentElement());
@@ -328,7 +330,13 @@ export default class OpenApiExplorer extends LitElement {
       this.resolvedSpec = null;
       this.loading = true;
       this.loadingFailedError = null;
-      const spec = await ProcessSpec(specUrlOrObject, this.serverUrl);
+      const specPromise = ProcessSpec(specUrlOrObject, this.serverUrl);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(
+          `Loading the spec timed out after ${this.loadTimeout / 1000} seconds`
+        )), this.loadTimeout)
+      );
+      const spec = await Promise.race([specPromise, timeoutPromise]);
       this.loading = false;
       if (spec === undefined || spec === null) {
         console.error('Unable to resolve the API spec. '); // eslint-disable-line no-console
