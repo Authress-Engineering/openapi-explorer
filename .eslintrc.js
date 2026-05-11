@@ -1,0 +1,54 @@
+const isProduction = process.env.NODE_ENV === 'production';
+
+module.exports = {
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    sourceType: 'module',
+    allowImportExportEverywhere: false,
+    ecmaVersion: 2020,
+    babelOptions: {
+      configFile: './babel.config.json'
+    }
+  },
+  settings: {
+    'import/resolver': {
+      webpack: {
+        config: 'webpack.config.js'
+      }
+    }
+  },
+  env: {
+    es6: true,
+    browser: true,
+    node: true
+  },
+  globals: {
+    AWS: false,
+    bootbox: false,
+    globalThis: true
+  },
+  plugins: [
+    'vue',
+    'mocha',
+    'promise'
+  ],
+  extends: [
+    'cimpress-atsquad'
+  ],
+  rules: {
+    'arrow-parens': 'off',
+    'curly': ['error', 'all'],
+    'indent': ['error', 2, { SwitchCase: 1, MemberExpression: 'off' }],
+    'max-len': ['error', { code: 200, tabWidth: 2, ignoreStrings: true, ignoreUrls: true, ignoreTemplateLiterals: true, ignoreComments: true, ignoreTrailingComments: true }],
+    'node/no-unsupported-features': ['off'],
+    'no-console': isProduction ? 'error' : 'warn',
+    'prefer-const': ['error'],
+    'node/no-unsupported-features/es-syntax': ['off'],
+    'node/no-unpublished-import': ['off'],
+    'node/no-missing-import': ['error', {
+      tryExtensions: ['.js', '.json', '.vue', '.css']
+    }],
+    'max-depth': 'off',
+    'comma-dangle': 'off'
+  }
+};

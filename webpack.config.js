@@ -86,7 +86,7 @@ export default {
           // failOnWarning: true,
           // failOnError: true,
           fix: false,
-          configFile: './.eslintrc',
+          configFile: './.eslintrc.js',
           outputReport: {
             filePath: './eslint_report.html',
             formatter: 'html',
