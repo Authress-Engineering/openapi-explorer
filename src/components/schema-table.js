@@ -117,6 +117,11 @@ export default class SchemaTable extends LitElement {
       .tr.object:not(.circular-object) .key-label {
         margin-left: -6px
       }
+      
+      /* Fix alignment with above for non-object keys */
+      .tr .xxx-of-key {
+        margin-left: 4px;
+      }
       `,
     ];
   }

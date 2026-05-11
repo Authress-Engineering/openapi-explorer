@@ -69,6 +69,10 @@ export default {
   devServer: {
     port: 8080,
     hot: true,
+    static: {
+      directory: path.join(__dirname, 'mocks'),
+      publicPath: '/mocks',
+    },
   },
   module: {
     rules: [

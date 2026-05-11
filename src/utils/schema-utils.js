@@ -455,6 +455,10 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
               objTypeOption[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
             }
           }
+
+          if (schema.additionalProperties) {
+            objTypeOption['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
+          }
           multiTypeOptions[`::OPTION~${i + 1}`] = objTypeOption;
         } else if (v === 'array') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
