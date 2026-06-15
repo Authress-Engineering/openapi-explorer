@@ -176,7 +176,7 @@ export function getSanitizedUrl(urlString) {
   try {
     // eslint-disable-next-line no-new
     const url = new URL(urlString);
-    return url.protocol === 'http' || url.protocol === 'https' ? url : '';
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url : '';
   } catch (error) {
     return '';
   }
