@@ -50,17 +50,17 @@ export default function navbarTemplate() {
     <slot name="nav-header"></slot>
     ${this.hideSearch ? ''
       : html`
-        <div style="display:flex; flex-direction:row; justify-content:center; align-items:center; padding:24px;">
-          <div style="display:flex; flex:1; line-height:22px;">
+        <div style="display:flex; flex-direction:column; padding:24px;">
+          <div style="display:flex; flex:1; align-items: center; flex-wrap: wrap; column-gap: 1ch; line-height: 22px;">
+            <label for="nav-bar-search" style="color:var(--fg);">${getI18nText('menu.filter')}</label>
             <input id="nav-bar-search" 
               part = "textbox textbox-nav-filter"
-              style = "width:100%; padding-right:20px; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
+              style = "flex: 1 0 auto; color:var(--nav-hover-text-color); border-color:var(--secondary-color); background-color:var(--nav-hover-bg-color)" 
               type = "text"
-              placeholder = "${getI18nText('menu.filter')}"
               @input = "${this.onSearchChange}"  
               spellcheck = "false">
           </div>
-          <button class="m-btn outline-primary" part="btn btn-fill btn-search" style="margin-left:5px;" @click="${this.onShowSearchModalClicked}">
+          <button class="m-btn outline-primary" part="btn btn-fill btn-search" @click="${this.onShowSearchModalClicked}" style="margin-left: auto; margin-top: 6px" aria-haspopup="true" aria-expanded="false" id="nav-advanced-search">
             ${getI18nText('menu.search')}
           </button>
         </div>
@@ -108,7 +108,7 @@ export default function navbarTemplate() {
 
       <slot name="nav-section" class="custom-nav-section" data-content-id='section' @click = '${(e) => this.scrollToCustomNavSectionTarget(e, false)}'></slot>
 
-      <div class="sticky-scroll-element ${this.operationsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAll.call(this); }}">
+      <div class="sticky-scroll-element ${this.operationsCollapsed ? 'collapsed' : ''}" @click="${() => { expandCollapseAll.call(this); }}" role="button" tabindex="0" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}" aria-expanded="${!this.operationsCollapsed}" aria-controls="${this.resolvedSpec.tags.filter((tag) => !tag.paths.length && !this.matchPaths || tag.paths.some((path) => pathIsInSearch(this.matchPaths, path))).map((tag) => `nav-section-${tag.elementId}`).join(' ')}"">
         <div class='nav-bar-section' part="navbar-section-header navbar-operations-header">
           <slot name="operations-header">
             <div class='nav-bar-section-title'>${getI18nText('menu.operations')}</div>  
@@ -116,7 +116,7 @@ export default function navbarTemplate() {
           <div style="" part="navbar-operations-header-collapse">
             ${this.resolvedSpec.tags.length > 1 && this.resolvedSpec.tags.some((tag) => !tag.paths.length && !this.matchPaths || tag.paths.some((path) => pathIsInSearch(this.matchPaths, path)))
               ? html`
-                <div class="toggle">▾</div>`
+                <div class="toggle" aria-hidden="true">▾</div>`
               : ''
             }  
           </div>
@@ -133,19 +133,20 @@ export default function navbarTemplate() {
                 ? html``
                 : html`
                   <div class='nav-bar-tag' id="link-${tag.elementId}" data-content-id='${tag.elementId}' role="link" tabindex="0"
+                    aria-expanded="${tag.expanded}"
                     @click='${e => { onExpandCollapseTag.call(this, e, tag.elementId); }}'
                     @keydown='${(e) => { if (e.key === 'Enter') { e.target.click(); }}}'
                     >
 
                     <div style="display: flex; justify-content: space-between; width: 100%;">
                       <div style="margin-right: .5rem">${tag.name}</div>
-                      <div class="toggle">▾</div>
+                      <div class="toggle" aria-hidden="true">▾</div>
                     </div>
                   </div>
                 `
               }
 
-              <div class="nav-bar-section-wrapper">
+              <div class="nav-bar-section-wrapper" id="nav-section-${tag.elementId}" style="display: ${tag.expanded ? 'block' : 'none'}">
                 <div>
                   ${tag.headers.map((header) => html`
                     <div 
@@ -157,7 +158,7 @@ export default function navbarTemplate() {
                     </div>`
                   )}
                 </div>
-                <div class='nav-bar-paths-under-tag'>
+                <div class="nav-bar-paths-under-tag">
                   <!-- Paths in each tag (endpoints) -->
                   ${tag.paths.filter((v) => pathIsInSearch(this.matchPaths, v)).map((p) => html`
                   <div class='nav-bar-path ${this.usePathInNavBar ? 'small-font' : ''}'
@@ -203,6 +204,8 @@ export default function navbarTemplate() {
                     expandCollapseComponent.call(this, component);
                     this.scrollToEventTarget(e, false);
                   }}"
+                  aria-controls="nav-section-cmp--${componentInfo.name.toLowerCase()}"
+                  aria-expanded="${component.expanded}"
                   @keydown="${(e) => {
                     if (e.key === 'Enter') {
                       e.target.click();
@@ -213,14 +216,14 @@ export default function navbarTemplate() {
                   </div>
 
                   <div style="" part="navbar-components-header-collapse">
-                    <div class="toggle">▾</div>
+                    <div class="toggle" aria-hidden="true">▾</div>
                   </div>
                 </div>
 
-                <div class="nav-bar-section-wrapper">
+                <div class="nav-bar-section-wrapper" id="nav-section-cmp--${componentInfo.name.toLowerCase()}" style="display: ${component.expanded ? 'block' : 'none'}">
                   <div class="nav-bar-paths-under-tag">
                     ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
-                      <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                      <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}' role="link" tabindex="0" @keydown = '${(e) => { if (e.key === 'Enter') { e.target.click(); }}}'>
                         <span> ${p.name} </span>
                       </div>`
                     )}

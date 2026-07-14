@@ -20,8 +20,8 @@ export function expandedEndpointBodyTemplate(path, tag) {
     ${this.renderStyle === 'read' ? html`<div class='divider' part="operation-divider"></div>` : ''}
     <div class='expanded-endpoint-body observe-me ${path.method}' part="section-operation ${path.elementId}" id='${path.elementId}'>
       ${(this.renderStyle === 'focused' && tag && tag.name !== 'General ⦂')
-        ? html`<h1 style="display: inline; align-self: center" class="title tag-link" role="heading" aria-level="1" data-content-id="${tag.elementId}"
-          @click="${(e) => this.scrollToEventTarget(e, false)}"> ${tag?.name} ${tagSummary}</h1>`
+        ? html`<h1 style="display: inline; align-self: center" class="title" data-content-id="${tag.elementId}"
+          ><span class="tag-link" role="link" tabindex="0" @click="${(e) => this.scrollToEventTarget(e, false)}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}"> ${tag?.name} ${tagSummary}</span></h1>`
         : ''}
       <slot name="${tag.elementId}"></slot>
 

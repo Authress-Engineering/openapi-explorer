@@ -43,16 +43,18 @@ export function expandCollapseComponent(component) {
 /* eslint-disable indent */
 function endpointHeadTemplate(path) {
   return html`
-  <summary @click="${(e) => { toggleExpand.call(this, path, e); }}" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}'>
-    <div class="method ${path.method}" role="heading" aria-level="3"><span style="line-height: 1;">${path.method}</span></div> 
-    <div style="${path.deprecated ? 'text-decoration: line-through;' : ''}">
-      ${this.usePathInNavBar
-        ? html`<div class="path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>`
-        : html`<div class="">${path.summary || path.shortSummary}</div>`
-      }
-      ${path.isWebhook ? html`<span style="color:var(--primary-color)"> (${getI18nText('operations.webhook')}) </span>` : ''}
+  <div role="heading" aria-level="3">
+    <div role="button" tabindex="0" class='endpoint-head ${path.method} ${path.expanded ? 'expanded' : 'collapsed'}' @click="${(e) => { toggleExpand.call(this, path, e); }}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}" aria-controls="${path.elementId}" aria-expanded="${path.expanded}">
+      <div class="method ${path.method}" role="img" aria-label="${path.method}"><span style="line-height: 1;" aria-hidden="true">${path.method}</span></div> 
+      <div style="${path.deprecated ? 'text-decoration: line-through;' : ''}">
+        ${this.usePathInNavBar
+          ? html`<div class="path">${path.path.split('/').filter(t => t.trim()).map(t => html`<span>/${t}</span>`)}</div>`
+          : html`<div class="">${path.summary || path.shortSummary}</div>`
+        }
+        ${path.isWebhook ? html`<span style="color:var(--primary-color)"> (${getI18nText('operations.webhook')}) </span>` : ''}
+      </div>
     </div>
-  </summary>
+  </div>
   `;
 }
 
@@ -125,9 +127,9 @@ function endpointBodyTemplate(path) {
 export default function endpointTemplate() {
   return html`
     <div style="display:flex; justify-content:flex-end; padding-right: 1rem; font-size: 14px; margin-top: 16px;"> 
-      <span @click="${(e) => expandCollapseAll.call(this, e, true)}" style="color:var(--primary-color); cursor: pointer;">Expand</span> 
+      <span @click="${(e) => expandCollapseAll.call(this, e, true)}" style="color:var(--primary-color); cursor: pointer;" role="button" tabindex="0" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">Expand</span> 
       &nbsp;|&nbsp; 
-      <span @click="${(e) => expandCollapseAll.call(this, e, false)}" style="color:var(--primary-color); cursor: pointer;">Collapse</span>
+      <span @click="${(e) => expandCollapseAll.call(this, e, false)}" style="color:var(--primary-color); cursor: pointer;" role="button" tabindex="0" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">Collapse</span>
     </div>
     ${(this.resolvedSpec && this.resolvedSpec.tags || []).map((tag) => html`
     <div class='regular-font method-section-gap section-tag ${tag.expanded ? 'expanded' : 'collapsed'}'> 

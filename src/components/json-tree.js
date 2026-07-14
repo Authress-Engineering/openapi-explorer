@@ -75,10 +75,12 @@ export default class JsonTree extends LitElement {
         animation-duration: 0s !important;
       }
       .open-bracket:not(.collapsed) + .inside-bracket-wrapper {
+        visibility: visible;
         animation: linear 0.2s expand-height;
       }
       .open-bracket.collapsed + .inside-bracket-wrapper {
         animation: linear 0.2s collapse-height;
+        visibility: hidden;
         max-height: 0;
       }
       .inside-bracket {
@@ -149,12 +151,12 @@ export default class JsonTree extends LitElement {
   render() {
     return html`
       <div class="json-tree tree ${this.interactive ? 'interactive' : ''}">
-        ${this.generateTree(this.data, true)}
+        ${this.generateTree(this.data, 'root', true)}
       </div>  
     `;
   }
 
-  generateTree(data, isLast = false) {
+  generateTree(data, id, isLast = false) {
     if (data === null) {
       return html`<div class="null" style="display:inline;">null</div>`;
     }
@@ -164,13 +166,13 @@ export default class JsonTree extends LitElement {
         return html`${(Array.isArray(data) ? '[ ],' : '{ },')}`;
       }
       return html`
-      <div class="open-bracket ${detailType === 'array' ? 'array' : 'object'} " @click="${this.toggleExpand}" > ${detailType === 'array' ? '[' : '{'}</div>
-      <div class="inside-bracket-wrapper">
+      <div aria-label="JSON ${detailType.replace('pure_', '')}" class="open-bracket ${detailType === 'array' ? 'array' : 'object'} " @click="${this.toggleExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}"> ${detailType === 'array' ? '[' : '{'}</div>
+      <div class="inside-bracket-wrapper" id="${id}">
         <div class="inside-bracket">
           ${Object.keys(data).map((key, i, a) => html`
             <div class="item"> 
               ${detailType === 'pure_object' ? html`"${key}":` : ''}
-              ${this.generateTree(data[key], i === (a.length - 1))}
+              ${this.generateTree(data[key], `${id}${key}${i}`, i === (a.length - 1))}
             </div>`)
           }
         </div>
@@ -188,6 +190,7 @@ export default class JsonTree extends LitElement {
   toggleExpand(e) {
     const openBracketEl = e.target;
     openBracketEl.classList.toggle('collapsed');
+    openBracketEl.setAttribute('aria-expanded', !openBracketEl.classList.contains('collapsed'));
     if (openBracketEl.classList.contains('collapsed')) {
       e.target.innerHTML = e.target.classList.contains('array') ? '[...]' : '{...}';
     } else {

@@ -12,6 +12,7 @@ export default function searchByPropertiesModalTemplate() {
     // Trigger the event to force it to be removed from the DOM
     document.dispatchEvent(new CustomEvent('keydown', { detail: { code: 'Escape' } }));
     document.removeEventListener('keydown', keyDownEventListenerAdvancedSearch, { once: true });
+    this.shadowRoot.getElementById('nav-advanced-search').setAttribute('aria-expanded', false);
   };
 
   document.addEventListener('keydown', keyDownEventListenerAdvancedSearch, { once: true });
@@ -20,10 +21,10 @@ export default function searchByPropertiesModalTemplate() {
   ${this.showAdvancedSearchDialog
     ? html`
       <div class="dialog-box-overlay">
-        <div class="dialog-box">
+        <div class="dialog-box" aria-modal="true" role="dialog" aria-labelledby="dialog-title">
           <header class="dialog-box-header">
-            <span class="dialog-box-title">Advanced Search</span>
-            <button class="m-btn thin-border" @click="${() => { closeAdvancedSearchDialog(); }}" part="btn btn-outline">&times;</button>
+            <span class="dialog-box-title" id="dialog-title">Advanced Search</span>
+            <button class="m-btn thin-border" @click="${() => { closeAdvancedSearchDialog(); }}" part="btn btn-outline" aria-label="Close">&times;</button>
           </header>
           <div id="advanced-search-modal" class="dialog-box-content">
             <span class="advanced-search-options">

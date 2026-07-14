@@ -21,7 +21,7 @@ export default css`
 }
 
 .m-endpoint.expanded{margin-bottom:16px; }
-.m-endpoint > .endpoint-head{
+.m-endpoint .endpoint-head{
   border-width:1px 1px 1px 5px;
   border-style:solid;
   border-color:transparent;
@@ -31,45 +31,45 @@ export default css`
   align-items: center;
   cursor: pointer;
 }
-.m-endpoint > .endpoint-head.put:hover,
-.m-endpoint > .endpoint-head.put.expanded{
+.m-endpoint .endpoint-head.put:hover,
+.m-endpoint .endpoint-head.put.expanded{
   border-color: var(--orange); 
   background-color: var(--light-orange);
 }
-.m-endpoint > .endpoint-head.post:hover,
-.m-endpoint > .endpoint-head.post.expanded {
+.m-endpoint .endpoint-head.post:hover,
+.m-endpoint .endpoint-head.post.expanded {
   border-color:var(--green); 
   background-color: var(--light-green);
 }
-.m-endpoint > .endpoint-head.get:hover,
-.m-endpoint > .endpoint-head.get.expanded,
-.m-endpoint > .endpoint-head.head:hover,
-.m-endpoint > .endpoint-head.head.expanded {
+.m-endpoint .endpoint-head.get:hover,
+.m-endpoint .endpoint-head.get.expanded,
+.m-endpoint .endpoint-head.head:hover,
+.m-endpoint .endpoint-head.head.expanded {
   border-color:var(--blue); 
   background-color: var(--light-blue);
 }
-.m-endpoint > .endpoint-head.delete:hover,
-.m-endpoint > .endpoint-head.delete.expanded {
+.m-endpoint .endpoint-head.delete:hover,
+.m-endpoint .endpoint-head.delete.expanded {
   border-color:var(--red); 
   background-color: var(--light-red);
 }
-.m-endpoint > .endpoint-head.patch:hover,
-.m-endpoint > .endpoint-head.patch.expanded {
+.m-endpoint .endpoint-head.patch:hover,
+.m-endpoint .endpoint-head.patch.expanded {
   border-color :var(--yellow); 
   background-color: var(--light-yellow);
 }
-.m-endpoint > .endpoint-head.query:hover,
-.m-endpoint > .endpoint-head.query.expanded {
+.m-endpoint .endpoint-head.query:hover,
+.m-endpoint .endpoint-head.query.expanded {
   border-color: var(--purple);
   background-color: var(--light-purple);
 }
-.m-endpoint > .endpoint-head.trace:hover,
-.m-endpoint > .endpoint-head.trace.expanded {
+.m-endpoint .endpoint-head.trace:hover,
+.m-endpoint .endpoint-head.trace.expanded {
   border-color: var(--purple);
   background-color: var(--light-purple);
 }
-.m-endpoint > .endpoint-head.options:hover,
-.m-endpoint > .endpoint-head.options.expanded {
+.m-endpoint .endpoint-head.options:hover,
+.m-endpoint .endpoint-head.options.expanded {
   border-color: var(--gray);
   background-color: var(--light-gray);
 }

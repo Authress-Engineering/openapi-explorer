@@ -311,6 +311,7 @@ export default class OpenApiExplorer extends LitElement {
   async onShowSearchModalClicked() {
     this.showAdvancedSearchDialog = true;
     // wait for the dialog to render
+    this.shadowRoot.getElementById('nav-advanced-search').setAttribute('aria-expanded', true);
     await sleep(10);
     const inputEl = this.shadowRoot.getElementById('advanced-search-dialog-input');
     if (inputEl) {
@@ -423,6 +424,7 @@ export default class OpenApiExplorer extends LitElement {
       const gotoEl = this.shadowRoot.getElementById(tmpElementId);
       if (gotoEl) {
         gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+        gotoEl.focus();
         replaceState(tmpElementId);
       }
     }, isExpandingNeeded ? 150 : 0);
@@ -459,6 +461,7 @@ export default class OpenApiExplorer extends LitElement {
         const gotoEl = this.shadowRoot.getElementById(anchor.replace('#', ''));
         if (gotoEl) {
           gotoEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+          gotoEl.focus();
         }
       }
     }
@@ -603,19 +606,21 @@ export default class OpenApiExplorer extends LitElement {
         component.expanded = true;
       }
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+      contentEl.focus();
 
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     } else if (elementId.match('cmp--') || elementId.match('tag--') || elementId.match('overview--') || elementId.match('auth--') || elementId.match('servers--')) {
       contentEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+      contentEl.focus();
 
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
     } else {
       this.shadowRoot.getElementById('operations-root').scrollIntoView({ behavior: 'auto', block: 'start' });
-
+      this.shadowRoot.getElementById('operations-root').focus();
       // Update Location Hash
       replaceState(elementId);
       newNavEl = this.shadowRoot.getElementById(`link-${elementId}`);
@@ -642,6 +647,7 @@ export default class OpenApiExplorer extends LitElement {
       if (waitForComponentToExpand) {
         setTimeout(() => newNavEl.scrollIntoView({ behavior: 'auto', block: 'center' }), 600);
       }
+      newNavEl.focus();
     }
 
     await sleep(0);

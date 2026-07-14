@@ -99,10 +99,12 @@ export default class SchemaTree extends LitElement {
         animation-duration: 0s !important;
       }
       .tr:not(.collapsed) + .inside-bracket-wrapper {
+        visibility: visible;
         animation: linear 0.2s expand-height;
       }
       .tr.collapsed + .inside-bracket-wrapper {
         animation: linear 0.2s collapse-height;
+        visibility: hidden;
         max-height: 0;
       }
 
@@ -147,6 +149,7 @@ export default class SchemaTree extends LitElement {
   }
 
   generateTree(data, dataType = 'object', arrayType = '', flags = {}, key = '', title = '', description = '', schemaLevel = 0, indentLevel = 0) {
+    const id = `row-${key}${schemaLevel}${indentLevel}`;
     if (!data) {
       return html`<div class="null" style="display:inline;">
         <span class="key-label xxx-of-key"> ${key.replace('::OPTION~', '')}</span>
@@ -189,43 +192,43 @@ export default class SchemaTree extends LitElement {
         if (dataType === 'array') {
           const arrType = arrayType !== 'object' ? arrayType : '';
           if (schemaLevel < this.schemaExpandLevel && !data['::circular']) {
-            return [html`<span class="open-bracket array-of-array" data-array-type="${arrType}" @click="${this.toggleObjectExpand}">[[ ${arrType} </span>`, ']]'];
+            return [html`<span class="open-bracket array-of-array" data-array-type="${arrType}" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[[ ${arrType} </span>`, ']]'];
           }
 
-          return [html`<span class="open-bracket array-of-array"  data-array-type="${arrType}" @click="${this.toggleObjectExpand}">[[...]]</span>`];
+          return [html`<span class="open-bracket array-of-array"  data-array-type="${arrType}" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[[...]]</span>`];
         }
 
         if (schemaLevel < this.schemaExpandLevel && !data['::circular']) {
-          return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[</span>`, ']'];
+          return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[</span>`, ']'];
         }
 
-        return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[...]</span>`];
+        return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[...]</span>`];
       }
       
       if (data['::type'] === 'xxx-of-option') {
         if (dataType === 'array') {
           if (schemaLevel < this.schemaExpandLevel && !data['::circular']) {
-            return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[</span>`, ']'];
+            return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[</span>`, ']'];
           }
 
-          return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}">[...]</span>`];
+          return [html`<span class="open-bracket array" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[...]</span>`];
         }
       }
       
       if (data['::type']) {
         if (dataType === 'array') {
           if (schemaLevel < this.schemaExpandLevel && !data['::circular']) {
-            return [html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{</span>`, '}]'];
+            return [html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[{</span>`, '}]'];
           }
           
-          return [html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}">[{...}]</span>`];
+          return [html`<span class="open-bracket array-of-object" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">[{...}]</span>`];
         }
 
         if (schemaLevel < this.schemaExpandLevel && !data['::circular']) {
-          return [html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{</span>`, '}'];
+          return [html`<span class="open-bracket object" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">{</span>`, '}'];
         }
 
-        return [html`<span class="open-bracket object" @click="${this.toggleObjectExpand}">{...}</span>`];
+        return [html`<span class="open-bracket object" @click="${this.toggleObjectExpand}" role="button" tabindex="0" aria-expanded="true" aria-controls="${id}" @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">{...}</span>`];
       }
 
       return [''];
@@ -263,7 +266,7 @@ export default class SchemaTree extends LitElement {
               ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
           </div>
         </div>
-        <div class="inside-bracket-wrapper">
+        <div class="inside-bracket-wrapper" id="${id}">
           <div class='inside-bracket ${data['::type'] || 'no-type-info'}' style='padding-left:${data['::type'] === 'xxx-of-option' ? 0 : leftPadding}px;'>
             ${Array.isArray(data) && data[0] ? html`${this.generateTree(data[0], 'xxx-of-option', '', data[0]['::flags'] || {}, '::ARRAY~OF', data[0]['::title'], data[0]['::description'], newSchemaLevel, newIndentLevel)}`
               : html`
@@ -326,6 +329,7 @@ export default class SchemaTree extends LitElement {
     const rowEl = e.target.closest('.tr');
 
     rowEl.classList.toggle('collapsed');
+    e.target.setAttribute('aria-expanded', !rowEl.classList.contains('collapsed'));
     if (rowEl.classList.contains('collapsed')) {
       e.target.innerHTML = e.target.classList.contains('array-of-object')
         ? '[{...}]'
