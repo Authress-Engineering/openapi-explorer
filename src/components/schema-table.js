@@ -97,10 +97,12 @@ export default class SchemaTable extends LitElement {
         animation-duration: 0s !important;
       }
       .tr:not(.collapsed) + .object-body {
+        visibility: visible;
         animation: linear 0.2s expand-height;
       }
       .tr.collapsed + .object-body {
         animation: linear 0.2s collapse-height;
+        visibility: hidden;
         max-height: 0;
       }
       .obj-toggle {
@@ -148,12 +150,16 @@ export default class SchemaTable extends LitElement {
           max-width: 25%;
         }
       </style>
-      <div class="table ${this.interactive ? 'interactive' : ''}">
+      <div class="table ${this.interactive ? 'interactive' : ''}" role="treegrid" aria-label="JSON model" tabindex="0" @keydown="${(e) => this.treegridKeydown(e)}" @focus="${(e) => {
+          e.target.removeAttribute('tabindex');
+          e.target.querySelector('.td').tabIndex = 0;
+          e.target.querySelector('.td').focus();
+        }}">
         <div style = 'border:1px solid var(--light-border-color)'>
-          <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);'>
-            <div class='key' part="schema-key schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
-            <div class='key-type' part="schema-type schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
-            <div class='key-descr' part="schema-description schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
+          <div style='display:flex; background-color: var(--bg2); padding:8px 4px; border-bottom:1px solid var(--light-border-color);' role="row" aria-level="1">
+            <div class='key' role="columnheader" part="schema-key schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg); padding-left:${firstColumnInitialPadding}px'> Field </div>
+            <div class='key-type' role="columnheader" part="schema-type schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Type </div>
+            <div class='key-descr' role="columnheader" part="schema-description schema-table-header" style='font-family:var(--font-regular); font-weight:bold; color:var(--fg);'> Description </div>
           </div>
           ${result || ''}
         </div>
@@ -245,20 +251,20 @@ export default class SchemaTable extends LitElement {
       const outerResult = html`
         ${newSchemaLevel >= 0 && key
           ? html`
-            <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::circular'] ? 'circular-object' : 'object'} ${data['::type']}' data-obj='${keyLabel}'>
-              <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" part="schema-key"
-                style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e)}>
+            <div class='tr ${newSchemaLevel <= this.schemaExpandLevel ? '' : 'collapsed'} ${data['::circular'] ? 'circular-object' : 'object'} ${data['::type']}' data-obj='${keyLabel}' role="row" aria-level="${schemaLevel}">
+              <div class="td no-select key ${data['::deprecated'] ? 'deprecated' : ''}" part="schema-key" tabindex="-1" role="gridcell"
+                style='padding-left:${leftPadding}px; cursor: pointer' @click=${(e) => this.toggleObjectExpand(e)} @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}" aria-expanded="true" aria-controls="${keyLabel}-obj-body">
                 <div style="display: flex; align-items: center">
-                  ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}'>▾</div>` : ''}
+                  ${(keyLabel || keyDescr) ? html`<div class='obj-toggle' data-obj='${keyLabel}' aria-hidden="true">▾</div>` : ''}
                   ${data['::type'] === 'xxx-of-option' || key.startsWith('::OPTION')
                     ? html`<span class="key-label xxx-of-key">${keyLabel}</span><span class="${isOneOfLabel ? 'xxx-of-key' : 'xxx-of-descr'}">${keyDescr}</span>`
                     : keyLabel.endsWith('*')
-                      ? html`<span class="key-label requiredStar" style="display:inline-block;" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`
+                      ? html`<span class="key-label requiredStar" style="display:inline-block;" role="img" aria-label=" (Required)" title="Required"> ${keyLabel.substring(0, keyLabel.length - 1)}</span>`
                       : html`<span class="key-label" style="display:inline-block;">${keyLabel === '::props' ? '' : keyLabel}</span>`
                   }
                 </div>
               </div>
-              <div class='td key-type' part="schema-type">
+              <div class='td key-type' part="schema-type" role="gridcell" tabindex="-1">
                 ${displaySchemaLink
                   ? html`<div class="schema-link" style="overflow: hidden; text-overflow: ellipsis" @click='${() => this.scrollToSchemaComponentByName(displaySchemaLink)}'>
                     ${dataType === 'array' ? '[' : ''}<span style="color: var(--secondary-color)">${detailObjTypeDisplay}</span>${dataType === 'array' ? ']' : ''}
@@ -267,7 +273,7 @@ export default class SchemaTable extends LitElement {
                 }
                 <div class="attributes" title="${flags['🆁'] && 'Read only attribute' || flags['🆆'] && 'Write only attribute' || ''}">${flags['🆁'] || flags['🆆'] || ''}</div>
               </div>
-              <div class='td key-descr' part="schema-description">
+              <div class='td key-descr' role="gridcell" tabindex="-1" part="schema-description">
                 <span class=" m-markdown-small">${unsafeHTML(toMarkdown(displayLine))}</span>
                 ${data['::metadata']?.constraints?.length
                     ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
@@ -275,12 +281,12 @@ export default class SchemaTable extends LitElement {
             </div>`
           : html`
               ${data['::type'] === 'array' && dataType === 'array'
-                ? html`<div class='tr'> <div class='td'> ${dataType} </div> </div>`
+                ? html`<div class='tr' role="row"> <div class='td' role="gridcell" tabindex="-1"> ${dataType} </div> </div>`
                 : ''
               }
           `
         }
-        <div class='object-body'>
+        <div class='object-body' id='${keyLabel}-obj-body'>
         ${recursiveResult}
         <div>
       `;
@@ -301,20 +307,20 @@ export default class SchemaTable extends LitElement {
     }
     
     const result = html`
-      <div class = "tr">
-        <div class="td key ${deprecated ? 'deprecated' : ''}" part="schema-key" style='padding-left:${leftPadding}px'>
+      <div class = "tr" role="row" aria-level="${schemaLevel}">
+        <div class="td key ${deprecated ? 'deprecated' : ''}" role="gridcell" tabindex="-1" part="schema-key" style='padding-left:${leftPadding}px'>
           ${keyLabel?.endsWith('*')
-            ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>`
+            ? html`<span class="key-label requiredStar" role="img" aria-label=" (Required)" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>`
             : key.startsWith('::OPTION')
               ? html`<span class='xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
               : html`${keyLabel ? html`<span class="key-label"> ${keyLabel}</span>` : html`<span class="xxx-of-descr">${schemaTitle}</span>`}`
           }
         </div>
-        <div class='td key-type' part="schema-type">
+        <div class='td key-type' role="gridcell" tabindex="-1" part="schema-type">
           <div>${dataType === 'array' ? '[' : ''}<span class="${cssType}">${format || type}</span>${dataType === 'array' ? ']' : ''}</div>
           <div class="attributes ${cssType}" style="font-family: var(--font-mono);" title="${readOrWriteOnly === '🆁' && 'Read only attribute' || readOrWriteOnly === '🆆' && 'Write only attribute' || ''}">${readOrWriteOnly}</div>
         </div>
-        <div class='td key-descr' part="schema-description">
+        <div class='td key-descr' role="gridcell" tabindex="-1" part="schema-description">
           <span class="m-markdown-small" style="vertical-align: middle;">
             ${unsafeHTML(toMarkdown(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
@@ -333,6 +339,62 @@ export default class SchemaTable extends LitElement {
   toggleObjectExpand(e) {
     const rowEl = e.target.closest('.tr');
     rowEl.classList.toggle('collapsed');
+    e.target.setAttribute('aria-expanded', !rowEl.classList.contains('collapsed'));
+  }
+
+  treegridKeydown(e) {
+    if (e.shiftKey) {return true;}
+    const cell = e.target;
+    if (cell.getAttribute('role') !== 'gridcell') {return true;}
+    const row = Array.from(cell.parentNode.children);
+    const table = Array.from(cell.closest('.table').querySelectorAll('.tr'));
+    const index = row.indexOf(cell);
+    const rIndex = table.indexOf(cell.parentNode);
+    switch (e.key) {
+      case 'ArrowRight':
+        if (index < row.length - 1) {
+          row[index + 1].tabIndex = 0;
+          row[index + 1].focus();
+          cell.tabIndex = '-1';
+        }
+        break;
+      case 'ArrowLeft':
+        if (index > 0) {
+          row[index - 1].tabIndex = 0;
+          row[index - 1].focus();
+          cell.tabIndex = '-1';
+        }
+        break;
+      case 'ArrowDown':
+        if (rIndex < table.length - 1) {
+          table[rIndex + 1].children[index].tabIndex = 0;
+          table[rIndex + 1].children[index].focus();
+          cell.tabIndex = '-1';
+        }
+        break;
+      case 'ArrowUp':
+        if (rIndex > 0) {
+          table[rIndex - 1].children[index].tabIndex = 0;
+          table[rIndex - 1].children[index].focus();
+          cell.tabIndex = '-1';
+        }
+        break;
+      case 'Home':
+        e.preventDefault();
+        cell.tabIndex = '-1';
+        row[0].tabIndex = 0;
+        row[0].focus();
+        break;
+      case 'End':
+        e.preventDefault();
+        cell.tabIndex = '-1';
+        row[row.length - 1].tabIndex = 0;
+        row[row.length - 1].focus();
+        break;
+      default:
+        break;
+    }
+    return true;
   }
 }
 if (!customElements.get('openapi-explorer')) {

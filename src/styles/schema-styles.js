@@ -33,6 +33,7 @@ export default css`
 .key-descr {
   font-family:var(--font-regular);
   flex-shrink: 1;
+  flex-grow: 1;
   text-overflow: ellipsis;
   overflow: hidden;
   display: none;
