@@ -78,8 +78,8 @@ export default function serverTemplate() {
   }
   return html`
   <section id = 'servers' part="section-servers" style="margin-top:24px; margin-bottom:24px;" class='regular-font observe-me section-padding ${this.renderStyle === 'read' ? 'section-gap--read-mode' : (this.renderStyle === 'focused' ? 'section-gap--focused-mode' : 'section-gap')}'>
-    <div class = 'sub-title' role="heading" aria-level="2">${getI18nText('headers.api-servers')}</div>
-    <div class = 'mono-font' style='margin: 12px 0; font-size:calc(var(--font-size-small) + 1px);'>
+    <div class = 'sub-title' role="heading" aria-level="2" id="servers-title">${getI18nText('headers.api-servers')}</div>
+    <div class = 'mono-font' style='margin: 12px 0; font-size:calc(var(--font-size-small) + 1px);' role='radiogroup' aria-labelledby='servers-title'>
       ${!this.resolvedSpec.servers || !this.resolvedSpec.servers.length
         ? ''
         : html`

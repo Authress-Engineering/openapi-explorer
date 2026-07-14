@@ -249,7 +249,7 @@ export default class SchemaTree extends LitElement {
                 ? ''
                 : schemaLevel > 0
                   ? html`<span class="key-label">
-                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span class="requiredStar" title="Required"></span>` : ''}:
+                      ${keyLabel.replace(/\*$/, '')}${keyLabel.endsWith('*') ? html`<span class="requiredStar" role="img" aria-label=" (Required)" title="Required"></span>` : ''}:
                     </span>`
                   : ''
             }
@@ -296,7 +296,7 @@ export default class SchemaTree extends LitElement {
       <div class="tr">
         <div class="td key ${deprecated ? 'deprecated' : ''}" style='min-width:${minFieldColWidth}px'>
           ${keyLabel.endsWith('*')
-            ? html`<span class="key-label requiredStar" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>:`
+            ? html`<span class="key-label requiredStar" role="img" aria-label=" (Required)" title="Required">${keyLabel.substring(0, keyLabel.length - 1)}</span>:`
             : key.startsWith('::OPTION')
               ? html`<span class='key-label xxx-of-key'>${keyLabel}</span><span class="xxx-of-descr">${keyDescr}</span>`
               : schemaLevel > 0

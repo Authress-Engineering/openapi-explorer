@@ -332,7 +332,7 @@ function renderSecurityScheme(v) {
           : html`Sends the <code>Authorization header</code> containing the token type <code style="text-transform: capitalize;">${v.scheme || 'bearer'}</code> followed by the <code>${v.bearerFormat ?? 'Token'}</code> string.`
         }
       </div>
-      <form style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
+      <form style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;" aria-live="polite">
         ${v.in === 'cookie'
           ? html`
           <div style="display: block">
@@ -343,7 +343,7 @@ function renderSecurityScheme(v) {
             </small>
           </div>`
           : !v.finalKeyValue ? html`
-              <input autocomplete="on" name="api-key" type="text" value="${v.value}" placeholder="${v.bearerFormat ?? 'api-token'}"
+              <input autocomplete="on" name="api-key" type="text" value="${v.value}"  aria-label="${v.bearerFormat ?? 'API token'}"
                 spellcheck="false" class="api-key-input fs-exclude ph-no-capture" data-hj-suppress data-sl="mask">
               <button type="submit" class="m-btn thin-border" style = "margin-left:5px;"
                 part = "btn btn-outline"
@@ -363,7 +363,7 @@ function renderSecurityScheme(v) {
           code { font-weight: bold; }
         </style>
         <div style="padding-top: 1rem">${unsafeHTML(getI18nText('authentication.http-basic-desc'))}</div>
-        <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;">
+        <div style="height: 50px; margin-top: 1rem; padding: 10px 0; margin-bottom: 10px;" aria-role="status">
           <span class="blue-text" style="margin-right: 1rem">Key Applied</span>
           <button class="m-btn thin-border small" part="btn btn-outline" @click=${() => { v.finalKeyValue = ''; this.requestUpdate(); }}>${getI18nText('authentication.remove')}</button>
         </div>`;
@@ -407,7 +407,7 @@ export default function securitySchemeTemplate() {
         <slot name="authentication-header">
           <div class="sub-title regular-font" role="heading" aria-level="2">${getI18nText('headers.authentication')}</div>
         </slot>
-        <div class="small-font-size" style="display:flex; align-items: center; min-height:40px">
+        <div class="small-font-size" style="display:flex; align-items: center; min-height:40px" aria-role="status">
           ${providedApiKeys.length > 0
             ? html`
               <div class="blue-text"> ${providedApiKeys.length} API key applied </div>
@@ -498,20 +498,20 @@ export function pathSecurityTemplate(pathSecurityOptions) {
         securityDefs: andSecurityKeys1,
       });
     });
-    return html`<div class="security-info-button" data-content-id='auth' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+    return html`<div class="security-info-button">
       <div style="position:relative; display:flex; min-width:350px; max-width:700px; justify-content: flex-end;">
-        <svg width="16" height="24" style="cursor: pointer;">
+        <svg width="16" height="24" style="cursor: pointer;" role="img" aria-label="Security">
           <g>
             <path style="fill: var(--fg3)" d="m13.8,8.5l0,-2.6l0,0c0,-3.2 -2.6,-5.8 -5.8,-5.8s-5.8,2.6 -5.8,5.8l0,0l0,2.6l-2.1,0l0,11.2l16,0l0,-11.2l-2.1,0l-0,0l0,0l0,0l-0,0zm-9.8,-2.6c0,0 0,0 0,0c0,-2.2 1.8,-4 4,-4c2.2,0 4,1.8 4,4c0,0 0,0 0,0l0,2.6l-8.03,0l0,-2.6l0,0l0,0z" />
           </g>
         </svg>
           ${orSecurityKeys1.map((orSecurityItem1, i) => html`
           ${i !== 0 ? html`<div style="padding:3px 4px;"> OR </div>` : ''}
-          <div class="security-tooltip tooltip" style="cursor: pointer;">
+          <div class="security-tooltip tooltip" style="cursor: pointer;" aria-describedby="tooltip-security-info" data-content-id="auth" role="link" tabindex="0" @click='${(e) => this.scrollToEventTarget(e, false)}' @keydown="${(e) => { if (e.key === 'Enter') { e.target.click(); }}}">
             <div style="padding:2px 4px; white-space:nowrap; text-overflow:ellipsis;max-width:150px; overflow:hidden;">
               <span part="anchor anchor-operation-security"> ${orSecurityItem1.securityTypes} </span>
             </div>
-            <div class="tooltip-text" style="position:absolute; color: var(--fg); top:26px; right:0; border:1px solid var(--border-color);padding:2px 4px; display:block;">
+            <div class="tooltip-text" id="tooltip-security-info" role="tooltip" style="position:absolute; color: var(--fg); top:26px; right:0; border:1px solid var(--border-color);padding:2px 4px; display:block;">
               ${orSecurityItem1.securityDefs.length > 1 ? html`<div>Requires <b>all</b> of the following </div>` : ''}
               <div style="padding-left: 8px">
                 ${orSecurityItem1.securityDefs.map((andSecurityItem, j) => html`

@@ -47,6 +47,7 @@ class SyntaxHighlighter extends LitElement {
       content: { type: Object },
       language: { type: String, attribute: 'language' },
       mimeType: { type: String, attribute: 'mime-type' },
+      label: { type: String, attribute: 'aria-label' },
     };
   }
 
@@ -96,7 +97,7 @@ class SyntaxHighlighter extends LitElement {
   }
 
   render() {
-    return this.renderCopyWrapper(this.renderHighlight());
+    return this.renderCopyWrapper(this.renderHighlight(), this.label?.toLowerCase());
   }
 
   /**
@@ -123,11 +124,13 @@ class SyntaxHighlighter extends LitElement {
    * @param {*} content Content
    * @returns Content
    */
-  renderCopyWrapper(content) {
+  renderCopyWrapper(content, label) {
     return html`<div class="fs-exclude ph-no-capture" data-hj-suppress data-sl="mask" style="min-height: 2rem;">
       <button 
         class="m-btn outline-primary toolbar-copy-btn" 
-        @click='${this.copyToClipboard}' 
+        @click='${this.copyToClipboard}'
+        aria-label="Copy ${label}"
+        aria-live="polite"
         part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
         ${content}
     </div>`;

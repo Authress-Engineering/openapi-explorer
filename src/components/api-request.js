@@ -302,7 +302,7 @@ export default class ApiRequest extends LitElement {
     }
 
     return html`
-    <div class="table-title top-gap">${title}${paramLocation === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
+    <div class="table-title top-gap" role="heading" aria-level="${this.renderStyle === 'focused' ? 4 : 5}">${title}${paramLocation === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
     <div style="display:block; overflow-x:auto; max-width:100%;">
       <table role="presentation" class="m-table" style="width:100%; word-break:break-word;">
         ${tableRows}
@@ -627,18 +627,21 @@ export default class ApiRequest extends LitElement {
         ${!hasResponse ? '' : html`<button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">${getI18nText('operations.clear-response')}</button>`}
       </div>
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
-        <div id="tab_buttons" class="tab-buttons row" @click="${(e) => {
-            if (e.target.classList.contains('tab-btn') === false) { return; }
-            this.activeResponseTab = e.target.dataset.tab;
-        }}">
-        <br>
-        <div style="width: 100%">
-        <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>${getI18nText('operations.request')}</button>
-          ${!hasResponse ? '' : html`
-            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
-            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`
-          }
-          </div>
+        ${hasResponse
+          ? html`
+            <div id="tab_buttons" class="tab-buttons row" role="group" @click="${(e) => {
+              if (e.target.classList.contains('tab-btn') === false) { return; }
+              this.activeResponseTab = e.target.dataset.tab;
+            }}">
+            <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" aria-current="${this.activeResponseTab === 'curl'}" data-tab = 'curl'>${getI18nText('operations.request')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" aria-current="${this.activeResponseTab === 'response'}" data-tab = 'response'>${getI18nText('operations.response')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  aria-current="${this.activeResponseTab === 'headers'}" data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
+            </div>`
+          : html`
+            <div id="tab_buttons" class="tab-buttons row">
+              <div class="tab-btn active" role="heading" aria-level="${this.renderStyle === 'focused' ? 4 : 5}" data-tab = 'curl'>${getI18nText('operations.request')}</div>
+            </div>`
+        }
         </div>
         ${this.responseIsBlob
           ? html`
@@ -659,14 +662,14 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}"/>
+              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" aria-label="Response text"/>
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}"/>
+          <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}" aria-label="Response headers"/>
         </div>
         <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}"/>
+          <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}" aria-label="Request example"/>
         </div>
       </div>`;
   }
