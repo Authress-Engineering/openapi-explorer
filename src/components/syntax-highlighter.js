@@ -45,9 +45,9 @@ class SyntaxHighlighter extends LitElement {
   static get properties() {
     return {
       content: { type: Object },
+      label: { type: String },
       language: { type: String, attribute: 'language' },
       mimeType: { type: String, attribute: 'mime-type' },
-      label: { type: String, attribute: 'aria-label' },
     };
   }
 
