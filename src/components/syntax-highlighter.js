@@ -47,6 +47,7 @@ class SyntaxHighlighter extends LitElement {
       content: { type: Object },
       language: { type: String, attribute: 'language' },
       mimeType: { type: String, attribute: 'mime-type' },
+      label: { type: String, attribute: 'aria-label' },
     };
   }
 
@@ -96,7 +97,7 @@ class SyntaxHighlighter extends LitElement {
   }
 
   render() {
-    return this.renderCopyWrapper(this.renderHighlight());
+    return this.renderCopyWrapper(this.renderHighlight(), this.label?.toLowerCase());
   }
 
   /**
@@ -105,6 +106,7 @@ class SyntaxHighlighter extends LitElement {
    */
   renderHighlight() {
     const lang = this.detectLanguage();
+    const label = this.label?.toLowerCase();
     const grammar = Prism.languages[lang];
 
     if (typeof this.content !== 'string') {
@@ -114,8 +116,8 @@ class SyntaxHighlighter extends LitElement {
     const stringContent = this.content?.toString() || '';
     const increasedSpaceContent = lang !== 'python' && lang !== 'yaml' && lang !== 'toml' ? stringContent.split('\n').map(line => line.replace(/^\s{2}/g, '    ')).join('\n') : stringContent;
     return grammar
-      ? html`<pre><code>${unsafeHTML(Prism.highlight(increasedSpaceContent, grammar, lang))}</code></pre>`
-      : html`<pre>${increasedSpaceContent}</pre>`;
+      ? html`<pre tabindex="0" role="region" aria-label="${label}"><code>${unsafeHTML(Prism.highlight(increasedSpaceContent, grammar, lang))}</code></pre>`
+      : html`<pre tabindex="0" role="region" aria-label="${label}">${increasedSpaceContent}</pre>`;
   }
 
   /**
@@ -123,11 +125,13 @@ class SyntaxHighlighter extends LitElement {
    * @param {*} content Content
    * @returns Content
    */
-  renderCopyWrapper(content) {
+  renderCopyWrapper(content, label) {
     return html`<div class="fs-exclude ph-no-capture" data-hj-suppress data-sl="mask" style="min-height: 2rem;">
       <button 
         class="m-btn outline-primary toolbar-copy-btn" 
-        @click='${this.copyToClipboard}' 
+        @click='${this.copyToClipboard}'
+        aria-label="${getI18nText('operations.copy')} ${label}"
+        aria-live="polite"
         part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
         ${content}
     </div>`;

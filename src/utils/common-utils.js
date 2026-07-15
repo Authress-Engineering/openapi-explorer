@@ -20,7 +20,8 @@ export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function copyToClipboard(copyData, eventTarget) {
+export async function copyToClipboard(copyData, eventTarget) {
+  const btnEl = eventTarget?.target;
   // In lots of places we have more than a couple of spaces for <pre> display purposes, we remove those extra spaces here.
   let data = copyData?.trim().replace(/\s{8}/g, '  ');
   try {
@@ -32,26 +33,20 @@ export function copyToClipboard(copyData, eventTarget) {
   } catch (error) {
     // Ignore non JSON text;
   }
-
-  const textArea = document.createElement('textarea');
-  textArea.value = data;
-  textArea.style.position = 'fixed'; // avoid scrolling to bottom
-  document.body.appendChild(textArea);
-  textArea.focus();
-  textArea.select();
   try {
-    document.execCommand('copy');
-    const btnEl = eventTarget?.target;
+    await window.navigator.clipboard.writeText(data);
     if (btnEl) {
+      const label = btnEl.getAttribute('aria-label');
       btnEl.innerText = getI18nText('operations.copied');
+      btnEl.setAttribute('aria-label', getI18nText('operations.copied'));
       setTimeout(() => {
         btnEl.innerText = getI18nText('operations.copy');
+        btnEl.setAttribute('aria-label', label);
       }, 5000);
     }
   } catch (err) {
     console.error('Unable to copy', err); // eslint-disable-line no-console
   }
-  document.body.removeChild(textArea);
 }
 
 export function getBaseUrlFromUrl(url) {
