@@ -33,6 +33,7 @@ export default css`
 .key-descr {
   font-family:var(--font-regular);
   flex-shrink: 1;
+  /* Force the description field to fill up the remaining space because some specs don't have descriptions for every property. */
   flex-grow: 1;
   text-overflow: ellipsis;
   overflow: hidden;
