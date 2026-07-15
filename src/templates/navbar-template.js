@@ -220,7 +220,7 @@ export default function navbarTemplate() {
                 <div class="nav-bar-section-wrapper">
                   <div class="nav-bar-paths-under-tag">
                     ${component.subComponents.filter(s => componentIsInSearch(this.matchPaths, s)).map((p) => html`
-                      <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}'>
+                      <div class='nav-bar-path' data-content-id='cmp--${p.id}' id='link-cmp--${p.id}' @click='${(e) => this.scrollToEventTarget(e, false)}' role="link" tabindex="0" @keydown = '${(e) => { if (e.key === 'Enter') { e.target.click(); }}}'>
                         <span> ${p.name} </span>
                       </div>`
                     )}
