@@ -41,7 +41,7 @@ jobs:
     - name: Deploy to NPM
       if: github.repository_owner == 'Authress-Engineering' && github.ref != 'refs/heads/main' && github.event_name == 'push'
       run: |
-        npm install -g npm@latest
+        npm install -g npm@11.6.3
         npm publish
 
     - name: After build
