@@ -97,7 +97,7 @@ class SyntaxHighlighter extends LitElement {
   }
 
   render() {
-    return this.renderCopyWrapper(this.renderHighlight(), this.label?.toLowerCase());
+    return this.renderCopyWrapper(this.renderHighlight(), this.label.toLowerCase());
   }
 
   /**
@@ -106,7 +106,7 @@ class SyntaxHighlighter extends LitElement {
    */
   renderHighlight() {
     const lang = this.detectLanguage();
-    const label = this.label?.toLowerCase();
+    const label = this.label.toLowerCase();
     const grammar = Prism.languages[lang];
 
     if (typeof this.content !== 'string') {
