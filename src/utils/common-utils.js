@@ -47,6 +47,7 @@ export function copyToClipboard(copyData, eventTarget) {
       setTimeout(() => {
         btnEl.innerText = getI18nText('operations.copy');
       }, 5000);
+      btnEl.focus();
     }
   } catch (err) {
     console.error('Unable to copy', err); // eslint-disable-line no-console
