@@ -651,7 +651,7 @@ export default class ApiRequest extends LitElement {
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
         ${hasResponse
           ? html`
-            <div id="tab_buttons" class="tab-buttons row" role="tablist" @click="${(e) => {
+            <div id="tab_buttons" class="tab-buttons row" role="tablist" aria-label="${getI18nText('operations.request')} ${getI18nText('operations.response')}" @click="${(e) => {
               if (e.target.classList.contains('tab-btn') === false) { return; }
               this.activeResponseTab = e.target.dataset.tab;
             }}"
