@@ -40,6 +40,7 @@ export async function copyToClipboard(copyData, eventTarget) {
       btnEl.parentElement.querySelector('.sr-only').innerText = getI18nText('operations.copied');
       setTimeout(() => {
         btnEl.innerText = getI18nText('operations.copy');
+        btnEl.parentElement.querySelector('.sr-only').innerText = '';
       }, 5000);
     }
   } catch (err) {
