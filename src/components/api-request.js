@@ -659,14 +659,14 @@ export default class ApiRequest extends LitElement {
             </div>`
           : html`
             <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" >
-              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" .label="Response text"/>
+              <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" .label="${getI18nText('operations.response')}"/>
             </div>`
         }
         <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" >
-          <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}" .label="Response headers"/>
+          <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}" .label="${getI18nText('operations.response-headers')}"/>
         </div>
         <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};">
-          <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}" .label="Request example"/>
+          <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}" .label="${getI18nText('operations.request')}"/>
         </div>
       </div>`;
   }

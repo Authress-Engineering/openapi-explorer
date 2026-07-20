@@ -27,7 +27,7 @@ export default function codeSamplesTemplate(xCodeSamples) {
       const fullSource = sanitizedSource.join('\n');
       return html`
         <div class="tab-content m-markdown code-sample-wrapper" style= "display:${i === 0 ? 'block' : 'none'}" data-tab = '${v.lang}${i}'>
-          <syntax-highlighter language="${v.lang}" .content="${fullSource}" .label="Code sample"/>
+          <syntax-highlighter language="${v.lang}" .content="${fullSource}" .label="${getI18nText('parameters.samples')}"/>
         </div>`;
     })
     }

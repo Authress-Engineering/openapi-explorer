@@ -36,12 +36,10 @@ export async function copyToClipboard(copyData, eventTarget) {
   try {
     await window.navigator.clipboard.writeText(data);
     if (btnEl) {
-      const label = btnEl.getAttribute('aria-label');
       btnEl.innerText = getI18nText('operations.copied');
-      btnEl.setAttribute('aria-label', getI18nText('operations.copied'));
+      btnEl.parentElement.querySelector('.sr-only').innerText = getI18nText('operations.copied');
       setTimeout(() => {
         btnEl.innerText = getI18nText('operations.copy');
-        btnEl.setAttribute('aria-label', label);
       }, 5000);
     }
   } catch (err) {
