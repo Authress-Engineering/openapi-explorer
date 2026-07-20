@@ -302,7 +302,7 @@ export default class ApiRequest extends LitElement {
     }
 
     return html`
-    <div class="table-title top-gap">${title}${paramLocation === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
+    <div class="table-title top-gap" role="heading" aria-level="${this.renderStyle === 'focused' ? 4 : 5}">${title}${paramLocation === 'path' ? html`<span style='color:var(--red);'>*</span>` : ''}</div>
     <div style="display:block; overflow-x:auto; max-width:100%;">
       <table role="presentation" class="m-table" style="width:100%; word-break:break-word;">
         ${tableRows}
@@ -575,7 +575,7 @@ export default class ApiRequest extends LitElement {
 
     return html`
       <div class='request-body-container' data-selected-request-body-type="${this.selectedRequestBodyType}">
-        <div class="table-title top-gap row">
+        <div class="table-title top-gap row" role="heading" aria-level="${this.renderStyle === 'focused' ? 4 : 5}" id="request-body-header">
         ${getI18nText('operations.request-body')} ${this.request_body.required ? html`<span class="mono-font" style='color:var(--red)'>*</span>` : ''} 
           <span style = "font-weight:normal; margin-left:5px"> ${this.selectedRequestBodyType}</span>
           <span style="flex:1"></span>
@@ -586,12 +586,34 @@ export default class ApiRequest extends LitElement {
         ${reqBodySchemaHtml || reqBodyDefaultHtml
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
-              <div class="tab-buttons row" role="group" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}">
-                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" aria-current="${this.activeSchemaTab === 'model'}" data-tab="model" >${getI18nText('operations.model')}</button>
-                <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" aria-current="${this.activeSchemaTab !== 'model'}" data-tab="body">${bodyTabNameUseBody ? getI18nText('operations.body') : getI18nText('operations.form')}</button>
+              <div class="tab-buttons row" role="tablist" aria-labelledby="request-body-header" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${(e) => {
+                const b = e.target;
+                if (b.tagName.toLowerCase() !== 'button') {return;}
+                const i = Array.from(b.parentNode.children).indexOf(b);
+                let newIndex = 0;
+                switch (e.key) {
+                  case 'ArrowRight':
+                    newIndex = (i + 1) % 2;
+                    break;
+                  case 'ArrowLeft':
+                    newIndex = (i - 1 + 2) % 2;
+                    break;
+                  case 'Home':
+                    newIndex = 0;
+                    break;
+                  case 'End':
+                    newIndex = 1;
+                    break;
+                  default:
+                    return;
+                }
+                e.target.parentElement.children[newIndex].focus();
+              }}">
+                <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" id="schema-model-button" role="tab" aria-controls="schema-model-body" aria-selected="${this.activeSchemaTab === 'model'}" tabindex="${this.activeSchemaTab === 'model' ? 0 : '-1'}" data-tab="model" >${getI18nText('operations.model')}</button>
+                <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" id="schema-body-button" role="tab" aria-controls="schema-body-body" aria-selected="${this.activeSchemaTab !== 'model'}" tabindex="${this.activeSchemaTab !== 'model' ? 0 : '-1'}" data-tab="body">${bodyTabNameUseBody ? getI18nText('operations.body') : getI18nText('operations.form')}</button>
               </div>
-              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
-              ${html`<div class="tab-content col" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
+              ${html`<div class="tab-content col" id="schema-model-body" tabindex="0" aria-labelledby="schema-model-button" role="tabpanel" style="display: ${this.activeSchemaTab === 'model' ? 'block' : 'none'}"> ${reqBodySchemaHtml}</div>`}
+              ${html`<div class="tab-content col" id="schema-body-body" tabindex="0" aria-labelledby="schema-body-button" role="tabpanel" style="display: ${this.activeSchemaTab === 'model' ? 'none' : 'block'}"> ${reqBodyDefaultHtml}</div>`}
             </div>`
           : html`${reqBodyFileInputHtml}`
         }
@@ -627,18 +649,21 @@ export default class ApiRequest extends LitElement {
         ${!hasResponse ? '' : html`<button class="m-btn" part="btn btn-outline" @click="${this.clearResponseData}">${getI18nText('operations.clear-response')}</button>`}
       </div>
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
-        <div id="tab_buttons" class="tab-buttons row" @click="${(e) => {
-            if (e.target.classList.contains('tab-btn') === false) { return; }
-            this.activeResponseTab = e.target.dataset.tab;
-        }}">
-        <br>
-        <div style="width: 100%">
-        <button class="tab-btn ${!hasResponse || this.activeResponseTab === 'curl' ? 'active' : ''}" data-tab = 'curl'>${getI18nText('operations.request')}</button>
-          ${!hasResponse ? '' : html`
-            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" data-tab = 'response'>${getI18nText('operations.response')}</button>
-            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>`
-          }
-          </div>
+        ${hasResponse
+          ? html`
+            <div id="tab_buttons" class="tab-buttons row" role="group" @click="${(e) => {
+              if (e.target.classList.contains('tab-btn') === false) { return; }
+              this.activeResponseTab = e.target.dataset.tab;
+            }}">
+            <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" aria-current="${this.activeResponseTab === 'curl'}" data-tab = 'curl'>${getI18nText('operations.request')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" aria-current="${this.activeResponseTab === 'response'}" data-tab = 'response'>${getI18nText('operations.response')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}"  aria-current="${this.activeResponseTab === 'headers'}" data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
+            </div>`
+          : html`
+            <div id="tab_buttons" class="tab-buttons row">
+              <div class="tab-btn active" role="heading" aria-level="${this.renderStyle === 'focused' ? 4 : 5}" data-tab = 'curl'>${getI18nText('operations.request')}</div>
+            </div>`
+        }
         </div>
         ${this.responseIsBlob
           ? html`
