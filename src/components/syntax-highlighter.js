@@ -76,7 +76,7 @@ class SyntaxHighlighter extends LitElement {
           display: flex;
           padding-right: 70px;
         }
-        .toolbar-copy-btn .sr-only {
+        .toolbar-copy-btn ~ .sr-only {
           clip: rect(0 0 0 0); 
           clip-path: inset(50%);
           height: 1px;
