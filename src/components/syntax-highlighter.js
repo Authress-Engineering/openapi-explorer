@@ -45,6 +45,7 @@ class SyntaxHighlighter extends LitElement {
   static get properties() {
     return {
       content: { type: Object },
+      label: { type: String },
       language: { type: String, attribute: 'language' },
       mimeType: { type: String, attribute: 'mime-type' },
     };
@@ -63,18 +64,27 @@ class SyntaxHighlighter extends LitElement {
         }
 
         .toolbar-copy-btn {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            margin-right: 8px;
-          }
-          .toolbar-copy-btn + pre {
-            white-space: pre;
-            max-height:400px;
-            overflow: auto;
-            display: flex;
-            padding-right: 70px;
-          }
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          margin-right: 8px;
+        }
+        .toolbar-copy-btn + pre {
+          white-space: pre;
+          max-height:400px;
+          overflow: auto;
+          display: flex;
+          padding-right: 70px;
+        }
+        .toolbar-copy-btn ~ .sr-only {
+          clip: rect(0 0 0 0); 
+          clip-path: inset(50%);
+          height: 1px;
+          width: 1px;
+          overflow: hidden;
+          position: absolute;
+          white-space: nowrap;          
+        }
     `];
   }
 
@@ -96,7 +106,7 @@ class SyntaxHighlighter extends LitElement {
   }
 
   render() {
-    return this.renderCopyWrapper(this.renderHighlight());
+    return this.renderCopyWrapper(this.renderHighlight(), this.label.toLowerCase());
   }
 
   /**
@@ -114,8 +124,8 @@ class SyntaxHighlighter extends LitElement {
     const stringContent = this.content?.toString() || '';
     const increasedSpaceContent = lang !== 'python' && lang !== 'yaml' && lang !== 'toml' ? stringContent.split('\n').map(line => line.replace(/^\s{2}/g, '    ')).join('\n') : stringContent;
     return grammar
-      ? html`<pre><code>${unsafeHTML(Prism.highlight(increasedSpaceContent, grammar, lang))}</code></pre>`
-      : html`<pre>${increasedSpaceContent}</pre>`;
+      ? html`<pre tabindex="0" role="region" aria-label="${this.label}"><code>${unsafeHTML(Prism.highlight(increasedSpaceContent, grammar, lang))}</code></pre>`
+      : html`<pre tabindex="0" role="region" aria-label="${this.label}">${increasedSpaceContent}</pre>`;
   }
 
   /**
@@ -123,13 +133,15 @@ class SyntaxHighlighter extends LitElement {
    * @param {*} content Content
    * @returns Content
    */
-  renderCopyWrapper(content) {
+  renderCopyWrapper(content, label) {
     return html`<div class="fs-exclude ph-no-capture" data-hj-suppress data-sl="mask" style="min-height: 2rem;">
       <button 
         class="m-btn outline-primary toolbar-copy-btn" 
-        @click='${this.copyToClipboard}' 
+        @click='${this.copyToClipboard}'
+        aria-label="${getI18nText('operations.copy')} ${label}"
         part="btn btn-fill btn-copy">${getI18nText('operations.copy')}</button>
-        ${content}
+      ${content}
+      <div class="sr-only" aria-live="polite" role="status"></div>
     </div>`;
   }
 
