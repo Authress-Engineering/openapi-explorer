@@ -42,7 +42,8 @@ export default css`
   color:var(--primary-color);
 }
 
-.tab-btn:focus-visible {
+.tab-btn:focus-visible,
+.tab-btn.active:focus-visible {
   color:var(--secondary-color);
 }
 

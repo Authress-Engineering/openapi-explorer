@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample, getTypeInfo } from '../utils/schema-utils.js';
-import { toMarkdown } from '../utils/common-utils.js';
+import { toMarkdown, handleTabs } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
 import FlexStyles from '../styles/flex-styles.js';
@@ -103,7 +103,7 @@ export default class ApiResponse extends LitElement {
   render() {
     return html`
     <div class="col regular-font response-panel ${this.renderStyle}-mode">
-      <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} " role="heading" aria-level="${this.renderStyle === 'focused' ? 3 : 4}"> 
+      <div class=" ${this.callback === 'true' ? 'tiny-title' : 'req-res-title'} " role="heading" aria-level="${this.renderStyle === 'focused' ? 3 : 4}" id="response-title"> 
         ${this.callback === 'true' ? getI18nText('operations.callback-response') : getI18nText('operations.response')}
       </div>
       <div>
@@ -159,7 +159,7 @@ export default class ApiResponse extends LitElement {
       this.headersForEachRespStatus[statusCode] = tempHeaders;
       this.mimeResponsesForEachStatus[statusCode] = allMimeResp;
     }
-    return html`<div class='row' style='flex-wrap:wrap' role="group">
+    return html`<div class='row' style='flex-wrap:wrap' role="tablist" aria-labelledby="response-title" @keydown="${handleTabs}">
       ${Object.keys(this.responses).map((respStatus) => html`
         ${respStatus === '$$ref' // Swagger-Client parser creates '$$ref' object if JSON references are used to create responses - this should be ignored
           ? ''
@@ -173,7 +173,11 @@ export default class ApiResponse extends LitElement {
                   this.selectedMimeType = undefined;
                 }
               }}"
-              aria-current="${this.selectedStatus === respStatus}"
+              role="tab"
+              aria-selected="${this.selectedStatus === respStatus}"
+              aria-controls="status${respStatus}"
+              tabindex="${this.selectedStatus === respStatus ? '0' : '-1'}"
+              id="button${respStatus}"
               class='m-btn small ${this.selectedStatus === respStatus ? 'primary' : ''}'
               part="btn--resp ${this.selectedStatus === respStatus ? 'btn-fill--resp' : 'btn-outline--resp'} btn-response-status"
               style='margin: 8px 4px 0 0; text-transform: capitalize'> 
@@ -184,7 +188,7 @@ export default class ApiResponse extends LitElement {
       </div>
 
       ${Object.keys(this.responses).map((status) => html`
-        <div style = 'display: ${status === this.selectedStatus ? 'block' : 'none'}' >
+        <div id="status${status}" role="tabpanel" aria-labelledby="button${status}" tabindex="0" style="display: ${status === this.selectedStatus ? 'block' : 'none'}">
           <div class="top-gap">
             <span class="resp-descr m-markdown ">${unsafeHTML(toMarkdown(this.responses[status] && this.responses[status].description || ''))}</span>
             ${(this.headersForEachRespStatus[status] && this.headersForEachRespStatus[status].length > 0)
@@ -196,23 +200,21 @@ export default class ApiResponse extends LitElement {
             ? ''
             : html`
               <div class="tab-panel col">
-                <div class="tab-buttons row" role="group" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" >
-                  <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" aria-current="${this.activeSchemaTab === 'model'}" data-tab='model'>${getI18nText('operations.model')}</button>
-                  <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" aria-current="${this.activeSchemaTab !== 'model'}" data-tab='body'>${getI18nText('operations.example')}</button>
+                <div class="tab-buttons row" role="tablist" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${handleTabs}">
+                  <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" id="resp-model-button" aria-controls="resp-model-body" role="tab" aria-selected="${this.activeSchemaTab === 'model'}" tabindex="${this.activeSchemaTab === 'model' ? 0 : '-1'}" data-tab='model'>${getI18nText('operations.model')}</button>
+                  <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" id="resp-body-button" aria-controls="resp-body-body" role="tab" aria-selected="${this.activeSchemaTab !== 'model'}" tabindex="${this.activeSchemaTab !== 'model' ? 0 : '-1'}" data-tab='body'>${getI18nText('operations.example')}</button>
                   <div style="flex:1"></div>
                   ${Object.keys(this.mimeResponsesForEachStatus[status]).length === 1
                     ? html`<span class='small-font-size gray-text' style='align-self:center; margin-top:8px;'> ${Object.keys(this.mimeResponsesForEachStatus[status])[0]} </span>`
                     : html`${this.mimeTypeDropdownTemplate(Object.keys(this.mimeResponsesForEachStatus[status]))}`
                   }
                 </div>
-                ${this.activeSchemaTab === 'body'
-                  ? html`<div class='tab-content col' style='flex:1;'>
-                      ${this.mimeExampleTemplate(this.mimeResponsesForEachStatus[status][this.selectedMimeType])}
-                    </div>`
-                  : html`<div class='tab-content col' style='flex:1;'>
-                      ${this.mimeSchemaTemplate(this.mimeResponsesForEachStatus[status][this.selectedMimeType])}
-                    </div>`
-                }
+                ${html`<div class='tab-content col' role="tabpanel" tabindex="0" id='resp-body-body' aria-labelledby='resp-body-button' style='flex:1; display: ${this.activeSchemaTab === 'body' ? 'block' : 'none'}'>
+                  ${this.mimeExampleTemplate(this.mimeResponsesForEachStatus[status][this.selectedMimeType])}
+                </div>`}
+                ${html`<div class='tab-content col' role="tabpanel" tabindex="0" id='resp-model-body' style='flex:1; display: ${this.activeSchemaTab === 'body' ? 'none' : 'block'}'>
+                  ${this.mimeSchemaTemplate(this.mimeResponsesForEachStatus[status][this.selectedMimeType])}
+                </div>`}
               </div>
             `
           }`)
