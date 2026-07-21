@@ -633,9 +633,9 @@ export default class ApiRequest extends LitElement {
               if (e.target.classList.contains('tab-btn') === false) { return; }
               this.activeResponseTab = e.target.dataset.tab;
             }}">
-            <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'curl'}" aria-controls="req-panel" id="req-button" data-tab = 'curl'>${getI18nText('operations.request')}</button>
-            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'response'}" aria-controls="req-response-panel" id="req-response-button" data-tab = 'response'>${getI18nText('operations.response')}</button>
-            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'headers'}" aria-controls="req-response-headers-panel" id="req-response-headers-button" data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'curl'}" tabindex="${this.activeResponseTab === 'curl' ? 0 : '-1'}" aria-controls="req-panel" id="req-button" data-tab = 'curl'>${getI18nText('operations.request')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'response'}" tabindex="${this.activeResponseTab === 'response' ? 0 : '-1'}" aria-controls="req-response-panel" id="req-response-button" data-tab = 'response'>${getI18nText('operations.response')}</button>
+            <button class="tab-btn ${this.activeResponseTab === 'headers' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'headers'}" tabindex="${this.activeResponseTab === 'headers' ? 0 : '-1'}" aria-controls="req-response-headers-panel" id="req-response-headers-button" data-tab = 'headers'>${getI18nText('operations.response-headers')}</button>
             </div>`
           : html`
             <div id="tab_buttons" class="tab-buttons row">
@@ -646,7 +646,7 @@ export default class ApiRequest extends LitElement {
         </div>
         ${this.responseIsBlob
           ? html`
-            <div class="tab-content col" id="req-response-panel" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" role="tabpanel" aria-labelledby="req-response-button">
+            <div class="tab-content col" id="req-response-panel" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" role="tabpanel" tabindex="0" aria-labelledby="req-response-button">
               ${this.responseBlobType === 'image'
                 ? html`<img style="max-height:var(--resp-area-height, 300px); object-fit:contain;" class="mar-top-8" src="${this.responseBlobUrl}"></img>`
                 : ''
@@ -662,14 +662,14 @@ export default class ApiRequest extends LitElement {
               </div>
             </div>`
           : html`
-            <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" role="tabpanel" id="req-response-panel" aria-labelledby="req-response-button">
+            <div class="tab-content col m-markdown" style="flex:1; display:${this.activeResponseTab === 'response' ? 'flex' : 'none'};" role="tabpanel" tabindex="0" id="req-response-panel" aria-labelledby="req-response-button">
               <syntax-highlighter style="min-height: 60px" mime-type="${this.responseContentType}" .content="${this.responseText}" .label="${getI18nText('operations.response')}"/>
             </div>`
         }
-        <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" role="tabpanel" aria-labelledby="req-response-headers-button" id="req-response-headers-panel">
+        <div class="tab-content col m-markdown" style="flex:1;display:${this.activeResponseTab === 'headers' ? 'flex' : 'none'};" role="tabpanel" tabindex="0" aria-labelledby="req-response-headers-button" id="req-response-headers-panel">
           <syntax-highlighter style="min-height: 60px" language="http" .content="${this.responseHeaders}" .label="${getI18nText('operations.response-headers')}"/>
         </div>
-        <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};" role="${hasResponse ? 'tabpanel' : 'presentation'}" id="req-panel" aria-labelledby="req-button">
+        <div class="tab-content m-markdown col" style="flex:1;display:${this.activeResponseTab === 'curl' ? 'flex' : 'none'};" role="${hasResponse ? 'tabpanel' : 'presentation'}" tabindex="{hasResponse ? 0 : '-1'}" id="req-panel" aria-labelledby="req-button">
           <syntax-highlighter style="min-height: 60px" language="shell" .content="${curlSyntax.trim()}" .label="${getI18nText('operations.request')}"/>
         </div>
       </div>`;
