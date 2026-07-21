@@ -191,8 +191,8 @@ export function getSanitizedEmail(emailRaw) {
 
 export function handleTabs(e) {
   const b = e.target;
-  if (b.tagName.toLowerCase() !== 'button') {return;}
-  const buttons = Array.from(b.parentNode.children);
+  if (b.tagName.toLowerCase() !== 'button') { return; }
+  const buttons = Array.from(b.parentElement.children);
   const i = buttons.indexOf(b);
   let newIndex = 0;
   switch (e.key) {
@@ -211,6 +211,6 @@ export function handleTabs(e) {
     default:
       return;
   }
-  e.target.parentElement.children[newIndex].focus();
+  b.parentElement.children[newIndex].focus();
 }
 
