@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { schemaInObjectNotation, generateExample, getTypeInfo } from '../utils/schema-utils.js';
-import { toMarkdown } from '../utils/common-utils.js';
+import { toMarkdown, handleTabs } from '../utils/common-utils.js';
 import { getI18nText } from '../languages/index.js';
 import FontStyles from '../styles/font-styles.js';
 import FlexStyles from '../styles/flex-styles.js';
@@ -159,8 +159,8 @@ export default class ApiResponse extends LitElement {
       this.headersForEachRespStatus[statusCode] = tempHeaders;
       this.mimeResponsesForEachStatus[statusCode] = allMimeResp;
     }
-    return html`<div class='row' style='flex-wrap:wrap' role="tablist" aria-labelledby="response-title">
-      ${Object.keys(this.responses).map((respStatus, i) => html`
+    return html`<div class='row' style='flex-wrap:wrap' role="tablist" aria-labelledby="response-title" @keydown="${handleTabs}">
+      ${Object.keys(this.responses).map((respStatus) => html`
         ${respStatus === '$$ref' // Swagger-Client parser creates '$$ref' object if JSON references are used to create responses - this should be ignored
           ? ''
           : html`
@@ -172,27 +172,6 @@ export default class ApiResponse extends LitElement {
                 } else {
                   this.selectedMimeType = undefined;
                 }
-              }}"
-              @keydown="${(e) => {
-                const keys = Object.keys(this.responses);
-                let newIndex = 0;
-                switch (e.key) {
-                  case 'ArrowRight':
-                    newIndex = (i + 1) % keys.length;
-                    break;
-                  case 'ArrowLeft':
-                    newIndex = (i - 1 + keys.length) % keys.length;
-                    break;
-                  case 'Home':
-                    newIndex = 0;
-                    break;
-                  case 'End':
-                    newIndex = keys.length - 1;
-                    break;
-                  default:
-                    return;
-                }
-                this.shadowRoot.getElementById(`button${keys[newIndex]}`).focus();
               }}"
               role="tab"
               aria-selected="${this.selectedStatus === respStatus}"
@@ -221,29 +200,7 @@ export default class ApiResponse extends LitElement {
             ? ''
             : html`
               <div class="tab-panel col">
-                <div class="tab-buttons row" role="tablist" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${(e) => {
-                  const b = e.target;
-                  if (b.tagName.toLowerCase() !== 'button') {return;}
-                  const i = Array.from(b.parentNode.children).indexOf(b);
-                  let newIndex = 0;
-                  switch (e.key) {
-                    case 'ArrowRight':
-                      newIndex = (i + 1) % 2;
-                      break;
-                    case 'ArrowLeft':
-                      newIndex = (i - 1 + 2) % 2;
-                      break;
-                    case 'Home':
-                      newIndex = 0;
-                      break;
-                    case 'End':
-                      newIndex = 1;
-                      break;
-                    default:
-                      return;
-                  }
-                  e.target.parentElement.children[newIndex].focus();
-                }}">
+                <div class="tab-buttons row" role="tablist" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${handleTabs}">
                   <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" id="resp-model-button" aria-controls="resp-model-body" role="tab" aria-selected="${this.activeSchemaTab === 'model'}" tabindex="${this.activeSchemaTab === 'model' ? 0 : '-1'}" data-tab='model'>${getI18nText('operations.model')}</button>
                   <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" id="resp-body-button" aria-controls="resp-body-body" role="tab" aria-selected="${this.activeSchemaTab !== 'model'}" tabindex="${this.activeSchemaTab !== 'model' ? 0 : '-1'}" data-tab='body'>${getI18nText('operations.example')}</button>
                   <div style="flex:1"></div>

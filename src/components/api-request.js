@@ -6,7 +6,7 @@ import formatXml from 'xml-but-prettier';
 
 import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
-import { toMarkdown } from '../utils/common-utils.js';
+import { toMarkdown, handleTabs } from '../utils/common-utils.js';
 import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
@@ -586,29 +586,7 @@ export default class ApiRequest extends LitElement {
         ${reqBodySchemaHtml || reqBodyDefaultHtml
           ? html`
             <div class="tab-panel col" style="border-width:0 0 1px 0;">
-              <div class="tab-buttons row" role="tablist" aria-labelledby="request-body-header" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${(e) => {
-                const b = e.target;
-                if (b.tagName.toLowerCase() !== 'button') {return;}
-                const i = Array.from(b.parentNode.children).indexOf(b);
-                let newIndex = 0;
-                switch (e.key) {
-                  case 'ArrowRight':
-                    newIndex = (i + 1) % 2;
-                    break;
-                  case 'ArrowLeft':
-                    newIndex = (i - 1 + 2) % 2;
-                    break;
-                  case 'Home':
-                    newIndex = 0;
-                    break;
-                  case 'End':
-                    newIndex = 1;
-                    break;
-                  default:
-                    return;
-                }
-                e.target.parentElement.children[newIndex].focus();
-              }}">
+              <div class="tab-buttons row" role="tablist" aria-labelledby="request-body-header" @click="${(e) => { if (e.target.tagName.toLowerCase() === 'button') { this.activeSchemaTab = e.target.dataset.tab; } }}" @keydown="${handleTabs}">
                 <button class="tab-btn ${this.activeSchemaTab === 'model' ? 'active' : ''}" id="schema-model-button" role="tab" aria-controls="schema-model-body" aria-selected="${this.activeSchemaTab === 'model'}" tabindex="${this.activeSchemaTab === 'model' ? 0 : '-1'}" data-tab="model" >${getI18nText('operations.model')}</button>
                 <button class="tab-btn ${this.activeSchemaTab !== 'model' ? 'active' : ''}" id="schema-body-button" role="tab" aria-controls="schema-body-body" aria-selected="${this.activeSchemaTab !== 'model'}" tabindex="${this.activeSchemaTab !== 'model' ? 0 : '-1'}" data-tab="body">${bodyTabNameUseBody ? getI18nText('operations.body') : getI18nText('operations.form')}</button>
               </div>
@@ -651,33 +629,9 @@ export default class ApiRequest extends LitElement {
       <div class="tab-panel col" style="border-width:0 0 1px 0;">
         ${hasResponse
           ? html`
-            <div id="tab_buttons" class="tab-buttons row" role="tablist" aria-label="${getI18nText('operations.request')} ${getI18nText('operations.response')}" @click="${(e) => {
+            <div id="tab_buttons" class="tab-buttons row" role="tablist" aria-label="${getI18nText('operations.request')} ${getI18nText('operations.response')}" @keydown="${handleTabs}" @click="${(e) => {
               if (e.target.classList.contains('tab-btn') === false) { return; }
               this.activeResponseTab = e.target.dataset.tab;
-            }}"
-            @keydown="${(e) => {
-              const b = e.target;
-              if (b.tagName.toLowerCase() !== 'button') {return;}
-              const buttons = Array.from(b.parentNode.children);
-              const i = buttons.indexOf(b);
-              let newIndex = 0;
-              switch (e.key) {
-                case 'ArrowRight':
-                  newIndex = (i + 1) % buttons.length;
-                  break;
-                case 'ArrowLeft':
-                  newIndex = (i - 1 + buttons.length) % buttons.length;
-                  break;
-                case 'Home':
-                  newIndex = 0;
-                  break;
-                case 'End':
-                  newIndex = buttons.length - 1;
-                  break;
-                default:
-                  return;
-              }
-              e.target.parentElement.children[newIndex].focus();
             }}">
             <button class="tab-btn ${this.activeResponseTab === 'curl' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'curl'}" aria-controls="req-panel" id="req-button" data-tab = 'curl'>${getI18nText('operations.request')}</button>
             <button class="tab-btn ${this.activeResponseTab === 'response' ? 'active' : ''}" role="tab" aria-selected="${this.activeResponseTab === 'response'}" aria-controls="req-response-panel" id="req-response-button" data-tab = 'response'>${getI18nText('operations.response')}</button>

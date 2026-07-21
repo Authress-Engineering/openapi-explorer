@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { getI18nText } from '../languages/index.js';
+import { handleTabs } from '../utils/common-utils.js';
 
 /* eslint-disable indent */
 export default function codeSamplesTemplate(xCodeSamples) {
@@ -17,31 +18,8 @@ export default function codeSamplesTemplate(xCodeSamples) {
         tabContents.forEach((tabBodyEl) => { tabBodyEl.style.display = (tabBodyEl.dataset.tab === clickedTab ? 'block' : 'none'); });
       }
     }">
-    <div class="tab-buttons row" role="tablist" style="width:100; overflow">
-      ${xCodeSamples.map((v, i) => html`<button class="tab-btn ${i === 0 ? 'active' : ''}" role="tab" id="codesample${i}-button" aria-controls="codesample${i}" aria-selected='${i === 0}' tabindex="${i === 0 ? 0 : '-1'}'" data-tab = '${v.lang}${i}' @keydown="${(e) => {
-          const samps = xCodeSamples;
-          let newIndex = 0;
-          switch (e.key) {
-            case 'ArrowRight':
-              newIndex = (i + 1) % samps.length;
-              break;
-            case 'ArrowLeft':
-              newIndex = (i - 1 + samps.length) % samps.length;
-              break;
-            case 'Home':
-              newIndex = 0;
-              break;
-            case 'End':
-              newIndex = samps.length - 1;
-              break;
-            default:
-              return;
-          }
-          const button = this.shadowRoot.getElementById(`codesample${newIndex}-button`);
-          Array.from(button.parentElement.children).forEach((b) => b.tabIndex = '-1');
-          button.tabIndex = 0;
-          button.focus();
-        }}"> ${v.label || v.lang} </button>`)}
+    <div class="tab-buttons row" role="tablist" style="width:100; overflow" @keydown="${handleTabs}">
+      ${xCodeSamples.map((v, i) => html`<button class="tab-btn ${i === 0 ? 'active' : ''}" role="tab" id="codesample${i}-button" aria-controls="codesample${i}" aria-selected='${i === 0}' tabindex="${i === 0 ? 0 : '-1'}'" data-tab = '${v.lang}${i}'> ${v.label || v.lang} </button>`)}
     </div>
     ${xCodeSamples.map((v, i) => {
       // We skip the first line because it could be there is no padding there, but padding on the next lines which needs to be removed

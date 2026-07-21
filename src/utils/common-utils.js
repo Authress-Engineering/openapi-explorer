@@ -188,3 +188,29 @@ export function getSanitizedEmail(emailRaw) {
 
   return '';
 }
+
+export function handleTabs(e) {
+  const b = e.target;
+  if (b.tagName.toLowerCase() !== 'button') {return;}
+  const buttons = Array.from(b.parentNode.children);
+  const i = buttons.indexOf(b);
+  let newIndex = 0;
+  switch (e.key) {
+    case 'ArrowRight':
+      newIndex = (i + 1) % buttons.length;
+      break;
+    case 'ArrowLeft':
+      newIndex = (i - 1 + buttons.length) % buttons.length;
+      break;
+    case 'Home':
+      newIndex = 0;
+      break;
+    case 'End':
+      newIndex = buttons.length - 1;
+      break;
+    default:
+      return;
+  }
+  e.target.parentElement.children[newIndex].focus();
+}
+
