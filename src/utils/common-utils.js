@@ -163,6 +163,28 @@ export function toMarkdown(markdownStringRaw) {
   return markdownResult;
 }
 
+function convertToDisplayString(entry) {
+  return typeof entry === 'string' ? entry : JSON.stringify(entry);
+}
+
+export function formatExamples(examples) {
+  if (Array.isArray(examples)) {
+    return examples.map(convertToDisplayString).join(' ┃ ');
+  }
+  if (examples === null || examples === undefined || examples === '') {
+    return '';
+  }
+  return convertToDisplayString(examples);
+}
+
+export function exampleText(examples) {
+  const value = Array.isArray(examples) ? examples[0] : examples;
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  return convertToDisplayString(value);
+}
+
 export function getSanitizedUrl(urlString) {
   if (!urlString) {
     return '';

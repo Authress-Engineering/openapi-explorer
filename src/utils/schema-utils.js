@@ -7,6 +7,47 @@ import xmlFormatter from './xml/xml.js';
 const IS_MISSING_TYPE_INFO_TYPE = '';
 const EXAMPLE_VALUE_FOR_MISSING_TYPE = '';
 
+// OpenAPI 3.1 `examples` is a list. A legacy `example` is one value, even when that value is an array.
+// An examples map (OpenAPI 3.0) contributes each entry's value. No example is an empty list.
+function schemaExampleList(schema, options) {
+  const listed = listedExamples(schema.examples);
+  if (listed) {
+    return listed;
+  }
+  if (Object.prototype.hasOwnProperty.call(schema, 'example') && schema.example !== undefined) {
+    return [schema.example];
+  }
+  if (options?.enableExampleGeneration) {
+    const generated = getSampleValueByType(schema, null);
+    if (generated !== undefined && generated !== '') {
+      return [generated];
+    }
+  }
+  return [];
+}
+
+function listedExamples(examples) {
+  if (Array.isArray(examples)) {
+    return examples.length ? examples : null;
+  }
+  if (!examples || typeof examples !== 'object') {
+    return null;
+  }
+  const values = [];
+  for (const entry of Object.values(examples)) {
+    if (entry && typeof entry === 'object') {
+      if (Object.prototype.hasOwnProperty.call(entry, 'value') && entry.value !== undefined) {
+        values.push(entry.value);
+      }
+      continue;
+    }
+    if (entry !== undefined) {
+      values.push(entry);
+    }
+  }
+  return values.length ? values : null;
+}
+
 /* Generates an schema object containing type and constraint info */
 export function getTypeInfo(parameter, options = { includeNulls: false, enableExampleGeneration: false }) {
   if (!parameter) {
@@ -35,7 +76,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     }
   }
 
-  const examples = schema.examples || schema.example || options?.enableExampleGeneration && getSampleValueByType(schema, null) || '';
+  const examples = schemaExampleList(schema, options);
   const info = {
     type: dataType,
     format,
