@@ -1,7 +1,7 @@
 import test from 'ava';
 import { expect } from 'chai';
 
-import { exampleText, formatExamples } from '../src/utils/common-utils.js';
+import { convertToDisplayString, formatExamples } from '../src/utils/common-utils.js';
 
 test('common-utils.js formatExamples separates multiple examples', t => {
   expect(formatExamples(['apple', 'banana', 'pear'])).to.equal('apple ┃ banana ┃ pear');
@@ -26,22 +26,22 @@ test('common-utils.js formatExamples gives an empty list no text', t => {
   t.pass();
 });
 
-test('common-utils.js formatExamples prints one legacy example as text', t => {
-  expect(formatExamples('apple')).to.equal('apple');
-  expect(formatExamples(5)).to.equal('5');
-  expect(formatExamples('')).to.equal('');
-  expect(formatExamples(undefined)).to.equal('');
-  expect(formatExamples({ id: 1 })).to.equal('{"id":1}');
+test('common-utils.js formatExamples prints one legacy example, kept as a one entry list, as text', t => {
+  expect(formatExamples(['apple'])).to.equal('apple');
+  expect(formatExamples([5])).to.equal('5');
+  expect(formatExamples([''])).to.equal('');
+  expect(formatExamples([{ id: 1 }])).to.equal('{"id":1}');
   expect(formatExamples([['a', 'b']])).to.equal('["a","b"]');
   t.pass();
 });
 
-test('common-utils.js exampleText uses the first example for a placeholder', t => {
-  expect(exampleText(['apple', 'banana'])).to.equal('apple');
-  expect(exampleText([['a', 'b']])).to.equal('["a","b"]');
-  expect(exampleText([0])).to.equal('0');
-  expect(exampleText([false])).to.equal('false');
-  expect(exampleText([])).to.equal('');
-  expect(exampleText(undefined)).to.equal('');
+test('common-utils.js convertToDisplayString keeps text as is and writes any other value as JSON', t => {
+  expect(convertToDisplayString('apple')).to.equal('apple');
+  expect(convertToDisplayString('')).to.equal('');
+  expect(convertToDisplayString(0)).to.equal('0');
+  expect(convertToDisplayString(false)).to.equal('false');
+  expect(convertToDisplayString(null)).to.equal('null');
+  expect(convertToDisplayString(['a', 'b'])).to.equal('["a","b"]');
+  expect(convertToDisplayString({ id: 1 })).to.equal('{"id":1}');
   t.pass();
 });

@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { html } from 'lit';
-import { toMarkdown, formatExamples } from '../utils/common-utils.js';
+import { toMarkdown, formatExamples, convertToDisplayString } from '../utils/common-utils.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { isPatternProperty } from '../utils/schema-utils.js';
 import { map } from 'lit/directives/map.js';
@@ -79,10 +79,10 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
   const { type, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = rowData;
   const { key, keyLabel, keyDescr, description, dataType, isRequired, options } = parentRecursionOptions;
   const exampleLabel = formatExamples(example);
-  const filledExample = Array.isArray(example) ? example[0] : example;
+  const [filledExample] = example;
   const exampleFill = type === 'array' && Array.isArray(filledExample)
     ? filledExample.join('~|~')
-    : (filledExample === null || filledExample === undefined ? '' : (typeof filledExample === 'string' ? filledExample : JSON.stringify(filledExample)));
+    : convertToDisplayString(filledExample ?? '');
   if (readOrWriteOnly === '🆁') {
     return undefined;
   }

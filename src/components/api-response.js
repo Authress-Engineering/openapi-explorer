@@ -240,7 +240,7 @@ export default class ApiResponse extends LitElement {
                 <div class="m-markdown-small regular-font" >${unsafeHTML(toMarkdown(v.description || ''))}</div>
               </td>
               <td style="padding:8px; vertical-align: baseline; border-top: 1px solid var(--light-border-color); text-overflow: ellipsis;">
-                ${formatExamples(typeData?.example) ?? typeData?.default ?? ''}
+                ${formatExamples(typeData?.example ?? []) ?? typeData?.default ?? ''}
               </td>
             </tr>
           `;

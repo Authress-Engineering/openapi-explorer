@@ -6,7 +6,7 @@ import formatXml from 'xml-but-prettier';
 
 import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
-import { toMarkdown, exampleText } from '../utils/common-utils.js';
+import { toMarkdown, convertToDisplayString } from '../utils/common-utils.js';
 import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
@@ -15,6 +15,11 @@ import json5 from 'json5';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
+
+// The placeholder of a parameter input is its first example.
+function exampleText(examples) {
+  return convertToDisplayString(examples[0] ?? '');
+}
 
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }

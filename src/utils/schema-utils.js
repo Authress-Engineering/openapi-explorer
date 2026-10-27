@@ -84,7 +84,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     pattern: (schema.pattern && !schema.enum) ? schema.pattern.replace(/(^\^)|(\$$)/g, '') : '',
     readOrWriteOnly: schema.readOnly && '🆁' || schema.writeOnly && '🆆' || '',
     deprecated: !!schema.deprecated,
-    example: examples || '',
+    example: examples,
     default: schema.default ?? '',
     title: schema.title || '',
     description: schema.description || '',
