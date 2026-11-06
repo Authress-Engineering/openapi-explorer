@@ -415,15 +415,21 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     let multiPrimitiveTypes;
     if (primitiveType.length > 0) {
       subSchema.type = primitiveType.join('┃');
-      multiPrimitiveTypes = getTypeInfo(subSchema, options);
       if (complexTypes.length === 0) {
-        return `${multiPrimitiveTypes?.html || ''}`;
+        return `${getTypeInfo(subSchema, options)?.html || ''}`;
       }
+      // Rendered as one of several type options: the description belongs to the property, not to this option
+      multiPrimitiveTypes = getTypeInfo({ ...subSchema, description: undefined }, options);
     }
     if (complexTypes.length > 0) {
       obj['::link'] = schema.title || '';
       obj['::circular'] = !!schema.circularReference;
       obj['::type'] = 'object';
+      // The description belongs to the property itself, not to each of its type options
+      obj['::title'] = schema.title || '';
+      obj['::description'] = schema.description || '';
+      obj['::deprecated'] = schema.deprecated || false;
+      obj['::metadata'] = metadata;
       const multiTypeOptions = {
         '::type': 'xxx-of-option',
       };
@@ -434,13 +440,12 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
           multiTypeOptions[`::OPTION~${i + 1}`] = 'NULL~|~~|~~|~~|~~|~~|~~|~~|~';
         } else if ('integer, number, string, boolean,'.includes(`${v},`)) {
           subSchema.type = Array.isArray(v) ? v.join('┃') : v;
-          const primitiveTypeInfo = getTypeInfo(subSchema, options);
+          const primitiveTypeInfo = getTypeInfo({ ...subSchema, description: undefined }, options);
           multiTypeOptions[`::OPTION~${i + 1}`] = primitiveTypeInfo.html;
         } else if (v === 'object') {
           // If object type iterate all the properties and create an object-type-option
           const objTypeOption = {
             '::title': schema.title || '',
-            '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': schema.title || '',
             '::circular': !!schema.circularReference,
@@ -455,6 +460,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
               objTypeOption[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
             }
           }
+          for (const key in schemaPatternProperties) {
+            objTypeOption[`<pattern: ${key}>`] = schemaInObjectNotation(schemaPatternProperties[key], options, (level + 1));
+          }
 
           if (schema.additionalProperties) {
             objTypeOption['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
@@ -463,7 +471,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         } else if (v === 'array') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
             '::title': schema.title || '',
-            '::description': schema.description || arrayItemsSchema?.description || '',
+            '::description': arrayItemsSchema?.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': arrayItemsSchema.title || schema.title || '',
             '::circular': !!schema.circularReference,
