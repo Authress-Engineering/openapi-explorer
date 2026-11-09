@@ -1,0 +1,175 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Multi-type and xxx-of variants",
+    "version": "1.0",
+    "description": "Every way a `patternProperties` object can appear as a child: multi-type (`type: [object, null]`), oneOf, anyOf, allOf, typed and untyped. Each must show the `<pattern: [a-z]{2}>` key with the Translation fields."
+  },
+  "paths": {
+    "/pattern-properties": {
+      "post": {
+        "summary": "patternProperties in child relations",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "typeArrayObject": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "type: [object, null] with patternProperties.",
+                    "patternProperties": {
+                      "[a-z]{2}": {
+                        "$ref": "#/components/schemas/Translation"
+                      }
+                    }
+                  },
+                  "arrayOfNullableObjects": {
+                    "type": "array",
+                    "description": "Array whose items are type: [object, null] with patternProperties.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "patternProperties": {
+                        "[a-z]{2}": {
+                          "$ref": "#/components/schemas/Translation"
+                        }
+                      }
+                    }
+                  },
+                  "mapOfNullableObjects": {
+                    "type": "object",
+                    "description": "additionalProperties of type: [object, null] with patternProperties.",
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "patternProperties": {
+                        "[a-z]{2}": {
+                          "$ref": "#/components/schemas/Translation"
+                        }
+                      }
+                    }
+                  },
+                  "oneOfTyped": {
+                    "description": "oneOf, option has type: object (worked before).",
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "anyOfTyped": {
+                    "description": "anyOf, option has type: object (worked before).",
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "allOfTyped": {
+                    "description": "allOf, member has type: object (worked before).",
+                    "allOf": [
+                      {
+                        "type": "object",
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "oneOfUntyped": {
+                    "description": "oneOf, option has only patternProperties.",
+                    "oneOf": [
+                      {
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "anyOfUntyped": {
+                    "description": "anyOf, option has only patternProperties.",
+                    "anyOf": [
+                      {
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "allOfUntyped": {
+                    "description": "allOf, member has only patternProperties.",
+                    "allOf": [
+                      {
+                        "patternProperties": {
+                          "[a-z]{2}": {
+                            "$ref": "#/components/schemas/Translation"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Translation": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
