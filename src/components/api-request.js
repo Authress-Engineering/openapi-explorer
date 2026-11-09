@@ -6,7 +6,7 @@ import formatXml from 'xml-but-prettier';
 
 import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
-import { toMarkdown } from '../utils/common-utils.js';
+import { toMarkdown, convertToDisplayString } from '../utils/common-utils.js';
 import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
@@ -15,6 +15,11 @@ import json5 from 'json5';
 
 const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 const mediaFileRegex = RegExp('^audio/|^image/|^video/');
+
+// The placeholder of a parameter input is its first example.
+function exampleText(examples) {
+  return convertToDisplayString(examples[0] ?? '');
+}
 
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
@@ -202,7 +207,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-style = "${paramStyle}"
                     data-param-serialize-explode = "${paramExplode}"
                     spellcheck = "false"
-                    placeholder="${generatedParamSchema.example || defaultVal || ''}"
+                    placeholder="${exampleText(generatedParamSchema.example) || defaultVal || ''}"
                     style = "width:100%; margin-top: 1rem; margin-bottom: 1rem;"
                     .value="${this.fillRequestWithDefault === 'true' ? defaultVal : ''}"></textarea>`
                 || generatedParamSchema.allowedValues && html`
@@ -224,7 +229,7 @@ export default class ApiRequest extends LitElement {
                     id="request-param-${paramName}"
                     aria-labelledby = "request-${paramName}-label"
                     @input="${() => { this.computeCurlSyntax(); }}"
-                    placeholder="${generatedParamSchema.example || defaultVal || ''}"
+                    placeholder="${exampleText(generatedParamSchema.example) || defaultVal || ''}"
                     class="request-param"
                     part="textbox textbox-param"
                     data-ptype="${paramLocation}"

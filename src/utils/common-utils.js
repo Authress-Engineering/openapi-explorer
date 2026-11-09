@@ -163,6 +163,14 @@ export function toMarkdown(markdownStringRaw) {
   return markdownResult;
 }
 
+export function convertToDisplayString(entry) {
+  return typeof entry === 'string' ? entry : JSON.stringify(entry);
+}
+
+export function formatExamples(examples) {
+  return examples.map(convertToDisplayString).join(' ┃ ');
+}
+
 export function getSanitizedUrl(urlString) {
   if (!urlString) {
     return '';

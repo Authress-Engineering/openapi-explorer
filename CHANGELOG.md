@@ -3,6 +3,7 @@ This package follows standard semver, `<major>.<minor>.<build>`. No breaking cha
 
 ## 2.4
 * Add support for [OpenAPI Spec 3.2](https://www.openapis.org/blog/2025/09/23/announcing-openapi-v3-2).
+* Separate multiple `examples` of a schema with `┃` when they are displayed, instead of running them together.
 
 ## 2.3
 * Schema types will now utilize the title property for displaying, rather than the type ID, when defined.
