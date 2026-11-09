@@ -2,7 +2,7 @@ import test from 'ava';
 import { expect } from 'chai';
 
 import xmlFormatter from '../src/utils/xml/xml.js';
-import { getExampleValuesFromSchema, schemaInObjectNotation } from '../src/utils/schema-utils.js';
+import { getExampleValuesFromSchema, getTypeInfo, schemaInObjectNotation } from '../src/utils/schema-utils.js';
 
 test('schema-utils.js getExampleValuesFromSchema', t => {
   const schema = {
@@ -96,4 +96,64 @@ const findPatternOwner = node => {
     expect(owner[patternKey]).to.have.property('name');
     t.pass();
   });
+});
+
+const multiTypeProperty = {
+  type: ['array', 'object', 'integer', 'null'],
+  title: 'Tags',
+  description: 'Property description',
+  deprecated: true,
+  uniqueItems: true,
+  minItems: 1,
+  minimum: 0,
+  items: { type: 'object', description: 'Item description', properties: { id: { type: 'integer' } } },
+  properties: { name: { type: 'string' } }
+};
+const optionsOf = result => Object.entries(Object.entries(result).find(([key]) => key.startsWith('::ONE~OF'))[1]).filter(([key]) => key.startsWith('::OPTION')).map(([, option]) => option);
+
+test('schema-utils.js schemaInObjectNotation puts title, description and deprecation of a multi-type property on the property', t => {
+  const result = schemaInObjectNotation(multiTypeProperty, {});
+  expect(result['::title']).to.equal('Tags');
+  expect(result['::description']).to.equal('Property description');
+  expect(result['::deprecated']).to.equal(true);
+  t.pass();
+});
+
+test('schema-utils.js schemaInObjectNotation does not copy the property description or deprecation down to the type options', t => {
+  const [arrayOption, objectOption, ...primitiveOptions] = optionsOf(schemaInObjectNotation(multiTypeProperty, {}));
+  expect(arrayOption['::description']).to.equal('Item description');
+  expect(arrayOption['::deprecated'] || false).to.equal(false);
+  expect(objectOption['::description'] || '').to.equal('');
+  expect(objectOption['::deprecated'] || false).to.equal(false);
+  primitiveOptions.filter(o => o.startsWith('{')).map(o => JSON.parse(o)).forEach(option => {
+    expect(option.schemaDescription).to.equal('');
+    expect(option.schemaTitle).to.equal('');
+    expect(option.deprecated).to.equal(false);
+  });
+  t.pass();
+});
+
+test('schema-utils.js schemaInObjectNotation shows constraints only on the type option they apply to', t => {
+  const [arrayOption, objectOption, ...primitiveOptions] = optionsOf(schemaInObjectNotation(multiTypeProperty, {}));
+  expect(arrayOption['::metadata'].constraints).to.include('Requires unique items');
+  expect(objectOption['::metadata']?.constraints || []).to.eql([]);
+  const integerOption = primitiveOptions.filter(o => o.startsWith('{')).map(o => JSON.parse(o)).find(o => o.type.includes('integer'));
+  expect(integerOption.constraints).to.eql(['Range: [0,)']);
+  t.pass();
+});
+
+test('schema-utils.js schemaInObjectNotation marks a deprecated one-of property as deprecated', t => {
+  const result = schemaInObjectNotation({ deprecated: true, oneOf: [{ type: 'string' }, { type: 'integer', deprecated: true }] }, {});
+  expect(result['::deprecated']).to.equal(true);
+  const [stringOption, integerOption] = optionsOf(result).map(o => JSON.parse(o));
+  expect(stringOption.deprecated).to.equal(false);
+  expect(integerOption.deprecated).to.equal(true);
+  t.pass();
+});
+
+test('schema-utils.js getTypeInfo shows the unique items constraint only for array types', t => {
+  expect(getTypeInfo({ type: ['integer', 'string', 'null'], uniqueItems: true }).constraints).to.eql([]);
+  expect(getTypeInfo({ type: 'array', items: { type: 'string' }, uniqueItems: true }).constraints).to.eql(['Requires unique items']);
+  expect(getTypeInfo({ type: 'string[]┃null', uniqueItems: true }).constraints).to.eql(['Requires unique items']);
+  t.pass();
 });

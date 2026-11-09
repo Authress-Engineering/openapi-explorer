@@ -61,7 +61,7 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     info.allowedValues = typeof schema.const !== 'undefined' && [schema.const] || schema.items.enum || null;
   }
 
-  if (schema.uniqueItems) {
+  if (schema.uniqueItems && dataType.match(/array|\[\]/)) {
     info.constraints.push('Requires unique items');
   }
 
@@ -387,6 +387,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     resultObj['::flags'] = { '🆁': readOnly && '🆁', '🆆': writeOnly && '🆆' };
     resultObj['::title'] = schema.title || '';
     resultObj['::description'] = schema.description || '';
+    resultObj['::deprecated'] = schema.deprecated || false;
     resultObj['::metadata'] = metadata;
     return resultObj;
   }
@@ -412,18 +413,23 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         complexTypes.push(v);
       }
     });
+    // Rendered as one option of several: title, description and deprecation belong to the property itself
+    const asPrimitiveOption = (type) => getTypeInfo({ ...subSchema, type, title: undefined, description: undefined, deprecated: undefined }, options);
     let multiPrimitiveTypes;
     if (primitiveType.length > 0) {
       subSchema.type = primitiveType.join('┃');
-      multiPrimitiveTypes = getTypeInfo(subSchema, options);
       if (complexTypes.length === 0) {
-        return `${multiPrimitiveTypes?.html || ''}`;
+        return `${getTypeInfo(subSchema, options)?.html || ''}`;
       }
+      multiPrimitiveTypes = asPrimitiveOption(subSchema.type);
     }
     if (complexTypes.length > 0) {
       obj['::link'] = schema.title || '';
       obj['::circular'] = !!schema.circularReference;
       obj['::type'] = 'object';
+      obj['::title'] = schema.title || '';
+      obj['::description'] = schema.description || '';
+      obj['::deprecated'] = schema.deprecated || false;
       const multiTypeOptions = {
         '::type': 'xxx-of-option',
       };
@@ -433,20 +439,15 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
         if (v === 'null') {
           multiTypeOptions[`::OPTION~${i + 1}`] = 'NULL~|~~|~~|~~|~~|~~|~~|~~|~';
         } else if ('integer, number, string, boolean,'.includes(`${v},`)) {
-          subSchema.type = Array.isArray(v) ? v.join('┃') : v;
-          const primitiveTypeInfo = getTypeInfo(subSchema, options);
+          const primitiveTypeInfo = asPrimitiveOption(Array.isArray(v) ? v.join('┃') : v);
           multiTypeOptions[`::OPTION~${i + 1}`] = primitiveTypeInfo.html;
         } else if (v === 'object') {
           // If object type iterate all the properties and create an object-type-option
           const objTypeOption = {
-            '::title': schema.title || '',
-            '::description': schema.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': schema.title || '',
             '::circular': !!schema.circularReference,
-            '::type': 'object',
-            '::deprecated': schema.deprecated || false,
-            '::metadata': metadata
+            '::type': 'object'
           };
           for (const key in schemaProperties) {
             if (!schema.deprecated && !schemaProperties[key].deprecated && schema.required?.includes(key)) {
@@ -465,15 +466,13 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
           multiTypeOptions[`::OPTION~${i + 1}`] = objTypeOption;
         } else if (v === 'array') {
           multiTypeOptions[`::OPTION~${i + 1}`] = {
-            '::title': schema.title || '',
-            '::description': schema.description || arrayItemsSchema?.description || '',
+            '::description': arrayItemsSchema?.description || '',
             '::flags': { '🆁': schema.readOnly && '🆁', '🆆': schema.writeOnly && '🆆' },
             '::link': arrayItemsSchema.title || schema.title || '',
             '::circular': !!schema.circularReference,
             '::type': 'array',
             // Array properties are read from the ::props object instead of reading from the keys of this object
-            '::props': schemaInObjectNotation(Object.assign({}, schema, arrayItemsSchema, { description: schema.description || arrayItemsSchema?.description }), options, (level + 1)),
-            '::deprecated': schema.deprecated || false,
+            '::props': schemaInObjectNotation(Object.assign({}, schema, { deprecated: undefined }, arrayItemsSchema, { description: arrayItemsSchema?.description }), options, (level + 1)),
             '::metadata': metadata
           };
         }
