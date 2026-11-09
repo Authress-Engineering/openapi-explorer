@@ -329,7 +329,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     // If allOf is an array of multiple elements, then all the keys makes a single object
     const objWithAllProps = {};
     allOf.map((v, i) => {
-      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
+      if (v.type === 'object' || v.properties || v.patternProperties || v.allOf || v.anyOf || v.oneOf) {
         const propSuffix = (v.anyOf || v.oneOf) && i > 0 ? i : '';
         const partialObj = schemaInObjectNotation(v, options, (level + 1), propSuffix);
         Object.assign(objWithAllProps, partialObj);
@@ -358,7 +358,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     let readOnly = true;
 
     (anyOf || oneOf || []).forEach((v, index) => {
-      if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf || v.type === 'array' || v.items) {
+      if (v.type === 'object' || v.properties || v.patternProperties || v.allOf || v.anyOf || v.oneOf || v.type === 'array' || v.items) {
         const partialObj = schemaInObjectNotation(v, options);
         if (partialObj) {
           objWithAnyOfProps[`::OPTION~${index + 1}${v.title ? `~${v.title}` : ''}`] = partialObj;
@@ -455,6 +455,9 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
               objTypeOption[key] = schemaInObjectNotation(schemaProperties[key], options, (level + 1));
             }
           }
+          for (const key in schemaPatternProperties) {
+            objTypeOption[`<pattern: ${key}>`] = schemaInObjectNotation(schemaPatternProperties[key], options, (level + 1));
+          }
 
           if (schema.additionalProperties) {
             objTypeOption['<any-key>'] = schemaInObjectNotation(schema.additionalProperties, options);
@@ -481,7 +484,7 @@ export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '
     return obj;
   }
   
-  if (propertyType === 'object' || schemaProperties || schema.circularReference) {
+  if (propertyType === 'object' || schemaProperties || schemaPatternProperties || schema.circularReference) {
     const obj = { '::type': '' };
     obj['::title'] = schema.title || '';
     obj['::description'] = schema.description || '';
