@@ -3,7 +3,7 @@
   "info": {
     "title": "Multi-type and xxx-of variants",
     "version": "1.0",
-    "description": "Every way a `patternProperties` object can appear as a child: multi-type (`type: [object, null]`), oneOf, anyOf, allOf, typed and untyped. Each must show the `<pattern: [a-z]{2}>` key with the Translation fields."
+    "description": "Every way a `patternProperties` object can appear as a child: multi-type (`type: [object, null]`), oneOf, anyOf, allOf, typed and untyped. Each must show the `<pattern: [a-z]{2}>` key with the Translation fields. The second operation has, per variant, a title, description, `deprecated` and constraints for every type (array, integer, string). Title, description and strike-through belong on the property; each constraint only on the option of the type it applies to."
   },
   "paths": {
     "/pattern-properties": {
@@ -141,6 +141,183 @@
                             "$ref": "#/components/schemas/Translation"
                           }
                         }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
+      }
+    },
+    "/descriptions-and-constraints": {
+      "post": {
+        "summary": "Descriptions and constraints of multi-type properties",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "simple": {
+                    "title": "Simple property",
+                    "description": "Simple property: description of the property.",
+                    "deprecated": true,
+                    "uniqueItems": true,
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "minimum": 0,
+                    "maximum": 10,
+                    "minLength": 2,
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "array": {
+                    "title": "Array property",
+                    "description": "Array property: description of the property.",
+                    "deprecated": true,
+                    "uniqueItems": true,
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "minimum": 0,
+                    "maximum": 10,
+                    "minLength": 2,
+                    "type": [
+                      "array",
+                      "integer",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "description": "Item description.",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "maxLength": 20
+                        }
+                      }
+                    }
+                  },
+                  "simpleObject": {
+                    "title": "Simple object",
+                    "description": "Simple object: description of the property.",
+                    "deprecated": true,
+                    "uniqueItems": true,
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "minimum": 0,
+                    "maximum": 10,
+                    "minLength": 2,
+                    "type": [
+                      "object",
+                      "integer",
+                      "null"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "count": {
+                        "type": "integer",
+                        "maximum": 99
+                      }
+                    }
+                  },
+                  "complexObject": {
+                    "title": "Complex object without pattern",
+                    "description": "Complex object without pattern: description of the property.",
+                    "deprecated": true,
+                    "uniqueItems": true,
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "minimum": 0,
+                    "maximum": 10,
+                    "minLength": 2,
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ],
+                    "properties": {
+                      "owner": {
+                        "$ref": "#/components/schemas/Translation"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "nested": {
+                        "type": "object",
+                        "properties": {
+                          "level": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "patternObject": {
+                    "title": "Complex object with pattern",
+                    "description": "Complex object with pattern: description of the property.",
+                    "deprecated": true,
+                    "uniqueItems": true,
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "minimum": 0,
+                    "maximum": 10,
+                    "minLength": 2,
+                    "type": [
+                      "object",
+                      "integer",
+                      "null"
+                    ],
+                    "patternProperties": {
+                      "[a-z]{2}": {
+                        "$ref": "#/components/schemas/Translation"
+                      }
+                    }
+                  },
+                  "explicitOneOf": {
+                    "title": "Explicit oneOf",
+                    "description": "Explicit oneOf: description of the property.",
+                    "deprecated": true,
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "description": "Object option: its own description.",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      {
+                        "type": "integer",
+                        "description": "Integer option: deprecated on its own.",
+                        "deprecated": true,
+                        "minimum": 0
+                      },
+                      {
+                        "type": "string",
+                        "minLength": 2
                       }
                     ]
                   }
