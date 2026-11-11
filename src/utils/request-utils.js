@@ -3,6 +3,10 @@ import json5 from 'json5';
 export const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
 export const mediaFileRegex = RegExp('^audio/|^image/|^video/');
 
+const serializeFormValue = v => (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v));
+// Save single quotes wrapped => 'text' => `"'"text"'"`
+const shellEscape = s => s.replace(/'/g, '\'"\'"\'');
+
 /**
  * Builds the multipart/form-data request body and the matching curl arguments.
  * @param {Array<{ name: string, value: any, isArray: boolean, file?: File }>} fields - The form fields in display order
@@ -10,23 +14,26 @@ export const mediaFileRegex = RegExp('^audio/|^image/|^video/');
  */
 export function buildMultipartFormData(fields) {
   const body = new FormData();
-  let curlForm = '';
   fields.forEach(({ name, value, isArray, file }) => {
     if (!isArray) {
       if (file) {
         body.append(name, file, file.name);
-        curlForm += ` \\\n  -F "${name}=@${file.name}"`;
       } else if (value) {
-        body.append(name, value);
-        curlForm += ` \\\n  -F "${name}=${value}"`;
+        body.append(name, serializeFormValue(value));
       }
     } else if (value && Array.isArray(value)) {
-      value.forEach((v) => {
-        curlForm += ` \\\n  -F "${name}[]=${v}"`;
-      });
-      body.append(name, value.join(','));
+      value.forEach(v => body.append(name, serializeFormValue(v)));
     }
   });
+
+  // Generate the curl from the FormData so that it always matches what is actually sent
+  const curlForm = [...body.entries()].map(([key, value]) => {
+    if (value instanceof File) {
+      const type = value.type ? `;type=${value.type}` : '';
+      return ` \\\n  -F '${shellEscape(`${key}=@${value.name}${type}`)}'`;
+    }
+    return ` \\\n  --form-string '${shellEscape(`${key}=${value}`)}'`;
+  }).join('');
   return { body, curlForm };
 }
 
