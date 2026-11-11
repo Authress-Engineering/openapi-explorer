@@ -7,14 +7,11 @@ import formatXml from 'xml-but-prettier';
 import { getI18nText } from '../languages/index.js';
 import { schemaInObjectNotation, getTypeInfo, generateExample, isPatternProperty } from '../utils/schema-utils.js';
 import { toMarkdown } from '../utils/common-utils.js';
+import { buildFetchRequest, mediaFileRegex, textFileRegex } from '../utils/request-utils.js';
 import './schema-tree.js';
 import getRequestFormTable from './request-form-table.js';
 import './tag-input.js';
 import './syntax-highlighter.js';
-import json5 from 'json5';
-
-const textFileRegex = RegExp('^font/|tar$|zip$|7z$|rtf$|msword$|excel$|/pdf$|/octet-stream$|^application/vnd.');
-const mediaFileRegex = RegExp('^audio/|^image/|^video/');
 
 export default class ApiRequest extends LitElement {
   createRenderRoot() { return this; }
@@ -720,203 +717,51 @@ export default class ApiRequest extends LitElement {
 
   recomputeFetchOptions() {
     const requestPanelEl = this.closest('.request-panel');
-    const pathParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='path']")];
-    const queryParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='query']")];
-    const headerParamEls = [...requestPanelEl.querySelectorAll("[data-ptype='header']")];
     const requestBodyContainerEl = requestPanelEl.querySelector('.request-body-container');
 
-    let pathUrl = `${this.serverUrl.replace(/\/$/, '')}${this.path.replaceAll(' ', '')}`;
-
-    // Generate URL using Path Params
-    const pathParameterMap = {};
-    pathParamEls.map((el) => {
-      pathParameterMap[el.dataset.pname] = el.value;
-      pathUrl = pathUrl.replace(`{${el.dataset.pname}}`, encodeURIComponent(el.value) || '-');
-    });
-
-    // Handle relative serverUrls
-    if (!pathUrl.startsWith('http')) {
-      const newUrl = new URL(pathUrl, window.location.href);
-      pathUrl = newUrl.toString();
-    }
-
-    const fetchUrl = new URL(pathUrl);
-
-    const fetchOptions = {
-      method: this.method.toUpperCase(),
-      headers: new Headers()
-    };
-
-    // Query Params
-    const queryParameterMap = {};
-    queryParamEls.forEach((el) => {
-      if (!el.dataset.array || el.dataset.array === 'false') {
-        if (el.value !== '') {
-          queryParameterMap[el.dataset.pname] = el.value;
-          fetchUrl.searchParams.append(el.dataset.pname, el.value);
-        }
-      } else {
-        const paramSerializeStyle = el.dataset.paramSerializeStyle;
-        const paramSerializeExplode = el.dataset.paramSerializeExplode;
-        const values = Array.isArray(el.value) ? el.value.filter((v) => v !== '') : [];
-        queryParameterMap[el.dataset.pname] = values;
-
-        if (values.length > 0) {
-          if (paramSerializeStyle === 'spaceDelimited') {
-            fetchUrl.searchParams.append(el.dataset.pname, values.join(' ').replace(/^\s|\s$/g, ''));
-          } else if (paramSerializeStyle === 'pipeDelimited') {
-            fetchUrl.searchParams.append(el.dataset.pname, values.join('|').replace(/^\||\|$/g, ''));
-          } else {
-            if (paramSerializeExplode === 'true' || paramSerializeExplode === true) { // eslint-disable-line no-lonely-if
-              values.forEach((v) => { fetchUrl.searchParams.append(el.dataset.pname, v); });
-            } else {
-              fetchUrl.searchParams.append(el.dataset.pname, values.join(',').replace(/^,|,$/g, ''));
-            }
-          }
-        }
-      }
-    });
-
-    // Add Authentication api keys if provided
-    this.api_keys.filter((v) => v.finalKeyValue).forEach((v) => {
-      if (v.in === 'query') {
-        fetchUrl.searchParams.append(v.name, v.finalKeyValue);
-        return;
-      }
-
-      // Otherwise put it in the header
-      fetchOptions.headers.append(v.name, v.finalKeyValue);
-    });
-
-    // Add Header Params
-    headerParamEls.map((el) => {
-      if (el.value) {
-        fetchOptions.headers.append(el.dataset.pname, el.value);
-      }
-    });
-
-    // Request Body Params
-
-    // url-encoded Form Params (dynamic) - Parse JSON and generate Params
-    const formUrlDynamicTextAreaEl = requestPanelEl.querySelector("[data-ptype='dynamic-form']");
-    // url-encoded Form Params (regular)
-    const rawFormInputEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-input']")];
-
-    const patternPropertyKeyEls = [...requestPanelEl.querySelectorAll("[data-ptype='pattern-property-key']")];
-    const patternPropertyInputEls = rawFormInputEls.filter(el => isPatternProperty(el.dataset.pname));
-    const formInputEls = rawFormInputEls.filter(el => !isPatternProperty(el.dataset.pname));
-
-    let curlData = '';
-    let curlForm = '';
+    let requestBody;
     if (requestBodyContainerEl) {
-      const requestBodyType = requestBodyContainerEl.dataset.selectedRequestBodyType;
+      const rawFormInputEls = [...requestPanelEl.querySelectorAll("[data-ptype='form-input']")];
+      const patternPropertyKeyEls = [...requestPanelEl.querySelectorAll("[data-ptype='pattern-property-key']")];
+      const patternPropertyInputEls = rawFormInputEls.filter(el => isPatternProperty(el.dataset.pname));
+      const formInputEls = rawFormInputEls.filter(el => !isPatternProperty(el.dataset.pname));
+      const formUrlDynamicTextAreaEl = requestPanelEl.querySelector("[data-ptype='dynamic-form']");
+      const exampleTextAreaEl = requestPanelEl.querySelector('.request-body-param-user-input');
+      const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
 
-      if (requestBodyType.includes('form-urlencoded')) {
-        if (formUrlDynamicTextAreaEl) {
-          const val = formUrlDynamicTextAreaEl.value;
-          const formUrlDynParams = new URLSearchParams();
-          let proceed = true;
-          let tmpObj;
-          if (val) {
-            try {
-              tmpObj = JSON.parse(val);
-            } catch (err) {
-              proceed = false;
-              console.warn('OpenAPI Explorer: Invalid JSON provided', err); // eslint-disable-line no-console
-            }
-          } else {
-            proceed = false;
-          }
-          if (proceed) {
-            for (const prop in tmpObj) {
-              formUrlDynParams.append(prop, JSON.stringify(tmpObj[prop]));
-            }
-            fetchOptions.body = formUrlDynParams;
-            curlData = ` \\\n  -d ${formUrlDynParams.toString()}`;
-          }
-        } else {
-          const formUrlParams = new URLSearchParams();
-          patternPropertyInputEls.concat(formInputEls).forEach((el, counter) => {
-            const keyName = patternPropertyKeyEls[counter]?.value || el.dataset.pname;
-            if (el.type === 'file') { return; }
-            if (el.dataset.array === 'false') {
-              if (el.value) {
-                formUrlParams.append(keyName, el.value);
-              }
-            } else {
-              const vals = (el.value && Array.isArray(el.value)) ? el.value.join(',') : '';
-              formUrlParams.append(keyName, vals);
-            }
-          });
-          fetchOptions.body = formUrlParams;
-          curlData = ` \\\n  -d ${formUrlParams.toString()}`;
-        }
-      } else if (requestBodyType.includes('form-data')) {
-        const formDataParams = new FormData();
-        patternPropertyInputEls.concat(formInputEls).forEach((el, counter) => {
-          const keyName = patternPropertyKeyEls[counter]?.value || el.dataset.pname;
-          if (el.dataset.array === 'false') {
-            if (el.type === 'file' && el.files[0]) {
-              formDataParams.append(keyName, el.files[0], el.files[0].name);
-              curlForm += ` \\\n  -F "${keyName}=@${el.files[0].name}"`;
-            } else if (el.value) {
-              formDataParams.append(keyName, el.value);
-              curlForm += ` \\\n  -F "${keyName}=${el.value}"`;
-            }
-          } else if (el.value && Array.isArray(el.value)) {
-            el.value.forEach((v) => {
-              curlForm += ` \\\n  -F "${keyName}[]=${v}"`;
-            });
-            formDataParams.append(keyName, el.value.join(','));
-          }
-        });
-        fetchOptions.body = formDataParams;
-      } else if (requestBodyType.includes('json') || requestBodyType.includes('xml') || requestBodyType.includes('text')) {
-        const exampleTextAreaEl = requestPanelEl.querySelector('.request-body-param-user-input');
-        if (exampleTextAreaEl && exampleTextAreaEl.value) {
-          fetchOptions.body = exampleTextAreaEl.value;
-          if (requestBodyType.includes('json')) {
-            try {
-              fetchOptions.body = JSON.stringify(json5.parse(exampleTextAreaEl.value), null, 4);
-              curlData = ` \\\n  -d '${fetchOptions.body}'`;
-            } catch (err) {
-              /* Ignore unparseable JSON, falls back automatically to the original value, which is better than nothing */
-            }
-          }
-
-          if (!curlData) {
-            // Save single quotes wrapped => 'text' => `"'"text"'"`
-            curlData = ` \\\n  -d '${fetchOptions.body.replace(/'/g, '\'"\'"\'')}'`;
-          }
-        }
-      } else if (mediaFileRegex.test(requestBodyType) || textFileRegex.test(requestBodyType)) {
-        const bodyParamFileEl = requestPanelEl.querySelector('.request-body-param-file');
-        if (bodyParamFileEl && bodyParamFileEl.files[0]) {
-          fetchOptions.body = bodyParamFileEl.files[0];
-          curlData = ` \\\n  --data-binary @${bodyParamFileEl.files[0].name}`;
-        }
-      }
-      // Common for all request-body
-      if (!requestBodyType.includes('form-data')) {
-        // For multipart/form-data don't set the content-type to allow creation of browser generated part boundaries
-        fetchOptions.headers.append('Content-Type', requestBodyType);
-      }
+      requestBody = {
+        mimeType: requestBodyContainerEl.dataset.selectedRequestBodyType,
+        dynamicFormValue: formUrlDynamicTextAreaEl ? formUrlDynamicTextAreaEl.value : undefined,
+        formFields: patternPropertyInputEls.concat(formInputEls).map((el, counter) => ({
+          name: patternPropertyKeyEls[counter]?.value || el.dataset.pname,
+          value: el.value,
+          isArray: el.dataset.array !== 'false',
+          isFile: el.type === 'file',
+          file: el.type === 'file' ? el.files[0] : undefined
+        })),
+        text: exampleTextAreaEl?.value,
+        file: bodyParamFileEl?.files[0]
+      };
     }
 
-    if (this.fetchCredentials) {
-      fetchOptions.credentials = this.fetchCredentials;
-    }
-
-    return {
-      fetchOptions,
-      fetchUrl,
-      path: pathParameterMap,
-      query: queryParameterMap,
-      curlParts: {
-        data: curlData,
-        form: curlForm
-      }
-    };
+    return buildFetchRequest({
+      serverUrl: this.serverUrl,
+      path: this.path,
+      method: this.method,
+      baseUrl: window.location.href,
+      fetchCredentials: this.fetchCredentials,
+      pathParams: [...requestPanelEl.querySelectorAll("[data-ptype='path']")].map(el => ({ name: el.dataset.pname, value: el.value })),
+      queryParams: [...requestPanelEl.querySelectorAll("[data-ptype='query']")].map(el => ({
+        name: el.dataset.pname,
+        value: el.value,
+        isArray: !!el.dataset.array && el.dataset.array !== 'false',
+        style: el.dataset.paramSerializeStyle,
+        explode: el.dataset.paramSerializeExplode
+      })),
+      headerParams: [...requestPanelEl.querySelectorAll("[data-ptype='header']")].map(el => ({ name: el.dataset.pname, value: el.value })),
+      apiKeys: this.api_keys,
+      requestBody
+    });
   }
 
   computeCurlSyntax(headerOverride) {
