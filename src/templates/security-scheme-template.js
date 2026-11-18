@@ -160,9 +160,10 @@ export async function checkForAuthToken(redirectToApiLocation) {
     return;
   }
 
-  const { apiKeyId, flowId, url } = parsedState;
-  if (redirectToApiLocation && url && !parameters.redirect_auth) {
-    const apiExplorerLocation = new URL(url);
+  const { apiKeyId, flowId, path } = parsedState;
+  // Handle Authorization Servers that don't deep link back to the oauth path correctly, instead make sure the user is redirected to the correct page
+  if (redirectToApiLocation && path && !parameters.redirect_auth) {
+    const apiExplorerLocation = new URL(window.location.origin + path);
     Object.keys(parameters).forEach(key => apiExplorerLocation.searchParams.append(key, parameters[key]));
     apiExplorerLocation.searchParams.append('redirect_auth', true);
     window.location.replace(apiExplorerLocation.toString());
@@ -222,7 +223,7 @@ async function onInvokeOAuthFlow(apiKeyId, flowType, authUrl, tokenUrl, e) {
     authCodeParams.set('client_id', clientId);
     authCodeParams.set('redirect_uri', securityObj.redirectUri || window.location.href);
     authCodeParams.set('response_type', responseType);
-    authCodeParams.set('state', base64url.encode(JSON.stringify({ apiKeyId, flowId: flowType, url: window.location.href })));
+    authCodeParams.set('state', base64url.encode(JSON.stringify({ apiKeyId, flowId: flowType, path: window.location.href.slice(window.location.origin.length) })));
 
     authUrlObj.search = authCodeParams.toString();
     window.location.assign(authUrlObj.toString());
