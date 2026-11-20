@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { renderConditions } from './conditions.js';
 import { toMarkdown } from '../utils/common-utils.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import FontStyles from '../styles/font-styles.js';
@@ -271,6 +272,7 @@ export default class SchemaTable extends LitElement {
                 <span class=" m-markdown-small">${unsafeHTML(toMarkdown(displayLine))}</span>
                 ${data['::metadata']?.constraints?.length
                     ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
+              ${renderConditions(data['::metadata']?.conditions)}
               </div>
             </div>`
           : html`
@@ -292,7 +294,7 @@ export default class SchemaTable extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, cssType, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, cssType, format, readOrWriteOnly, constraints, conditions, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return { result: undefined, keyLabelMaxCharacterLength: newIndentLevel };
     }
@@ -319,6 +321,7 @@ export default class SchemaTable extends LitElement {
             ${unsafeHTML(toMarkdown(`${`${(schemaTitle || title) ? `**${schemaTitle || title}${schemaDescription || description ? ':' : ''}**` : ''} ${schemaDescription || description}` || ''}`))}
           </span>
           ${constraints.length ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px;'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
+            ${renderConditions(conditions)}
           ${defaultValue !== '' ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
           ${allowedValues ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues.filter(v => v !== null && v !== undefined).join(' ┃ ')}</div><br>` : ''}
           ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}

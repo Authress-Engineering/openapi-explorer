@@ -87,12 +87,15 @@ export function getTypeInfo(parameter, options = { includeNulls: false, enableEx
     }
   }
 
+  info.conditions = Array.isArray(schema['x-conditions']) ? schema['x-conditions'] : [];
+
   info.html = JSON.stringify({
     type: info.type,
     format: info.format,
     cssType: info.cssType,
     readOrWriteOnly: info.readOrWriteOnly,
     constraints: info.constraints,
+    conditions: info.conditions,
     defaultValue: info.default,
     example: info.example,
     allowedValues: info.allowedValues,
@@ -316,14 +319,152 @@ export function isPatternProperty(label) {
  * @param {number} level - recursion level
  * @param {string} suffix - used for suffixing property names to avoid duplicate props during object composition
  */
+function formatConditionValue(value) {
+  return typeof value === 'string' ? value : JSON.stringify(value);
+}
+
+/* Describes the `if` part of a conditional (if/then/else) schema in a human readable way */
+function describeCondition(ifSchema) {
+  if (!ifSchema || typeof ifSchema !== 'object') {
+    return JSON.stringify(ifSchema);
+  }
+  const parts = [];
+  const properties = ifSchema.properties || {};
+  Object.keys(properties).forEach((key) => {
+    const prop = properties[key] || {};
+    if (typeof prop.const !== 'undefined') {
+      parts.push(`${key} = ${formatConditionValue(prop.const)}`);
+    } else if (Array.isArray(prop.enum)) {
+      parts.push(`${key} is one of ${prop.enum.map(formatConditionValue).join(' | ')}`);
+    } else if (prop.pattern) {
+      parts.push(`${key} matches ${prop.pattern}`);
+    } else {
+      parts.push(`${key} matches ${JSON.stringify(prop)}`);
+    }
+  });
+  (ifSchema.required || []).filter((key) => !properties[key]).forEach((key) => parts.push(`${key} is set`));
+  const rest = omitKeys(ifSchema, ['properties', 'required', 'type']);
+  if (Object.keys(rest).length) {
+    parts.push(JSON.stringify(rest));
+  }
+  return parts.join(' and ') || JSON.stringify(ifSchema);
+}
+
+/* Describes the constraints a `then`/`else` branch adds to a single property */
+function describeConditionalPropertyConstraints(propSchema) {
+  if (!propSchema || typeof propSchema !== 'object') {
+    return [{ label: 'Schema', value: JSON.stringify(propSchema) }];
+  }
+  const rules = [];
+  const add = (label, value) => rules.push({ label, value: String(value) });
+  if (typeof propSchema.const !== 'undefined') { add('Must be', formatConditionValue(propSchema.const)); }
+  if (Array.isArray(propSchema.enum)) { add('Allowed', propSchema.enum.map(formatConditionValue).join(' ┃ ')); }
+  if (propSchema.pattern) { add('Pattern', propSchema.pattern); }
+  if (propSchema.format) { add('Format', propSchema.format); }
+  if (propSchema.type) { add('Type', [].concat(propSchema.type).join(' ┃ ')); }
+  if (propSchema.minLength !== undefined) { add('Min length', propSchema.minLength); }
+  if (propSchema.maxLength !== undefined) { add('Max length', propSchema.maxLength); }
+  if (propSchema.minimum !== undefined) { add('Minimum', propSchema.minimum); }
+  if (propSchema.maximum !== undefined) { add('Maximum', propSchema.maximum); }
+  if (propSchema.exclusiveMinimum !== undefined) { add('Exclusive minimum', propSchema.exclusiveMinimum); }
+  if (propSchema.exclusiveMaximum !== undefined) { add('Exclusive maximum', propSchema.exclusiveMaximum); }
+  if (propSchema.minItems !== undefined) { add('Min items', propSchema.minItems); }
+  if (propSchema.maxItems !== undefined) { add('Max items', propSchema.maxItems); }
+  if (propSchema.not) { add('Not', JSON.stringify(propSchema.not)); }
+  return rules.length ? rules : [{ label: 'Schema', value: JSON.stringify(propSchema) }];
+}
+
+function omitKeys(obj, keys) {
+  return Object.keys(obj).filter((key) => !keys.includes(key)).reduce((acc, key) => Object.assign(acc, { [key]: obj[key] }), {});
+}
+
+function isPureConditional(subSchema) {
+  return subSchema && typeof subSchema === 'object' && Object.prototype.hasOwnProperty.call(subSchema, 'if')
+    && Object.keys(subSchema).every((key) => ['if', 'then', 'else', 'description', 'title', '$comment'].includes(key));
+}
+
+/* Moves if/then/else rules of an object schema (directly or as allOf entries) onto the affected properties as human readable constraints */
+function applyConditionals(rawSchema) {
+  if (!rawSchema || typeof rawSchema !== 'object') {
+    return rawSchema;
+  }
+  const conditionals = [];
+  if (Object.prototype.hasOwnProperty.call(rawSchema, 'if')) {
+    conditionals.push(rawSchema);
+  }
+  const allOfConditionals = Array.isArray(rawSchema.allOf) ? rawSchema.allOf.filter(isPureConditional) : [];
+  conditionals.push(...allOfConditionals);
+  if (!conditionals.length) {
+    return rawSchema;
+  }
+
+  const schema = omitKeys(rawSchema, ['if', 'then', 'else']);
+  if (allOfConditionals.length) {
+    const remainingAllOf = rawSchema.allOf.filter((s) => !isPureConditional(s));
+    if (remainingAllOf.length) {
+      schema.allOf = remainingAllOf;
+    } else {
+      delete schema.allOf;
+    }
+  }
+  const properties = Object.assign({}, schema.properties);
+  const objectConditions = [];
+  // A condition is { when, rules: [{ label, value }] }, rules with the same `when` are grouped
+  const addCondition = (target, when, rules) => {
+    const existing = target.find((c) => c.when === when);
+    if (existing) {
+      existing.rules.push(...rules);
+    } else {
+      target.push({ when, rules: [...rules] });
+    }
+  };
+  const addPropertyCondition = (key, when, rules) => {
+    if (!properties[key]) {
+      addCondition(objectConditions, when, rules.map((r) => ({ label: `${key} ${r.label.toLowerCase()}`, value: r.value })));
+      return;
+    }
+    properties[key] = Object.assign({}, properties[key]);
+    properties[key]['x-conditions'] = (properties[key]['x-conditions'] || []).map((c) => ({ when: c.when, rules: [...c.rules] }));
+    addCondition(properties[key]['x-conditions'], when, rules);
+  };
+  const applyBranch = (branch, conditionText) => {
+    if (!branch || typeof branch !== 'object') {
+      return;
+    }
+    const branchProperties = branch.properties || {};
+    Object.keys(branchProperties).forEach((key) => {
+      addPropertyCondition(key, `If ${conditionText}`, describeConditionalPropertyConstraints(branchProperties[key]));
+    });
+    (branch.required || []).forEach((key) => addPropertyCondition(key, `If ${conditionText}`, [{ label: 'Required', value: '' }]));
+    const rest = omitKeys(branch, ['properties', 'required']);
+    if (Object.keys(rest).length) {
+      addCondition(objectConditions, `If ${conditionText}`, [{ label: 'Schema', value: JSON.stringify(rest) }]);
+    }
+  };
+  conditionals.forEach((conditional) => {
+    const conditionText = describeCondition(conditional.if);
+    applyBranch(conditional.then, conditionText);
+    applyBranch(conditional.else, `not (${conditionText})`);
+  });
+
+  if (schema.properties) {
+    schema.properties = properties;
+  }
+  if (objectConditions.length) {
+    schema['x-conditions'] = [].concat(schema['x-conditions'] || [], objectConditions);
+  }
+  return schema;
+}
+
 export function schemaInObjectNotation(rawSchema, options, level = 0, suffix = '') {
-  const { allOf, oneOf, anyOf, items: arrayItemsSchema, properties: schemaProperties, patternProperties: schemaPatternProperties, ...schema } = (rawSchema || {});
+  const { allOf, oneOf, anyOf, items: arrayItemsSchema, properties: schemaProperties, patternProperties: schemaPatternProperties, ...schema } = (applyConditionals(rawSchema) || {});
   const propertyType = schema.type;
   const metadata = { constraints: [] };
   if (schema.uniqueItems) { metadata.constraints.push('Requires unique items'); }
   if (typeof schema.minItems === 'number' || typeof schema.maxItems === 'number') {
     metadata.constraints.push(`Length: [${schema.minItems || 0}${schema.maxItems ? ', ' : '+'}${schema.maxItems || ''}]`);
   }
+  if (Array.isArray(schema['x-conditions'])) { metadata.conditions = schema['x-conditions']; }
 
   if (allOf) {
     // If allOf is an array of multiple elements, then all the keys makes a single object
