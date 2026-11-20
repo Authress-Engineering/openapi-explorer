@@ -1,3 +1,4 @@
+import { renderConditions } from './conditions.js';
 /* eslint-disable indent */
 import { html } from 'lit';
 import { toMarkdown } from '../utils/common-utils.js';
@@ -76,7 +77,7 @@ function generateFormRows(data, options, dataType = 'object', key = '', descript
 }
 
 function generatePrimitiveRow(rowData, parentRecursionOptions) {
-  const { type, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = rowData;
+  const { type, format, readOrWriteOnly, constraints, conditions, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = rowData;
   const { key, keyLabel, keyDescr, description, dataType, isRequired, options } = parentRecursionOptions;
   if (readOrWriteOnly === '🆁') {
     return undefined;
@@ -115,6 +116,7 @@ function generatePrimitiveRow(rowData, parentRecursionOptions) {
             <div class="param-constraint">
               ${pattern ? html`<span style="font-weight:bold">Pattern: </span>${pattern}<br/>` : ''}
               ${constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${constraints.join(', ')}<br/>` : ''}
+              ${renderConditions(conditions)}
               ${allowedValues?.filter(v => v !== '').map((v, i) => html`
                 ${i > 0 ? '|' : html`<span style="font-weight:bold">Allowed: </span>`}
                 ${html`

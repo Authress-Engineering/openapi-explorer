@@ -157,3 +157,22 @@ test('schema-utils.js getTypeInfo shows the unique items constraint only for arr
   expect(getTypeInfo({ type: 'string[]┃null', uniqueItems: true }).constraints).to.eql(['Requires unique items']);
   t.pass();
 });
+
+test('schema-utils.js schemaInObjectNotation shows if/then rules from allOf as constraints on the affected property', (t) => {
+  const schema = {
+    type: 'object',
+    properties: { id: { type: 'string', pattern: '[a-z_]+' }, type: { type: 'string', enum: ['HALL', 'STAND'] } },
+    allOf: [
+      { if: { properties: { type: { const: 'HALL' } }, required: ['type'] }, then: { properties: { id: { pattern: '^hall_' } } } },
+      { if: { properties: { type: { const: 'STAND' } } }, then: { required: ['id'] }, else: { properties: { id: { maxLength: 5 } } } }
+    ]
+  };
+  const result = schemaInObjectNotation(schema, {});
+  t.deepEqual(Object.keys(result).filter((k) => !k.startsWith('::')), ['id', 'type']);
+  t.deepEqual(JSON.parse(result.id).constraints, []);
+  t.deepEqual(JSON.parse(result.id).conditions, [
+    { when: 'If type = HALL', rules: [{ label: 'Pattern', value: '^hall_' }] },
+    { when: 'If type = STAND', rules: [{ label: 'Required', value: '' }] },
+    { when: 'If not (type = STAND)', rules: [{ label: 'Max length', value: '5' }] }
+  ]);
+});

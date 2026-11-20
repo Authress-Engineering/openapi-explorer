@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { renderConditions } from './conditions.js';
 import { toMarkdown } from '../utils/common-utils.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getI18nText } from '../languages/index.js';
@@ -260,7 +261,8 @@ export default class SchemaTree extends LitElement {
               ${unsafeHTML(toMarkdown(displayLine))}
             </span>
             ${this.schemaDescriptionExpanded ? html`
-              ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}` : ''}
+              ${data['::metadata']?.constraints?.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${data['::metadata'].constraints.join(', ')}</div><br>` : ''}
+              ${renderConditions(data['::metadata']?.conditions)}` : ''}
           </div>
         </div>
         <div class="inside-bracket-wrapper">
@@ -282,7 +284,7 @@ export default class SchemaTree extends LitElement {
     }
 
     // For Primitive Data types
-    const { type, cssType, format, readOrWriteOnly, constraints, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
+    const { type, cssType, format, readOrWriteOnly, constraints, conditions, defaultValue, example, allowedValues, pattern, schemaDescription, schemaTitle, deprecated } = JSON.parse(data);
     if (readOrWriteOnly === '🆁' && this.schemaHideReadOnly === 'true') {
       return undefined;
     }
@@ -312,6 +314,7 @@ export default class SchemaTree extends LitElement {
           </span>
           ${this.schemaDescriptionExpanded ? html`
             ${constraints.length ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Constraints: </span>${constraints.join(', ')}</div><br>` : ''}
+            ${renderConditions(conditions)}
             ${defaultValue !== '' ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Default: </span>${defaultValue}</div><br>` : ''}
             ${allowedValues ? html`<div style='display:inline-block; line-break:anywhere; margin-right:8px'><span class='bold-text'>Allowed: </span>${allowedValues.filter(v => v !== null && v !== undefined).join(' ┃ ')}</div><br>` : ''}
             ${pattern ? html`<div style='display:inline-block; line-break: anywhere; margin-right:8px'><span class='bold-text'>Pattern: </span>${pattern}</div><br>` : ''}

@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit';
+import { renderConditions } from './conditions.js';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -245,10 +246,11 @@ export default class ApiRequest extends LitElement {
                       </div>`
                     : ''
                   }
-                  ${generatedParamSchema.constraints.length || displayAllowedValuesHints || generatedParamSchema.pattern
+                  ${generatedParamSchema.constraints.length || generatedParamSchema.conditions?.length || displayAllowedValuesHints || generatedParamSchema.pattern
                     ? html`
                       <div class="param-constraint" style="margin-top: 1rem;">
                         ${generatedParamSchema.constraints.length ? html`<span style="font-weight:bold">Constraints: </span>${generatedParamSchema.constraints.join(', ')}<br>` : ''}
+                        ${renderConditions(generatedParamSchema.conditions)}
                         ${generatedParamSchema.pattern ? html`
                         <div class="tooltip tooltip-replace" style="cursor: pointer; max-width: 100%; display: flex;">
                           <div style="white-space:nowrap; font-weight:bold; margin-right: 2px;">Pattern: </div>
